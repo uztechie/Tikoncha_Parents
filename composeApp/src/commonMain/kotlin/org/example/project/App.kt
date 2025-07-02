@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import org.example.project.presentation.home.HomeScreen
+import org.example.project.presentation.login.LoginScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -25,8 +26,9 @@ import tikoncha_parents.composeapp.generated.resources.compose_multiplatform
 @Preview
 fun App() {
     MaterialTheme {
-        Navigator(HomeScreen()){
-            SlideTransition(it)
-        }
+        Navigator(LoginScreen())
+//        Navigator(HomeScreen()){
+//            SlideTransition(it)
+//        }
     }
 }

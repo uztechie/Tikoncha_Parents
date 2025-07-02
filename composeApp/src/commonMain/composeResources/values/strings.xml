@@ -1,3 +1,8 @@
 <resources>
+
+    <string name="bilimdon_bo_lishga_birinchi_qadam">Bilimdon bo‘lishga birinchi qadam</string>
+    <string name="bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin">Bu ilova senga kun davomida nimalar qilganingni eslatadi. O‘yin ham, dars ham muhim — hammasi muvozanatda bo‘lsin!</string>
+    <string name="o_tkazib_yuborish">O’tkazib yuborish</string>
+
     <string name="app_namee">Tikoncha Parents</string>
 </resources>
