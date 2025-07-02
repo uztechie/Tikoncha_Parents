@@ -1,4 +1,4 @@
-package org.example.project
+package org.example.project.presentation.base.theme
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,15 +8,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.floor
-import kotlin.math.max
 
 val ButtonHeight = 50.dp
 val DialogButtonHeight = 40.dp
@@ -55,14 +50,8 @@ val ContainerPadding = 15.dp
 val HeaderHeight = 60.dp
 
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
+val SmallTextSize = 14.sp
 
-val ChatTextSize:TextUnit @Composable get() =  14.responsiveSp()
-val UltraLargeTextSize:TextUnit @Composable get() =  25.responsiveSp()
-val SmallTextSize:TextUnit @Composable get() =  12.responsiveSp()
-val NormalTextSize:TextUnit @Composable get() =  14.responsiveSp()
-val LargeTextSize:TextUnit @Composable get() =  18.responsiveSp()
-val UltraSmallTextSize:TextUnit @Composable get() =  10.responsiveSp()
-val NormalLargeTextSize:TextUnit @Composable get() =  16.responsiveSp()
 
 val CloseButtonSize: Dp = 30.dp
 val CloseButtonInnerPadding: Dp = 5.dp
@@ -114,18 +103,3 @@ fun DividerHorizontal() {
 
 
 
-@Composable
-fun Int.responsiveSp(): TextUnit {
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-    val baseWidth = 300
-    val stepSize = 40
-    val multiplierPerStep = 0.1f
-
-    val steps = floor((screenWidthDp - baseWidth).toFloat() / stepSize).toInt()
-    val scaleFactor = 1f + (steps * multiplierPerStep)
-
-    // Optional: prevent font from becoming too small
-    val finalScale = max(0.5f, scaleFactor)
-
-    return (this * finalScale).sp
-}

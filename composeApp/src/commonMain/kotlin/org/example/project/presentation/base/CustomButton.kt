@@ -12,13 +12,15 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.example.project.ButtonCornerRadius
-import org.example.project.ButtonHeight
-import org.example.project.DisableButtonColor
-import org.example.project.DisableButtonContentColor
-import org.example.project.OnPrimaryColor
-import org.example.project.PrimaryColor
-import org.example.project.SmallTextSize
+import org.example.project.presentation.base.theme.ButtonCornerRadius
+import org.example.project.presentation.base.theme.ButtonHeight
+import org.example.project.presentation.base.theme.DisableButtonColor
+import org.example.project.presentation.base.theme.DisableButtonContentColor
+import org.example.project.presentation.base.theme.OnPrimaryColor
+import org.example.project.presentation.base.theme.PrimaryColor
+
+
+import org.example.project.presentation.base.theme.SmallTextSize
 
 @Composable
 fun CustomButton(

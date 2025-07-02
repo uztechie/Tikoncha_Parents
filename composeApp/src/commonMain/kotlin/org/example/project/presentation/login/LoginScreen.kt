@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.delay
-import org.example.project.BackgroundColor
-import org.example.project.PrimaryColor
+import org.example.project.presentation.base.theme.BackgroundColor
+import org.example.project.presentation.base.theme.PrimaryColor
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 class LoginScreen : Screen {

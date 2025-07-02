@@ -12,7 +12,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
-import org.example.project.TextColor
+import org.example.project.presentation.base.theme.TextColor
+
 import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun CustomText(
