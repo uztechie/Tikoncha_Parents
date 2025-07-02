@@ -1,0 +1,15 @@
+package org.example.project.data.remote
+
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+
+class TikonchaClient(private val engine: HttpClientEngine) {
+    val client = HttpClient(engine){
+        install(ContentNegotiation){
+            json()
+        }
+    }
+
+}

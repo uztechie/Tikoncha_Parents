@@ -1,8 +1,9 @@
 package org.example.project.domain
 
-import org.example.project.data.TikonchaApi
+import org.example.project.data.remote.TikonchaClient
 
 
-class TikonchaRepository(private val api: TikonchaApi) {
+interface TikonchaRepository {
+    suspend fun login(): List<String>
 
 }
