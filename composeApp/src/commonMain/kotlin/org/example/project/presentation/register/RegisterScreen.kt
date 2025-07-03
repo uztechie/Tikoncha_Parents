@@ -73,6 +73,7 @@ import tikoncha_parents.composeapp.generated.resources.siz_noto_g_ri_kodni_kirit
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordScreen
 
 
 class RegisterScreen : Screen {
@@ -218,6 +219,7 @@ fun Register(
         CustomButton(
             onClick = {
                 event(RegisterEvent.OnConfirmClicked)
+                navigator?.push(CreatePasswordScreen())
             },
             modifier = Modifier
                 .fillMaxWidth()

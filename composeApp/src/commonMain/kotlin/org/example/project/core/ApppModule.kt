@@ -12,6 +12,7 @@ import org.example.project.presentation.register.RegisterViewmodel
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
 
 val sharedModule = module {
     single {
@@ -29,4 +30,5 @@ val sharedModule = module {
     viewModel { LoginViewmodel() }
     viewModel { OtpViewmodel() }
     viewModel { RegisterViewmodel() }
+    viewModel { CreatePasswordViewmodel() }
 }
