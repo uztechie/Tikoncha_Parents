@@ -8,6 +8,7 @@ import org.example.project.domain.TikonchaRepositoryImpl
 import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.login.LoginViewmodel
 import org.example.project.presentation.otp_screen.OtpViewmodel
+import org.example.project.presentation.register.RegisterViewmodel
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -27,4 +28,5 @@ val sharedModule = module {
     viewModel { HomeViewModel(get()) }
     viewModel { LoginViewmodel() }
     viewModel { OtpViewmodel() }
+    viewModel { RegisterViewmodel() }
 }

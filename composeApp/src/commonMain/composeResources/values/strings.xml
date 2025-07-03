@@ -10,6 +10,13 @@
     <string name="kodni_qaytadan_yuborish">Kodni qaytadan yuborish</string>
     <string name="sekund">%1$s sekund</string>
     <string name="siz_noto_g_ri_kodni_kirittingiz">Siz noto'g'ri kodni kirittingiz</string>
+    <string name="ismingizni_kiriting">Ismingizni kiriting</string>
+    <string name="familiyangizni_kiriting">Familiyangizni kiriting</string>
+    <string name="otangizni_ismini_kiriting">Otangizni ismini kiriting</string>
+    <string name="passport_id_raqamingiz">Passport / ID raqamingiz</string>
+    <string name="ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring">Ro’yxatdan o’tish uchun quyidagilarni to’ldiring</string>
+    <string name="ota">Ota</string>
+    <string name="ona">Ona</string>
 
     <string name="app_namee">Tikoncha Parents</string>
 </resources>

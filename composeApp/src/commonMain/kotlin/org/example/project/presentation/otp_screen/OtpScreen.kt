@@ -38,6 +38,7 @@ import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.TextColor
+import org.example.project.presentation.register.RegisterScreen
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -169,6 +170,7 @@ fun Otp(
         CustomButton(
             onClick = {
                 event(OtpEvent.OnConfirmClicked)
+                navigator?.push(RegisterScreen())
             },
             modifier = Modifier
                 .fillMaxWidth()
