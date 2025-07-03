@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import org.example.project.presentation.base.theme.TextColor
 
@@ -43,7 +44,6 @@ fun CustomText(
         softWrap = softWrap,
         lineHeight = lineHeight,
         letterSpacing = letterSpacing,
-        fontFamily = FontFamily(),
         fontStyle = fontStyle
     )
 }
@@ -63,7 +63,8 @@ fun CustomText(
     lineHeight:TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    textDecoration: TextDecoration = TextDecoration.None
 ) {
     Text(
         textAlign = textAlign,
@@ -78,8 +79,8 @@ fun CustomText(
         softWrap = softWrap,
         lineHeight = lineHeight,
         letterSpacing = letterSpacing,
-        fontFamily = FontFamily(),
-        fontStyle = fontStyle
+        fontStyle = fontStyle,
+        textDecoration = textDecoration
     )
 }
 
