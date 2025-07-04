@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import org.example.project.core.MAP_KEY
 import org.example.project.presentation.home.HomeScreen
 import org.example.project.presentation.login.LoginScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ru.sulgik.mapkit.MapKit
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.compose_multiplatform
 
@@ -31,4 +33,8 @@ fun App() {
 //            SlideTransition(it)
 //        }
     }
+}
+
+fun initMapKit() {
+    MapKit.setApiKey(MAP_KEY)
 }

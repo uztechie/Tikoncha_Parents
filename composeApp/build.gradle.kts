@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -11,6 +12,7 @@ plugins {
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.cocoapods)
 }
 
 kotlin {
@@ -27,16 +29,37 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeApp"
+            baseName = "composeApp"
             isStatic = true
         }
     }
-    
+
+    cocoapods {
+        version = "1.0"
+        summary = "Yandex MapKit integration"
+        homepage = "home page"
+        ios.deploymentTarget = "16.0"
+        podfile = project.file("../iosApp/Podfile")
+
+        framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+
+//        xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] = NativeBuildType.DEBUG
+//        xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] = NativeBuildType.RELEASE
+
+//        pod("YandexMapsMobile"){
+//            version = "4.17.0-lite"
+//            packageName = "YandexMapKit"
+//        }
+    }
+
     sourceSets {
-        
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core.ktx)
 
             implementation(libs.ktor.client.okhttp)
         }
@@ -68,6 +91,12 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(libs.kotlinx.serialization.json)
+
+            //yandex map
+//            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.2.1") // main module
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.2.1") // optional compose support
+
+
 
 
 
