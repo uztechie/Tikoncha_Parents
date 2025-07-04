@@ -23,6 +23,7 @@
     <string name="farzandlaringiz">Farzandlaringiz:</string>
     <string name="farzandingiz_telefon_raqamini_kiriting">Farzandingiz telefon raqamini kiriting</string>
     <string name="farzand_qo_shish">Farzand qo’shish</string>
+    <string name="kirish_uchun_parolingizni_kiriting">Kirish uchun parolingizni kiriting</string>
 
     <string name="app_namee">Tikoncha Parents</string>
 </resources>
