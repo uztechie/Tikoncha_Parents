@@ -1,4 +1,4 @@
-package org.example.project.presentation.otp_screen
+package org.example.project.presentation.otp
 
 sealed class OtpEvent {
     data class SetPhone(val phoneNumber: String): OtpEvent()

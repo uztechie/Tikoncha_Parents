@@ -56,7 +56,7 @@ fun PhoneNumberInputField(
             Icon(
                 painter = painterResource(Res.drawable.call),
                 contentDescription = "Phone Icon",
-                tint = Color(0xFF4CAF50), // Yashil
+                tint = PrimaryColor,
                 modifier = Modifier.padding(end = 8.dp).size(NormalIconSize)
             )
             CustomText(

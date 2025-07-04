@@ -1,4 +1,4 @@
-package org.example.project.presentation.otp_screen
+package org.example.project.presentation.otp
 
 data class OtpState(
     val phoneNumber: String = "",

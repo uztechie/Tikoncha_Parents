@@ -5,12 +5,12 @@ import org.example.project.data.remote.TikonchaApiImpl
 import org.example.project.data.remote.TikonchaClient
 import org.example.project.domain.TikonchaRepository
 import org.example.project.domain.TikonchaRepositoryImpl
+import org.example.project.presentation.add_child.ChildViewmodel
 import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.login.LoginViewmodel
-import org.example.project.presentation.otp_screen.OtpViewmodel
+import org.example.project.presentation.otp.OtpViewmodel
 import org.example.project.presentation.register.RegisterViewmodel
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
 
@@ -31,4 +31,5 @@ val sharedModule = module {
     viewModel { OtpViewmodel() }
     viewModel { RegisterViewmodel() }
     viewModel { CreatePasswordViewmodel() }
+    viewModel { ChildViewmodel() }
 }

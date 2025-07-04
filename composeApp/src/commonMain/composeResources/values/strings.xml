@@ -20,6 +20,9 @@
     <string name="ro_yxatdan_o_tish_parol_yaratish">Ro’yxatdan o’tish parol yaratish</string>
     <string name="parol_kiriting">Parol kiriting</string>
     <string name="parolni_qayta_kiriting">Parolni qayta kiriting</string>
+    <string name="farzandlaringiz">Farzandlaringiz:</string>
+    <string name="farzandingiz_telefon_raqamini_kiriting">Farzandingiz telefon raqamini kiriting</string>
+    <string name="farzand_qo_shish">Farzand qo’shish</string>
 
     <string name="app_namee">Tikoncha Parents</string>
 </resources>
