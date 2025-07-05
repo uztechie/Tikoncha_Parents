@@ -1,4 +1,3 @@
-// iosMain/kotlin/utils/DateTimeUtils.kt
 package utils
 
 import platform.Foundation.NSDate

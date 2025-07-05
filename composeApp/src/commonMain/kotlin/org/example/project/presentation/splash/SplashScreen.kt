@@ -31,7 +31,7 @@ class SplashScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(true) {
             delay(1000) // 1 sekund
             navigator?.push(SliderScreen())
         }

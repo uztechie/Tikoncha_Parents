@@ -2,7 +2,7 @@
 
 package org.example.project.presentation.login
 
-import KeyboardAsState
+import org.example.project.platform.KeyboardAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

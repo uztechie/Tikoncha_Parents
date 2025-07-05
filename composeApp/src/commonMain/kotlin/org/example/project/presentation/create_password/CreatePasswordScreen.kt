@@ -1,6 +1,6 @@
 package uz.saidburxon.newedu.presentation.feature.create_password
 
-import KeyboardAsState
+import org.example.project.platform.KeyboardAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
@@ -40,7 +39,6 @@ import org.example.project.presentation.base.theme.LargeTextSize
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.register.RegisterViewmodel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -52,7 +50,6 @@ import tikoncha_parents.composeapp.generated.resources.parolni_qayta_kiriting
 import tikoncha_parents.composeapp.generated.resources.password_eye_close
 import tikoncha_parents.composeapp.generated.resources.password_eye_open
 import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_parol_yaratish
-import tikoncha_parents.composeapp.generated.resources.slider_normal
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
