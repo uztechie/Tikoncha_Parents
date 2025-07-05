@@ -15,18 +15,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.*
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.theme.*
+import org.example.project.presentation.monitoring.MonitorScreen
+import org.example.project.presentation.monitoring.Monitoring
 import org.example.project.presentation.task.TaskScreen
 import org.example.project.presentation.task.TaskViewModel
-import uz.saidburxon.newedu.presentation.navigation.ScreenMain
+import uz.saidburxon.newedu.presentation.navigation.MainScreenRoutes
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.feature.home.MainHomeScreen
@@ -51,11 +51,11 @@ fun Main(
     val mainNavController = rememberNavController()
 
     val bottomNavItems = listOf(
-        BottomNavItem(ScreenMain.Home, painterResource(Res.drawable.home), stringResource(Res.string.asosiy)),
-        BottomNavItem(ScreenMain.Task, painterResource(Res.drawable.file_text), stringResource(Res.string.vazifa)),
-        BottomNavItem(ScreenMain.Conversation, painterResource(Res.drawable.eye_check), stringResource(Res.string.kuzatuv)),
-        BottomNavItem(ScreenMain.Conversation, painterResource(Res.drawable.map), stringResource(Res.string.xarita)),
-        BottomNavItem(ScreenMain.Profile, painterResource(Res.drawable.profil), stringResource(Res.string.profil))
+        BottomNavItem(MainScreenRoutes.Home, painterResource(Res.drawable.home), stringResource(Res.string.asosiy)),
+        BottomNavItem(MainScreenRoutes.Task, painterResource(Res.drawable.file_text), stringResource(Res.string.vazifa)),
+        BottomNavItem(MainScreenRoutes.Monitor, painterResource(Res.drawable.eye_check), stringResource(Res.string.kuzatuv)),
+        BottomNavItem(MainScreenRoutes.Map, painterResource(Res.drawable.map), stringResource(Res.string.xarita)),
+        BottomNavItem(MainScreenRoutes.Profile, painterResource(Res.drawable.profil), stringResource(Res.string.profil))
     )
 
     Scaffold(
@@ -80,7 +80,7 @@ fun Main(
                         onClick = {
                             if (currentRoute != item.route.route) {
                                 mainNavController.navigate(item.route.route) {
-                                    popUpTo(ScreenMain.Home.route)
+                                    popUpTo(MainScreenRoutes.Home.route)
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -115,9 +115,29 @@ fun Main(
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = mainNavController,
-            startDestination = ScreenMain.Home.route
+            startDestination = MainScreenRoutes.Home.route
         ) {
-            composable(ScreenMain.Home.route) {
+            composable(MainScreenRoutes.Home.route) {
+                val viewModel = remember { TaskViewModel() }
+                val state by viewModel.state.collectAsState()
+
+                MainHomeScreen(
+                    state = state,
+                    event = viewModel::onEvent
+                )
+
+            }
+            composable(MainScreenRoutes.Map.route) {
+                val viewModel = remember { TaskViewModel() }
+                val state by viewModel.state.collectAsState()
+
+                MainHomeScreen(
+                    state = state,
+                    event = viewModel::onEvent
+                )
+
+            }
+            composable(MainScreenRoutes.Profile.route) {
                 val viewModel = remember { TaskViewModel() }
                 val state by viewModel.state.collectAsState()
 
@@ -128,7 +148,7 @@ fun Main(
 
             }
 
-            composable(ScreenMain.Task.route) {
+            composable(MainScreenRoutes.Task.route) {
 
                 val viewModel = remember { TaskViewModel() }
                 val state by viewModel.state.collectAsState()
@@ -140,10 +160,10 @@ fun Main(
                     navigator = navigator
                 )
             }
-//
-//            composable(ScreenMain.Conversation.route) {
-//                ChatScreen()
-//            }
+
+            composable(MainScreenRoutes.Monitor.route) {
+                Monitoring()
+            }
 //
 //            composable(ScreenMain.Profile.route) {
 //                ProfileScreen()

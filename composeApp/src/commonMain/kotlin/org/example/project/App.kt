@@ -19,12 +19,14 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 fun App() {
     MaterialTheme {
 
+
+
         Surface(
             modifier = Modifier
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Navigator(SplashScreen())
+            Navigator(MainScreen())
         }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)
