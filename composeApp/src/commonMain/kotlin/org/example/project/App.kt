@@ -26,7 +26,7 @@ fun App() {
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Navigator(MainScreen())
+            Navigator(SplashScreen())
         }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)
