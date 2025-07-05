@@ -1,32 +1,31 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.SlideTransition
-import org.example.project.presentation.home.HomeScreen
-import org.example.project.presentation.login.LoginScreen
-import org.jetbrains.compose.resources.painterResource
+import org.example.project.presentation.add_child.ChildScreen
+import org.example.project.presentation.slider.SliderScreen
+import org.example.project.presentation.splash.SplashScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.compose_multiplatform
+import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        Navigator(LoginScreen())
+
+        Surface(
+            modifier = Modifier
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Navigator(SplashScreen())
+        }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)
 //        }

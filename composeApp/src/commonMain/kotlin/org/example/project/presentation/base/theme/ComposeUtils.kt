@@ -46,11 +46,14 @@ val TextFieldHeightDialogOrButtonSheet = 40.dp
 val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 
+val NormalTextSize = 16.sp
+val LargeTextSize = 26.sp
+val SmallTextSize = 14.sp
+
 val ContainerPadding = 15.dp
 val HeaderHeight = 60.dp
 
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
-val SmallTextSize = 14.sp
 
 
 val CloseButtonSize: Dp = 30.dp
