@@ -10,6 +10,7 @@ import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.login.LoginViewmodel
 import org.example.project.presentation.otp.OtpViewmodel
 import org.example.project.presentation.register.RegisterViewmodel
+import org.example.project.presentation.task.TaskViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
@@ -34,4 +35,6 @@ val sharedModule = module {
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel() }
     viewModel { LoginPasswordViewmodel() }
+    viewModel { TaskViewModel() }
+    viewModel { HomeViewModel(get ()) }
 }

@@ -24,6 +24,20 @@
     <string name="farzandingiz_telefon_raqamini_kiriting">Farzandingiz telefon raqamini kiriting</string>
     <string name="farzand_qo_shish">Farzand qo’shish</string>
     <string name="kirish_uchun_parolingizni_kiriting">Kirish uchun parolingizni kiriting</string>
+    <string name="asosiy">Asosiy</string>
+    <string name="vazifa">Vazifa</string>
+    <string name="suhbat">Suhbat</string>
+    <string name="profil">Profil</string>
+    <string name="bajarilgan">Bajarilgan</string>
+    <string name="bajarildi">Bajarildi</string>
+    <string name="vazifalar">Vazifalar</string>
+    <string name="sizdan_vazifalar">Sizdan vazifalar</string>
+    <string name="barchasini_ko_rish">Barchasini ko’rish</string>
+    <string name="xozir_vazifalar_yo_q">Xozir vazifalar yo’q</string>
+    <string name="farzandingiz_vazifalari">Farzandingiz vazifalari</string>
+    <string name="vazifa_qo_shish">Vazifa qo’shish</string>
+    <string name="kuzatuv">Kuzatuv</string>
+    <string name="xarita">Xarita</string>
 
     <string name="app_namee">Tikoncha Parents</string>
 </resources>

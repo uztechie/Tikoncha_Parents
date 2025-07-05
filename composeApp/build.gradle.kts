@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
         }
 
         nativeMain.dependencies {

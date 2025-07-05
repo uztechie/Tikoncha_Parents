@@ -78,6 +78,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 class ChildScreen : Screen {
 
@@ -211,73 +212,6 @@ fun Child(
             }
 
 
-//            CustomText(
-//                text = stringResource(Res.string.farzandlaringiz),
-//                fontSize = 16.sp,
-//                color = HintTextColor,
-//            )
-//
-//            SpaceMedium()
-//
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .clip(RoundedCornerShape(ContainerCornerRadius)),
-//                colors = CardDefaults.cardColors(
-//                    containerColor = MainBorderColor
-//                )
-//            ) {
-//                Column(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(PaddingCornerRadius)
-//                ) {
-//
-//                    CustomText(
-//                        text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
-//                        fontSize = 16.sp,
-//                        color = HintTextColor,
-//                    )
-//
-//                    SpaceMedium()
-//
-//                    ChildPhoneInputField(
-//                        phoneNumber = childState.number,
-//                        onPhoneNumberChange = {
-//                            childEvent(ChildEvent.OnNumberInsert(it))
-//                        },
-//                    )
-//                }
-//            }
-//
-//            SpaceLarge()
-//
-//            TextButton(
-//                onClick = { },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
-//                    .height(ButtonHeight),
-//            ) {
-//                Row {
-//
-//                    Text(
-//                        text = stringResource(Res.string.farzand_qo_shish),
-//                        fontSize = NormalTextSize,
-//                        color = PrimaryColor
-//                    )
-//
-//                    SpaceMedium()
-//
-//                    Icon(
-//                        painter = painterResource(Res.drawable.add_square),
-//                        contentDescription = "",
-//                        tint = PrimaryColor
-//                    )
-//                }
-//            }
-
-
             Spacer(modifier = Modifier.weight(1f))
 
             TextButton(
@@ -301,7 +235,7 @@ fun Child(
             CustomButton(
                 onClick = {
                     childEvent(ChildEvent.OnConfirmClicked)
-//                    navigator?.push(OtpScreen())
+                    navigator?.push(MainScreen())
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
