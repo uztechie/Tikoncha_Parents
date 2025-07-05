@@ -38,6 +38,14 @@
     <string name="vazifa_qo_shish">Vazifa qo’shish</string>
     <string name="kuzatuv">Kuzatuv</string>
     <string name="xarita">Xarita</string>
-
+    <string name="tugash_vaqti">Tugash vaqti</string>
+    <string name="yangi_vazifa_qo_shish">Yangi vazifa qo’shish</string>
+    <string name="vazifa_nomi">Vazifa nomi</string>
     <string name="app_namee">Tikoncha Parents</string>
+    <string name="vazifa_haqida_qisqacha_ma_lumot">Vazifa haqida qisqacha ma’lumot</string>
+    <string name="tugatish_sanasi">Tugatish sanasi</string>
+    <string name="muhim">Muhim</string>
+    <string name="o_ta_muhim">O’ta muhim</string>
+    <string name="o_rtacha">O’rtacha</string>
+
 </resources>
