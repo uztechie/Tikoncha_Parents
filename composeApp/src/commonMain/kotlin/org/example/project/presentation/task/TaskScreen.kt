@@ -3,7 +3,6 @@ package org.example.project.presentation.task
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,30 +25,22 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
-import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.theme.*
 import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.register.RegisterEvent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 
@@ -120,7 +110,7 @@ fun TaskScreen(
                 SpaceSmall()
 
                 Text(
-                    text = reformattedToday(),
+                    text = reformattedToday(state.date),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -186,7 +176,9 @@ fun TaskScreen(
             SpaceMedium()
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(AddNewTaskScreen())
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))

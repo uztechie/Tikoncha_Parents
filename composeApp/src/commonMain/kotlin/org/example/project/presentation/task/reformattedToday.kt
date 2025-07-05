@@ -1,19 +1,12 @@
 package org.example.project.presentation.task
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
-fun reformattedToday(): String {
-    val today: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-
-    val currentDay = today.dayOfMonth
-    val currentMonth = today.monthNumber // 1–12
-
-    val monthUz = uzbekMonthName(currentMonth)
-
-    return "$currentDay - $monthUz"
+fun reformattedToday(reformatedDate: LocalDate?): String {
+    val day = reformatedDate?.dayOfMonth
+    val monthUz = uzbekMonthName(reformatedDate?.monthNumber ?:0 )
+    return "$day - $monthUz"
 }
 
 fun uzbekMonthName(monthNumber: Int): String {
@@ -33,3 +26,13 @@ fun uzbekMonthName(monthNumber: Int): String {
         else -> ""
     }
 }
+
+fun formatTime(localTime: LocalTime?): String {
+    if (localTime == null) return ""
+
+    val hour = localTime.hour.toString().padStart(2, '0')
+    val minute = localTime.minute.toString().padStart(2, '0')
+
+    return "$hour:$minute"
+}
+

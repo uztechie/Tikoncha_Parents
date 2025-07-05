@@ -49,7 +49,6 @@ fun Main(
     navigator: Navigator?
 ) {
     val mainNavController = rememberNavController()
-
     val bottomNavItems = listOf(
         BottomNavItem(MainScreenRoutes.Home, painterResource(Res.drawable.home), stringResource(Res.string.asosiy)),
         BottomNavItem(MainScreenRoutes.Task, painterResource(Res.drawable.file_text), stringResource(Res.string.vazifa)),
