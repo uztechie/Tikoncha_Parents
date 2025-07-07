@@ -69,6 +69,7 @@ import tikoncha_parents.composeapp.generated.resources.chart
 import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.profile
 
+
 class HomeScreen : Screen {
 
     @Composable

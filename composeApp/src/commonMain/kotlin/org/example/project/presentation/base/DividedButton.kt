@@ -95,7 +95,8 @@ fun DividedButton(
                 onItemClick()
             },
         verticalAlignment = Alignment.CenterVertically,
-    ) {
+    )
+    {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -146,7 +147,7 @@ fun DividedButton(
                 modifier = Modifier
                     .size(SmallIconButtonSize),
                 contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(contentColor, BlendMode.DstIn)
+                colorFilter = ColorFilter.tint(contentColor)
             )
         }
     }

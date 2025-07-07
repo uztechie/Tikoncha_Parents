@@ -77,7 +77,8 @@ fun Monitoring(){
                 .fillMaxSize()
                 .padding(ContainerPadding)
                 .verticalScroll(rememberScrollState()),
-        ) {
+        )
+        {
             CustomText(
                 text = stringResource(Res.string.farzandingiz),
                 fontSize = SmallTextSize,
