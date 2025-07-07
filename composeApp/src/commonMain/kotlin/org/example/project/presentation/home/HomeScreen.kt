@@ -46,8 +46,6 @@ class HomeScreen: Screen {
             state = state.value,
             event = event
         )
-
-
     }
 
 }
