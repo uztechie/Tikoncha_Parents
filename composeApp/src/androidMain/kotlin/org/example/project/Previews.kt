@@ -1,13 +1,17 @@
 package org.example.project
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -21,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.domain.model.PermissionItem
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomMultiLineTextField
 import org.example.project.presentation.base.CustomSelectionButton
@@ -36,17 +42,28 @@ import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.SpaceUltraSmall
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.presentation.monitoring.ClientPermissionStateScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.alarm
+import tikoncha_parents.composeapp.generated.resources.bolaning_ilovasini_sozligi
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.kuzatuv
+import tikoncha_parents.composeapp.generated.resources.permission_adminstration
+import tikoncha_parents.composeapp.generated.resources.permission_battery_2bars_1
 import tikoncha_parents.composeapp.generated.resources.permission_camera
+import tikoncha_parents.composeapp.generated.resources.permission_floating
+import tikoncha_parents.composeapp.generated.resources.permission_location
+import tikoncha_parents.composeapp.generated.resources.permission_message_notif
+import tikoncha_parents.composeapp.generated.resources.permission_monitoring
+import tikoncha_parents.composeapp.generated.resources.permission_usage_time
 import tikoncha_parents.composeapp.generated.resources.person
 import tikoncha_parents.composeapp.generated.resources.tanlang
 import tikoncha_parents.composeapp.generated.resources.yuborish
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import kotlin.times
+
+
 
