@@ -3,6 +3,7 @@ package org.example.project.presentation.home
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 
 class HomeViewModel: ViewModel() {
@@ -12,12 +13,6 @@ class HomeViewModel: ViewModel() {
 
     fun onEvent(event: HomeEvent){
         when(event){
-            HomeEvent.Count -> {
-                _state.value = _state.value.copy(
-                    counter = _state.value.counter + 1
-                )
-
-            }
             is HomeEvent.GetUsageList -> {
 
             }
@@ -26,7 +21,9 @@ class HomeViewModel: ViewModel() {
 
             }
             is HomeEvent.OnChildSelected -> {
-
+                _state.update {
+                    it.copy(selectedChildren = event.child)
+                }
             }
         }
     }
