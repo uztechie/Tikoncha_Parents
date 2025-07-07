@@ -18,6 +18,16 @@ class HomeViewModel: ViewModel() {
                 )
 
             }
+            is HomeEvent.GetUsageList -> {
+
+            }
+
+            HomeEvent.OnChildSelectClicked -> {
+
+            }
+            is HomeEvent.OnChildSelected -> {
+
+            }
         }
     }
 }

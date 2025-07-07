@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.common.SegmentedToggle
@@ -45,6 +47,7 @@ import org.example.project.presentation.settings.SettingScreen
 import org.example.project.ui.Background
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
+import org.example.project.ui.DividerHorizontal
 import org.example.project.ui.HintTextColor
 import org.example.project.ui.LargeIconButtonPadding
 import org.example.project.ui.LargeIconButtonSize
@@ -53,6 +56,7 @@ import org.example.project.ui.MainBorderColor
 import org.example.project.ui.MainCornerRadius
 import org.example.project.ui.NormalIconButtonPadding
 import org.example.project.ui.NormalIconButtonSize
+import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.SmallTextSize
@@ -91,6 +95,19 @@ class HomeScreen : Screen {
             )
         }
 
+        val childrenList = remember {
+            mutableStateListOf(
+                "Saidburxon",
+                "Muhammadsaid",
+                "Muhammadyusuf",
+                "Beka"
+            )
+        }
+
+        var showDialog by remember {
+            mutableStateOf(false)
+        }
+
         val navigator = LocalNavigator.current
 
         var selectionTypeIndex by remember {
@@ -99,6 +116,18 @@ class HomeScreen : Screen {
         var selectionType by remember {
             mutableStateOf(DateSelectionType.WEEK)
         }
+
+        CustomListDialog(
+            title = "Farzandlaringiz",
+            items = childrenList,
+            show = showDialog,
+            onItemSelected = {
+
+            },
+            onDismiss = {
+                showDialog = false
+            }
+        )
 
         Column(
             modifier = Modifier
@@ -218,14 +247,16 @@ class HomeScreen : Screen {
                         .height(TextFieldHeight),
                     text = "Saidburxon",
                     painter = painterResource(Res.drawable.profile),
-                    onClick = {}
+                    onClick = {
+                        showDialog = true
+                    }
                 )
 
                 SpaceMedium()
 
                 SegmentedToggle(
                     options = listOf("Haftalik" to null, "Kunlik" to null),
-                    selectedIndex = 0,
+                    selectedIndex = selectionTypeIndex,
                     modifier = Modifier
                         .fillMaxWidth(),
                     onOptionSelected = {
@@ -272,6 +303,23 @@ class HomeScreen : Screen {
                         7 to 14.5
                     )
                 )
+
+                SpaceMedium()
+
+                CustomText(
+                    text = "Ijtimoiy tarmoqlar",
+                    color = TextColor,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = NormalLargeTextSize
+                )
+
+                SpaceSmall()
+
+                list.forEach { item ->
+                    AppUsageItem(appUsage = item)
+                    SpaceUltraSmall()
+                    DividerHorizontal()
+                }
 
             }
 
