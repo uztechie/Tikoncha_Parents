@@ -1,6 +1,10 @@
 package org.example.project.presentation.home
 
-sealed interface HomeEvent {
+import org.example.project.presentation.domain.model.UsagePeriod
 
-    data object Count: HomeEvent
+sealed interface HomeEvent {
+    data class GetUsageList(val usagePeriod: UsagePeriod, val dateSelectionType: DateSelectionType): HomeEvent
+
+    object OnChildSelectClicked: HomeEvent
+    data class OnChildSelected(val child: String): HomeEvent
 }
