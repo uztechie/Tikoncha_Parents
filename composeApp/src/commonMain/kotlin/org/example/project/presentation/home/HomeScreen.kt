@@ -81,7 +81,7 @@ class HomeScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        HomeScreen(
+        HomeUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -91,7 +91,7 @@ class HomeScreen : Screen {
 }
 
 @Composable
-fun HomeScreen(
+fun HomeUi(
     navigator: Navigator?,
     state: HomeState,
     event: (HomeEvent) -> Unit

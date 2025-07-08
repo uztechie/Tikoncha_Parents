@@ -14,20 +14,22 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
+import org.example.project.presentation.profile.language.LanguageScreen
 import org.example.project.presentation.profile.personal_information.PersonalInformationScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ProfileStatsContainerHeight
 import org.example.project.ui.SpaceLarge
-import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.coin
 import tikoncha_parents.composeapp.generated.resources.coins
@@ -44,15 +46,23 @@ class ProfileScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        ProfileScreen(
-            navigator = navigator
+        val viewModel = koinViewModel<ProfileViewModel>()
+        val state = viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
+        ProfileUi(
+            navigator = navigator,
+            event = event,
+            state = state.value
         )
     }
 }
 
 @Composable
-fun ProfileScreen(
-    navigator: Navigator?
+fun ProfileUi(
+    navigator: Navigator?,
+    state: ProfileState,
+    event: (ProfileEvent) -> Unit
 ){
 
     val sections = remember {
@@ -97,11 +107,11 @@ fun ProfileScreen(
 
 
             ProfileHeader(
-                fullName = "Shuxratov Saidburxon",
+                fullName = state.fullName,
                 fathersName = "",
                 image = null,
                 onSelectImageButtonClick = {
-
+                    event(ProfileEvent.OnChangeProfileImageClicked(null))
                 }
             )
 
@@ -150,7 +160,7 @@ fun ProfileScreen(
                             }
 
                             ProfileSection.LANGUAGE -> {
-
+                                navigator!!.push(LanguageScreen())
                             }
 
                             ProfileSection.SETTINGS -> {
@@ -194,7 +204,9 @@ fun ProfileScreen(
 @Preview
 @Composable
 private fun PreviewProfileScreen(){1
-    ProfileScreen(
-        navigator = null
+    ProfileUi(
+        navigator = null,
+        state = ProfileState(),
+        event = {}
     )
 }

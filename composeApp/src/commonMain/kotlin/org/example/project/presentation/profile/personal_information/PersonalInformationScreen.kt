@@ -1,7 +1,6 @@
 package org.example.project.presentation.profile.personal_information
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
 import org.example.project.presentation.common.CustomText
-import org.example.project.presentation.domain.model.Child
 import org.example.project.presentation.profile.CustomHeader
 import org.example.project.presentation.profile.ProfileHeader
 import org.example.project.ui.AppIconInnerPadding
@@ -31,7 +31,6 @@ import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.NormalLargeTextSize
-import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SpaceLarge
@@ -41,8 +40,8 @@ import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.calendar
@@ -53,44 +52,32 @@ import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.school_icon
 import tikoncha_parents.composeapp.generated.resources.shift_clock
 import tikoncha_parents.composeapp.generated.resources.two_users
-import kotlin.toString
 
 class PersonalInformationScreen: Screen {
     @Composable
     override fun Content() {
-        PersonalInformationScreen(
-            navigator = null
+
+        val navigator = LocalNavigator.current
+
+        val viewModel = koinViewModel<PersonalInformationViewModel>()
+
+        val state = viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
+        PersonalInformationUi(
+            navigator = navigator,
+            state = state.value,
+            event = event
         )
     }
 }
 
 @Composable
-fun PersonalInformationScreen(
-    navigator: Navigator?
+fun PersonalInformationUi(
+    navigator: Navigator?,
+    state: PersonalInformationState,
+    event: (PersonalInformationEvent) -> Unit
 ){
-
-    val childrenList = remember {
-        mutableStateListOf(
-            Child(
-                fullName = "Ergashev Ergashtir Abdukarim o'g'li",
-                age = 16,
-                gender = "Erkak",
-                phoneNumber = "+998 99 123 34 23",
-                school = "Andijon shahar, 13-maktab",
-                className = "10-A",
-                shift = "2-smena"
-            ),
-            Child(
-                fullName = "Kettiyev Keldi Abdukarim o'g'li",
-                age = 16,
-                gender = "Erkak",
-                phoneNumber = "+998 91 269 48 09",
-                school = "Andijon shahar, 9-maktab",
-                className = "10-W",
-                shift = "5-smena"
-            )
-        )
-    }
 
     val personalInformationItems by remember() {
         derivedStateOf {
@@ -98,22 +85,22 @@ fun PersonalInformationScreen(
                 PersonalInformationItemData(
                     icon = Res.drawable.profile,
                     title = "Ism",
-                    value = "Shuxratov Saidburxon"
+                    value = state.fullName
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.phone,
                     title = "Telefon nomer",
-                    value = "+998 99 123 54 67"
+                    value = state.phoneNumber
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.two_users,
                     title = "Qarindoshligi",
-                    value = "Otasi"
+                    value = state.relativity
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.id_card,
                     title = "Pasport ID",
-                    value = "AD 125378029"
+                    value = state.passportNumber
                 )
             )
         }
@@ -140,10 +127,12 @@ fun PersonalInformationScreen(
         ) {
 
             ProfileHeader(
-                fullName = "Shuxratov Saidburxon",
+                fullName = state.fullName,
                 fathersName = "",
-                onSelectImageButtonClick = {},
-                image = null
+                onSelectImageButtonClick = {
+                    event(PersonalInformationEvent.OnChangeProfilePhotoClicked(null))
+                },
+                image = state.profileImage
             )
 
             SpaceLarge()
@@ -189,7 +178,7 @@ fun PersonalInformationScreen(
 
             SpaceSmall()
 
-            childrenList.forEach {child ->
+            state.childrenData.forEach {child ->
 
                 Column(
                     modifier = Modifier
@@ -320,7 +309,9 @@ fun PersonalInformationScreen(
 @Preview
 @Composable
 private fun PreviewPersonalInformationScreen(){
-    PersonalInformationScreen(
-        navigator = null
+    PersonalInformationUi(
+        navigator = null,
+        state = PersonalInformationState(),
+        event = {}
     )
 }
