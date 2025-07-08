@@ -36,7 +36,8 @@ fun CustomSelectionButton(
     painter: Painter,
     onClick: () -> Unit,
     loading: Boolean = false,
-    label: String = ""
+    label: String = "",
+    showTrailingIcon: Boolean = true
 ) {
 
     val color = if (text.isEmpty()) HintTextColor else TextColor
@@ -80,28 +81,29 @@ fun CustomSelectionButton(
                 .weight(1f)
         )
 
-        SpaceSmall()
+        if (showTrailingIcon) {
 
-        if (loading) {
-            CircularProgressIndicator(
-                color = PrimaryColor,
-                modifier = Modifier.size(20.dp),
-                strokeWidth = 2.dp,
-            )
-        } else {
-            Icon(
-                painter = painterResource(Res.drawable.arrow_right),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(20.dp)
-                    .graphicsLayer {
-                        rotationZ = 90f
-                    },
-                tint = TextColor
-            )
+            SpaceSmall()
+
+            if (loading) {
+                CircularProgressIndicator(
+                    color = PrimaryColor,
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Icon(
+                    painter = painterResource(Res.drawable.arrow_right),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .graphicsLayer {
+                            rotationZ = 90f
+                        },
+                    tint = TextColor
+                )
+            }
         }
-
-
     }
 }
 

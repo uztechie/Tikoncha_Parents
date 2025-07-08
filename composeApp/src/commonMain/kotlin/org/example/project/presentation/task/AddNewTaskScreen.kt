@@ -1,5 +1,6 @@
 package org.example.project.presentation.task
 
+import TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,8 +34,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.CustomTextFieldTask
 import org.example.project.presentation.base.theme.*
@@ -49,7 +56,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 
 
-class AddNewTaskScreen :Screen {
+class AddNewTaskScreen : Screen {
 
     @Composable
     override fun Content() {
@@ -67,6 +74,9 @@ class AddNewTaskScreen :Screen {
         )
     }
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewTask(
     navigator: Navigator?,
@@ -74,44 +84,50 @@ fun AddNewTask(
     event: (TaskEvent) -> Unit,
 ) {
 
-    var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    val dateText = selectedDate?.let { reformattedToday(it) } ?: ""
+    val timeText = selectedTime?.let { formatTime(it) } ?: ""
 
 
+    var showDialogData by remember { mutableStateOf(false) }
     var showDialogTime by remember { mutableStateOf(false) }
-
-    val dateAnd = state.date?.let { reformattedToday(it) } ?: ""
     val timeAnd = state.time?.let { formatTime(it) } ?: ""
+    val dateAnd = state.date?.let { reformattedToday(it) } ?: ""
+
+    val onClick = state.title.isNotBlank() && state.desc.isNotBlank() && selectedDate != null && selectedTime != null && state.importance != ImportanceType.NONE
 
 
     LaunchedEffect(state.completed) {
-        if (state.completed == true){
+        if (state.completed == true) {
             navigator?.pop()
         }
     }
 
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-
-    if (showDialog) {
+    if (showDialogData) {
         CalendarDialog(
             selectedDate = selectedDate,
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showDialogData = false },
             onDateSelected = {
+                println("AAAA = $dateAnd")
                 selectedDate = it
-                showDialog = false
+                showDialogData = false
             }
         )
     }
 
 
-//    TimePickerDialog(
-//        show = showDialogTime,
-//        onTimeSelected = {
-//            event(TaskEvent.OnTimeChange(it))
-//        },
-//        onDismiss = { showDialogTime = false },
-//        currentTime = state.time
-//    )
-
+    if (showDialogTime) {
+        TimePickerDialog(
+            show = showDialogTime,
+            initialTime = selectedTime ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time, // helper function
+            onDismiss = { showDialogTime = false },
+            onTimeSelected = {
+                println("AAAA = $timeAnd")
+                selectedTime = it
+            }
+        )
+    }
 
 
     Column(
@@ -125,7 +141,7 @@ fun AddNewTask(
             title = stringResource(Res.string.yangi_vazifa_qo_shish),
             showBackButton = true,
             onBackClick = {
-               navigator?.pop()
+                navigator?.pop()
             }
         )
 
@@ -192,48 +208,32 @@ fun AddNewTask(
 
             SpaceMedium()
 
-            CustomTextField(
-                onClick = { showDialog = true },
-                value = dateAnd,
-                onValueChange = {},
+            CustomSelectionButton(
+                text = dateText,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
-                label = stringResource(Res.string.tugatish_sanasi),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.calendar_2),
-                        contentDescription = "",
-                        modifier = Modifier.size(22.dp)
-                    )
+                    .height(TextFieldHeight),
+                label = stringResource(Res.string.tugash_vaqti),
+                painter = painterResource(Res.drawable.calendar_2),
+                onClick = {
+                    showDialogData = true
                 },
-                fonSize = SmallTextSize,
-                readOnly = true,
+                showTrailingIcon = false
             )
 
             SpaceSmall()
 
-            CustomTextField(
+            CustomSelectionButton(
+                text = timeText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TextFieldHeight),
+                label = stringResource(Res.string.tugatish_sanasi),
+                painter = painterResource(Res.drawable.alarm),
                 onClick = {
                     showDialogTime = true
                 },
-                value = formatTime(state.time),
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
-                label = stringResource(Res.string.tugash_vaqti),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.alarm),
-                        contentDescription = "",
-                        modifier = Modifier.size(22.dp)
-                    )
-                },
-                fonSize = SmallTextSize,
-                readOnly = true,
+                showTrailingIcon = false
             )
 
             SpaceMedium()
@@ -292,13 +292,19 @@ fun AddNewTask(
                 .padding(20.dp)
                 .fillMaxWidth()
                 .height(ButtonHeight),
-            enabled = state.isSaveButtonEnabled,
-            text = stringResource(Res.string.keyingisi)
+            enabled = onClick,
+            text = stringResource(Res.string.saqlash)
         )
 
         SpaceLarge()
     }
 }
+
+
+fun LocalTime.formatToString(): String {
+    return "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
+}
+
 
 @Preview
 @Composable

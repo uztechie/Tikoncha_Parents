@@ -45,41 +45,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
-fun TimePickerTestScreen() {
-
-    var hour by remember { mutableStateOf(10) }
-    var minute by remember { mutableStateOf(30) }
-    var showDialog by remember { mutableStateOf(true) }
-
-    if (showDialog) {
-        TimePickerDialog(
-            hour = hour,
-            minute = minute,
-            onHourChange = { hour = it },
-            onMinuteChange = { minute = it },
-            onSave = { showDialog = false },
-            onDismiss = { showDialog = false }
-        )
-    }
-
-    // Matn: tanlangan vaqtni ko‘rsatadi
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Tanlangan vaqt: $hour:$minute")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { showDialog = true }) {
-            Text("Vaqtni tanlash")
-        }
-    }
-}
-
-
-@Composable
 fun TimePickerDialog(
     hour: Int,
     minute: Int,
