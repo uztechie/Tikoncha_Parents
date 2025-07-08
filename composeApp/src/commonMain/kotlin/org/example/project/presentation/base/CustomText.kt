@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import org.example.project.presentation.base.theme.TextColor
 
@@ -29,10 +30,12 @@ fun CustomText(
     softWrap: Boolean = true,
     lineHeight:TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
-    fontStyle: FontStyle = FontStyle.Normal
+    fontStyle: FontStyle = FontStyle.Normal,
+    overflow: TextOverflow = TextOverflow.Ellipsis
 
 ) {
     Text(
+        overflow = overflow,
        text = text,
         modifier = modifier,
         style = style,
@@ -53,7 +56,9 @@ fun CustomText(
 fun CustomText(
     text: String,
     modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.titleMedium,
+    style: TextStyle = MaterialTheme.typography.titleMedium.copy(
+
+    ),
     color: Color = TextColor,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
@@ -64,9 +69,11 @@ fun CustomText(
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
     textAlign: TextAlign = TextAlign.Start,
-    textDecoration: TextDecoration = TextDecoration.None
+    textDecoration: TextDecoration = TextDecoration.None,
+    overflow: TextOverflow = TextOverflow.Ellipsis
 ) {
     Text(
+        overflow = overflow,
         textAlign = textAlign,
         text = text,
         modifier = modifier,
@@ -80,7 +87,8 @@ fun CustomText(
         lineHeight = lineHeight,
         letterSpacing = letterSpacing,
         fontStyle = fontStyle,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+
     )
 }
 

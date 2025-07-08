@@ -11,7 +11,6 @@ val EditTextBorder = Color(0xFFD9D9D9)
 val ColorWhite = Color(0xFFF8F8F8)
 
 
-
 val DividerColor = Color(0xFFE9E9E9)
 val BackgroundColor = Color(0xFFFFFDFD)
 val PrimaryColor = Color(0xFF4BB462)

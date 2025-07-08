@@ -52,5 +52,7 @@
     <string name="tanlang">Tanlang</string>
     <string name="yuborish">Yuborish</string>
     <string name="bolaning_ilovasini_sozligi">Bolaning ilovasini sozligi</string>
+    <string name="ism_orqali_qidirish">Ism orqali qidirish</string>
+    <string name="xabar_yozish">Xabar yozish</string>
 
 </resources>

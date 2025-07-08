@@ -5,7 +5,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toLocalDateTime
+import java.text.SimpleDateFormat
 import java.time.format.TextStyle
+import java.util.Date
 import java.util.Locale
 
 actual fun getCurrentDate(): LocalDate {
@@ -16,4 +18,10 @@ actual fun getMonthName(date: LocalDate): String {
     val javaDate = date.toJavaLocalDate()
     return javaDate.month.getDisplayName(TextStyle.FULL, Locale("uz"))
         .replaceFirstChar { it.uppercase() }
+}
+
+actual fun reformatDateTime(millis: Long, pattern: String): String {
+    val date = Date(millis)
+    val formatter = SimpleDateFormat(pattern, Locale.getDefault())
+    return formatter.format(date)
 }

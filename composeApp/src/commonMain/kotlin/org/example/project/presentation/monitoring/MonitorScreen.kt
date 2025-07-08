@@ -29,6 +29,7 @@ import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.SpaceUltraSmall
 import org.example.project.presentation.base.theme.TextColor
+import org.example.project.presentation.chat.ChatScreen
 import org.example.project.presentation.common.CustomListDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -150,7 +151,9 @@ private fun MonitorUi(){
             DividedButton(
                 title = "Farzandingiz bilan suhbat",
                 icon = painterResource(Res.drawable.dialogg),
-                onItemClick = {},
+                onItemClick = {
+                    rootNavigator?.push(ChatScreen())
+                },
                 isPermission = false
             )
 
@@ -172,8 +175,6 @@ private fun MonitorUi(){
                     .fillMaxWidth(),
                 singleLine = false,
                 label = "Xabar yuborish",
-                maxLines = 5,
-                minLines = 2
             )
             SpaceMedium()
             CustomButton(
