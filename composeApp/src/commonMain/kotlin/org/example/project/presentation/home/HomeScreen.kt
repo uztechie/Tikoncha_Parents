@@ -39,6 +39,7 @@ import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.common.SegmentedToggle
+import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.ui.Background
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
@@ -138,6 +139,7 @@ fun HomeScreen(
         show = showDialog,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
+            navigator!!.push(ProfileScreen())
         },
         onDismiss = {
             showDialog = false

@@ -87,7 +87,7 @@ val NormalIconSize: Dp = 22.dp
 
 val ProfileImageSize: Dp = 90.dp
 
-val ProfileStatsContainerHeight: Dp = 95.dp
+val ProfileStatsContainerHeight: Dp = 85.dp
 
 val ParentsInformationContainerHeight: Dp = 260.dp
 
