@@ -89,7 +89,6 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
         },
         label = { Text(text = item.label) },
         icon = {
-
             if (item.screen.key == ProfileScreen().key){
                 Image(
                     painter = item.icon,
@@ -105,8 +104,6 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
                     tint = color
                 )
             }
-
-
         }
     )
 }

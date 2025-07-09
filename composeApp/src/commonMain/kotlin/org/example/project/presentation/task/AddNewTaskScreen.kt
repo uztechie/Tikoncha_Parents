@@ -299,8 +299,6 @@ fun AddNewTask(
             enabled = onClick,
             text = stringResource(Res.string.saqlash)
         )
-
-        SpaceLarge()
     }
 }
 
