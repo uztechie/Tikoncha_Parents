@@ -7,7 +7,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.task.AddNewTaskScreen
+import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
@@ -24,7 +24,7 @@ fun App() {
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Navigator(AddNewTaskScreen())
+            Navigator(MainScreen())
         }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)

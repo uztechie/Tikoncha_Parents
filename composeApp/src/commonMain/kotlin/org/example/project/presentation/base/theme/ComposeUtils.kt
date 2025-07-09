@@ -50,6 +50,7 @@ val NormalTextSize = 16.sp
 val NormalTextLineHeight = 18.sp
 val LargeTextSize = 26.sp
 val SmallTextSize = 14.sp
+val UltraSmallTextSize = 12.sp
 
 val ContainerPadding = 15.dp
 val HeaderHeight = 60.dp

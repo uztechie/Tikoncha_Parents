@@ -70,6 +70,7 @@ import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TextFieldCornerRadius
 import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -147,7 +148,7 @@ fun Child(
 
             SpaceMedium()
 
-// Barcha farzand telefon raqamlarini ko‘rsatish
+            // Barcha farzand telefon raqamlarini ko‘rsatish
             children.forEachIndexed { index, childState ->
 
                 Card(
@@ -184,7 +185,7 @@ fun Child(
 
             SpaceLarge()
 
-// ➕ Farzand qo‘shish tugmasi
+            // ➕ Farzand qo‘shish tugmasi
             TextButton(
                 onClick = {
                     children = children + ChildState()
@@ -215,7 +216,9 @@ fun Child(
             Spacer(modifier = Modifier.weight(1f))
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(ChildConfirmCodScreen())
+                },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
@@ -235,7 +238,7 @@ fun Child(
             CustomButton(
                 onClick = {
                     childEvent(ChildEvent.OnConfirmClicked)
-                    navigator?.push(MainScreen())
+                    navigator?.push(ChildConfirmCodScreen())
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
@@ -244,35 +247,6 @@ fun Child(
                 enabled = areAllPhoneNumbersValid,
                 text = stringResource(Res.string.keyingisi)
             )
-            SpaceLarge()
-            val annotatedText = buildAnnotatedString {
-
-                append("Авторизуясь, вы принимаете наши Условия использования и ")
-                pushStringAnnotation(
-                    tag = "POLICY",
-                    annotation = "policy"
-                )
-                withStyle(
-                    style = SpanStyle(
-                        color = PrimaryColor,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    append("Политику конфиденциальности.")
-                }
-                pop()
-            }
-
-            ClickableText(
-                text = annotatedText,
-                style = TextStyle(fontSize = SmallTextSize, color = Color.Black),
-                onClick = { offset ->
-                    annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
-                        .firstOrNull()?.let {
-                        }
-                }
-            )
-            SpaceLarge()
         }
     }
 }

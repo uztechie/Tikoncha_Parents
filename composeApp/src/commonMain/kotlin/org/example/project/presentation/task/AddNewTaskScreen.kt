@@ -46,6 +46,8 @@ import org.example.project.presentation.base.CustomTextFieldTask
 import org.example.project.presentation.base.theme.*
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
+import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -287,7 +289,9 @@ fun AddNewTask(
         Spacer(modifier = Modifier.weight(1f))
 
         CustomButton(
-            onClick = { },
+            onClick = {
+                navigator?.push(TaskScreen())
+            },
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth()

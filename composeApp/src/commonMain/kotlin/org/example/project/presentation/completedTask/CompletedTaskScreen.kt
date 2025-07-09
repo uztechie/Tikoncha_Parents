@@ -1,4 +1,4 @@
-package org.example.project.presentation.task
+package org.example.project.presentation.completedTask
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,13 +24,10 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -41,44 +39,59 @@ import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.example.project.presentation.add_child.ChildEvent
 import org.example.project.presentation.base.CustomHeader
-import org.example.project.presentation.base.CustomSelectionButton
-import org.example.project.presentation.base.theme.*
+import org.example.project.presentation.base.SegmentedToggle
+import org.example.project.presentation.base.theme.BackgroundColor
+import org.example.project.presentation.base.theme.ButtonHeight
+import org.example.project.presentation.base.theme.CardCornerRadius
+import org.example.project.presentation.base.theme.ContainerCornerRadius
+import org.example.project.presentation.base.theme.ContainerPadding
+import org.example.project.presentation.base.theme.HintTextColor
+import org.example.project.presentation.base.theme.LargeIconButtonPadding
+import org.example.project.presentation.base.theme.LargeIconButtonSize
+import org.example.project.presentation.base.theme.PrimaryColor
+import org.example.project.presentation.base.theme.SmallTextSize
 import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.common.CustomListDialog
-import org.example.project.presentation.completedTask.CompletedTaskScreen
-import org.example.project.presentation.home.HomeEvent
-import org.example.project.presentation.home.HomeState
+import org.example.project.presentation.base.theme.TextColor
+import org.example.project.presentation.base.theme.TonalButtonContainerColor
+import org.example.project.presentation.base.theme.WheelPickerSelectionColor
+import org.example.project.presentation.task.TaskEvent
+import org.example.project.presentation.task.TaskItem
+import org.example.project.presentation.task.TaskState
+import org.example.project.presentation.task.TaskViewModel
+import org.example.project.presentation.task.reformattedToday
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.bajarilgan_vazifalar
+import tikoncha_parents.composeapp.generated.resources.calendar_search
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_vazifalari
+import tikoncha_parents.composeapp.generated.resources.shaxsiy_vazifalar
+import tikoncha_parents.composeapp.generated.resources.sizdan_vazifalar
+import tikoncha_parents.composeapp.generated.resources.task_square2
 
-
-
-class TaskScreen: Screen{
+class CompletedTaskScreen : Screen {
     @Composable
     override fun Content() {
+
         val viewModel = remember { TaskViewModel() }
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current
 
-        TaskUi(
-            navigator = navigator,
+        CompletedTaskUi(
             state = state,
-            event = event
+            event = event,
+            navigator = navigator
         )
     }
-
 }
 
 @Composable
-fun TaskUi(
+fun CompletedTaskUi(
     navigator: Navigator?,
     state: TaskState,
     event: (TaskEvent) -> Unit
@@ -86,19 +99,14 @@ fun TaskUi(
 
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-    var showDialog by remember { mutableStateOf(false) }
+    val showTaskRes = if (state.genderIndex == 0) {
+        Res.string.shaxsiy_vazifalar
+    } else {
+        Res.string.sizdan_vazifalar
+    }
 
-    CustomListDialog(
-        title = "Farzandlaringiz",
-        items = state.childList,
-        show = showDialog,
-        onItemSelected = {
-            event(TaskEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
-        }
-    )
+    val showTask = stringResource(showTaskRes)
+
 
     Column(
         modifier = Modifier
@@ -109,14 +117,16 @@ fun TaskUi(
     {
 
         CustomHeader(
-            title = stringResource(Res.string.vazifalar),
+            title = stringResource(Res.string.bajarilgan_vazifalar),
+            showBackButton = true,
+            onBackClick = {navigator?.pop()},
             trailingIcon = {
 
                 SpaceMedium()
 
                 FilledTonalIconButton(
                     modifier = Modifier.size(LargeIconButtonSize),
-                    onClick = { navigator?.push(CompletedTaskScreen())},
+                    onClick = { },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = TonalButtonContainerColor,
                         contentColor = TextColor
@@ -177,26 +187,32 @@ fun TaskUi(
 
             SpaceMedium()
 
-            CustomSelectionButton(
-                text = state.child,
+            SegmentedToggle(
+                options = listOf(
+                    stringResource(Res.string.shaxsiy_vazifalar) to null,
+                    stringResource(Res.string.sizdan_vazifalar) to null,
+                ),
+                selectedIndex = state.genderIndex,
+                onOptionSelected = {
+                    event(TaskEvent.OnGenderSelected(it))
+                },
                 modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = { showDialog = true },
-                painter = painterResource(Res.drawable.parent),
-                loading = false,
-                label = stringResource(Res.string.farzandlaringiz)
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
             )
 
             SpaceMedium()
 
             Text(
-                text = stringResource(Res.string.sizdan_vazifalar),
+                text = showTask,
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
                 color = TextColor
             )
 
             SpaceSmall()
+
+
 
             Card(
                 modifier = Modifier
@@ -207,113 +223,26 @@ fun TaskUi(
                     containerColor = WheelPickerSelectionColor
                 )
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                        fontSize = SmallTextSize,
-                        color = HintTextColor,
-                        fontWeight = FontWeight.W500
-                    )
-                }
-            }
-
-            SpaceMedium()
-
-            TextButton(
-                onClick = {
-                    navigator?.push(AddNewTaskScreen())
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
-                    .height(ButtonHeight),
-            ) {
-                Row {
-
-                    Text(
-                        text = stringResource(Res.string.vazifa_qo_shish),
-                        fontSize = 16.sp,
-                        color = PrimaryColor
-                    )
-
-                    SpaceMedium()
-
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                        tint = PrimaryColor
-                    )
-                }
-            }
-
-            SpaceMedium()
-
-            Text(
-                text = stringResource(Res.string.farzandingiz_vazifalari),
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.W600,
-            )
-
-            SpaceSmall()
-
-            if (state.newTasks.isEmpty()) {
-                Card(
+                LazyColumn(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(2f),
-                    shape = RoundedCornerShape(CardCornerRadius),
-                    colors = CardDefaults.cardColors(
-                        containerColor = WheelPickerSelectionColor
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Text(
-                            text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                            fontSize = 12.sp,
-                            color = HintTextColor,
-                            fontWeight = FontWeight.W500
-                        )
-                    }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    state.newTasks.forEach {
-                        TaskItem(
-                            task = it,
-                            onEditIconClick = { },
-                            onDoneButtonClick = { },
-                            onDetailsIconClick = { }
+                    items(state.completedTasksEndList) { list->
+                        CompletedTaskItem(
+                            task = list,
+                            onDetailsIconClick = {},
+                            onEditIconClick = {},
+                            onDoneButtonClick = {}
                         )
                     }
                 }
             }
-
-
         }
-
-        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
 @Preview
-@Composable
-private fun Preview() {
-    TaskUi(
-        state = TaskState(),
-        event = {},
-        navigator = LocalNavigator.current
-    )
+fun Preview() {
+    CompletedTaskScreen()
 }
