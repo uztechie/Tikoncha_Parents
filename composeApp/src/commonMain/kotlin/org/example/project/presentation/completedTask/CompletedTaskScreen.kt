@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -57,6 +58,7 @@ import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TonalButtonContainerColor
 import org.example.project.presentation.base.theme.WheelPickerSelectionColor
+import org.example.project.presentation.task.ImportanceType
 import org.example.project.presentation.task.TaskEvent
 import org.example.project.presentation.task.TaskItem
 import org.example.project.presentation.task.TaskState
@@ -97,6 +99,14 @@ fun CompletedTaskUi(
     event: (TaskEvent) -> Unit
 ) {
 
+    val testTasks = listOf(
+        CompletedTaskList(task = "Kitob o‘qish", content = "Har kuni 10 bet", progress = 80),
+        CompletedTaskList(task = "Masala yechish", content = "Har kuni 10 donadan", progress = 100, isCompleted = true, importance = ImportanceType.MOST_IMPORTANT),
+        CompletedTaskList(task = "KMP UI", content = "UI tugatish", progress = 100, isCompleted = true)
+    )
+    val updatedState = state.copy(completedTasksEndList = testTasks)
+
+
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     val showTaskRes = if (state.genderIndex == 0) {
@@ -112,14 +122,13 @@ fun CompletedTaskUi(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
-            .verticalScroll(rememberScrollState())
     )
     {
 
         CustomHeader(
             title = stringResource(Res.string.bajarilgan_vazifalar),
             showBackButton = true,
-            onBackClick = {navigator?.pop()},
+            onBackClick = { navigator?.pop() },
             trailingIcon = {
 
                 SpaceMedium()
@@ -212,25 +221,25 @@ fun CompletedTaskUi(
 
             SpaceSmall()
 
-
-
-            Card(
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f),
-                shape = RoundedCornerShape(CardCornerRadius),
-                colors = CardDefaults.cardColors(
-                    containerColor = WheelPickerSelectionColor
-                )
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(state.completedTasksEndList) { list->
+                items(updatedState.completedTasksEndList) { task ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight() // aspectRatio olib tashlandi
+                            .border(1.dp, WheelPickerSelectionColor, RoundedCornerShape(CardCornerRadius)),
+                        shape = RoundedCornerShape(CardCornerRadius),
+                        colors = CardDefaults.cardColors(
+                            containerColor = WheelPickerSelectionColor
+                        )
+                    ) {
                         CompletedTaskItem(
-                            task = list,
+                            task = task,
                             onDetailsIconClick = {},
                             onEditIconClick = {},
                             onDoneButtonClick = {}
@@ -238,6 +247,7 @@ fun CompletedTaskUi(
                     }
                 }
             }
+
         }
     }
 }
