@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomMultiLineTextField
 import org.example.project.presentation.base.CustomSelectionButton
@@ -28,6 +29,8 @@ import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.SpaceUltraSmall
 import org.example.project.presentation.base.theme.TextColor
+import org.example.project.presentation.chat.ChatScreen
+import org.example.project.presentation.common.CustomListDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -48,18 +51,43 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 class MonitorScreen: Screen {
     @Composable
     override fun Content() {
-        Monitoring()
+        MonitorUi()
     }
 }
 
+
+val items = listOf<String>("Alijonov Karimjon", "Alijonova Gulmira")
+
 @Preview
 @Composable
-fun Monitoring(){
+private fun MonitorUi(){
 
-    val navigator = LocalNavigator.current
+    val mainNavigator = LocalNavigator.current
+    val rootNavigator = mainNavigator?.parent
+
     var message by remember {
         mutableStateOf("")
     }
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    var selectedChild by remember {
+        mutableStateOf("")
+    }
+
+    CustomListDialog(
+        title = "Farzandlaringiz",
+        items = items,
+        show = showDialog,
+        onItemSelected = {
+            selectedChild = it
+        },
+        onDismiss = {
+            showDialog = false
+        }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,7 +105,8 @@ fun Monitoring(){
                 .fillMaxSize()
                 .padding(ContainerPadding)
                 .verticalScroll(rememberScrollState()),
-        ) {
+        )
+        {
             CustomText(
                 text = stringResource(Res.string.farzandingiz),
                 fontSize = SmallTextSize,
@@ -87,9 +116,11 @@ fun Monitoring(){
             SpaceUltraSmall()
 
             CustomSelectionButton(
-                onClick = {},
+                onClick = {
+                    showDialog = true
+                },
                 label = stringResource(Res.string.tanlang),
-                text = "",
+                text = selectedChild,
                 painter = painterResource(Res.drawable.person)
             )
             SpaceLarge()
@@ -111,14 +142,18 @@ fun Monitoring(){
             DividedButton(
                 title = "Bolaning ilovasi sozligini ko’rish",
                 icon = painterResource(Res.drawable.permission_adminstration),
-                onItemClick = {},
+                onItemClick = {
+                    rootNavigator?.push(ClientPermissionStateScreen())
+                },
                 isPermission = false
             )
             SpaceSmall()
             DividedButton(
                 title = "Farzandingiz bilan suhbat",
                 icon = painterResource(Res.drawable.dialogg),
-                onItemClick = {},
+                onItemClick = {
+                    rootNavigator?.push(ChatScreen())
+                },
                 isPermission = false
             )
 
@@ -140,8 +175,6 @@ fun Monitoring(){
                     .fillMaxWidth(),
                 singleLine = false,
                 label = "Xabar yuborish",
-                maxLines = 5,
-                minLines = 2
             )
             SpaceMedium()
             CustomButton(

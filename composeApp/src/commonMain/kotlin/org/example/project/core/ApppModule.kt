@@ -13,6 +13,7 @@ import org.example.project.presentation.register.RegisterViewmodel
 import org.example.project.presentation.task.TaskViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import uz.saidburxon.newedu.presentation.feature.chat.ChatViewModel
 import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 
@@ -28,7 +29,6 @@ val sharedModule = module {
     single<TikonchaRepository> { TikonchaRepositoryImpl(get()) }
 
 
-    viewModel { HomeViewModel(get()) }
     viewModel { LoginViewmodel() }
     viewModel { OtpViewmodel() }
     viewModel { RegisterViewmodel() }
@@ -36,5 +36,6 @@ val sharedModule = module {
     viewModel { ChildViewmodel() }
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel() }
-    viewModel { HomeViewModel(get ()) }
+    viewModel { HomeViewModel() }
+    viewModel { ChatViewModel() }
 }

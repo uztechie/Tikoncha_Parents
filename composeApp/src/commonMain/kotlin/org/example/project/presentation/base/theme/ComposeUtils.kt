@@ -29,6 +29,8 @@ val ButtonCornerRadius = 15.dp
 val ButtonDialogCornerRadius = 12.dp
 
 val ChatMessageCornerRadius = 20.dp
+val ChatIconSize = 60.dp
+val ChatSmallIconSize = 22.dp
 val CardCornerRadius = 25.dp
 val LargeCardCornerRadius = 32.dp
 val CardCornerPadding = 20.dp
@@ -48,8 +50,9 @@ val TextFieldIconSize = 20.dp
 
 val NormalTextSize = 16.sp
 val NormalTextLineHeight = 18.sp
-val LargeTextSize = 26.sp
+val LargeTextSize = 20.sp
 val SmallTextSize = 14.sp
+val UltraSmallTextSize = 12.sp
 
 val ContainerPadding = 15.dp
 val HeaderHeight = 60.dp
