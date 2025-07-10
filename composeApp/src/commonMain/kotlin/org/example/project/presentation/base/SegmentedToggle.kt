@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.OnPrimaryColor
 import org.example.project.presentation.base.theme.PrimaryColor
@@ -53,10 +54,11 @@ fun SegmentedToggle(
     options: List<Pair<String, Painter?>>,
     selectedIndex: Int,
     fontSize: TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Bold,
     onOptionSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val TAG = "SegmentedToggle"
+
     val itemCount = options.size
     val itemWidth = remember { mutableStateOf(0.dp) }
 
@@ -99,7 +101,7 @@ fun SegmentedToggle(
                 val isSelected = index == selectedIndex
 
                 val contentColor by animateColorAsState(
-                    targetValue = if (isSelected) OnPrimaryColor else Color.Black,
+                    targetValue = if (isSelected) OnPrimaryColor else HintTextColor,
                     label = "ContentColor"
                 )
 
@@ -134,7 +136,7 @@ fun SegmentedToggle(
                     CustomText(
                         text = label,
                         color = contentColor,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = fontWeight,
                         fontSize = fontSize
                     )
                 }

@@ -27,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -56,6 +58,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
+import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 
 
 class AddNewTaskScreen : Screen {
@@ -88,7 +91,7 @@ fun AddNewTask(
 
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
-    val dateText = selectedDate?.let { reformattedToday(it) } ?: ""
+    val dateText = selectedDate?.let { reformattedYearDay(it) } ?: ""
     val timeText = selectedTime?.let { formatTime(it) } ?: ""
 
 
@@ -174,11 +177,13 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(22.dp),
+                        colorFilter = ColorFilter.tint(ChatMessageColor)
                     )
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next,
                 )
             )
@@ -198,7 +203,8 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(22.dp),
+                        colorFilter = ColorFilter.tint(ChatMessageColor)
                     )
                 },
                 label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
@@ -220,7 +226,9 @@ fun AddNewTask(
                 onClick = {
                     showDialogData = true
                 },
-                showTrailingIcon = false
+                showTrailingIcon = false,
+                fontWeight = FontWeight.W500,
+                fonSize = SmallTextSize
             )
 
             SpaceSmall()
@@ -235,7 +243,9 @@ fun AddNewTask(
                 onClick = {
                     showDialogTime = true
                 },
-                showTrailingIcon = false
+                showTrailingIcon = false,
+                fontWeight = FontWeight.W500,
+                fonSize = SmallTextSize
             )
 
             SpaceMedium()
@@ -257,7 +267,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_rtacha),
                     color = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) MediumButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) Color.White else TextColor
+                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) Color.White else HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -269,7 +279,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = TextColor
+                    textColor = HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -281,11 +291,11 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_ta_muhim),
                     color = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) MostImportantButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) Color.White else TextColor
+                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) Color.White else HintTextColor
                 )
             }
-
         }
+
         Spacer(modifier = Modifier.weight(1f))
 
         CustomButton(
@@ -300,11 +310,6 @@ fun AddNewTask(
             text = stringResource(Res.string.saqlash)
         )
     }
-}
-
-
-fun LocalTime.formatToString(): String {
-    return "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 }
 
 

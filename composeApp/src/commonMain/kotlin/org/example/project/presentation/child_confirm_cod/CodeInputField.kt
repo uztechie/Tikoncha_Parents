@@ -17,10 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.ui.CardCornerRadius
 import org.example.project.ui.ContainerCornerRadius
 import org.example.project.ui.DisableTextColor
@@ -38,7 +41,9 @@ import tikoncha_parents.composeapp.generated.resources.password_check
 fun CodeInputField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Normal
 ) {
     OutlinedTextField(
         value = value,
@@ -48,7 +53,7 @@ fun CodeInputField(
             .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        textStyle = TextStyle(fontSize = 18.sp),
+        textStyle = TextStyle(fontSize = fontSize, fontWeight = fontWeight),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
@@ -69,7 +74,7 @@ fun CodeInputField(
         },
         placeholder = {
             Text(stringResource(Res.string.kodni_kiriting))
-        }
+        },
     )
 }
 

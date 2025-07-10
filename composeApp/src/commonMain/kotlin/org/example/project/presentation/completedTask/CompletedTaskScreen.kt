@@ -50,6 +50,7 @@ import org.example.project.presentation.base.theme.ContainerPadding
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.LargeIconButtonPadding
 import org.example.project.presentation.base.theme.LargeIconButtonSize
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.SmallTextSize
 import org.example.project.presentation.base.theme.SpaceLarge
@@ -129,29 +130,6 @@ fun CompletedTaskUi(
             title = stringResource(Res.string.bajarilgan_vazifalar),
             showBackButton = true,
             onBackClick = { navigator?.pop() },
-            trailingIcon = {
-
-                SpaceMedium()
-
-                FilledTonalIconButton(
-                    modifier = Modifier.size(LargeIconButtonSize),
-                    onClick = { },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = TonalButtonContainerColor,
-                        contentColor = TextColor
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.task_square2),
-                        contentDescription = "",
-                        tint = PrimaryColor,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(LargeIconButtonPadding)
-                    )
-                }
-            }
         )
 
         Column(
@@ -208,6 +186,8 @@ fun CompletedTaskUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
+                fontWeight = FontWeight.Normal,
+                fontSize = SmallTextSize
             )
 
             SpaceMedium()

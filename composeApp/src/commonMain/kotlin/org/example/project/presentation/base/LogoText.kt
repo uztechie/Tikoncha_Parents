@@ -31,7 +31,7 @@ fun LogoText(
             text = getStyledText(),
             fontSize = 40.sp,
             fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.W700,
         )
     }
 }

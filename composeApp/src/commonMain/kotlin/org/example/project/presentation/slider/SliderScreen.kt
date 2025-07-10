@@ -124,16 +124,19 @@ class SliderScreen : Screen {
                     PagerIndicator(pageItems.size, pagerState.currentPage)
 
                     SpaceLarge()
+
                     CustomText(
                         text = stringResource(titles[page]),
                         modifier = Modifier.padding(start = 20.dp),
-                        fontSize = 28.sp,
+                        fontSize = 32.sp,
                         style = TextStyle.Default,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.W700,
                         color = DisableButtonTextColor,
                         fontStyle = FontStyle.Italic
                     )
+
                     Spacer(modifier = Modifier.weight(1f))
+
                     Image(
                         painter = painterResource(Res.drawable.star),
                         contentDescription = "Star",
@@ -141,15 +144,19 @@ class SliderScreen : Screen {
                             .padding(start = 150.dp)
                             .size(269.dp)
                     )
+
                     LogoText()
+
                     CustomText(
                         text = stringResource(descriptions[page]),
                         modifier = Modifier.padding(start = 24.dp),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W500,
                         color = DisableButtonTextColor
                     )
+
                     SpaceLarge()
+
                     TextButton(
                         onClick = {
                             navigator?.push(LoginScreen())
@@ -160,9 +167,9 @@ class SliderScreen : Screen {
                             text = stringResource(Res.string.o_tkazib_yuborish),
                             modifier = Modifier.padding(start = 12.dp),
                             color = DisableButtonTextColor,
-                            fontSize = 14.sp,
+                            fontSize = 18.sp,
                             style = TextStyle(textDecoration = TextDecoration.Underline),
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.W600
                         )
                     }
                     SpaceLarge()

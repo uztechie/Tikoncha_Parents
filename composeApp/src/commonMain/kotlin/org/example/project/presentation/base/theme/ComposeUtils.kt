@@ -46,10 +46,10 @@ val TextFieldHeightDialogOrButtonSheet = 40.dp
 val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 
-val NormalTextSize = 16.sp
 val NormalTextLineHeight = 18.sp
 val LargeTextSize = 26.sp
 val SmallTextSize = 14.sp
+val NormalTextSize = 16.sp
 val UltraSmallTextSize = 12.sp
 
 val ContainerPadding = 15.dp

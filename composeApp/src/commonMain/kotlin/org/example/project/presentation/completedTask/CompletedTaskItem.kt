@@ -87,13 +87,13 @@ fun CompletedTaskItem(
                     CustomText(
                         text = task.task,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = SmallTextSize,
+                        fontSize = NormalTextSize,
                         color = titleColor
                     )
 
                     CustomText(
                         text = task.content,
-                        fontSize = SmallTextSize,
+                        fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
                         color = HintTextColor
                     )

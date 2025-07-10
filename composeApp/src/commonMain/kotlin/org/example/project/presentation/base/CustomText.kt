@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.TextColor
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -58,7 +59,7 @@ fun CustomText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,
-    fontSize:TextUnit = TextUnit.Unspecified,
+    fontSize:TextUnit = NormalTextSize,
     softWrap: Boolean = true,
     lineHeight:TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,

@@ -60,6 +60,7 @@ import org.example.project.presentation.base.theme.ContainerCornerRadius
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.MainBorderColor
 import org.example.project.presentation.base.theme.NormalIconSize
+import org.example.project.presentation.base.theme.NormalTextLineHeight
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.OnPrimaryColor
 import org.example.project.presentation.base.theme.PaddingCornerRadius
@@ -135,7 +136,7 @@ fun Child(
             CustomText(
                 text = stringResource(Res.string.xush_kelibsiz),
                 fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.W500,
             )
 
             SpaceMedium()
@@ -144,6 +145,7 @@ fun Child(
                 text = stringResource(Res.string.farzandlaringiz),
                 fontSize = 16.sp,
                 color = HintTextColor,
+                fontWeight = FontWeight.W500
             )
 
             SpaceMedium()
@@ -165,8 +167,9 @@ fun Child(
                     ) {
                         CustomText(
                             text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
-                            fontSize = 16.sp,
+                            fontSize = SmallTextSize,
                             color = HintTextColor,
+                            fontWeight = FontWeight.W500
                         )
 
                         SpaceMedium()
@@ -229,8 +232,9 @@ fun Child(
 
                     Text(
                         text = stringResource(Res.string.o_tkazib_yuborish),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor
+                        fontSize = NormalTextLineHeight,
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W500,
                     )
                 }
             }
@@ -245,7 +249,9 @@ fun Child(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = areAllPhoneNumbersValid,
-                text = stringResource(Res.string.keyingisi)
+                text = stringResource(Res.string.keyingisi),
+                fontWeight = FontWeight.W500,
+                fontSize = NormalTextLineHeight
             )
         }
     }
@@ -281,7 +287,8 @@ fun ChildPhoneInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = Color.Black
+                color = TextColor,
+                fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
@@ -303,7 +310,7 @@ fun ChildPhoneInputField(
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
                 contentColor = TextColor,
-
+                fontWeight = FontWeight.W500
                 )
         }
     }

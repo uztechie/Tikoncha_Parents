@@ -32,6 +32,7 @@ import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.presentation.base.theme.ButtonHeight
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.LargeTextSize
+import org.example.project.presentation.base.theme.NormalTextLineHeight
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.SpaceLarge
@@ -106,7 +107,7 @@ fun Otp(
         CustomText(
             text = stringResource(Res.string.xush_kelibsiz),
             fontSize = LargeTextSize,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.W600,
         )
         SpaceMedium()
         CustomText(
@@ -122,7 +123,8 @@ fun Otp(
             onBorderColor = if (finishedTime) true else false,
             onOtpUpdate = {
                 event(OtpEvent.OnOtpUpdate(it))
-            }
+            },
+            fontWeight = FontWeight.W600
         )
         SpaceMedium()
         if (finishedTime) {
@@ -162,9 +164,9 @@ fun Otp(
         SpaceSmall()
         CustomText(
             text = stringResource(Res.string.sekund, formattedTime),
-            fontSize = NormalTextSize,
+            fontSize = NormalTextLineHeight,
             color = TextColor,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.W600
         )
         Spacer(modifier = Modifier.weight(1f))
         CustomButton(
@@ -176,7 +178,10 @@ fun Otp(
                 .fillMaxWidth()
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
-            text = stringResource(Res.string.keyingisi)
+            text = stringResource(Res.string.keyingisi),
+            fontSize = NormalTextLineHeight,
+            fontWeight = FontWeight.W600
+
         )
         SpaceLarge()
     }

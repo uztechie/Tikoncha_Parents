@@ -85,13 +85,13 @@ fun TaskItem(
                     CustomText(
                         text = task.title,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = SmallTextSize,
+                        fontSize = NormalTextSize,
                         color = titleColor
                     )
 
                     CustomText(
                         text = task.description,
-                        fontSize = SmallTextSize,
+                        fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
                         color = HintTextColor
                     )

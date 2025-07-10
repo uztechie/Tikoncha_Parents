@@ -33,7 +33,7 @@ fun PagerIndicator(
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(pageCount) { index ->
-            val color = if (index <= currentPageIndex) SliderPageColor else Color.LightGray
+            val color = if (index <= currentPageIndex) SliderPageColor else Color.White
             Box(
                 modifier = Modifier
                     .weight(1f)

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -87,7 +86,6 @@ fun ChildCodUI(
     }
 
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -132,7 +130,9 @@ fun ChildCodUI(
                 onValueChange = { input ->
                     val digits = input.text.filter { it.isDigit() }.take(6)
                     code = digits
-                }
+                },
+                fontSize = SmallTextSize,
+                fontWeight = FontWeight.W500
             )
 
             SpaceSmall()
@@ -140,7 +140,8 @@ fun ChildCodUI(
             CustomText(
                 text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
                 fontSize = UltraSmallTextSize,
-                color = HintTextColor
+                color = HintTextColor,
+                fontWeight = FontWeight.W500
             )
 
 
@@ -158,8 +159,9 @@ fun ChildCodUI(
 
                     Text(
                         text = stringResource(Res.string.hozir_emas),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor
+                        fontSize = NormalTextLineHeight,
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W600
                     )
                 }
             }
@@ -172,7 +174,9 @@ fun ChildCodUI(
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = stringResource(Res.string.davom_etish)
+                text = stringResource(Res.string.davom_etish),
+                fontSize = NormalTextLineHeight,
+                fontWeight = FontWeight.W600,
             )
         }
     }

@@ -36,6 +36,7 @@ import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.presentation.base.theme.ButtonHeight
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.LargeTextSize
+import org.example.project.presentation.base.theme.NormalTextLineHeight
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
@@ -148,7 +149,7 @@ fun CreatePassword(
             CustomText(
                 text = stringResource(Res.string.xush_kelibsiz),
                 fontSize = LargeTextSize,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.W600,
             )
 
             SpaceMedium()
@@ -157,6 +158,7 @@ fun CreatePassword(
                 text = stringResource(Res.string.ro_yxatdan_o_tish_parol_yaratish),
                 fontSize = NormalTextSize,
                 color = HintTextColor,
+                fontWeight = FontWeight.W500
             )
 
             SpaceMedium()
@@ -172,7 +174,8 @@ fun CreatePassword(
                     }
                     showPasswordImage = it
                 },
-                placeholder = stringResource(Res.string.parol_kiriting)
+                placeholder = stringResource(Res.string.parol_kiriting),
+                fontWeight = FontWeight.W500
             )
             Spacer(Modifier.size(10.dp))
             PasswordTextField(
@@ -186,7 +189,8 @@ fun CreatePassword(
                     }
                     showPasswordImage = it
                 },
-                placeholder = stringResource(Res.string.parolni_qayta_kiriting)
+                placeholder = stringResource(Res.string.parolni_qayta_kiriting),
+                fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
@@ -199,7 +203,9 @@ fun CreatePassword(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = isPhoneNumberValid ,
-                text = stringResource(Res.string.keyingisi)
+                text = stringResource(Res.string.keyingisi),
+                fontWeight = FontWeight.W600,
+                fontSize = NormalTextLineHeight
             )
             SpaceLarge()
 

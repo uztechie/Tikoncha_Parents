@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
@@ -64,7 +65,8 @@ fun CustomTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
-    fonSize: TextUnit = NormalTextSize
+    fonSize: TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Normal
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -105,7 +107,8 @@ fun CustomTextField(
         maxLines = if(singleLine) 1 else 5,
         textStyle = MaterialTheme.typography.bodyMedium.copy(
             color = contentColor,
-            fontSize = fonSize
+            fontSize = fonSize,
+            fontWeight = fontWeight
         ),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
@@ -129,7 +132,8 @@ fun CustomTextField(
                         CustomText(
                             text = label,
                             fontSize = fonSize,
-                            color = HintTextColor
+                            color = HintTextColor,
+                            fontWeight = fontWeight
                         )
                     }
                     innerTextField()

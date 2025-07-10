@@ -183,8 +183,9 @@ fun TaskUi(
                     .fillMaxWidth(),
                 onClick = { showDialog = true },
                 painter = painterResource(Res.drawable.parent),
+                label = stringResource(Res.string.farzandlaringiz),
                 loading = false,
-                label = stringResource(Res.string.farzandlaringiz)
+                tint = PrimaryColor
             )
 
             SpaceMedium()
