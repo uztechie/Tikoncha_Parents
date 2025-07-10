@@ -113,15 +113,6 @@ fun HomeUi(
         )
     }
 
-    val childrenList = remember {
-        mutableStateListOf(
-            "Saidburxon",
-            "Muhammadsaid",
-            "Muhammadyusuf",
-            "Beka"
-        )
-    }
-
     var showDialog by remember {
         mutableStateOf(false)
     }

@@ -21,6 +21,8 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
 import org.example.project.presentation.profile.language.LanguageScreen
 import org.example.project.presentation.profile.personal_information.PersonalInformationScreen
+import org.example.project.presentation.profile.settings.SettingsScreen
+import org.example.project.presentation.profile.subscription.SubscriptionScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.PrimaryColor
@@ -164,11 +166,11 @@ fun ProfileUi(
                             }
 
                             ProfileSection.SETTINGS -> {
-
+                                navigator!!.push(SettingsScreen())
                             }
 
                             ProfileSection.SUBSCRIPTIONS -> {
-
+                                navigator!!.push(SubscriptionScreen())
                             }
 
                             ProfileSection.COINS -> {

@@ -1,4 +1,4 @@
-package org.example.project.presentation.profile.language
+package org.example.project.presentation.profile.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,60 +8,48 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.profile.CustomHeader
+import org.example.project.presentation.profile.settings.notification.NotificationSettingsScreen
+import org.example.project.presentation.profile.settings.theme.ThemeScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
-import org.example.project.ui.NormalLargeTextSize
-import org.example.project.ui.SpaceMedium
+import org.example.project.ui.LargeTextSize
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-class LanguageScreen: Screen {
+class SettingsScreen: Screen {
     @Composable
     override fun Content() {
 
         val navigator = LocalNavigator.current
 
-        LanguageUi(
+        SettingsUi(
             navigator = navigator
         )
-
     }
 }
 
 @Composable
-fun LanguageUi(
+fun SettingsUi(
     navigator: Navigator?
 ){
-
-    var selectedLanguage by remember {
-        mutableStateOf(LanguageType.UZ)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Til",
+            title = "Sozlamalar",
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
             }
         )
-
-        SpaceMedium()
 
         Column(
             modifier = Modifier
@@ -69,9 +57,21 @@ fun LanguageUi(
                 .padding(horizontal = ContainerPadding)
         ) {
 
-            LanguageSelection(
-                selectedLanguage = selectedLanguage,
-                onLanguageSelected = {selectedLanguage = it}
+            ProfileSettingsItem(
+                selectedSetting = SettingType.NOTIFICATION,
+                onSettingSelected = {settings ->
+                    when(settings){
+                        SettingType.NOTIFICATION -> {
+                            navigator!!.push(NotificationSettingsScreen())
+                        }
+                        SettingType.THEME -> {
+                            navigator!!.push(ThemeScreen())
+                        }
+                        SettingType.DANGEROUS_ZONE -> {
+
+                        }
+                    }
+                }
             )
 
             Spacer(
@@ -81,14 +81,14 @@ fun LanguageUi(
 
             CustomButton(
                 text = "Davom etish",
-                enabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
+                fontSize = LargeTextSize,
                 onClick = {
                     navigator!!.pop()
                 },
-                fontSize = NormalLargeTextSize
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
+                enabled = true
             )
 
         }
@@ -97,8 +97,8 @@ fun LanguageUi(
 
 @Preview
 @Composable
-private fun PreviewLanguageScreen(){
-    LanguageUi(
+fun PreviewSettingsScreen(){
+    SettingsUi(
         navigator = null
     )
 }

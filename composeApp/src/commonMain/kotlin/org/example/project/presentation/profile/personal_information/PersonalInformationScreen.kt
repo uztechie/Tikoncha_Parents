@@ -110,7 +110,6 @@ fun PersonalInformationUi(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
-            .verticalScroll(rememberScrollState())
     ) {
         CustomHeader(
             title = "Shaxsiy ma'lumotlar",
@@ -124,6 +123,7 @@ fun PersonalInformationUi(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
 
             ProfileHeader(

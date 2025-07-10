@@ -1,4 +1,4 @@
-package org.example.project.presentation.profile.language
+package org.example.project.presentation.profile.settings.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,35 +17,34 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.profile.CustomHeader
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
-import org.example.project.ui.NormalLargeTextSize
+import org.example.project.ui.LargeTextSize
 import org.example.project.ui.SpaceMedium
+import org.example.project.ui.SpaceSmall
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-class LanguageScreen: Screen {
+class ThemeScreen: Screen {
     @Composable
     override fun Content() {
 
         val navigator = LocalNavigator.current
 
-        LanguageUi(
+        ThemeUi(
             navigator = navigator
         )
-
     }
 }
 
 @Composable
-fun LanguageUi(
+fun ThemeUi(
     navigator: Navigator?
 ){
 
-    var selectedLanguage by remember {
-        mutableStateOf(LanguageType.UZ)
+    var selectedTheme by remember {
+        mutableStateOf("light")
     }
 
     Column(
@@ -54,7 +53,7 @@ fun LanguageUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Til",
+            title = "Tema",
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -69,9 +68,11 @@ fun LanguageUi(
                 .padding(horizontal = ContainerPadding)
         ) {
 
-            LanguageSelection(
-                selectedLanguage = selectedLanguage,
-                onLanguageSelected = {selectedLanguage = it}
+            ThemeSelector(
+                selectedTheme = selectedTheme,
+                onThemeSelected = { theme ->
+                    selectedTheme = theme
+                }
             )
 
             Spacer(
@@ -81,14 +82,14 @@ fun LanguageUi(
 
             CustomButton(
                 text = "Davom etish",
-                enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
+                enabled = true,
+                fontSize = LargeTextSize,
                 onClick = {
                     navigator!!.pop()
-                },
-                fontSize = NormalLargeTextSize
+                }
             )
 
         }
@@ -97,8 +98,8 @@ fun LanguageUi(
 
 @Preview
 @Composable
-private fun PreviewLanguageScreen(){
-    LanguageUi(
+private fun PreviewThemeScreen(){
+    ThemeUi(
         navigator = null
     )
 }
