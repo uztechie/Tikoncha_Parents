@@ -148,7 +148,9 @@ fun ChildCodUI(
             Spacer(modifier = Modifier.weight(1f))
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(MainScreen())
+                },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
