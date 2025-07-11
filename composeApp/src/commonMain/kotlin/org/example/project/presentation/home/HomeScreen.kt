@@ -370,6 +370,10 @@ fun HomeUi(
 @Composable
 fun Pre() {
 
-    HomeScreen().Content()
+    HomeUi(
+        navigator = null,
+        state = HomeState(),
+        event = {}
+    )
 }
 

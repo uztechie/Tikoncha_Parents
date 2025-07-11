@@ -201,9 +201,5 @@ fun DateSelectorSlider(
                 )
             }
         }
-
     }
-
-
-
 }

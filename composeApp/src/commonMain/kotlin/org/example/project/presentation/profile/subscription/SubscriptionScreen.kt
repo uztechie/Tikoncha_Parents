@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,12 +91,12 @@ fun SubscriptionUi(
         mutableStateMapOf(
             0 to Subscription(
                 title = "Yillik",
-                price = "150 000",
+                price = "1 500 000",
                 isSelected = false
             ),
             1 to Subscription(
                 title = "Oylik",
-                price = "16 000",
+                price = "160 000",
                 isSelected = false
             )
         )
@@ -108,6 +109,10 @@ fun SubscriptionUi(
     var showDialog by remember {
         mutableStateOf(false)
     }
+
+    var isSelected by remember { mutableStateOf(false) }
+
+    val selectedPrice = subscriptions.values.find { it.isSelected }?.price
 
     CustomListDialog(
         title = "Farzandlaringiz",
@@ -133,7 +138,8 @@ fun SubscriptionUi(
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
-            }
+            },
+            fonWeight = FontWeight.W600
         )
 
         SpaceMedium()
@@ -257,8 +263,13 @@ fun SubscriptionUi(
                         subscriptions.forEach { (i, sub) ->
                             subscriptions[i] = sub.copy(isSelected = i == index)
                         }
-                    }
+                    },
+                    fontWeight = FontWeight.W500
                 )
+
+                if (subscription.isSelected){
+                    isSelected = true
+                }
 
             }
 
@@ -279,20 +290,22 @@ fun SubscriptionUi(
                 )
             }
 
-            SpaceMedium()
+            Spacer(Modifier.weight(1f))
 
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 text = "Sotib olish",
-                enabled = true,
+                enabled = isSelected,
                 fontSize = NormalLargeTextSize,
                 onClick = {
-
+                    if (selectedPrice != null) {
+                        navigator?.push(PaymentScreen(selectedPrice = selectedPrice))
+                    }
                 }
             )
-
+            SpaceMedium()
         }
 
     }

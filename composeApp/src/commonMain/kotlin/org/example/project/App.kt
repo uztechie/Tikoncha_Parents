@@ -5,6 +5,8 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import org.example.project.presentation.home.HomeScreen
+import org.example.project.presentation.profile.subscription.PaymentScreen
+import org.example.project.presentation.profile.subscription.SubscriptionScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -12,7 +14,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     MaterialTheme {
-        Navigator(HomeScreen()){
+        Navigator(SubscriptionScreen()){
             SlideTransition(it)
         }
     }
