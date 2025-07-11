@@ -56,6 +56,9 @@ val SliderCornerRadius = 20.dp
 val TextFieldCornerRadius = 12.dp
 val TextFieldHeight = 45.dp
 val TextFieldHeightDialogOrButtonSheet = 40.dp
+
+val CoinTextFieldWidth = 90.dp
+
 val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 

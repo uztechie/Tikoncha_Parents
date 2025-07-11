@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
+import org.example.project.presentation.profile.coins.CoinsScreen
 import org.example.project.presentation.profile.language.LanguageScreen
 import org.example.project.presentation.profile.personal_information.PersonalInformationScreen
 import org.example.project.presentation.profile.settings.SettingsScreen
@@ -174,7 +175,7 @@ fun ProfileUi(
                             }
 
                             ProfileSection.COINS -> {
-
+                                navigator!!.push(CoinsScreen())
                             }
                         }
                     }
