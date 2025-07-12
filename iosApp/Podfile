@@ -1,0 +1,11 @@
+platform :ios, '15.0'
+use_frameworks!
+
+target 'iosApp' do
+  pod 'composeApp', :path => '../composeApp'  # faqat bitta manba
+
+#    pod 'YandexMapsMobile', '4.17.0-lite'
+#      pod 'Google-Maps-iOS-Utils', '6.0.0'
+
+
+end

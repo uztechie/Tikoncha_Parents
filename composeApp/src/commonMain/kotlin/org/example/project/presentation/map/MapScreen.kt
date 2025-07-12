@@ -8,6 +8,12 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.theme.BackgroundColor
+import ru.sulgik.mapkit.compose.YandexMap
+import ru.sulgik.mapkit.compose.bindToLifecycleOwner
+import ru.sulgik.mapkit.compose.rememberAndInitializeMapKit
+import ru.sulgik.mapkit.compose.rememberCameraPositionState
+import ru.sulgik.mapkit.geometry.Point
+import ru.sulgik.mapkit.map.CameraPosition
 
 class MapScreen: Screen{
     @Composable
@@ -23,5 +29,33 @@ class MapScreen: Screen{
 
             }
         }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        )
+        {
+            rememberAndInitializeMapKit().bindToLifecycleOwner()
+
+            val startPosition = CameraPosition(
+                target = Point(
+                    40.776691, 72.342787
+                ),
+                zoom = 15f,
+                0f,
+                tilt = 0f
+            )
+            val cameraPosition = rememberCameraPositionState {
+                position = startPosition
+            }
+            YandexMap(
+                modifier = Modifier
+                    .fillMaxSize(),
+                cameraPositionState = cameraPosition,
+            ){}
+
+        }
+
+
     }
 }

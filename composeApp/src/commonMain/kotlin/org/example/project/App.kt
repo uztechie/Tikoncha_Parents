@@ -16,6 +16,7 @@ import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.presentation.profile.subscription.PaymentScreen
 import org.example.project.presentation.profile.subscription.SubscriptionScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ru.sulgik.mapkit.MapKit
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 
@@ -34,4 +35,9 @@ fun App() {
 //            SlideTransition(it)
 //        }
     }
+}
+
+fun initMapKit() {
+    val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
+    MapKit.setApiKey(MAP_KEY)
 }

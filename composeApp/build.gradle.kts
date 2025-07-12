@@ -11,6 +11,7 @@ plugins {
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.cocoapods)
 }
 
 kotlin {
@@ -29,6 +30,23 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+        }
+    }
+
+    cocoapods {
+        // Podspec -> shared.podspec avto-generate bo‘ladi
+        version = "1.0.0"
+        summary = "KMP + Compose + Google Maps namunasi"
+        homepage = "https://example.com"
+        ios.deploymentTarget = "15.0"
+        podfile = project.file("../iosApp/Podfile")
+
+        framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+        pod("YandexMapsMobile") {
+            version = "4.17.0-lite"
         }
     }
     
@@ -51,7 +69,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(libs.voyager.navigator)
-            implementation(libs.voyager.bottomSheetNavigator)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.koin)
@@ -71,6 +88,9 @@ kotlin {
 
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
             implementation("network.chaintech:qr-kit:3.1.2")
+
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.2.0")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.2.0")
 
         }
 
