@@ -12,6 +12,7 @@ import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.example.project.presentation.splash.SplashScreen
 import cafe.adriel.voyager.transitions.SlideTransition
 import org.example.project.presentation.home.HomeScreen
+import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.presentation.profile.subscription.PaymentScreen
 import org.example.project.presentation.profile.subscription.SubscriptionScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -27,7 +28,7 @@ fun App() {
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Navigator(ChildConfirmCodScreen())
+            Navigator(MainScreen())
         }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)

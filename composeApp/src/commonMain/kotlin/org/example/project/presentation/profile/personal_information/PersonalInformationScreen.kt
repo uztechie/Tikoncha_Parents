@@ -58,6 +58,7 @@ class PersonalInformationScreen: Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
+        val rootNavigator = navigator?.parent
 
         val viewModel = koinViewModel<PersonalInformationViewModel>()
 
@@ -65,7 +66,6 @@ class PersonalInformationScreen: Screen {
         val event = viewModel::onEvent
 
         PersonalInformationUi(
-            navigator = navigator,
             state = state.value,
             event = event
         )
@@ -74,10 +74,11 @@ class PersonalInformationScreen: Screen {
 
 @Composable
 fun PersonalInformationUi(
-    navigator: Navigator?,
     state: PersonalInformationState,
     event: (PersonalInformationEvent) -> Unit
 ){
+    val rootNavigator = LocalNavigator.current
+
 
     val personalInformationItems by remember() {
         derivedStateOf {
@@ -115,7 +116,7 @@ fun PersonalInformationUi(
             title = "Shaxsiy ma'lumotlar",
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                rootNavigator?.pop()
             }
         )
 
@@ -310,7 +311,6 @@ fun PersonalInformationUi(
 @Composable
 private fun PreviewPersonalInformationScreen(){
     PersonalInformationUi(
-        navigator = null,
         state = PersonalInformationState(),
         event = {}
     )

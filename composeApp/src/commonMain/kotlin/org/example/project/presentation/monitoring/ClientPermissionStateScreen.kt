@@ -21,6 +21,7 @@ import org.example.project.presentation.base.theme.ContainerPadding
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bolaning_ilovasini_sozligi
 import tikoncha_parents.composeapp.generated.resources.permission_adminstration
@@ -127,3 +128,9 @@ val permissionList = listOf<PermissionItem>(
     ),
 
     )
+
+@Composable
+@Preview
+fun Preview(){
+    ClientPermissionStateUi()
+}

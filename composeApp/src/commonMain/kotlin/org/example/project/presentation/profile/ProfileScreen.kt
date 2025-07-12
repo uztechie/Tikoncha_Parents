@@ -54,7 +54,6 @@ class ProfileScreen : Screen {
         val event = viewModel::onEvent
 
         ProfileUi(
-            navigator = navigator,
             event = event,
             state = state.value
         )
@@ -63,10 +62,11 @@ class ProfileScreen : Screen {
 
 @Composable
 fun ProfileUi(
-    navigator: Navigator?,
     state: ProfileState,
     event: (ProfileEvent) -> Unit
 ){
+    val navigator = LocalNavigator.current
+    val rootNavigator = navigator?.parent
 
     val sections = remember {
         mutableStateListOf(
@@ -159,23 +159,23 @@ fun ProfileUi(
                         when (section) {
 
                             ProfileSection.PERSONAL_INFORMATION -> {
-                                navigator!!.push(PersonalInformationScreen())
+                                rootNavigator!!.push(PersonalInformationScreen())
                             }
 
                             ProfileSection.LANGUAGE -> {
-                                navigator!!.push(LanguageScreen())
+                                rootNavigator!!.push(LanguageScreen())
                             }
 
                             ProfileSection.SETTINGS -> {
-                                navigator!!.push(SettingsScreen())
+                                rootNavigator!!.push(SettingsScreen())
                             }
 
                             ProfileSection.SUBSCRIPTIONS -> {
-                                navigator!!.push(SubscriptionScreen())
+                                rootNavigator!!.push(SubscriptionScreen())
                             }
 
                             ProfileSection.COINS -> {
-                                navigator!!.push(CoinsScreen())
+                                rootNavigator!!.push(CoinsScreen())
                             }
                         }
                     }
@@ -208,7 +208,6 @@ fun ProfileUi(
 @Composable
 private fun PreviewProfileScreen(){1
     ProfileUi(
-        navigator = null,
         state = ProfileState(),
         event = {}
     )

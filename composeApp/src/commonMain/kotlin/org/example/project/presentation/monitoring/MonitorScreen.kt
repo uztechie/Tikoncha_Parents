@@ -183,14 +183,6 @@ private fun MonitorUi(){
                 modifier = Modifier
                     .fillMaxWidth()
             )
-
-
-
         }
-
-
-
-
-
     }
 }
