@@ -33,7 +33,7 @@ kotlin {
     }
     
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -66,8 +66,7 @@ kotlin {
 
             implementation(libs.kotlinx.serialization.json)
 
-
-
+            implementation("network.chaintech:qr-kit:3.1.2")
 
         }
 

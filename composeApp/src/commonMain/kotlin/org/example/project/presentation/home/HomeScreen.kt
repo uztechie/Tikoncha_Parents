@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.QrCodeScreen
 import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
@@ -130,7 +131,7 @@ fun HomeUi(
         show = showDialog,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
-            navigator!!.push(ProfileScreen())
+            navigator!!.push(QrCodeScreen())
         },
         onDismiss = {
             showDialog = false
