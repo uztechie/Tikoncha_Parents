@@ -60,6 +60,7 @@ import org.example.project.presentation.base.theme.ContainerCornerRadius
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.MainBorderColor
 import org.example.project.presentation.base.theme.NormalIconSize
+import org.example.project.presentation.base.theme.NormalTextLineHeight
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.OnPrimaryColor
 import org.example.project.presentation.base.theme.PaddingCornerRadius
@@ -70,6 +71,7 @@ import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TextFieldCornerRadius
 import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -134,7 +136,7 @@ fun Child(
             CustomText(
                 text = stringResource(Res.string.xush_kelibsiz),
                 fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.W500,
             )
 
             SpaceMedium()
@@ -143,11 +145,12 @@ fun Child(
                 text = stringResource(Res.string.farzandlaringiz),
                 fontSize = 16.sp,
                 color = HintTextColor,
+                fontWeight = FontWeight.W500
             )
 
             SpaceMedium()
 
-// Barcha farzand telefon raqamlarini ko‘rsatish
+            // Barcha farzand telefon raqamlarini ko‘rsatish
             children.forEachIndexed { index, childState ->
 
                 Card(
@@ -164,8 +167,9 @@ fun Child(
                     ) {
                         CustomText(
                             text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
-                            fontSize = 16.sp,
+                            fontSize = SmallTextSize,
                             color = HintTextColor,
+                            fontWeight = FontWeight.W500
                         )
 
                         SpaceMedium()
@@ -184,7 +188,7 @@ fun Child(
 
             SpaceLarge()
 
-// ➕ Farzand qo‘shish tugmasi
+            // ➕ Farzand qo‘shish tugmasi
             TextButton(
                 onClick = {
                     children = children + ChildState()
@@ -215,7 +219,9 @@ fun Child(
             Spacer(modifier = Modifier.weight(1f))
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(ChildConfirmCodScreen())
+                },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
@@ -226,8 +232,9 @@ fun Child(
 
                     Text(
                         text = stringResource(Res.string.o_tkazib_yuborish),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor
+                        fontSize = NormalTextLineHeight,
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W500,
                     )
                 }
             }
@@ -235,44 +242,17 @@ fun Child(
             CustomButton(
                 onClick = {
                     childEvent(ChildEvent.OnConfirmClicked)
-                    navigator?.push(MainScreen())
+                    navigator?.push(ChildConfirmCodScreen())
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = areAllPhoneNumbersValid,
-                text = stringResource(Res.string.keyingisi)
+                text = stringResource(Res.string.keyingisi),
+                fontWeight = FontWeight.W500,
+                fontSize = NormalTextLineHeight
             )
-            SpaceLarge()
-            val annotatedText = buildAnnotatedString {
-
-                append("Авторизуясь, вы принимаете наши Условия использования и ")
-                pushStringAnnotation(
-                    tag = "POLICY",
-                    annotation = "policy"
-                )
-                withStyle(
-                    style = SpanStyle(
-                        color = PrimaryColor,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    append("Политику конфиденциальности.")
-                }
-                pop()
-            }
-
-            ClickableText(
-                text = annotatedText,
-                style = TextStyle(fontSize = SmallTextSize, color = Color.Black),
-                onClick = { offset ->
-                    annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
-                        .firstOrNull()?.let {
-                        }
-                }
-            )
-            SpaceLarge()
         }
     }
 }
@@ -307,7 +287,8 @@ fun ChildPhoneInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = Color.Black
+                color = TextColor,
+                fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
@@ -329,7 +310,7 @@ fun ChildPhoneInputField(
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
                 contentColor = TextColor,
-
+                fontWeight = FontWeight.W500
                 )
         }
     }

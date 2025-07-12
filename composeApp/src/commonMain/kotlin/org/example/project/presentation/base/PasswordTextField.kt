@@ -18,11 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.example.project.presentation.base.theme.NormalIconSize
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TextFieldCornerRadius
@@ -39,6 +42,8 @@ fun PasswordTextField(
     modifier: Modifier = Modifier,
     placeholder: String,
     value: String,
+    fontWeight: FontWeight = FontWeight.Normal,
+    fonSize: TextUnit = NormalTextSize,
     onShowPassword: (Boolean) -> Unit,
     onValueChange:(String)-> Unit
 ) {
@@ -109,6 +114,8 @@ fun PasswordTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password
         ),
+        fontWeight = fontWeight,
+        fonSize = fonSize
     )
 }
 

@@ -19,8 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.example.project.presentation.base.theme.*
 import org.jetbrains.compose.resources.painterResource
@@ -36,7 +39,11 @@ fun CustomSelectionButton(
     painter: Painter,
     onClick: () -> Unit,
     loading: Boolean = false,
-    label: String = ""
+    label: String = "",
+    fonSize: TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Normal,
+    showTrailingIcon: Boolean = true,
+    tint: Color = ChatMessageColor
 ) {
 
     val color = if (text.isEmpty()) HintTextColor else TextColor
@@ -66,42 +73,44 @@ fun CustomSelectionButton(
             contentDescription = "",
             modifier = Modifier
                 .size(20.dp),
-            tint = PrimaryColor
+            tint = tint
         )
 
         Spacer(Modifier.width(TextFieldInnerPadding))
 
         CustomText(
             text = newText,
-            fontSize = NormalTextSize,
+            fontSize = fonSize,
+            fontWeight = fontWeight,
             color = color,
             maxLines = 1,
             modifier = Modifier
                 .weight(1f)
         )
 
-        SpaceSmall()
+        if (showTrailingIcon) {
 
-        if (loading) {
-            CircularProgressIndicator(
-                color = PrimaryColor,
-                modifier = Modifier.size(20.dp),
-                strokeWidth = 2.dp,
-            )
-        } else {
-            Icon(
-                painter = painterResource(Res.drawable.arrow_right),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(20.dp)
-                    .graphicsLayer {
-                        rotationZ = 90f
-                    },
-                tint = TextColor
-            )
+            SpaceSmall()
+
+            if (loading) {
+                CircularProgressIndicator(
+                    color = PrimaryColor,
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Icon(
+                    painter = painterResource(Res.drawable.arrow_right),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .graphicsLayer {
+                            rotationZ = 90f
+                        },
+                    tint = TextColor
+                )
+            }
         }
-
-
     }
 }
 

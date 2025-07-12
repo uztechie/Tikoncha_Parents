@@ -29,6 +29,7 @@
     <string name="suhbat">Suhbat</string>
     <string name="profil">Profil</string>
     <string name="bajarilgan">Bajarilgan</string>
+    <string name="bajarilgan_vazifalar">Bajarilgan vazifalar</string>
     <string name="bajarildi">Bajarildi</string>
     <string name="vazifalar">Vazifalar</string>
     <string name="sizdan_vazifalar">Sizdan vazifalar</string>
@@ -47,10 +48,18 @@
     <string name="muhim">Muhim</string>
     <string name="o_ta_muhim">O’ta muhim</string>
     <string name="o_rtacha">O’rtacha</string>
-
     <string name="farzandingiz">Farzandingiz</string>
     <string name="tanlang">Tanlang</string>
     <string name="yuborish">Yuborish</string>
+    <string name="bekor_qilish">Bekor qilish</string>
+    <string name="saqlash">Saqlash</string>
+    <string name="tugash_vaqtini_belgilang">Tugash vaqtini belgilang</string>
+    <string name="shaxsiy_vazifalar">Shaxsiy vazifalar</string>
+    <string name="farzandingizni_tasdiqlang">Farzandingizni tasdiqlang</string>
+    <string name="hozir_emas">Hozir emas</string>
+    <string name="davom_etish">Davom etish</string>
+    <string name="kodni_kiriting">Kodni kiriting</string>
+    <string name="ushbu_kodni_farzandingiz_telefonidan_kiriting">Ushbu kodni farzandingiz telefonidan kiriting</string>
     <string name="bolaning_ilovasini_sozligi">Bolaning ilovasini sozligi</string>
     <string name="ism_orqali_qidirish">Ism orqali qidirish</string>
     <string name="xabar_yozish">Xabar yozish</string>

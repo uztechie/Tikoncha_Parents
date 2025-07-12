@@ -1,4 +1,4 @@
-package org.example.project.presentation.task
+package org.example.project.presentation.completedTask
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.presentation.base.theme.*
+import org.example.project.presentation.task.CustomLinearProgress
+import org.example.project.presentation.task.ImportanceType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -30,11 +32,11 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
-fun TaskItem(
-    task: Task,
-    onEditIconClick: (task: Task) -> Unit,
-    onDetailsIconClick: (task: Task) -> Unit,
-    onDoneButtonClick: (task: Task) -> Unit
+fun CompletedTaskItem(
+    task: CompletedTaskList,
+    onEditIconClick: (task: CompletedTaskList) -> Unit,
+    onDetailsIconClick: (task: CompletedTaskList) -> Unit,
+    onDoneButtonClick: (task: CompletedTaskList) -> Unit
 ) {
 
     val importance = when(task.importance){
@@ -83,14 +85,14 @@ fun TaskItem(
                 ) {
 
                     CustomText(
-                        text = task.title,
+                        text = task.task,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = NormalTextSize,
                         color = titleColor
                     )
 
                     CustomText(
-                        text = task.description,
+                        text = task.content,
                         fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
                         color = HintTextColor
@@ -152,7 +154,7 @@ fun TaskItem(
                     CustomText(
                         modifier = Modifier
                             .padding(start = 3.dp),
-                        text = task.date,
+                        text = task.endDate,
                         color = TextColor,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
@@ -172,7 +174,7 @@ fun TaskItem(
                     CustomText(
                         modifier = Modifier
                             .padding(start = 3.dp),
-                        text = task.time,
+                        text = task.endTime,
                         color = TextColor,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
@@ -257,19 +259,8 @@ fun TaskItem(
 @Preview()
 @Composable
 private fun Pre() {
-    TaskItem(
-        task = Task(
-            id = 0,
-            title = "40 varoq kitob o'qish",
-            description = "Bir hafta davomida har kuni 40 varoqdan",
-            date = "04.11.2025",
-            time = "08:00",
-            importance = ImportanceType.MEDIUM,
-            isCompleted = true,
-            dateTime = getCurrentTimeMillis(),
-            progress = 50,
-            createdAt = getCurrentTimeMillis()
-        ),
+    CompletedTaskItem(
+        task = CompletedTaskList(),
         onEditIconClick = {},
         onDoneButtonClick = {},
         onDetailsIconClick = {}

@@ -6,6 +6,7 @@ import org.example.project.data.remote.TikonchaClient
 import org.example.project.domain.TikonchaRepository
 import org.example.project.domain.TikonchaRepositoryImpl
 import org.example.project.presentation.add_child.ChildViewmodel
+import org.example.project.presentation.child_confirm_cod.ChildConfirmViewModel
 import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.login.LoginViewmodel
 import org.example.project.presentation.otp.OtpViewmodel
@@ -37,5 +38,6 @@ val sharedModule = module {
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel() }
     viewModel { HomeViewModel() }
+    viewModel { ChildConfirmViewModel() }
     viewModel { ChatViewModel() }
 }

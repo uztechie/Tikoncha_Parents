@@ -132,13 +132,14 @@ fun Login(
             CustomText(
                 text = stringResource(Res.string.xush_kelibsiz),
                 fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.W600,
             )
             SpaceMedium()
             CustomText(
                 text = stringResource(Res.string.ro_yxatdan_o_tish),
                 fontSize = 16.sp,
                 color = HintTextColor,
+                fontWeight = FontWeight.W500
             )
             SpaceMedium()
             PhoneNumberInputField(
@@ -158,7 +159,9 @@ fun Login(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = isPhoneNumberValid,
-                text = stringResource(Res.string.keyingisi)
+                text = stringResource(Res.string.keyingisi),
+                fontWeight = FontWeight.W600,
+                fontSize = 18.sp
             )
             SpaceLarge()
             val annotatedText = buildAnnotatedString {
@@ -171,7 +174,9 @@ fun Login(
                 withStyle(
                     style = SpanStyle(
                         color = PrimaryColor,
-                        textDecoration = TextDecoration.Underline
+                        textDecoration = TextDecoration.Underline,
+                        fontSize = SmallTextSize,
+                        fontWeight = FontWeight.W500
                     )
                 ) {
                     append("Политику конфиденциальности.")

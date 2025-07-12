@@ -1,5 +1,6 @@
 package org.example.project.presentation.task
 
+import TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,20 +27,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.CustomTextFieldTask
 import org.example.project.presentation.base.theme.*
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
+import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -47,9 +58,10 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
+import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 
 
-class AddNewTaskScreen :Screen {
+class AddNewTaskScreen : Screen {
 
     @Composable
     override fun Content() {
@@ -67,6 +79,9 @@ class AddNewTaskScreen :Screen {
         )
     }
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewTask(
     navigator: Navigator?,
@@ -74,44 +89,50 @@ fun AddNewTask(
     event: (TaskEvent) -> Unit,
 ) {
 
-    var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+    val dateText = selectedDate?.let { reformattedYearDay(it) } ?: ""
+    val timeText = selectedTime?.let { formatTime(it) } ?: ""
 
 
+    var showDialogData by remember { mutableStateOf(false) }
     var showDialogTime by remember { mutableStateOf(false) }
-
-    val dateAnd = state.date?.let { reformattedToday(it) } ?: ""
     val timeAnd = state.time?.let { formatTime(it) } ?: ""
+    val dateAnd = state.date?.let { reformattedToday(it) } ?: ""
+
+    val onClick = state.title.isNotBlank() && state.desc.isNotBlank() && selectedDate != null && selectedTime != null && state.importance != ImportanceType.NONE
 
 
     LaunchedEffect(state.completed) {
-        if (state.completed == true){
+        if (state.completed == true) {
             navigator?.pop()
         }
     }
 
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-
-    if (showDialog) {
+    if (showDialogData) {
         CalendarDialog(
             selectedDate = selectedDate,
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showDialogData = false },
             onDateSelected = {
+                println("AAAA = $dateAnd")
                 selectedDate = it
-                showDialog = false
+                showDialogData = false
             }
         )
     }
 
 
-//    TimePickerDialog(
-//        show = showDialogTime,
-//        onTimeSelected = {
-//            event(TaskEvent.OnTimeChange(it))
-//        },
-//        onDismiss = { showDialogTime = false },
-//        currentTime = state.time
-//    )
-
+    if (showDialogTime) {
+        TimePickerDialog(
+            show = showDialogTime,
+            initialTime = selectedTime ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time, // helper function
+            onDismiss = { showDialogTime = false },
+            onTimeSelected = {
+                println("AAAA = $timeAnd")
+                selectedTime = it
+            }
+        )
+    }
 
 
     Column(
@@ -125,7 +146,7 @@ fun AddNewTask(
             title = stringResource(Res.string.yangi_vazifa_qo_shish),
             showBackButton = true,
             onBackClick = {
-               navigator?.pop()
+                navigator?.pop()
             }
         )
 
@@ -156,11 +177,13 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(22.dp),
+                        colorFilter = ColorFilter.tint(ChatMessageColor)
                     )
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next,
                 )
             )
@@ -180,7 +203,8 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(22.dp),
+                        colorFilter = ColorFilter.tint(ChatMessageColor)
                     )
                 },
                 label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
@@ -192,48 +216,36 @@ fun AddNewTask(
 
             SpaceMedium()
 
-            CustomTextField(
-                onClick = { showDialog = true },
-                value = dateAnd,
-                onValueChange = {},
+            CustomSelectionButton(
+                text = dateText,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
-                label = stringResource(Res.string.tugatish_sanasi),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.calendar_2),
-                        contentDescription = "",
-                        modifier = Modifier.size(22.dp)
-                    )
+                    .height(TextFieldHeight),
+                label = stringResource(Res.string.tugash_vaqti),
+                painter = painterResource(Res.drawable.calendar_2),
+                onClick = {
+                    showDialogData = true
                 },
-                fonSize = SmallTextSize,
-                readOnly = true,
+                showTrailingIcon = false,
+                fontWeight = FontWeight.W500,
+                fonSize = SmallTextSize
             )
 
             SpaceSmall()
 
-            CustomTextField(
+            CustomSelectionButton(
+                text = timeText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TextFieldHeight),
+                label = stringResource(Res.string.tugatish_sanasi),
+                painter = painterResource(Res.drawable.alarm),
                 onClick = {
                     showDialogTime = true
                 },
-                value = formatTime(state.time),
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
-                label = stringResource(Res.string.tugash_vaqti),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.alarm),
-                        contentDescription = "",
-                        modifier = Modifier.size(22.dp)
-                    )
-                },
-                fonSize = SmallTextSize,
-                readOnly = true,
+                showTrailingIcon = false,
+                fontWeight = FontWeight.W500,
+                fonSize = SmallTextSize
             )
 
             SpaceMedium()
@@ -255,7 +267,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_rtacha),
                     color = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) MediumButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) Color.White else TextColor
+                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) Color.White else HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -267,7 +279,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = TextColor
+                    textColor = HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -279,26 +291,27 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_ta_muhim),
                     color = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) MostImportantButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) Color.White else TextColor
+                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) Color.White else HintTextColor
                 )
             }
-
         }
+
         Spacer(modifier = Modifier.weight(1f))
 
         CustomButton(
-            onClick = { },
+            onClick = {
+                navigator?.push(TaskScreen())
+            },
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth()
                 .height(ButtonHeight),
-            enabled = state.isSaveButtonEnabled,
-            text = stringResource(Res.string.keyingisi)
+            enabled = onClick,
+            text = stringResource(Res.string.saqlash)
         )
-
-        SpaceLarge()
     }
 }
+
 
 @Preview
 @Composable

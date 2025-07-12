@@ -53,6 +53,22 @@ class TaskViewModel () : ViewModel() {
                     )
                 }
             }
+
+            is TaskEvent.OnChildSelected -> {
+                _state.update {
+                    it.copy(
+                        child = event.child
+                    )
+                }
+            }
+
+            is TaskEvent.OnGenderSelected -> {
+                _state.update {
+                    it.copy(
+                        genderIndex = event.genderIndex
+                    )
+                }
+            }
         }
     }
 }

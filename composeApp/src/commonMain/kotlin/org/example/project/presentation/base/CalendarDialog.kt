@@ -17,6 +17,13 @@ import org.example.project.platform.getCurrentDate
 import org.example.project.platform.getMonthName
 import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.base.theme.*
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_down
+import tikoncha_parents.composeapp.generated.resources.arrow_next
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.saqlash
 import uz.saidburxon.newedu.presentation.base.CustomButton
 
 @Composable
@@ -39,7 +46,6 @@ fun CalendarDialog(
         mutableStateOf(selectedDate ?: getCurrentDate().withDayOfMonth(1))
     }
     var tempSelectedDate by remember { mutableStateOf(selectedDate) }
-    val today = getCurrentDate()
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -55,7 +61,10 @@ fun CalendarDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { currentMonth = currentMonth.minus(DatePeriod(months = 1)) }) {
-//                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = "Oldingi oy")
+                        Icon(
+                            painter = painterResource(Res.drawable.arrow_down),
+                            contentDescription = "Back"
+                        )
                     }
 
                     Text(
@@ -65,10 +74,10 @@ fun CalendarDialog(
                     )
 
                     IconButton(onClick = { currentMonth = currentMonth.plus(DatePeriod(months = 1)) }) {
-//                        Icon(
-//                            Icons.AutoMirrored.Filled.ArrowForwardIos,
-//                            contentDescription = "Keyingi oy"
-//                        )
+                        Icon(
+                            painter = painterResource(Res.drawable.arrow_next),
+                            null
+                        )
                     }
                 }
 
@@ -155,7 +164,7 @@ fun CalendarDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 CustomOutlinedButton(
-                    text = "Bekor qilish",
+                    text = stringResource(Res.string.bekor_qilish),
                     onClick = onDismissRequest,
                     modifier = Modifier
                         .height(DialogButtonHeight)
@@ -176,10 +185,21 @@ fun CalendarDialog(
                         .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonDialogCornerRadius))
                         .height(DialogButtonHeight),
                     enabled = tempSelectedDate != null,
-                    text = "Saqlash",
+                    text = stringResource(Res.string.saqlash),
                     shape = RoundedCornerShape(ButtonDialogCornerRadius)
                 )
             }
         }
     )
 }
+
+fun reformattedYearDay(reformatedDate: LocalDate?): String {
+    if (reformatedDate == null) return ""
+
+    val day = reformatedDate.dayOfMonth.toString().padStart(2, '0')
+    val month = reformatedDate.monthNumber.toString().padStart(2, '0')
+    val year = reformatedDate.year.toString()
+
+    return "$day.$month.$year"
+}
+

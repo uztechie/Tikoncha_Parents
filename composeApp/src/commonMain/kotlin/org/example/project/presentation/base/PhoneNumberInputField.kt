@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -62,7 +63,8 @@ fun PhoneNumberInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = Color.Black
+                color = TextColor,
+                fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
@@ -84,6 +86,7 @@ fun PhoneNumberInputField(
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
                 contentColor = TextColor,
+                fontWeight = FontWeight.W500
 
             )
         }

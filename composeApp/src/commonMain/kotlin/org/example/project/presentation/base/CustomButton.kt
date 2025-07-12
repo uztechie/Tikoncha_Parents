@@ -16,6 +16,7 @@ import org.example.project.presentation.base.theme.ButtonCornerRadius
 import org.example.project.presentation.base.theme.ButtonHeight
 import org.example.project.presentation.base.theme.DisableButtonColor
 import org.example.project.presentation.base.theme.DisableButtonContentColor
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.OnPrimaryColor
 import org.example.project.presentation.base.theme.PrimaryColor
 
@@ -25,7 +26,8 @@ import org.example.project.presentation.base.theme.SmallTextSize
 @Composable
 fun CustomButton(
     text:String,
-    fontSize:TextUnit = SmallTextSize,
+    fontSize:TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
     color: Color = PrimaryColor,
     textColor: Color = OnPrimaryColor,
@@ -54,7 +56,7 @@ fun CustomButton(
         CustomText(
             color = contentColor,
             text = text,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight =fontWeight,
             fontSize = fontSize
         )
 

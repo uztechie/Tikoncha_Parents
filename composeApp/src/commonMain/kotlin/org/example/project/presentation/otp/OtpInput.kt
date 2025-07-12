@@ -30,12 +30,15 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.TextColor
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -44,7 +47,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun OtpInput(
     otpLength: Int = 6,
     onBorderColor: Boolean = false,
-    onOtpUpdate: (String) -> Unit
+    fontSize: TextUnit = NormalTextSize,
+    fontWeight: FontWeight = FontWeight.Normal,
+    onOtpUpdate: (String) -> Unit,
 ) {
 
     val focusRequesters = remember { List(otpLength) { FocusRequester() } }
@@ -117,9 +122,10 @@ fun OtpInput(
                         .background(Color.Transparent),
                     singleLine = true,
                     textStyle = TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = fontSize,
                         textAlign = TextAlign.Center,
                         color = TextColor,
+                        fontWeight = fontWeight
                     )
                 )
             }
@@ -129,7 +135,8 @@ fun OtpInput(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .align(Alignment.CenterVertically),
-                    style = TextStyle(fontSize = 24.sp)
+                    style = TextStyle(fontSize = 24.sp),
+                    fontWeight = fontWeight
                 )
             }
         }
@@ -139,5 +146,5 @@ fun OtpInput(
 @Preview
 @Composable
 private fun Preview() {
-    OtpInput {  }
+    OtpInput {}
 }

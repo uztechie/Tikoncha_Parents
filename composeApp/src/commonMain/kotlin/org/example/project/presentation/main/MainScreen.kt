@@ -1,5 +1,6 @@
 package uz.saidburxon.newedu.presentation.feature.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -88,12 +89,21 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
         },
         label = { Text(text = item.label) },
         icon = {
-            Icon(
-                painter = item.icon,
-                contentDescription = item.label,
-                modifier = Modifier.size(20.dp),
-                tint = color
-            )
+            if (item.screen.key == ProfileScreen().key){
+                Image(
+                    painter = item.icon,
+                    contentDescription = item.label,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+            else{
+                Icon(
+                    painter = item.icon,
+                    contentDescription = item.label,
+                    modifier = Modifier.size(20.dp),
+                    tint = color
+                )
+            }
         }
     )
 }

@@ -42,6 +42,7 @@ import org.example.project.presentation.base.theme.HeaderHeight
 import org.example.project.presentation.base.theme.HintTextColor
 import org.example.project.presentation.base.theme.LargeTextSize
 import org.example.project.presentation.base.theme.NormalIconSize
+import org.example.project.presentation.base.theme.NormalTextLineHeight
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.SpaceLarge
@@ -115,7 +116,7 @@ fun Register(
         CustomText(
             text = stringResource(Res.string.xush_kelibsiz),
             fontSize = LargeTextSize,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.W600,
         )
         SpaceMedium()
         CustomText(
@@ -141,7 +142,8 @@ fun Register(
                     contentDescription = "Parent",
                     modifier = Modifier.size(NormalIconSize)
                 )
-            }
+            },
+            fontWeight = FontWeight.W500
         )
 
         SpaceMedium()
@@ -159,7 +161,8 @@ fun Register(
                     contentDescription = "Parent",
                     modifier = Modifier.size(NormalIconSize)
                 )
-            }
+            },
+            fontWeight = FontWeight.W500
         )
 
         SpaceMedium()
@@ -177,7 +180,8 @@ fun Register(
                     contentDescription = "Parent",
                     modifier = Modifier.size(NormalIconSize)
                 )
-            }
+            },
+            fontWeight = FontWeight.W500
         )
 
         SpaceMedium()
@@ -194,7 +198,8 @@ fun Register(
                     contentDescription = "Parent",
                     modifier = Modifier.size(NormalIconSize)
                 )
-            }
+            },
+            fontWeight = FontWeight.W500
         )
 
         SpaceMedium()
@@ -211,6 +216,8 @@ fun Register(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ButtonHeight),
+            fontWeight = FontWeight.W600,
+            fontSize = NormalTextSize,
         )
 
 
@@ -225,7 +232,9 @@ fun Register(
                 .fillMaxWidth()
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
-            text = stringResource(Res.string.keyingisi)
+            text = stringResource(Res.string.keyingisi),
+            fontWeight = FontWeight.W600,
+            fontSize = NormalTextLineHeight
         )
         SpaceLarge()
     }
