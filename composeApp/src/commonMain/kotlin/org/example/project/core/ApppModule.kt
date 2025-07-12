@@ -8,6 +8,9 @@ import org.example.project.domain.TikonchaRepositoryImpl
 import org.example.project.presentation.add_child.ChildViewmodel
 import org.example.project.presentation.child_confirm_cod.ChildConfirmViewModel
 import org.example.project.presentation.home.HomeViewModel
+import org.example.project.presentation.profile.ProfileViewModel
+import org.example.project.presentation.profile.personal_information.PersonalInformationViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.example.project.presentation.login.LoginViewmodel
 import org.example.project.presentation.otp.OtpViewmodel
 import org.example.project.presentation.register.RegisterViewmodel
@@ -19,6 +22,9 @@ import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordV
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 
 val sharedModule = module {
+    viewModelOf(::HomeViewModel)
+    viewModelOf(::PersonalInformationViewModel)
+    viewModelOf(::ProfileViewModel)
     single {
         HttpClientEngineFactory().getHttpEngine()
     }

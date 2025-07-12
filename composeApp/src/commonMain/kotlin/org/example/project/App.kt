@@ -10,6 +10,10 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
 import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.example.project.presentation.splash.SplashScreen
+import cafe.adriel.voyager.transitions.SlideTransition
+import org.example.project.presentation.home.HomeScreen
+import org.example.project.presentation.profile.subscription.PaymentScreen
+import org.example.project.presentation.profile.subscription.SubscriptionScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
@@ -18,6 +22,8 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 @Preview
 fun App() {
     MaterialTheme {
+        Navigator(SubscriptionScreen()){
+            SlideTransition(it)
 
 
 

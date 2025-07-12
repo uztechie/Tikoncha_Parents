@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -34,7 +33,7 @@ kotlin {
     }
     
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -71,6 +70,8 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+            implementation("network.chaintech:qr-kit:3.1.2")
+
         }
 
         nativeMain.dependencies {

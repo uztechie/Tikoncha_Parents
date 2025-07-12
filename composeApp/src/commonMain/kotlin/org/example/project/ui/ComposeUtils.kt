@@ -56,6 +56,9 @@ val SliderCornerRadius = 20.dp
 val TextFieldCornerRadius = 12.dp
 val TextFieldHeight = 45.dp
 val TextFieldHeightDialogOrButtonSheet = 40.dp
+
+val CoinTextFieldWidth = 90.dp
+
 val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 
@@ -63,11 +66,11 @@ val ContainerPadding = 15.dp
 val HeaderHeight = 60.dp
 
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
-
-val ChatTextSize:TextUnit  =  14.sp //.responsiveSp()
-val UltraLargeTextSize:TextUnit @Composable get() =  25.sp //.responsiveSp()
+val ChatTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
+val UltraLargeTextSize:TextUnit @Composable get() =  20.sp //.responsiveSp()
 val SmallTextSize:TextUnit @Composable get() =  12.sp //.responsiveSp()
 val NormalTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
+val NormalTextSizeSp = 16.sp
 val LargeTextSize:TextUnit @Composable get() =  18.sp //.responsiveSp()
 val UltraSmallTextSize:TextUnit @Composable get() =  10.sp //.responsiveSp()
 val NormalLargeTextSize:TextUnit @Composable get() =  16.sp //.responsiveSp()
@@ -87,7 +90,7 @@ val NormalIconSize: Dp = 22.dp
 
 val ProfileImageSize: Dp = 90.dp
 
-val ProfileStatsContainerHeight: Dp = 95.dp
+val ProfileStatsContainerHeight: Dp = 85.dp
 
 val ParentsInformationContainerHeight: Dp = 260.dp
 

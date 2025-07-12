@@ -35,10 +35,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.QrCodeScreen
 import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.common.SegmentedToggle
+import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.ui.Background
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
@@ -81,7 +83,7 @@ class HomeScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        HomeScreen(
+        HomeUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -91,7 +93,7 @@ class HomeScreen : Screen {
 }
 
 @Composable
-fun HomeScreen(
+fun HomeUi(
     navigator: Navigator?,
     state: HomeState,
     event: (HomeEvent) -> Unit
@@ -113,15 +115,6 @@ fun HomeScreen(
         )
     }
 
-    val childrenList = remember {
-        mutableStateListOf(
-            "Saidburxon",
-            "Muhammadsaid",
-            "Muhammadyusuf",
-            "Beka"
-        )
-    }
-
     var showDialog by remember {
         mutableStateOf(false)
     }
@@ -139,6 +132,7 @@ fun HomeScreen(
         show = showDialog,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
+            navigator!!.push(QrCodeScreen())
         },
         onDismiss = {
             showDialog = false
@@ -378,6 +372,10 @@ fun HomeScreen(
 @Composable
 fun Pre() {
 
-    HomeScreen().Content()
+    HomeUi(
+        navigator = null,
+        state = HomeState(),
+        event = {}
+    )
 }
 
