@@ -16,9 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.example.project.ui.DividerHorizontal
 import org.example.project.ui.NormalIconButtonPadding
+import org.example.project.ui.NormalTextSize
+import org.example.project.ui.NormalTextSizeSp
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.SpaceMedium
 import org.jetbrains.compose.resources.painterResource
@@ -30,6 +34,8 @@ fun SubscriptionOptionItem(
     title: String,
     priceUsd: String,
     isSelected: Boolean,
+    fontSize: TextUnit = NormalTextSizeSp,
+    fontWeight: FontWeight = FontWeight.Normal,
     onCheckedChange: (Boolean) -> Unit
 ) {
 
@@ -46,10 +52,18 @@ fun SubscriptionOptionItem(
                 onCheckedChange = onCheckedChange
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = title)
+            Text(
+                text = title,
+                fontSize = fontSize,
+                fontWeight = fontWeight
+            )
         }
 
-        Text(text = priceUsd)
+        Text(
+            text = priceUsd,
+            fontSize = fontSize,
+            fontWeight = fontWeight
+        )
     }
 
     SpaceMedium()

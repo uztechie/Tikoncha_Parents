@@ -68,9 +68,10 @@ val HeaderHeight = 60.dp
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
 
 val ChatTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
-val UltraLargeTextSize:TextUnit @Composable get() =  25.sp //.responsiveSp()
+val UltraLargeTextSize:TextUnit @Composable get() =  20.sp //.responsiveSp()
 val SmallTextSize:TextUnit @Composable get() =  12.sp //.responsiveSp()
 val NormalTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
+val NormalTextSizeSp = 16.sp
 val LargeTextSize:TextUnit @Composable get() =  18.sp //.responsiveSp()
 val UltraSmallTextSize:TextUnit @Composable get() =  10.sp //.responsiveSp()
 val NormalLargeTextSize:TextUnit @Composable get() =  16.sp //.responsiveSp()
