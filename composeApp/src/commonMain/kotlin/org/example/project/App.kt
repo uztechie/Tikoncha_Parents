@@ -22,11 +22,6 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 @Preview
 fun App() {
     MaterialTheme {
-        Navigator(SubscriptionScreen()){
-            SlideTransition(it)
-
-
-
         Surface(
             modifier = Modifier
                 .statusBarsPadding()
