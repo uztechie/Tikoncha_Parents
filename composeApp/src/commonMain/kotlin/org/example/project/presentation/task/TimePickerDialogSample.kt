@@ -34,10 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import cafe.adriel.voyager.core.screen.Screen
-import kotlinx.datetime.Clock.System.now
-import kotlinx.datetime.LocalTime
-import org.example.project.presentation.base.CustomTextField
+
 import org.example.project.presentation.base.theme.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

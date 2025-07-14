@@ -89,8 +89,15 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
             implementation("network.chaintech:qr-kit:3.1.2")
 
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.2.0")
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.2.0")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.3.0")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.3.0")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko:0.3.0") // optional: moko support
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko-compose:0.3.0")
+
+
+            //location
+            api("dev.icerock.moko:geo-compose:0.8.0")
+            api("dev.icerock.moko:permissions-compose:0.19.1")
 
         }
 

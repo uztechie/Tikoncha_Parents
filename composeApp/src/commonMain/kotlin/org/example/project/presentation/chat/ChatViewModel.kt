@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.common.Util
-import org.example.project.platform.reformatDateTime
-import utils.getCurrentTimeMillis
+import org.example.project.common.Util.currentMillis
 import uz.saidburxon.newedu.domain.model.ChatMessage
 import uz.saidburxon.newedu.domain.model.ChatMessageItem
 
@@ -69,11 +68,11 @@ class ChatViewModel : ViewModel() {
         sendMessageJob?.cancel()
         sendMessageJob = viewModelScope.launch {
             val chatMessage = ChatMessage(
-                id = getCurrentTimeMillis(),
+                id = currentMillis,
                 isMine = true,
                 message = state.value.message.trim(),
-                createdAt = getCurrentTimeMillis(),
-                time = Util.formatLocalDate(getCurrentTimeMillis())
+                createdAt = currentMillis,
+                time = Util.formatLocalDate(currentMillis)
             )
 
             _state.update {
@@ -87,11 +86,11 @@ class ChatViewModel : ViewModel() {
 
             delay(2000)
             val chatMessageReplay = ChatMessage(
-                id = getCurrentTimeMillis(),
+                id = currentMillis,
                 isMine = false,
                 message = chatMessage.message,
-                createdAt = getCurrentTimeMillis(),
-                time = Util.formatLocalDate(getCurrentTimeMillis())
+                createdAt = currentMillis,
+                time = Util.formatLocalDate(currentMillis)
             )
             _state.update {
                 it.copy(

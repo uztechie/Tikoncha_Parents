@@ -1,14 +1,20 @@
 package org.example.project.common
 
-import kotlinx.datetime.Clock
+
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 object Util {
+
+    val currentMillis: Long = Clock.System.now().toEpochMilliseconds()
 
     fun formatLocalDate(millis: Long): String {
         val zone = TimeZone.currentSystemDefault()
@@ -34,4 +40,21 @@ object Util {
             append(date.year)
         }
     }
+
+    fun getCurrentDate(): LocalDate {
+        return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    }
+
+    fun getCurrentTime(): LocalTime {
+        return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+    }
+
+    fun getMonthName(date: LocalDate): String {
+        val uzbekMonths = listOf(
+            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
+        )
+        return uzbekMonths[date.monthNumber - 1]
+    }
+
 }

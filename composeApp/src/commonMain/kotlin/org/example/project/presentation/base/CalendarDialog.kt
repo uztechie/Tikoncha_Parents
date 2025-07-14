@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import kotlinx.datetime.*
-import org.example.project.platform.getCurrentDate
-import org.example.project.platform.getMonthName
+import org.example.project.common.Util
+import org.example.project.common.Util.getMonthName
 import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.base.theme.*
 import org.jetbrains.compose.resources.painterResource
@@ -43,7 +43,7 @@ fun CalendarDialog(
     }
 
     var currentMonth by remember {
-        mutableStateOf(selectedDate ?: getCurrentDate().withDayOfMonth(1))
+        mutableStateOf(selectedDate ?: Util.getCurrentDate().withDayOfMonth(1))
     }
     var tempSelectedDate by remember { mutableStateOf(selectedDate) }
 

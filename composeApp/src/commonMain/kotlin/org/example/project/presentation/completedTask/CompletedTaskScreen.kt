@@ -37,9 +37,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import org.example.project.common.Util.getCurrentDate
+
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.SegmentedToggle
 import org.example.project.presentation.base.theme.BackgroundColor
@@ -108,7 +107,7 @@ fun CompletedTaskUi(
     val updatedState = state.copy(completedTasksEndList = testTasks)
 
 
-    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val today = getCurrentDate()
 
     val showTaskRes = if (state.genderIndex == 0) {
         Res.string.shaxsiy_vazifalar

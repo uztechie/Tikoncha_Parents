@@ -36,11 +36,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.Clock
+
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.common.Util
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.base.CustomTextField
@@ -125,7 +126,7 @@ fun AddNewTask(
     if (showDialogTime) {
         TimePickerDialog(
             show = showDialogTime,
-            initialTime = selectedTime ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time, // helper function
+            initialTime = selectedTime ?: Util.getCurrentTime(), // helper function
             onDismiss = { showDialogTime = false },
             onTimeSelected = {
                 println("AAAA = $timeAnd")

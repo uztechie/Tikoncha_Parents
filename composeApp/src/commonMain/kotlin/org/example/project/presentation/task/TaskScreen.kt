@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.common.Util
 import org.example.project.presentation.add_child.ChildEvent
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
@@ -84,7 +84,7 @@ fun TaskUi(
     event: (TaskEvent) -> Unit
 ) {
 
-    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val today = Util.getCurrentDate()
 
     var showDialog by remember { mutableStateOf(false) }
 

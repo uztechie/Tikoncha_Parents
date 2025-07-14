@@ -19,13 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.common.Util.currentMillis
 import org.example.project.presentation.base.theme.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import utils.getCurrentTimeMillis
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 
@@ -266,9 +266,9 @@ private fun Pre() {
             time = "08:00",
             importance = ImportanceType.MEDIUM,
             isCompleted = true,
-            dateTime = getCurrentTimeMillis(),
+            dateTime = currentMillis,
             progress = 50,
-            createdAt = getCurrentTimeMillis()
+            createdAt = currentMillis
         ),
         onEditIconClick = {},
         onDoneButtonClick = {},
