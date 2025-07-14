@@ -57,6 +57,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.ktor.client.okhttp)
+            implementation("com.google.android.gms:play-services-location:21.2.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -96,8 +97,9 @@ kotlin {
 
 
             //location
-            api("dev.icerock.moko:geo-compose:0.8.0")
+            api("dev.icerock.moko:permissions:0.19.1")
             api("dev.icerock.moko:permissions-compose:0.19.1")
+            api("dev.icerock.moko:permissions-location:0.19.1")
 
         }
 

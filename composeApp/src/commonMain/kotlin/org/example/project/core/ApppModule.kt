@@ -46,4 +46,9 @@ val sharedModule = module {
     viewModel { HomeViewModel() }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatViewModel() }
+
+
+
+
+
 }
