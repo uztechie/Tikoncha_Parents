@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.add_child.ChildScreen
 import org.example.project.presentation.common.CustomOutlinedButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.profile.CustomHeader
@@ -40,16 +41,21 @@ import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.calendar
 import tikoncha_parents.composeapp.generated.resources.class_icon
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.id_card
+import tikoncha_parents.composeapp.generated.resources.maktab
 import tikoncha_parents.composeapp.generated.resources.phone
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.school_icon
+import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import tikoncha_parents.composeapp.generated.resources.shift_clock
 import tikoncha_parents.composeapp.generated.resources.two_users
 
@@ -113,7 +119,7 @@ fun PersonalInformationUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Shaxsiy ma'lumotlar",
+            title = stringResource(Res.string.shaxsiy_malumotlar),
             showBackButton = true,
             onBackClick = {
                 rootNavigator?.pop()
@@ -147,7 +153,7 @@ fun PersonalInformationUi(
             ) {
 
                 CustomText(
-                    text = "Shaxsiy ma'lumotlar",
+                    text = stringResource(Res.string.shaxsiy_malumotlar),
                     color = TextColor,
                     fontSize = NormalLargeTextSize,
                     fontWeight = FontWeight.SemiBold
@@ -171,7 +177,7 @@ fun PersonalInformationUi(
             SpaceSmall()
 
             CustomText(
-                text = "Farzandlaringiz",
+                text = stringResource(Res.string.farzandingiz),
                 fontSize = NormalLargeTextSize,
                 color = TextColor,
                 fontWeight = FontWeight.SemiBold
@@ -235,7 +241,7 @@ fun PersonalInformationUi(
                     }
 
                     CustomText(
-                        text = "Shaxsiy ma'lumotlar",
+                        text = stringResource(Res.string.shaxsiy_malumotlar),
                         color = TextColor,
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.SemiBold
@@ -258,7 +264,7 @@ fun PersonalInformationUi(
                     SpaceSmall()
 
                     CustomText(
-                        text = "Maktab",
+                        text = stringResource(Res.string.maktab),
                         color = TextColor,
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.SemiBold
@@ -285,7 +291,7 @@ fun PersonalInformationUi(
             }
 
             CustomOutlinedButton(
-                text = "Farzand qo'shish",
+                text = stringResource(Res.string.farzand_qo_shish),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
@@ -296,9 +302,7 @@ fun PersonalInformationUi(
                         tint = PrimaryColor
                     )
                 },
-                onClick = {
-
-                },
+                onClick = { rootNavigator?.push(ChildScreen())},
                 textColor = PrimaryColor
             )
 

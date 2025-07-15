@@ -28,6 +28,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.ui.PrimaryColor
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.chor
+import tikoncha_parents.composeapp.generated.resources.daq
+import tikoncha_parents.composeapp.generated.resources.dush
+import tikoncha_parents.composeapp.generated.resources.jum
+import tikoncha_parents.composeapp.generated.resources.pay
+import tikoncha_parents.composeapp.generated.resources.sesh
+import tikoncha_parents.composeapp.generated.resources.shan
+import tikoncha_parents.composeapp.generated.resources.soat
+import tikoncha_parents.composeapp.generated.resources.yak
 import kotlin.math.ceil
 
 @Composable
@@ -40,7 +51,15 @@ fun UsageBarChart(
     val maxHour = ceil(max/60).toInt()
     val durationLabels = getDurationLabels(maxHour)
 
-    val daysOfWeek = listOf("Dush", "Sesh", "Chor", "Pay", "Jum", "Shan", "Yak")
+    val daysOfWeek = listOf(
+        stringResource(Res.string.dush),
+        stringResource(Res.string.sesh),
+        stringResource(Res.string.chor),
+        stringResource(Res.string.pay),
+        stringResource(Res.string.jum),
+        stringResource(Res.string.shan),
+        stringResource(Res.string.yak),
+    )
     val showHours = data.size > 7
     val keys = data.keys.sorted()
 
@@ -53,7 +72,7 @@ fun UsageBarChart(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             durationLabels.forEach { label ->
-                var ext = if (label == "30" || label=="0") "daq" else "soat"
+                var ext = if (label == "30" || label=="0") stringResource(Res.string.daq) else stringResource(Res.string.soat)
                 Text(
                     text = "$label $ext",
                     fontSize = 12.sp,

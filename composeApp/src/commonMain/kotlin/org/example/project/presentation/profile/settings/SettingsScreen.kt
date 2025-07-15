@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.common.CustomButton
 import org.example.project.presentation.profile.CustomHeader
 import org.example.project.presentation.profile.settings.notification.NotificationSettingsScreen
@@ -20,7 +21,12 @@ import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.LargeTextSize
+import org.example.project.ui.NormalLargeTextSize
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.sozlamalar
 
 class SettingsScreen: Screen {
     @Composable
@@ -44,7 +50,7 @@ fun SettingsUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Sozlamalar",
+            title = stringResource(Res.string.sozlamalar),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -80,8 +86,8 @@ fun SettingsUi(
             )
 
             CustomButton(
-                text = "Davom etish",
-                fontSize = LargeTextSize,
+                text = stringResource(Res.string.davom_etish),
+                fontSize = NormalLargeTextSize,
                 onClick = {
                     navigator!!.pop()
                 },

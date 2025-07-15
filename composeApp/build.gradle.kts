@@ -106,6 +106,9 @@ kotlin {
             // Compose yordamchi adapterlari
             api("dev.icerock.moko:geo-compose:0.8.0")
 
+            implementation("com.russhwolf:multiplatform-settings:1.3.0")
+            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+
         }
 
         nativeMain.dependencies {

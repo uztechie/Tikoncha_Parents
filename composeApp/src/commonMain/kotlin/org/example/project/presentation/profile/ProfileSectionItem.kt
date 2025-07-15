@@ -26,9 +26,15 @@ import org.example.project.ui.SpaceSmall
 import org.example.project.ui.TextColor
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.obuna
 import tikoncha_parents.composeapp.generated.resources.profile
+import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
+import tikoncha_parents.composeapp.generated.resources.sozlamalar
+import tikoncha_parents.composeapp.generated.resources.tangachalar
+import tikoncha_parents.composeapp.generated.resources.til
 
 @Composable
 fun ProfileSectionItem(
@@ -38,11 +44,11 @@ fun ProfileSectionItem(
 ) {
 
     val title = when(section){
-        ProfileSection.PERSONAL_INFORMATION -> "Shaxsiy ma'lumotlar"
-        ProfileSection.LANGUAGE -> "Til"
-        ProfileSection.SETTINGS -> "Sozlamalar"
-        ProfileSection.SUBSCRIPTIONS -> "Obuna"
-        ProfileSection.COINS -> "Tangachalar"
+        ProfileSection.PERSONAL_INFORMATION -> stringResource(Res.string.shaxsiy_malumotlar)
+        ProfileSection.LANGUAGE -> stringResource(Res.string.til)
+        ProfileSection.SETTINGS -> stringResource(Res.string.sozlamalar)
+        ProfileSection.SUBSCRIPTIONS -> stringResource(Res.string.obuna)
+        ProfileSection.COINS -> stringResource(Res.string.tangachalar)
     }
 
     Column(

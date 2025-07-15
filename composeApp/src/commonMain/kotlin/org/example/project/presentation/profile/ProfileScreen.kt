@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -19,6 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
+import org.example.project.presentation.common.TransparentQrScreen
 import org.example.project.presentation.profile.coins.CoinsScreen
 import org.example.project.presentation.profile.language.LanguageScreen
 import org.example.project.presentation.profile.personal_information.PersonalInformationScreen
@@ -31,14 +35,20 @@ import org.example.project.ui.ProfileStatsContainerHeight
 import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.coin
 import tikoncha_parents.composeapp.generated.resources.coins
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_bajarilmagan_vazifalari
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz_tangalari
 import tikoncha_parents.composeapp.generated.resources.file
 import tikoncha_parents.composeapp.generated.resources.global
+import tikoncha_parents.composeapp.generated.resources.profil
 import tikoncha_parents.composeapp.generated.resources.profile
+import tikoncha_parents.composeapp.generated.resources.qr_kod
 import tikoncha_parents.composeapp.generated.resources.scan
 import tikoncha_parents.composeapp.generated.resources.settings
 import tikoncha_parents.composeapp.generated.resources.telegrams_star
@@ -68,6 +78,8 @@ fun ProfileUi(
     val navigator = LocalNavigator.current
     val rootNavigator = navigator?.parent
 
+    var showQrCode by remember { mutableStateOf(false) }
+
     val sections = remember {
         mutableStateListOf(
             ProfileSectionItemData(
@@ -93,13 +105,15 @@ fun ProfileUi(
         )
     }
 
+    val painter = rememberQrKitPainter(data = "There will be url or smth like this")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Profil",
+            title = stringResource(Res.string.profil),
         )
 
         Column(
@@ -126,7 +140,7 @@ fun ProfileUi(
             ) {
 
                 UserStatsItem(
-                    title = "Farzandingiz tangalari",
+                    title = stringResource(Res.string.farzandlaringiz_tangalari),
                     value = "0 ta",
                     icon = painterResource(Res.drawable.coin),
                     modifier = Modifier
@@ -137,7 +151,7 @@ fun ProfileUi(
                 SpaceSmall()
 
                 UserStatsItem(
-                    title = "Farzandingiz bajarilmagan vazifalari",
+                    title = stringResource(Res.string.farzandingiz_bajarilmagan_vazifalari),
                     value = "0 ta",
                     icon = painterResource(Res.drawable.file),
                     modifier = Modifier
@@ -186,9 +200,9 @@ fun ProfileUi(
             SpaceLarge()
 
             CustomOutlinedButton(
-                text = "Qr kod",
+                text = stringResource(Res.string.qr_kod),
                 onClick = {
-
+                    showQrCode = true
                 },
                 textColor = PrimaryColor,
                 leadingIcon = {
@@ -199,6 +213,16 @@ fun ProfileUi(
                 },
                 modifier = Modifier.width(130.dp)
             )
+
+            if (showQrCode){
+                TransparentQrScreen(
+                    painter =  painter,
+                    onDismissRequest = {
+                        showQrCode = false
+                    }
+                )
+            }
+
         }
     }
 

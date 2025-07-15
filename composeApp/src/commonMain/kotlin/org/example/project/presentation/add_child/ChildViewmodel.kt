@@ -23,8 +23,8 @@ class ChildViewmodel(): ViewModel() {
                 }
             }
 
-            ChildEvent.OnConfirmClicked -> {
-
+            is ChildEvent.OnConfirmClicked -> {
+                event.childState.copy(accept = true)
             }
         }
     }

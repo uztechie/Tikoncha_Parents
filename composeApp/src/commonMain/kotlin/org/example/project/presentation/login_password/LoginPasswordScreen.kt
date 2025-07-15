@@ -166,7 +166,7 @@ fun LoginPassword(
                    }
                    showPasswordImage = it
                },
-               placeholder = "Parolni kiriting",
+               placeholder = stringResource(Res.string.parol_kiriting),
                modifier = Modifier
            )
 

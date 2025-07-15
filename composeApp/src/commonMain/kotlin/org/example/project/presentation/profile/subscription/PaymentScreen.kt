@@ -30,14 +30,25 @@ import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.click_pay
+import tikoncha_parents.composeapp.generated.resources.hammasi
+import tikoncha_parents.composeapp.generated.resources.million
+import tikoncha_parents.composeapp.generated.resources.ming_sum
 import tikoncha_parents.composeapp.generated.resources.money_light
+import tikoncha_parents.composeapp.generated.resources.obuna_pro
 import tikoncha_parents.composeapp.generated.resources.pay_me
-import tikoncha_parents.composeapp.generated.resources.profile
+import tikoncha_parents.composeapp.generated.resources.sotib_olish
+import tikoncha_parents.composeapp.generated.resources.ta_tanga
+import tikoncha_parents.composeapp.generated.resources.tasdiqlash
+import tikoncha_parents.composeapp.generated.resources.tolov
 
-class PaymentScreen(private val selectedPrice: String) : Screen {
+class PaymentScreen(
+    private val subscriptionPrice: Int? = null,
+    private val coinsAmount: Int? = null
+) : Screen {
     @Composable
     override fun Content() {
 
@@ -45,7 +56,8 @@ class PaymentScreen(private val selectedPrice: String) : Screen {
 
         PaymentScreenUi(
             navigator = navigator,
-            selectedPrice = selectedPrice
+            subscriptionPrice = subscriptionPrice,
+            coinsAmount = coinsAmount
         )
     }
 }
@@ -53,14 +65,15 @@ class PaymentScreen(private val selectedPrice: String) : Screen {
 @Composable
 fun PaymentScreenUi(
     navigator: Navigator?,
-    selectedPrice: String
+    subscriptionPrice: Int? = null,
+    coinsAmount: Int? = null
 ) {
 
     var selectedPayment by remember { mutableStateOf("") }
 
     var isSelected by remember { mutableStateOf(false) }
 
-    if (selectedPayment.isNotEmpty()){
+    if (selectedPayment.isNotEmpty()) {
         isSelected = true
     }
 
@@ -72,7 +85,7 @@ fun PaymentScreenUi(
     ) {
 
         CustomHeader(
-            title = "Tasdiqlash",
+            title = stringResource(Res.string.tasdiqlash),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -91,7 +104,7 @@ fun PaymentScreenUi(
             SpaceMedium()
 
             CustomText(
-                text = "To’lov",
+                text = stringResource(Res.string.tolov),
                 fontSize = UltraLargeTextSize,
                 fontWeight = FontWeight.W600
             )
@@ -143,33 +156,43 @@ fun PaymentScreenUi(
                         verticalArrangement = Arrangement.Center, // ⬅️ Vertikal markaz
                     ) {
 
-                    Row(
-                        modifier = Modifier.padding(6.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(BackgroundColor)
-                                .padding(10.dp)
-                        ){
-                            Image(
-                                painter = painterResource(Res.drawable.money_light),
-                                contentDescription = null,
-                                modifier = Modifier.size(NormalIconButtonSize)
+                        Row(
+                            modifier = Modifier.padding(6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(BackgroundColor)
+                                    .padding(10.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(Res.drawable.money_light),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(NormalIconButtonSize)
+                                )
+                            }
+
+                            SpaceMedium()
+
+                            CustomText(
+                                text = if (subscriptionPrice != null) {
+                                    if (subscriptionPrice < 1000000){
+                                        "${stringResource(Res.string.obuna_pro)} ${subscriptionPrice / 1000} ${stringResource(Res.string.ming_sum)}"
+                                    }else{
+
+                                        val millions = subscriptionPrice / 1000000
+                                        val thousands = (subscriptionPrice - (millions * 1000000)) / 1000
+
+                                        "${stringResource(Res.string.obuna_pro)} $millions ${stringResource(Res.string.million)} $thousands ${stringResource(Res.string.ming_sum)}"
+                                    }
+                                }else "${coinsAmount.toString()} ${stringResource(Res.string.ta_tanga)}",
+                                fontSize = NormalTextSizeSp,
+                                fontWeight = FontWeight.W500,
                             )
                         }
-
-                        SpaceMedium()
-
-                        CustomText(
-                            text = "Obuna Pro 150 ming so’m",
-                            fontSize = NormalTextSizeSp,
-                            fontWeight = FontWeight.W500,
-                        )
                     }
-                        }
 
                     SpaceUltraSmall()
 
@@ -183,13 +206,13 @@ fun PaymentScreenUi(
                 )
                 {
                     CustomText(
-                        text = "Hammasi",
+                        text = stringResource(Res.string.hammasi),
                         fontSize = NormalTextSize,
                         color = TextColor,
                         fontWeight = FontWeight.W600
                     )
                     CustomText(
-                        text = "$selectedPrice UZS",
+                        text = if (subscriptionPrice != null) "${subscriptionPrice}.00 UZS" else "${coinsAmount!! * 100}.00 UZS",
                         fontSize = NormalTextSize,
                         color = PrimaryColor,
                         fontWeight = FontWeight.W600
@@ -203,7 +226,7 @@ fun PaymentScreenUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = "Sotib olish",
+                text = stringResource(Res.string.sotib_olish),
                 enabled = isSelected,
                 fontSize = NormalLargeTextSize,
                 onClick = { }
@@ -220,6 +243,6 @@ fun PaymentScreenUi(
 private fun Preview() {
     PaymentScreenUi(
         navigator = null,
-        selectedPrice = ""
+        coinsAmount = 1000
     )
 }

@@ -38,6 +38,7 @@ import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.profile.CustomHeader
+import org.example.project.presentation.profile.subscription.PaymentScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.CardColors
@@ -58,11 +59,18 @@ import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldHeight
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bitta_tanga
 import tikoncha_parents.composeapp.generated.resources.coin
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.hammasi
 import tikoncha_parents.composeapp.generated.resources.money_light
 import tikoncha_parents.composeapp.generated.resources.profile
+import tikoncha_parents.composeapp.generated.resources.sotib_olish
+import tikoncha_parents.composeapp.generated.resources.tangachalar
+import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
 
 class CoinsScreen : Screen {
     @Composable
@@ -104,7 +112,7 @@ fun CoinsUi(
     }
 
     CustomListDialog(
-        title = "Farzandlaringiz",
+        title = stringResource(Res.string.farzandlaringiz),
         items = childrenList,
         show = showDialog,
         onItemSelected = { child ->
@@ -121,7 +129,7 @@ fun CoinsUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Tangachalar",
+            title = stringResource(Res.string.tangachalar),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -159,7 +167,7 @@ fun CoinsUi(
             ) {
 
                 CustomText(
-                    text = "Tangachalar",
+                    text = stringResource(Res.string.tangachalar),
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = PrimaryColor,
@@ -170,7 +178,7 @@ fun CoinsUi(
                 SpaceUltraSmall()
 
                 CustomText(
-                    text = "Tangachalar orqali farzandingiz Suniy intellekt imkoniyatlaridan foydalanishi mumkin",
+                    text = stringResource(Res.string.tangachalar_orqali),
                     color = HintTextColor,
                     fontSize = NormalTextSize,
                     modifier = Modifier
@@ -206,7 +214,7 @@ fun CoinsUi(
                 SpaceUltraSmall()
 
                 CustomText(
-                    text = "Tangachalar",
+                    text = stringResource(Res.string.tangachalar),
                     fontSize = NormalTextSize,
                     color = TextColor,
                     fontWeight = FontWeight.SemiBold
@@ -281,7 +289,7 @@ fun CoinsUi(
                             SpaceMedium()
 
                             CustomText(
-                                text = "Bitta tanga 100 so'm",
+                                text = stringResource(Res.string.bitta_tanga),
                                 fontSize = NormalTextSize,
                                 fontWeight = FontWeight.Medium,
                             )
@@ -300,7 +308,7 @@ fun CoinsUi(
                 )
                 {
                     CustomText(
-                        text = "Hammasi",
+                        text = stringResource(Res.string.hammasi),
                         fontSize = NormalTextSize,
                         color = TextColor,
                         fontWeight = FontWeight.W600
@@ -320,10 +328,12 @@ fun CoinsUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                onClick = {},
-                text = "Sotib olish",
+                onClick = {
+                    navigator!!.push(PaymentScreen(coinsAmount = coinsAmount.toInt()))
+                },
+                text = stringResource(Res.string.sotib_olish),
                 enabled = true,
-                fontSize = LargeTextSize
+                fontSize = NormalLargeTextSize
             )
 
         }

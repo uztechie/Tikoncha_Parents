@@ -35,14 +35,22 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bolaning_ilovasini_sozligi
+import tikoncha_parents.composeapp.generated.resources.bolaning_ilovasini_sozligini_korish
 import tikoncha_parents.composeapp.generated.resources.dialogg
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_bilan_suhbat
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.kuzatuv
 import tikoncha_parents.composeapp.generated.resources.microphonee
 import tikoncha_parents.composeapp.generated.resources.permission_adminstration
 import tikoncha_parents.composeapp.generated.resources.permission_camera
 import tikoncha_parents.composeapp.generated.resources.person
 import tikoncha_parents.composeapp.generated.resources.tanlang
+import tikoncha_parents.composeapp.generated.resources.xabar_yozish
+import tikoncha_parents.composeapp.generated.resources.xabar_yuborish
+import tikoncha_parents.composeapp.generated.resources.yon_atrofni_eshitish
+import tikoncha_parents.composeapp.generated.resources.yon_atrofni_kuzatish
 import tikoncha_parents.composeapp.generated.resources.yuborish
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
@@ -77,7 +85,7 @@ private fun MonitorUi(){
     }
 
     CustomListDialog(
-        title = "Farzandlaringiz",
+        title = stringResource(Res.string.farzandlaringiz),
         items = items,
         show = showDialog,
         onItemSelected = {
@@ -126,21 +134,21 @@ private fun MonitorUi(){
             SpaceLarge()
             SpaceLarge()
             DividedButton(
-                title = "Yon atrofini kuzatish",
+                title = stringResource(Res.string.yon_atrofni_kuzatish),
                 icon = painterResource(Res.drawable.permission_camera),
                 onItemClick = {},
                 isPermission = false
             )
             SpaceSmall()
             DividedButton(
-                title = "Yon atrofini eshitish",
+                title = stringResource(Res.string.yon_atrofni_eshitish),
                 icon = painterResource(Res.drawable.microphonee),
                 onItemClick = {},
                 isPermission = false
             )
             SpaceSmall()
             DividedButton(
-                title = "Bolaning ilovasi sozligini ko’rish",
+                title = stringResource(Res.string.bolaning_ilovasini_sozligini_korish),
                 icon = painterResource(Res.drawable.permission_adminstration),
                 onItemClick = {
                     rootNavigator?.push(ClientPermissionStateScreen())
@@ -149,7 +157,7 @@ private fun MonitorUi(){
             )
             SpaceSmall()
             DividedButton(
-                title = "Farzandingiz bilan suhbat",
+                title = stringResource(Res.string.farzandingiz_bilan_suhbat),
                 icon = painterResource(Res.drawable.dialogg),
                 onItemClick = {
                     rootNavigator?.push(ChatScreen())
@@ -174,7 +182,7 @@ private fun MonitorUi(){
                 modifier = Modifier
                     .fillMaxWidth(),
                 singleLine = false,
-                label = "Xabar yuborish",
+                label = stringResource(Res.string.xabar_yuborish),
             )
             SpaceMedium()
             CustomButton(

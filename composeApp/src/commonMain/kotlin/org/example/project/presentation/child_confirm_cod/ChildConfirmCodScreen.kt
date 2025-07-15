@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import com.russhwolf.settings.Settings
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.theme.*
 import org.example.project.presentation.base.theme.SpaceLarge
@@ -65,14 +66,12 @@ class ChildConfirmCodScreen(): Screen {
     }
 }
 
-
 @Composable
 fun ChildCodUI(
     navigator: Navigator?,
     state: ChildConfirmState,
     event: (ChildConfirmEvent)-> Unit
 ) {
-
 
     var code by remember { mutableStateOf("") }
 
@@ -85,6 +84,7 @@ fun ChildCodUI(
         )
     }
 
+    val settings: Settings = Settings()
 
     Box(
         modifier = Modifier
@@ -149,7 +149,7 @@ fun ChildCodUI(
 
             TextButton(
                 onClick = {
-                    navigator?.push(MainScreen())
+                    navigator?.pop()
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
@@ -170,7 +170,8 @@ fun ChildCodUI(
 
             CustomButton(
                 onClick = {
-                    navigator?.push(MainScreen())
+                    settings.putBoolean("isRegistered", true)
+                    navigator?.replaceAll(MainScreen())
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
@@ -180,6 +181,7 @@ fun ChildCodUI(
                 fontSize = NormalTextLineHeight,
                 fontWeight = FontWeight.W600,
             )
+            SpaceLarge()
         }
     }
 }
