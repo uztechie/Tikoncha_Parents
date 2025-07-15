@@ -1,4 +1,4 @@
-package org.example.project.presentation.location
+package org.example.project.presentation.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

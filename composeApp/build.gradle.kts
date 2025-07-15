@@ -101,6 +101,11 @@ kotlin {
             api("dev.icerock.moko:permissions-compose:0.19.1")
             api("dev.icerock.moko:permissions-location:0.19.1")
 
+            // Lokatsiya trakeri
+            api("dev.icerock.moko:geo:0.8.0")
+            // Compose yordamchi adapterlari
+            api("dev.icerock.moko:geo-compose:0.8.0")
+
         }
 
         nativeMain.dependencies {

@@ -36,6 +36,7 @@ val sharedModule = module {
     single<TikonchaRepository> { TikonchaRepositoryImpl(get()) }
 
 
+
     viewModel { LoginViewmodel() }
     viewModel { OtpViewmodel() }
     viewModel { RegisterViewmodel() }

@@ -40,7 +40,6 @@ import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.common.SegmentedToggle
-import org.example.project.presentation.location.LocationScreen
 import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.ui.Background
 import org.example.project.ui.BackgroundColor
@@ -213,7 +212,7 @@ fun HomeUi(
                 modifier = Modifier
                     .size(LargeIconButtonSize),
                 onClick = {
-                    navigator?.push(LocationScreen())
+
                 },
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = TonalButtonContainerColor,

@@ -41,3 +41,5 @@ fun initMapKit() {
     val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
     MapKit.setApiKey(MAP_KEY)
 }
+
+
