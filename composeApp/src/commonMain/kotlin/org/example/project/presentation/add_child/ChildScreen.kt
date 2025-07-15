@@ -156,8 +156,8 @@ fun Child(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(ContainerCornerRadius))
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 8.dp)
+                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else MainBorderColor, shape = RoundedCornerShape(ContainerCornerRadius)),
                     colors = CardDefaults.cardColors(containerColor = MainBorderColor)
                 ) {
                     Column(
@@ -168,7 +168,7 @@ fun Child(
                         CustomText(
                             text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
                             fontSize = SmallTextSize,
-                            color = HintTextColor,
+                            color = TextColor,
                             fontWeight = FontWeight.W500
                         )
 
@@ -180,7 +180,8 @@ fun Child(
                                 children = children.toMutableList().also {
                                     it[index] = it[index].copy(number = newNumber)
                                 }
-                            }
+                            },
+                            isAccepted = childState.accept
                         )
                     }
                 }
@@ -220,7 +221,7 @@ fun Child(
 
             TextButton(
                 onClick = {
-                    navigator?.push(ChildConfirmCodScreen())
+                    navigator?.pop()
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
@@ -241,7 +242,9 @@ fun Child(
 
             CustomButton(
                 onClick = {
-                    childEvent(ChildEvent.OnConfirmClicked)
+
+                    children = children.map { it.copy(accept = true) }
+
                     navigator?.push(ChildConfirmCodScreen())
                 },
                 modifier = Modifier
@@ -253,6 +256,7 @@ fun Child(
                 fontWeight = FontWeight.W500,
                 fontSize = NormalTextLineHeight
             )
+            SpaceLarge()
         }
     }
 }
@@ -261,21 +265,25 @@ fun Child(
 fun ChildPhoneInputField(
     modifier: Modifier = Modifier,
     phoneNumber: String,
-    onPhoneNumberChange: (String) -> Unit
+    onPhoneNumberChange: (String) -> Unit,
+    isAccepted: Boolean = false
 ) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(TextFieldCornerRadius))
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(TextFieldCornerRadius))
-                .background(OnPrimaryColor)
                 .border(
                     width = 1.dp,
-                    color = OnPrimaryColor,
+                    color = if (isAccepted) PrimaryColor else OnPrimaryColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
+                .background(OnPrimaryColor)
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Icon(
@@ -287,7 +295,7 @@ fun ChildPhoneInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = TextColor,
+                color = if (isAccepted) PrimaryColor else TextColor,
                 fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -309,7 +317,7 @@ fun ChildPhoneInputField(
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
-                contentColor = TextColor,
+                contentColor = if (isAccepted) PrimaryColor else TextColor,
                 fontWeight = FontWeight.W500
                 )
         }
@@ -349,7 +357,12 @@ class PhoneNumberTransformation : VisualTransformation {
     }
 }
 
+@Composable
 @Preview
 private fun Preview() {
-    ChildScreen()
+    Child(
+        navigator = null,
+        childState = ChildState(),
+        childEvent = {}
+    )
 }

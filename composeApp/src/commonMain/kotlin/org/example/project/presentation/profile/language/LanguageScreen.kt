@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.common.CustomButton
 import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.profile.CustomHeader
@@ -24,7 +25,11 @@ import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.SpaceMedium
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.til
 
 class LanguageScreen: Screen {
     @Composable
@@ -54,7 +59,7 @@ fun LanguageUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Til",
+            title = stringResource(Res.string.til),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -80,15 +85,15 @@ fun LanguageUi(
             )
 
             CustomButton(
-                text = "Davom etish",
+                text = stringResource(Res.string.davom_etish),
                 enabled = true,
+                fontSize = NormalLargeTextSize,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
                     navigator!!.pop()
-                },
-                fontSize = NormalLargeTextSize
+                }
             )
 
         }

@@ -14,13 +14,19 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.common.CustomButton
 import org.example.project.presentation.profile.CustomHeader
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.LargeTextSize
+import org.example.project.ui.NormalLargeTextSize
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
+import tikoncha_parents.composeapp.generated.resources.davom_etish
 import kotlin.text.set
 
 class NotificationSettingsScreen: Screen {
@@ -53,7 +59,7 @@ fun NotificationSettingsUi(
             .background(BackgroundColor)
     ) {
         CustomHeader(
-            title = "Bildirishnomalar",
+            title = stringResource(Res.string.bildirishnomalar),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -82,8 +88,8 @@ fun NotificationSettingsUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = "Davom etish",
-                fontSize = LargeTextSize,
+                text = stringResource(Res.string.davom_etish),
+                fontSize = NormalLargeTextSize,
                 onClick = {
                     navigator!!.pop()
                 }

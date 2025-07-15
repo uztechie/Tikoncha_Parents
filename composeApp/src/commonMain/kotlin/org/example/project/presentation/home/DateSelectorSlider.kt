@@ -34,9 +34,12 @@ import org.example.project.ui.SmallTextSize
 import org.example.project.ui.TextColor
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_left
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_right
+import tikoncha_parents.composeapp.generated.resources.haftalik
+import tikoncha_parents.composeapp.generated.resources.kunlik
 
 @Composable
 fun DateSelectorSlider(
@@ -74,10 +77,10 @@ fun DateSelectorSlider(
     }
 
     val selectionType = if (type == DateSelectionType.DAY){
-        "Kunlik"
+        stringResource(Res.string.kunlik)
     }
     else{
-        "Haftalik"
+        stringResource(Res.string.haftalik)
     }
 
     val textMeasurer = rememberTextMeasurer()

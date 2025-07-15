@@ -18,22 +18,33 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.russhwolf.settings.Settings
 import kotlinx.coroutines.delay
 import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.slider.SliderScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 class SplashScreen : Screen {
 
     @Composable
     override fun Content() {
 
+        val settings: Settings = Settings()
+
         val navigator = LocalNavigator.current
 
         LaunchedEffect(true) {
+
+            val isRegistered = settings.getBoolean("isRegistered", false)
+
             delay(1000) // 1 sekund
-            navigator?.push(SliderScreen())
+            if (isRegistered){
+                navigator?.replaceAll(MainScreen())
+            }else{
+                navigator?.replaceAll(SliderScreen())
+            }
         }
 
         Column(

@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,9 +34,8 @@ import org.example.project.presentation.common.CustomOutlinedButton
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.domain.model.Subscription
-import org.example.project.presentation.home.HomeEvent
 import org.example.project.presentation.profile.CustomHeader
-import org.example.project.presentation.profile.ProfileScreen
+import org.example.project.presentation.profile.coins.CoinsScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.CardColors
@@ -50,16 +47,22 @@ import org.example.project.ui.LargeTextSize
 import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
-import org.example.project.ui.SmallTextSize
 import org.example.project.ui.SpaceMedium
-import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldHeight
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.farzandingiz
+import tikoncha_parents.composeapp.generated.resources.ilovaning_barcha_funksiyalaridan
+import tikoncha_parents.composeapp.generated.resources.obuna
+import tikoncha_parents.composeapp.generated.resources.premium_obuna_bilan
 import tikoncha_parents.composeapp.generated.resources.profile
+import tikoncha_parents.composeapp.generated.resources.sotib_olish
+import tikoncha_parents.composeapp.generated.resources.tangachalar
+import tikoncha_parents.composeapp.generated.resources.xozir_sizning_obunangiz
 
 class SubscriptionScreen : Screen {
     @Composable
@@ -91,12 +94,12 @@ fun SubscriptionUi(
         mutableStateMapOf(
             0 to Subscription(
                 title = "Yillik",
-                price = "1 500 000",
+                price = 1500000,
                 isSelected = false
             ),
             1 to Subscription(
                 title = "Oylik",
-                price = "160 000",
+                price = 150000,
                 isSelected = false
             )
         )
@@ -115,7 +118,7 @@ fun SubscriptionUi(
     val selectedPrice = subscriptions.values.find { it.isSelected }?.price
 
     CustomListDialog(
-        title = "Farzandlaringiz",
+        title = stringResource(Res.string.farzandingiz),
         items = childrenList,
         show = showDialog,
         onItemSelected = { child ->
@@ -134,7 +137,7 @@ fun SubscriptionUi(
     ) {
 
         CustomHeader(
-            title = "Obuna",
+            title = stringResource(Res.string.obuna),
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
@@ -182,7 +185,7 @@ fun SubscriptionUi(
                     Row {
 
                         CustomText(
-                            text = "Xozr sizning obunangiz ",
+                            text = stringResource(Res.string.xozir_sizning_obunangiz),
                             fontSize = NormalLargeTextSize,
                             fontWeight = FontWeight.SemiBold,
                             color = TextColor
@@ -199,7 +202,7 @@ fun SubscriptionUi(
                     SpaceUltraSmall()
 
                     CustomText(
-                        text = "Ilovaning barcha funksiyalaridan foydalanish uchun Pro versiyasini yuklab oling",
+                        text = stringResource(Res.string.ilovaning_barcha_funksiyalaridan),
                         fontSize = NormalTextSize,
                         color = HintTextColor,
                         style = TextStyle()
@@ -229,7 +232,7 @@ fun SubscriptionUi(
 
                     CustomText(
                         color = HintTextColor,
-                        text = "Premium ibuna bilan ko'proq erkinlik va eksklyuziv xususiyatlar",
+                        text = stringResource(Res.string.premium_obuna_bilan),
                         fontSize = NormalTextSize,
                         style = TextStyle()
                     )
@@ -237,9 +240,9 @@ fun SubscriptionUi(
                 }
 
                 CustomOutlinedButton(
-                    text = "Tangachalar",
+                    text = stringResource(Res.string.tangachalar),
                     onClick = {
-
+                        navigator!!.push(CoinsScreen())
                     },
                     textColor = PrimaryColor,
                     modifier = Modifier
@@ -257,7 +260,7 @@ fun SubscriptionUi(
 
                 SubscriptionOptionItem(
                     title = subscription.title,
-                    priceUsd = subscription.price,
+                    priceUsd = subscription.price.toString(),
                     isSelected = subscription.isSelected,
                     onCheckedChange = { selected ->
                         subscriptions.forEach { (i, sub) ->
@@ -296,12 +299,12 @@ fun SubscriptionUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = "Sotib olish",
+                text = stringResource(Res.string.sotib_olish),
                 enabled = isSelected,
                 fontSize = NormalLargeTextSize,
                 onClick = {
                     if (selectedPrice != null) {
-                        navigator?.push(PaymentScreen(selectedPrice = selectedPrice))
+                        navigator?.push(PaymentScreen(subscriptionPrice = selectedPrice))
                     }
                 }
             )

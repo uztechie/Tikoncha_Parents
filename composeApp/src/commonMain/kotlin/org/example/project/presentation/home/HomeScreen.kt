@@ -35,7 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.QrCodeScreen
 import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.common.CustomSelectionButton
 import org.example.project.presentation.common.CustomText
@@ -64,11 +63,20 @@ import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldHeight
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bosh_sahifa
+import tikoncha_parents.composeapp.generated.resources.boshqalar
 import tikoncha_parents.composeapp.generated.resources.chart
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz_telefon_ishlatish_statistikasi
+import tikoncha_parents.composeapp.generated.resources.haftalik
+import tikoncha_parents.composeapp.generated.resources.ijtimoiy_tarmoqlar
+import tikoncha_parents.composeapp.generated.resources.kunlik
 import tikoncha_parents.composeapp.generated.resources.notification
+import tikoncha_parents.composeapp.generated.resources.oyinlar
 import tikoncha_parents.composeapp.generated.resources.profile
 
 
@@ -127,12 +135,11 @@ fun HomeUi(
     }
 
     CustomListDialog(
-        title = "Farzandlaringiz",
+        title = stringResource(Res.string.farzandlaringiz),
         items = state.childrenList,
         show = showDialog,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
-            navigator!!.push(QrCodeScreen())
         },
         onDismiss = {
             showDialog = false
@@ -198,7 +205,7 @@ fun HomeUi(
 
             SpaceMedium()
             CustomText(
-                text = "Bosh sahifa",
+                text = stringResource(Res.string.bosh_sahifa),
                 color = TextColor,
                 fontSize = LargeTextSize,
                 fontWeight = FontWeight.W500,
@@ -243,7 +250,7 @@ fun HomeUi(
         ) {
 
             CustomText(
-                text = "Farzandingizning telefon ishlatish statistikasi",
+                text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
                 color = HintTextColor,
                 fontSize = NormalTextSize,
                 modifier = Modifier.fillMaxWidth()
@@ -265,7 +272,7 @@ fun HomeUi(
             SpaceMedium()
 
             SegmentedToggle(
-                options = listOf("Haftalik" to null, "Kunlik" to null),
+                options = listOf(stringResource(Res.string.haftalik) to null, stringResource(Res.string.kunlik) to null),
                 selectedIndex = selectionTypeIndex,
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -310,7 +317,7 @@ fun HomeUi(
                SpaceMedium()
 
                CustomText(
-                   text = "Ijtimoiy tarmoqlar",
+                   text = stringResource(Res.string.ijtimoiy_tarmoqlar),
                    color = TextColor,
                    fontWeight = FontWeight.SemiBold,
                    fontSize = NormalLargeTextSize
@@ -329,7 +336,7 @@ fun HomeUi(
                 SpaceMedium()
 
                 CustomText(
-                    text = "O'yinlar",
+                    text = stringResource(Res.string.oyinlar),
                     color = TextColor,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = NormalLargeTextSize
@@ -348,7 +355,7 @@ fun HomeUi(
                 SpaceMedium()
 
                 CustomText(
-                    text = "Boshqalar",
+                    text = stringResource(Res.string.boshqalar),
                     color = TextColor,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = NormalLargeTextSize

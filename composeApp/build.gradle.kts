@@ -92,6 +92,9 @@ kotlin {
             implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.2.0")
             implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.2.0")
 
+            implementation("com.russhwolf:multiplatform-settings:1.3.0")
+            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+
         }
 
         nativeMain.dependencies {

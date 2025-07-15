@@ -65,7 +65,7 @@ fun TimePickerDialog(
                     .width(300.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Vaqtni tanlang", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(stringResource(Res.string.vaqtni_tanlang), fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -77,21 +77,21 @@ fun TimePickerDialog(
                         value = hour,
                         range = 0..23,
                         onValueChange = onHourChange,
-                        label = "Soat"
+                        label = stringResource(Res.string.soat)
                     )
 
                     NumberPicker(
                         value = minute,
                         range = 0..59,
                         onValueChange = onMinuteChange,
-                        label = "Minut"
+                        label = stringResource(Res.string.minut)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(onClick = onSave) {
-                    Text("Saqlash")
+                    Text(stringResource(Res.string.saqlash))
                 }
             }
         }
