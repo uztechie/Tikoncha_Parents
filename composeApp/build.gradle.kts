@@ -87,6 +87,9 @@ kotlin {
 
             implementation(libs.kotlinx.serialization.json)
 
+            implementation(libs.remember.settings)
+
+
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
             implementation("network.chaintech:qr-kit:3.1.2")
 

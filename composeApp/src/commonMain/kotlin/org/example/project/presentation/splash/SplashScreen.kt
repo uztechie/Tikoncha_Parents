@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +17,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -23,7 +26,10 @@ import kotlinx.coroutines.delay
 import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.slider.SliderScreen
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.tikoncha_logo
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 class SplashScreen : Screen {
@@ -54,18 +60,11 @@ class SplashScreen : Screen {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Color.Black)) {
-                        append("New ")
-                    }
-                    withStyle(style = SpanStyle(color = PrimaryColor)) {
-                        append("edu")
-                    }
-                },
-                fontSize = 40.sp,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.Bold
+            Icon(
+                painter = painterResource(Res.drawable.tikoncha_logo),
+                contentDescription = null,
+                tint = PrimaryColor,
+                modifier = Modifier.size(200.dp)
             )
         }
     }

@@ -2,6 +2,7 @@ package org.example.project
 
 import android.app.Application
 import org.example.project.core.initKoin
+import org.koin.android.ext.koin.androidContext
 
 
 class MyApp : Application() {
@@ -9,7 +10,9 @@ class MyApp : Application() {
         super.onCreate()
         AppHolder.app = this
         initMapKit()
-        initKoin {}
+        initKoin(
+            config = {androidContext(this@MyApp)}
+        )
     }
 }
 
