@@ -1,5 +1,4 @@
 <resources>
-
     <string name="bilimdon_bo_lishga_birinchi_qadam">Первый шаг к эрудиции</string>
     <string name="bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin">Это приложение напомнит вам, что вы делали в течение дня. И игра, и урок важны - пусть всё будет в равновесии!</string>
     <string name="o_tkazib_yuborish">Пропустить</string>
@@ -110,4 +109,10 @@
     <string name="qr_kod">QR код</string>
     <string name="vaqtni_tanlang">Выберите время</string>
     <string name="minut">Минута</string>
+    <string name="yillik">Годовой</string>
+    <string name="oylik">Месячный</string>
+    <string name="tangachalar">Чешуйки</string>
+    <string name="suniy_intelekt">Синтетический интеллект</string>
+    <string name="har_oy_dan_ortiq_tangalar">Более 500 Монет каждый месяц</string>
+
 </resources>

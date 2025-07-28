@@ -7,15 +7,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
-import org.example.project.presentation.completedTask.CompletedTaskScreen
 import org.example.project.presentation.splash.SplashScreen
-import cafe.adriel.voyager.transitions.SlideTransition
+import dev.burnoo.compose.remembersetting.rememberStringSetting
 import org.example.project.platform.Localization
-import org.example.project.presentation.home.HomeScreen
+import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.profile.ProfileScreen
-import org.example.project.presentation.profile.subscription.PaymentScreen
-import org.example.project.presentation.profile.subscription.SubscriptionScreen
+import org.example.project.presentation.profile.language.AppLanguage
+import org.example.project.presentation.profile.language.LanguageManager
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import ru.sulgik.mapkit.MapKit
@@ -27,14 +25,13 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 fun App() {
     MaterialTheme {
 
-        val localization = koinInject<Localization>()
-        val  languageIos
+
         Surface(
             modifier = Modifier
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
-            Navigator(SplashScreen())
+            Navigator(MainScreen())
         }
 //        Navigator(HomeScreen()){
 //            SlideTransition(it)

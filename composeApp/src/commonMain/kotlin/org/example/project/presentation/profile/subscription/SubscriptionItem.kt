@@ -30,7 +30,9 @@ import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ai_icon
 import tikoncha_parents.composeapp.generated.resources.icon_coins
@@ -83,7 +85,7 @@ fun SubscriptionItem(
                 Column {
 
                     Text(
-                        text = subscription.settingName,
+                        text = stringResource(subscription.settingName),
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.Medium,
                         style = TextStyle()
@@ -92,7 +94,7 @@ fun SubscriptionItem(
                     SpaceUltraSmall()
 
                     Text(
-                        text = subscription.subtitle,
+                        text = stringResource(subscription.subtitle),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium,
                         color = HintTextColor,
@@ -106,28 +108,29 @@ fun SubscriptionItem(
 
 enum class SubscriptionType(
     val iconId: DrawableResource,
-    val settingName: String,
-    val subtitle: String,
+    val settingName: StringResource,
+    val subtitle: StringResource,
 
     ) {
     COIN(
         iconId = Res.drawable.icon_coins,
-        settingName = "Tangachalar",
-        subtitle = "Har oy 500 dan ortiq tangalar"
+        settingName = Res.string.tangachalar,
+        subtitle = Res.string.har_oy_dan_ortiq_tangalar
     ),
     AI(
         iconId = Res.drawable.ai_icon,
-        settingName = "Suniy intelekt",
-        subtitle = "AI yordamida yangi imkoniyatlar"
+        settingName = Res.string.suniy_intelekt,
+        subtitle = Res.string.ai_yangi_imkoniyatlar
     ),
     COIN_1(
         iconId = Res.drawable.icon_coins,
-        settingName = "Tangachalar",
-        subtitle = "Har oy 500 dan ortiq tangalar"
+        settingName = Res.string.tangachalar,
+        subtitle = Res.string.har_oy_dan_ortiq_tangalar
     ),
     AI_1(
         iconId = Res.drawable.ai_icon,
-        settingName = "Suniy intelekt",
-        subtitle = "AI yordamida yangi imkoniyatlar"
+        settingName = Res.string.suniy_intelekt,
+        subtitle = Res.string.ai_yangi_imkoniyatlar
     )
+
 }

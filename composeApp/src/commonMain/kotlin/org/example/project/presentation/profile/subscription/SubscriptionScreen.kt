@@ -58,11 +58,13 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.ilovaning_barcha_funksiyalaridan
 import tikoncha_parents.composeapp.generated.resources.obuna
+import tikoncha_parents.composeapp.generated.resources.oylik
 import tikoncha_parents.composeapp.generated.resources.premium_obuna_bilan
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.xozir_sizning_obunangiz
+import tikoncha_parents.composeapp.generated.resources.yillik
 
 class SubscriptionScreen : Screen {
     @Composable
@@ -81,6 +83,9 @@ fun SubscriptionUi(
     navigator: Navigator?
 ) {
 
+    val title = stringResource(Res.string.yillik)
+    val title2 = stringResource(Res.string.oylik)
+
     val childrenList = remember {
         mutableStateListOf(
             "Saidburxon",
@@ -93,12 +98,12 @@ fun SubscriptionUi(
     val subscriptions = remember {
         mutableStateMapOf(
             0 to Subscription(
-                title = "Yillik",
+                title = title,
                 price = 1500000,
                 isSelected = false
             ),
             1 to Subscription(
-                title = "Oylik",
+                title = title2,
                 price = 150000,
                 isSelected = false
             )

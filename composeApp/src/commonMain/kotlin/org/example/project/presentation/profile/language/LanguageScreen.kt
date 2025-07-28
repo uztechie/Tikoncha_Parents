@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import dev.burnoo.compose.remembersetting.rememberStringSetting
+import org.example.project.platform.Localization
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.common.CustomButton
 import org.example.project.presentation.domain.model.LanguageType
@@ -27,9 +30,8 @@ import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.SpaceMedium
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.davom_etish
-import tikoncha_parents.composeapp.generated.resources.til
 
 class LanguageScreen: Screen {
     @Composable
@@ -49,9 +51,19 @@ fun LanguageUi(
     navigator: Navigator?
 ){
 
-    var selectedLanguage by remember {
-        mutableStateOf(LanguageType.UZ)
+    val localization = koinInject<Localization>()
+    var languageIos by rememberStringSetting(
+        key = "savedLanguageIos",
+        defaultValue = LanguageType.UZ.languageCode
+    )
+    val selectedLanguage by derivedStateOf {
+        LanguageType.entries.first{it.languageCode == languageIos}
     }
+
+
+//    var selectedLanguage by remember {
+//        mutableStateOf(LanguageType.UZ)
+//    }
 
     Column(
         modifier = Modifier
@@ -76,7 +88,11 @@ fun LanguageUi(
 
             LanguageSelection(
                 selectedLanguage = selectedLanguage,
-                onLanguageSelected = {selectedLanguage = it}
+                onLanguageSelected = {
+                    languageIos = if (it == LanguageType.UZ) AppLanguage.UZ.ios
+                    else AppLanguage.RU.ios
+                    localization.applyLanguage(languageIos)
+                }
             )
 
             Spacer(

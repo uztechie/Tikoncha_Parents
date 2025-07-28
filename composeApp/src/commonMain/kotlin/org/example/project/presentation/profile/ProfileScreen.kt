@@ -173,7 +173,7 @@ fun ProfileUi(
                         when (section) {
 
                             ProfileSection.PERSONAL_INFORMATION -> {
-                                rootNavigator!!.push(PersonalInformationScreen())
+                                rootNavigator?.push(PersonalInformationScreen())
                             }
 
                             ProfileSection.LANGUAGE -> {

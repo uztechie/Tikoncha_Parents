@@ -34,6 +34,7 @@ import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.TextColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LanguageSelection(
@@ -126,4 +127,13 @@ fun LanguageSelection(
             DividerHorizontal()
         }
     }
+}
+
+@Composable
+@Preview
+fun Preview(){
+    LanguageSelection(
+        selectedLanguage = LanguageType.UZ,
+        onLanguageSelected = {}
+    )
 }
