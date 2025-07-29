@@ -69,13 +69,13 @@
     <string name="ijtimoiy_tarmoqlar">Социальные сети</string>
     <string name="oyinlar">Игры</string>
     <string name="boshqalar">Другие</string>
-    <string name="dush">Душ</string>
+    <string name="dush">Пон</string>
     <string name="sesh">Вто</string>
-    <string name="chor">Чор</string>
+    <string name="chor">Сре</string>
     <string name="pay">Чет</string>
     <string name="jum">Пят</string>
-    <string name="shan">Шан</string>
-    <string name="yak">Як</string>
+    <string name="shan">Суб</string>
+    <string name="yak">Вос</string>
     <string name="daq">мин</string>
     <string name="soat">час</string>
     <string name="yon_atrofni_kuzatish">Наблюдение за окружающей средой</string>
@@ -111,8 +111,26 @@
     <string name="minut">Минута</string>
     <string name="yillik">Годовой</string>
     <string name="oylik">Месячный</string>
-    <string name="tangachalar">Чешуйки</string>
     <string name="suniy_intelekt">Синтетический интеллект</string>
     <string name="har_oy_dan_ortiq_tangalar">Более 500 Монет каждый месяц</string>
+    <string name="ai_yangi_imkoniyatlar">Новые возможности с помощью AI</string>
+    <string name="ism">Имя</string>
+    <string name="yosh">Возраст</string>
+    <string name="jins">Пол</string>
+    <string name="telefon_nomer">Телефон номер</string>
+    <string name="sinf">Класс</string>
+    <string name="smena">Смена</string>
+    <string name="qarindoshligi">Родственность</string>
+    <string name="pasport_id">ID паспорта</string>
+    <string name="reklama">Реклама</string>
+    <string name="yorug">Яркий</string>
+    <string name="xavfli_zona">Опасная зона</string>
+    <string name="akkauntni_o_chirish">Удалить аккаунт</string>
+    <string name="pochta_orqali">Через почту</string>
+    <string name="sms_orqali">Через СМС</string>
+    <string name="qora">Темный</string>
+    <string name="standart">Стандартная</string>
+    <string name="pro">ПРО</string>
+    <string name="ta">шт.</string>
 
 </resources>

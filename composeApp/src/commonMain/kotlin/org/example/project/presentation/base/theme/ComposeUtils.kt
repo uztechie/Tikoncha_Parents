@@ -42,7 +42,7 @@ val ItemElevation = 2.dp
 
 val SliderCornerRadius = 20.dp
 
-val TextFieldCornerRadius = 12.dp
+val TextFieldCornerRadius = 8.dp
 val TextFieldHeight = 45.dp
 val TextFieldHeightDialogOrButtonSheet = 40.dp
 val TextFieldInnerPadding = 15.dp

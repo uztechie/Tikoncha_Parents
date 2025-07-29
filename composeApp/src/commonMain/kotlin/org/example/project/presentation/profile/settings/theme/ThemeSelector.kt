@@ -21,9 +21,11 @@ import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.theme_dark
 import tikoncha_parents.composeapp.generated.resources.theme_light
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun ThemeSelector(
@@ -32,8 +34,8 @@ fun ThemeSelector(
 ) {
 
     val themes = listOf(
-        "light" to "Yorug'",
-        "dark" to "Qora"
+        "light" to stringResource(Res.string.yorug),
+        "dark" to stringResource(Res.string.qora)
     )
 
     Row(

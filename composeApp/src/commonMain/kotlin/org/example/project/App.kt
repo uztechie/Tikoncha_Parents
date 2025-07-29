@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.splash.SplashScreen
@@ -14,6 +15,7 @@ import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.presentation.profile.language.AppLanguage
 import org.example.project.presentation.profile.language.LanguageManager
+import org.example.project.presentation.profile.language.LanguagePrefs
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import ru.sulgik.mapkit.MapKit
@@ -23,8 +25,14 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 @Composable
 @Preview
 fun App() {
+
     MaterialTheme {
 
+//        val localization = koinInject<Localization>()
+//        LaunchedEffect(Unit) {
+//            val savedCode = LanguagePrefs.loadOrDefault().languageCode
+//            localization.applyLanguage(savedCode)  // 🔧 Saqlangan tilni darhol qo‘llash
+//        }
 
         Surface(
             modifier = Modifier

@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowInsetsControllerCompat
+import org.example.project.platform.Localization
+import org.example.project.presentation.profile.language.LanguagePrefs
 import ru.sulgik.mapkit.MapKit
 
 class MainActivity : ComponentActivity() {
@@ -17,6 +19,9 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
         super.onCreate(savedInstanceState)
+        val saved = LanguagePrefs.loadOrDefault().languageCode
+        // 2) UI dan oldin qo‘llang
+        Localization(this).applyLanguage(saved)
 
         setContent {
             App()

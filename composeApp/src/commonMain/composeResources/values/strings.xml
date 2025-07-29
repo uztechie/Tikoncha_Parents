@@ -111,7 +111,26 @@
     <string name="minut">Minut</string>
     <string name="yillik">Yillik</string>
     <string name="oylik">Oylik</string>
-    <string name="tangachalar">Tangachalar</string>
     <string name="suniy_intelekt">Suniy intelekt</string>
     <string name="har_oy_dan_ortiq_tangalar">Har oy 500 dan ortiq tangalar</string>
+    <string name="ai_yangi_imkoniyatlar">AI yordamida yangi imkoniyatlar</string>
+    <string name="ism">Ism</string>
+    <string name="yosh">Yosh</string>
+    <string name="jins">Jins</string>
+    <string name="telefon_nomer">Telefon nomer</string>
+    <string name="sinf">Sinf</string>
+    <string name="smena">Smena</string>
+    <string name="qarindoshligi">Qarindoshligi</string>
+    <string name="pasport_id">Pasport ID</string>
+    <string name="reklama">Reklama</string>
+    <string name="yorug">Yorug`</string>
+    <string name="xavfli_zona">Xavfli zona</string>
+    <string name="akkauntni_o_chirish">Akkauntni o’chirish</string>
+    <string name="pochta_orqali">Pochta orqali</string>
+    <string name="sms_orqali">Sms orqali</string>
+    <string name="qora">Qora</string>
+    <string name="standart">Standart</string>
+    <string name="pro">PRO</string>
+    <string name="ta">ta</string>
+
 </resources>

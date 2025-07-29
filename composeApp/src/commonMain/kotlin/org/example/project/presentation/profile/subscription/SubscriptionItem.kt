@@ -36,6 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ai_icon
 import tikoncha_parents.composeapp.generated.resources.icon_coins
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun SubscriptionItem(

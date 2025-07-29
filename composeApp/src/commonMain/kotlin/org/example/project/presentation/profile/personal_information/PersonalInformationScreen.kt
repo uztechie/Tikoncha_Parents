@@ -51,6 +51,7 @@ import tikoncha_parents.composeapp.generated.resources.class_icon
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.id_card
+import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.maktab
 import tikoncha_parents.composeapp.generated.resources.phone
 import tikoncha_parents.composeapp.generated.resources.profile
@@ -91,22 +92,22 @@ fun PersonalInformationUi(
             listOf(
                 PersonalInformationItemData(
                     icon = Res.drawable.profile,
-                    title = "Ism",
+                    title = Res.string.ism,
                     value = state.fullName
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.phone,
-                    title = "Telefon nomer",
+                    title = Res.string.telefon_nomer,
                     value = state.phoneNumber
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.two_users,
-                    title = "Qarindoshligi",
+                    title = Res.string.qarindoshligi,
                     value = state.relativity
                 ),
                 PersonalInformationItemData(
                     icon = Res.drawable.id_card,
-                    title = "Pasport ID",
+                    title = Res.string.pasport_id,
                     value = state.passportNumber
                 )
             )
@@ -165,7 +166,7 @@ fun PersonalInformationUi(
 
                     PersonalInformationItem(
                         icon = item.icon,
-                        title = item.title,
+                        title = stringResource(item.title),
                         value = item.value.toString()
                     )
 
@@ -199,22 +200,22 @@ fun PersonalInformationUi(
                         mutableStateListOf(
                             PersonalInformationItemData(
                                 icon = Res.drawable.profile,
-                                title = "Ism",
+                                title = Res.string.ism,
                                 value = child.fullName
                             ),
                             PersonalInformationItemData(
                                 icon = Res.drawable.calendar,
-                                title = "Yosh",
+                                title = Res.string.yosh,
                                 value = "${child.age}-yosh"
                             ),
                             PersonalInformationItemData(
                                 icon = Res.drawable.two_users,
-                                title = "Jins",
+                                title = Res.string.jins,
                                 value = child.gender
                             ),
                             PersonalInformationItemData(
                                 icon = Res.drawable.phone,
-                                title = "Telefon nomer",
+                                title = Res.string.telefon_nomer,
                                 value = child.phoneNumber
                             ),
                         )
@@ -224,17 +225,17 @@ fun PersonalInformationUi(
                         mutableStateListOf(
                             PersonalInformationItemData(
                                 icon = Res.drawable.school_icon,
-                                title = "Maktab",
+                                title = Res.string.maktab,
                                 value = child.school
                             ),
                             PersonalInformationItemData(
                                 icon = Res.drawable.class_icon,
-                                title = "Sinf",
+                                title = Res.string.sinf,
                                 value = child.className
                             ),
                             PersonalInformationItemData(
                                 icon = Res.drawable.shift_clock,
-                                title = "Smena",
+                                title = Res.string.smena,
                                 value = child.shift
                             )
                         )
@@ -253,7 +254,7 @@ fun PersonalInformationUi(
 
                         PersonalInformationItem(
                             icon = item.icon,
-                            title = item.title,
+                            title = stringResource(item.title),
                             value = item.value.toString()
                         )
 
@@ -276,18 +277,14 @@ fun PersonalInformationUi(
 
                         PersonalInformationItem(
                             icon = item.icon,
-                            title = item.title,
+                            title = stringResource(item.title),
                             value = item.value.toString()
                         )
 
                         SpaceUltraSmall()
-
                     }
-
                 }
-
                 SpaceMedium()
-
             }
 
             CustomOutlinedButton(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import dev.burnoo.compose.remembersetting.rememberStringSetting
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.example.project.platform.Localization
 import org.example.project.presentation.base.theme.NormalTextSize
 import org.example.project.presentation.common.CustomButton
@@ -32,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.*
 
 class LanguageScreen: Screen {
     @Composable
@@ -52,18 +56,22 @@ fun LanguageUi(
 ){
 
     val localization = koinInject<Localization>()
-    var languageIos by rememberStringSetting(
-        key = "savedLanguageIos",
-        defaultValue = LanguageType.UZ.languageCode
-    )
-    val selectedLanguage by derivedStateOf {
-        LanguageType.entries.first{it.languageCode == languageIos}
+    var languageCode by remember {
+        mutableStateOf(LanguagePrefs.loadOrDefault().languageCode)
     }
 
+    val selectedLanguage by remember(languageCode) {
+        derivedStateOf {
+            LanguageType.entries.firstOrNull { it.languageCode == languageCode } ?: LanguageType.UZ
+        }
+    }
 
-//    var selectedLanguage by remember {
-//        mutableStateOf(LanguageType.UZ)
-//    }
+    LaunchedEffect(Unit) {
+        // Agar applyLanguage og‘ir ish qilsa, main bloklamaslik uchun
+        withContext(Dispatchers.Main) {
+            localization.applyLanguage(languageCode)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -88,10 +96,14 @@ fun LanguageUi(
 
             LanguageSelection(
                 selectedLanguage = selectedLanguage,
-                onLanguageSelected = {
-                    languageIos = if (it == LanguageType.UZ) AppLanguage.UZ.ios
-                    else AppLanguage.RU.ios
-                    localization.applyLanguage(languageIos)
+                onLanguageSelected = { type ->
+                    // ✅ 1) Local state yangilanadi
+                    val newCode = type.languageCode
+                    languageCode = newCode
+                    // ✅ 2) Diskka saqlanadi (Android/iOS)
+                    LanguagePrefs.saveCode(newCode)
+                    // ✅ 3) Darhol qo‘llanadi
+                    localization.applyLanguage(newCode)
                 }
             )
 

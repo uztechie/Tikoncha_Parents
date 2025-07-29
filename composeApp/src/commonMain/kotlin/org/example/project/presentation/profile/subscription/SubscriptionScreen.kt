@@ -1,14 +1,7 @@
 package org.example.project.presentation.profile.subscription
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,43 +21,15 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.common.CustomListDialog
-import org.example.project.presentation.common.CustomOutlinedButton
-import org.example.project.presentation.common.CustomSelectionButton
-import org.example.project.presentation.common.CustomText
+import org.example.project.presentation.common.*
 import org.example.project.presentation.domain.model.Subscription
 import org.example.project.presentation.profile.CustomHeader
 import org.example.project.presentation.profile.coins.CoinsScreen
-import org.example.project.ui.BackgroundColor
-import org.example.project.ui.ButtonHeight
-import org.example.project.ui.CardColors
-import org.example.project.ui.ContainerCornerRadius
-import org.example.project.ui.ContainerPadding
-import org.example.project.ui.DialogButtonHeight
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.LargeTextSize
-import org.example.project.ui.NormalLargeTextSize
-import org.example.project.ui.NormalTextSize
-import org.example.project.ui.PrimaryColor
-import org.example.project.ui.SpaceMedium
-import org.example.project.ui.SpaceUltraSmall
-import org.example.project.ui.TextColor
-import org.example.project.ui.TextFieldHeight
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.farzandingiz
-import tikoncha_parents.composeapp.generated.resources.ilovaning_barcha_funksiyalaridan
-import tikoncha_parents.composeapp.generated.resources.obuna
-import tikoncha_parents.composeapp.generated.resources.oylik
-import tikoncha_parents.composeapp.generated.resources.premium_obuna_bilan
-import tikoncha_parents.composeapp.generated.resources.profile
-import tikoncha_parents.composeapp.generated.resources.sotib_olish
-import tikoncha_parents.composeapp.generated.resources.tangachalar
-import tikoncha_parents.composeapp.generated.resources.xozir_sizning_obunangiz
-import tikoncha_parents.composeapp.generated.resources.yillik
+import tikoncha_parents.composeapp.generated.resources.*
 
 class SubscriptionScreen : Screen {
     @Composable
@@ -196,8 +161,10 @@ fun SubscriptionUi(
                             color = TextColor
                         )
 
+                        Spacer(Modifier.size(5.dp))
+
                         CustomText(
-                            text = "Standart",
+                            text = stringResource(Res.string.standart),
                             fontSize = NormalLargeTextSize,
                             fontWeight = FontWeight.SemiBold,
                             color = PrimaryColor
@@ -229,7 +196,7 @@ fun SubscriptionUi(
                 ) {
 
                     CustomText(
-                        text = "PRO",
+                        text = stringResource(Res.string.pro),
                         color = PrimaryColor,
                         fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold

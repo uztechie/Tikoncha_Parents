@@ -30,7 +30,11 @@ import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.SmallTextSize
 import org.example.project.ui.TextColor
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun ProfileNotificationItem(
@@ -60,13 +64,13 @@ fun ProfileNotificationItem(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = notification.settingName,
+                        text = stringResource(notification.settingName),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = notification.subtitle,
+                        text = stringResource(notification.subtitle),
                         fontSize = SmallTextSize,
                         color = HintTextColor
                     )
@@ -101,17 +105,18 @@ fun ProfileNotificationItem(
 
 
 enum class NotificationType(
-    val settingName: String,
-    val subtitle: String,
+    val settingName: StringResource,
+    val subtitle: StringResource,
 
     ) {
     E_MAIL(
-        settingName = "Pochta orqali",
-        subtitle = "Reklamalar"
+        settingName = Res.string.pochta_orqali,
+        subtitle = Res.string.reklama
     ),
     SMS(
-        settingName = "Sms orqali",
-        subtitle = "Reklamalar"),
+        settingName = Res.string.sms_orqali,
+        subtitle = Res.string.reklama
+    ),
 }
 
 @Preview

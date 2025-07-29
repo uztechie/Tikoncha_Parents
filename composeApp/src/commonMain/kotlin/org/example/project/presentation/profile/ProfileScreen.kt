@@ -1,26 +1,14 @@
 package org.example.project.presentation.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.common.CustomOutlinedButton
 import org.example.project.presentation.common.TransparentQrScreen
 import org.example.project.presentation.profile.coins.CoinsScreen
@@ -28,10 +16,7 @@ import org.example.project.presentation.profile.language.LanguageScreen
 import org.example.project.presentation.profile.personal_information.PersonalInformationScreen
 import org.example.project.presentation.profile.settings.SettingsScreen
 import org.example.project.presentation.profile.subscription.SubscriptionScreen
-import org.example.project.ui.BackgroundColor
-import org.example.project.ui.ContainerPadding
-import org.example.project.ui.PrimaryColor
-import org.example.project.ui.ProfileStatsContainerHeight
+import org.example.project.ui.*
 import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
@@ -39,19 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import qrgenerator.qrkitpainter.rememberQrKitPainter
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.coin
-import tikoncha_parents.composeapp.generated.resources.coins
-import tikoncha_parents.composeapp.generated.resources.farzandingiz_bajarilmagan_vazifalari
-import tikoncha_parents.composeapp.generated.resources.farzandlaringiz_tangalari
-import tikoncha_parents.composeapp.generated.resources.file
-import tikoncha_parents.composeapp.generated.resources.global
-import tikoncha_parents.composeapp.generated.resources.profil
-import tikoncha_parents.composeapp.generated.resources.profile
-import tikoncha_parents.composeapp.generated.resources.qr_kod
-import tikoncha_parents.composeapp.generated.resources.scan
-import tikoncha_parents.composeapp.generated.resources.settings
-import tikoncha_parents.composeapp.generated.resources.telegrams_star
+import tikoncha_parents.composeapp.generated.resources.*
 
 class ProfileScreen : Screen {
     @Composable
@@ -141,7 +114,7 @@ fun ProfileUi(
 
                 UserStatsItem(
                     title = stringResource(Res.string.farzandlaringiz_tangalari),
-                    value = "0 ta",
+                    value = "0 ${stringResource(Res.string.ta)}",
                     icon = painterResource(Res.drawable.coin),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
@@ -152,7 +125,7 @@ fun ProfileUi(
 
                 UserStatsItem(
                     title = stringResource(Res.string.farzandingiz_bajarilmagan_vazifalari),
-                    value = "0 ta",
+                    value = "0 ${stringResource(Res.string.ta)}",
                     icon = painterResource(Res.drawable.file),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)

@@ -32,11 +32,15 @@ import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_right
 import tikoncha_parents.composeapp.generated.resources.bell_notification
+import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
+import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.star_setting
 import tikoncha_parents.composeapp.generated.resources.warning_1
 
@@ -92,7 +96,7 @@ fun ProfileSettingsItem(
                 Column {
 
                     Text(
-                        text = setting.settingName,
+                        text = stringResource(setting.settingName),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500
                     )
@@ -100,7 +104,7 @@ fun ProfileSettingsItem(
                     SpaceUltraSmall()
 
                     Text(
-                        text = setting.subtitle,
+                        text = stringResource(setting.subtitle),
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.W500,
                         color = HintTextColor
@@ -133,20 +137,24 @@ fun ProfileSettingsItem(
 
 enum class SettingType(
     val iconId: DrawableResource,
-    val settingName: String,
-    val subtitle: String,
+    val settingName: StringResource,
+    val subtitle: StringResource,
 
     ) {
     NOTIFICATION(
         iconId = Res.drawable.bell_notification,
-        settingName = "Bildirishnomalar",
-        subtitle = "Reklamalar"
+        settingName = Res.string.bildirishnomalar,
+        subtitle = Res.string.reklama
     ),
-    THEME(iconId = Res.drawable.star_setting, settingName = "Tema", subtitle = "Yorug`"),
+    THEME(
+        iconId = Res.drawable.star_setting,
+        settingName = Res.string.tema,
+        subtitle = Res.string.yorug
+    ),
     DANGEROUS_ZONE(
         iconId = Res.drawable.warning_1,
-        settingName = "Xavfli zona",
-        subtitle = "Akkauntni o’chirish"
+        settingName = Res.string.xavfli_zona,
+        subtitle = Res.string.akkauntni_o_chirish
     ),
 }
 
