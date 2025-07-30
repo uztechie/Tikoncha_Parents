@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,8 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.common.CustomText
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.HintTextColor
 import org.example.project.ui.MainCornerRadius
@@ -31,6 +30,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun PersonalInformationItem(
@@ -43,7 +43,7 @@ fun PersonalInformationItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(MainCornerRadius))
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = ContainerPadding, vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -66,7 +66,7 @@ fun PersonalInformationItem(
             CustomText(
                 text = title,
                 fontSize = UltraSmallTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.SemiBold,
                 style = TextStyle()
             )
@@ -76,14 +76,11 @@ fun PersonalInformationItem(
             CustomText(
                 text = value,
                 fontSize = SmallTextSize,
-                color = TextColor,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
                 style = TextStyle()
             )
-
         }
-
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,14 +21,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.ui.ContainerPadding
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.LanguageTonalIconColor
 import org.example.project.ui.NormalIconButtonPadding
 import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.NormalTextSize
-import org.example.project.ui.SmallTextSize
 import org.example.project.ui.SpaceLarge
-import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -37,6 +34,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ai_icon
 import tikoncha_parents.composeapp.generated.resources.icon_coins
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun SubscriptionItem(
@@ -69,7 +67,7 @@ fun SubscriptionItem(
                     modifier = Modifier
                         .size(36.dp)
                         .background(
-                            LanguageTonalIconColor,
+                            MaterialTheme.colorScheme.tertiaryContainer,
                             RoundedCornerShape(NormalIconButtonPadding)
                         ),
                     contentAlignment = Alignment.Center
@@ -85,7 +83,7 @@ fun SubscriptionItem(
 
                 Column {
 
-                    Text(
+                    CustomText(
                         text = stringResource(subscription.settingName),
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.Medium,
@@ -94,11 +92,11 @@ fun SubscriptionItem(
 
                     SpaceUltraSmall()
 
-                    Text(
+                    CustomText(
                         text = stringResource(subscription.subtitle),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium,
-                        color = HintTextColor,
+                        color = MaterialTheme.colorScheme.secondary,
                         style = TextStyle()
                     )
                 }
@@ -133,5 +131,4 @@ enum class SubscriptionType(
         settingName = Res.string.suniy_intelekt,
         subtitle = Res.string.ai_yangi_imkoniyatlar
     )
-
 }

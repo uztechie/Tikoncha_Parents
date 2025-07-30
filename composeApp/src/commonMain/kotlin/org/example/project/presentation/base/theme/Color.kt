@@ -45,6 +45,7 @@ val MostImportantButtonColor = Color(0xFFF67272)
 val Success = Color(0xFF00C853)
 val Failed = Color(0xFFFF9090)
 val Background = Color(0xFFFFFFFF)
+val OnText = Color(0xFFAFAFAF)
 
 
 val PermissionTextColor = Color(0xFF1A1A1A)
@@ -60,3 +61,16 @@ val ProgressColor2 = Color(0xFFFF6D00)
 val ProgressColor3 = Color(0xFFFFD600)
 val ProgressColor4 = Color(0xFFAEEA00)
 val ProgressColor5 = PrimaryColor
+
+val DarkBackgroundColor = Color(0xFF010D01)
+
+val DarkCardColors = Color(0xFF1A1A1A)
+
+val DarkMainBorderColor = Color(0xFF011E01)
+
+val DarkTextColor = Color(0xFFFFFFFF)
+
+val DarkButtonBackgroundColors = Color(0xFF434343)
+
+val DarkCardColorsButton = Color(0xFF282525)
+

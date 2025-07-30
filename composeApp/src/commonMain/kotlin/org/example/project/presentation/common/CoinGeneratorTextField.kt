@@ -39,6 +39,7 @@ import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldCornerRadius
 import org.example.project.ui.TextFieldInnerPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun CoinGeneratorTextField(

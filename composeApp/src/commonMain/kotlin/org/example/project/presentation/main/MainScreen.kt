@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -75,25 +77,28 @@ fun MainUi() {
     Navigator(HomeScreen()) {
         val mainNavigator = LocalNavigator.current
         Scaffold(
-            containerColor = BackgroundColor,
+            containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 NavigationBar(
-                    containerColor = OnPrimaryColor,
+                    containerColor = MaterialTheme.colorScheme.background,
                     modifier = Modifier
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = MainCornerRadius,
-                                topEnd = MainCornerRadius
-                            )
-                        )
                         .border(
-                            1.dp,
-                            MainBorderColor,
-                            RoundedCornerShape(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            shape = RoundedCornerShape(
                                 topStart = MainCornerRadius,
                                 topEnd = MainCornerRadius
                             )
                         )
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(
+                                topStart = MainCornerRadius,
+                                topEnd = MainCornerRadius
+                            ),
+                            clip = false // bu muhim: soyani chizish uchun
+                        )
+                        .padding(top = 4.dp)
                         .background(PrimaryColor)
                 ) {
 
@@ -117,7 +122,7 @@ fun MainUi() {
 private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigator?) {
     val isSelected = mainNavigator?.lastItem?.key == item.screen.key
     println("isSelected=${isSelected}  MAINNAvigator=${mainNavigator?.lastItem?.key}  key=${item.screen.key}")
-    val color = if (isSelected) PrimaryColor else TextColor
+    val color = if (isSelected) PrimaryColor else MaterialTheme.colorScheme.surfaceBright
 
     NavigationBarItem(
         selected = isSelected,
@@ -130,7 +135,8 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
                 text = item.label,
                 maxLines = 1,
                 softWrap = false,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = color
             )
         },
         icon = {
@@ -148,6 +154,13 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
                     tint = color
                 )
             }
-        }
+        },
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = PrimaryColor,
+            selectedTextColor = PrimaryColor,
+            unselectedIconColor = MainDisableColor,
+            unselectedTextColor = MainDisableColor,
+            indicatorColor = Color.Transparent,
+        )
     )
 }

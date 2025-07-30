@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -59,8 +60,8 @@ fun CodeInputField(
             unfocusedBorderColor = Color.Transparent,
             disabledBorderColor = Color.Transparent,
             errorBorderColor = Color.Transparent,
-            focusedPlaceholderColor = HintTextColor,
-            unfocusedPlaceholderColor = HintTextColor
+            focusedPlaceholderColor = MaterialTheme.colorScheme.secondary,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.secondary
         ),
         leadingIcon = {
             Icon(

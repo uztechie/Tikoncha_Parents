@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -108,7 +109,7 @@ fun Register(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 20.dp)
             .imePadding()
     ) {
@@ -123,7 +124,7 @@ fun Register(
             text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring),
             fontSize = NormalTextSize,
             fontStyle = FontStyle.Normal,
-            color = HintTextColor,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.W500,
         )
 

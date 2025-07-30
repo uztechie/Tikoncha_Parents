@@ -30,9 +30,11 @@ import org.example.project.presentation.base.theme.TextColor
 import org.example.project.presentation.base.theme.TextFieldCornerRadius
 import org.example.project.presentation.base.theme.TextFieldHeight
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.call
+import tikoncha_parents.composeapp.generated.resources.telefon_nomer
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
@@ -63,7 +65,6 @@ fun PhoneNumberInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = TextColor,
                 fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -76,7 +77,7 @@ fun PhoneNumberInputField(
                     }
 
                 },
-                label = "Telefon raqam",
+                label = stringResource(Res.string.telefon_nomer),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number
                 ),
@@ -85,7 +86,6 @@ fun PhoneNumberInputField(
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
-                contentColor = TextColor,
                 fontWeight = FontWeight.W500
 
             )

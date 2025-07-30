@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -120,13 +121,13 @@ fun Child(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -144,7 +145,7 @@ fun Child(
             CustomText(
                 text = stringResource(Res.string.farzandlaringiz),
                 fontSize = 16.sp,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
 
@@ -157,8 +158,8 @@ fun Child(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
-                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else MainBorderColor, shape = RoundedCornerShape(ContainerCornerRadius)),
-                    colors = CardDefaults.cardColors(containerColor = MainBorderColor)
+                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else PrimaryColor, shape = RoundedCornerShape(ContainerCornerRadius)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
                 ) {
                     Column(
                         modifier = Modifier
@@ -168,7 +169,6 @@ fun Child(
                         CustomText(
                             text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
                             fontSize = SmallTextSize,
-                            color = TextColor,
                             fontWeight = FontWeight.W500
                         )
 
@@ -283,7 +283,7 @@ fun ChildPhoneInputField(
                     color = if (isAccepted) PrimaryColor else OnPrimaryColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
-                .background(OnPrimaryColor)
+                .background(Color.Transparent)
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Icon(
@@ -295,7 +295,7 @@ fun ChildPhoneInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = if (isAccepted) PrimaryColor else TextColor,
+                color = if (isAccepted) PrimaryColor else MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -317,7 +317,7 @@ fun ChildPhoneInputField(
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
-                contentColor = if (isAccepted) PrimaryColor else TextColor,
+                contentColor = if (isAccepted) PrimaryColor else MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.W500
                 )
         }

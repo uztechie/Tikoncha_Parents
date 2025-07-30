@@ -13,17 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.DividerHorizontal
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.LanguageTonalIconColor
 import org.example.project.ui.NormalIconButtonPadding
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.SmallTextSize
@@ -43,6 +42,7 @@ import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
 import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.star_setting
 import tikoncha_parents.composeapp.generated.resources.warning_1
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun ProfileSettingsItem(
@@ -55,7 +55,7 @@ fun ProfileSettingsItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
     ) {
 
         SettingType.values().forEach { setting ->
@@ -79,7 +79,7 @@ fun ProfileSettingsItem(
                     modifier = Modifier
                         .size(36.dp)
                         .background(
-                            LanguageTonalIconColor,
+                            MaterialTheme.colorScheme.tertiaryContainer,
                             RoundedCornerShape(NormalIconButtonPadding)
                         ),
                     contentAlignment = Alignment.Center
@@ -95,7 +95,7 @@ fun ProfileSettingsItem(
 
                 Column {
 
-                    Text(
+                    CustomText(
                         text = stringResource(setting.settingName),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500
@@ -103,11 +103,11 @@ fun ProfileSettingsItem(
 
                     SpaceUltraSmall()
 
-                    Text(
+                    CustomText(
                         text = stringResource(setting.subtitle),
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.W500,
-                        color = HintTextColor
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
 
@@ -122,6 +122,7 @@ fun ProfileSettingsItem(
                     Image(
                         painter = painterResource(Res.drawable.arrow_right),
                         contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
                     )
                 }
             }
@@ -130,7 +131,6 @@ fun ProfileSettingsItem(
 
             DividerHorizontal()
         }
-
         SpaceLarge()
     }
 }

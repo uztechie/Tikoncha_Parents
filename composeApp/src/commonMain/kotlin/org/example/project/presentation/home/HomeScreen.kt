@@ -15,9 +15,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,21 +39,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.CustomSelectionButton
+import org.example.project.presentation.base.SegmentedToggle
+import org.example.project.presentation.base.theme.ShapeCornerRadius
 import org.example.project.presentation.common.CustomListDialog
-import org.example.project.presentation.common.CustomSelectionButton
-import org.example.project.presentation.common.CustomText
-import org.example.project.presentation.common.SegmentedToggle
-import org.example.project.presentation.profile.ProfileScreen
-import org.example.project.ui.Background
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.DividerHorizontal
-import org.example.project.ui.HintTextColor
 import org.example.project.ui.LargeIconButtonPadding
 import org.example.project.ui.LargeIconButtonSize
 import org.example.project.ui.LargeTextSize
-import org.example.project.ui.MainBorderColor
-import org.example.project.ui.MainCornerRadius
 import org.example.project.ui.NormalIconButtonPadding
 import org.example.project.ui.NormalIconButtonSize
 import org.example.project.ui.NormalLargeTextSize
@@ -59,9 +57,7 @@ import org.example.project.ui.SmallTextSize
 import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
-import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldHeight
-import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -78,6 +74,7 @@ import tikoncha_parents.composeapp.generated.resources.kunlik
 import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.oyinlar
 import tikoncha_parents.composeapp.generated.resources.profile
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 
 class HomeScreen : Screen {
@@ -105,7 +102,17 @@ fun HomeUi(
     navigator: Navigator?,
     state: HomeState,
     event: (HomeEvent) -> Unit
-){
+) {
+
+
+    val bottomRoundedShape = RoundedCornerShape(
+        topStart = 0.dp,
+        topEnd = 0.dp,
+        bottomStart = ShapeCornerRadius,
+        bottomEnd = ShapeCornerRadius
+    )
+
+
     val list = remember {
         mutableStateListOf(
             AppUsage("", "Instagram", "", "1 soat"),
@@ -149,7 +156,7 @@ fun HomeUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 //            Button(
 //                onClick = {
@@ -161,82 +168,81 @@ fun HomeUi(
 //                )
 //            }
 
-        Row(
+        Card(
             modifier = Modifier
-                .clip(
-                    RoundedCornerShape(
-                        bottomStart = MainCornerRadius,
-                        bottomEnd = MainCornerRadius
-                    )
-                )
-                .border(
-                    1.dp,
-                    MainBorderColor,
-                    RoundedCornerShape(
-                        bottomStart = MainCornerRadius,
-                        bottomEnd = MainCornerRadius
-                    )
-                )
-                .background(BackgroundColor)
                 .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = ContainerPadding),
-            verticalAlignment = Alignment.CenterVertically
+                .shadow(
+                    elevation = 4.dp,
+                    shape = bottomRoundedShape,
+                    ambientColor = MaterialTheme.colorScheme.primary, // 🌈 Soya rangi shu yerda
+                    spotColor = MaterialTheme.colorScheme.primary     // Android 12+ uchun
+                )
+                .padding(bottom = 4.dp),
+            shape = bottomRoundedShape,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background
+            ),
         ) {
-
-            FilledTonalIconButton(
+            Row(
                 modifier = Modifier
-                    .size(NormalIconButtonSize),
-                onClick = {},
-                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                    containerColor = TonalButtonContainerColor,
-                    contentColor = TextColor
-                ),
-                shape = RoundedCornerShape(10.dp)
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = ContainerPadding),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(Res.drawable.chart),
-                    contentDescription = "",
+
+                FilledTonalIconButton(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(NormalIconButtonPadding)
+                        .size(NormalIconButtonSize),
+                    onClick = {},
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.scrim,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.chart),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(NormalIconButtonPadding)
+                    )
+                }
+
+                SpaceMedium()
+                CustomText(
+                    text = stringResource(Res.string.bosh_sahifa),
+                    fontSize = LargeTextSize,
+                    fontWeight = FontWeight.W500,
+                    maxLines = 1
                 )
-            }
-
-            SpaceMedium()
-            CustomText(
-                text = stringResource(Res.string.bosh_sahifa),
-                color = TextColor,
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.W500,
-                maxLines = 1
-            )
 
 
-            Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
-            FilledTonalIconButton(
-                modifier = Modifier
-                    .size(LargeIconButtonSize),
-                onClick = {
-
-                },
-                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                    containerColor = TonalButtonContainerColor,
-                    contentColor = TextColor
-                ),
-                shape = CircleShape
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.notification),
-                    contentDescription = "",
-                    tint = PrimaryColor,
+                FilledTonalIconButton(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(LargeIconButtonPadding)
-                )
-            }
+                        .size(LargeIconButtonSize),
+                    onClick = {
 
+                    },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.scrim,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    ),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.notification),
+                        contentDescription = "",
+                        tint = PrimaryColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(LargeIconButtonPadding)
+                    )
+                }
+            }
         }
 
         Column(
@@ -253,7 +259,7 @@ fun HomeUi(
 
             CustomText(
                 text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = NormalTextSize,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -274,7 +280,10 @@ fun HomeUi(
             SpaceMedium()
 
             SegmentedToggle(
-                options = listOf(stringResource(Res.string.haftalik) to null, stringResource(Res.string.kunlik) to null),
+                options = listOf(
+                    stringResource(Res.string.haftalik) to null,
+                    stringResource(Res.string.kunlik) to null
+                ),
                 selectedIndex = selectionTypeIndex,
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -287,13 +296,13 @@ fun HomeUi(
 
             SpaceMedium()
 
-                DateSelectorSlider(
-                    type = selectionType,
-                    periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
-                    onDateSelected = {
-                        event(HomeEvent.GetUsageList(it, selectionType))
-                    }
-                )
+            DateSelectorSlider(
+                type = selectionType,
+                periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
+                onDateSelected = {
+                    event(HomeEvent.GetUsageList(it, selectionType))
+                }
+            )
 
             SpaceUltraSmall()
 
@@ -302,7 +311,7 @@ fun HomeUi(
                 modifier = Modifier
                     .fillMaxWidth(),
                 fontSize = SmallTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center
             )
 
@@ -315,31 +324,29 @@ fun HomeUi(
                 data = if (selectionType == DateSelectionType.DAY) state.dailyChartData else state.weeklyChartData
             )
 
-           if (state.socialAppUsageList.isNotEmpty()){
-               SpaceMedium()
+            if (state.socialAppUsageList.isNotEmpty()) {
+                SpaceMedium()
 
-               CustomText(
-                   text = stringResource(Res.string.ijtimoiy_tarmoqlar),
-                   color = TextColor,
-                   fontWeight = FontWeight.SemiBold,
-                   fontSize = NormalLargeTextSize
-               )
+                CustomText(
+                    text = stringResource(Res.string.ijtimoiy_tarmoqlar),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = NormalLargeTextSize
+                )
 
-               SpaceSmall()
+                SpaceSmall()
 
-               state.socialAppUsageList.forEach { item ->
-                   AppUsageItem(appUsage = item)
-                   SpaceUltraSmall()
-                   DividerHorizontal()
-               }
-           }
+                state.socialAppUsageList.forEach { item ->
+                    AppUsageItem(appUsage = item)
+                    SpaceUltraSmall()
+                    DividerHorizontal()
+                }
+            }
 
-            if (state.gameUsageList.isNotEmpty()){
+            if (state.gameUsageList.isNotEmpty()) {
                 SpaceMedium()
 
                 CustomText(
                     text = stringResource(Res.string.oyinlar),
-                    color = TextColor,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = NormalLargeTextSize
                 )
@@ -353,12 +360,11 @@ fun HomeUi(
                 }
             }
 
-            if (state.otherAppUsageList.isNotEmpty()){
+            if (state.otherAppUsageList.isNotEmpty()) {
                 SpaceMedium()
 
                 CustomText(
                     text = stringResource(Res.string.boshqalar),
-                    color = TextColor,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = NormalLargeTextSize
                 )
@@ -371,9 +377,7 @@ fun HomeUi(
                     DividerHorizontal()
                 }
             }
-
         }
-
     }
 }
 

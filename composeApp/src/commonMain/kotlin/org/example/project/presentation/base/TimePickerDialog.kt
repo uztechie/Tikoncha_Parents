@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun TimePickerDialog(
@@ -61,13 +63,13 @@ fun TimePickerDialog(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
+                    CustomText(
                         text = stringResource(Res.string.tugash_vaqtini_belgilang),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -99,8 +101,8 @@ fun TimePickerDialog(
                             modifier = Modifier
                                 .height(DialogButtonHeight)
                                 .fillMaxWidth(),
-                            textColor = org.example.project.presentation.base.theme.PrimaryColor,
-                            borderColor = org.example.project.presentation.base.theme.PrimaryColor,
+                            textColor = PrimaryColor,
+                            borderColor = PrimaryColor,
                             shape = RoundedCornerShape(ButtonDialogCornerRadius)
                         )
 
@@ -114,7 +116,7 @@ fun TimePickerDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp,
-                                    org.example.project.presentation.base.theme.PrimaryColor, RoundedCornerShape(ButtonDialogCornerRadius))
+                                    PrimaryColor, RoundedCornerShape(ButtonDialogCornerRadius))
                                 .height(DialogButtonHeight),
                             text = stringResource(Res.string.saqlash),
                             shape = RoundedCornerShape(ButtonDialogCornerRadius)
@@ -175,11 +177,11 @@ fun TimeColumn(
             items(items.size) { index ->
                 val value = items[index]
                 val isSelected = value == selected
-                Text(
+                CustomText(
                     text = value.toString().padStart(2, '0'),
                     fontSize = if (isSelected) 16.sp else 12.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) Color.Black else Color.LightGray,
+                    color = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }
@@ -192,7 +194,7 @@ fun TimeColumn(
                 .fillMaxWidth()
                 .height(24.dp)
                 .background(
-                    color = ChatMessageBackgroundColor.copy(alpha = 0.5f),
+                    color = MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(6.dp)
                 )
                 .zIndex(1f)

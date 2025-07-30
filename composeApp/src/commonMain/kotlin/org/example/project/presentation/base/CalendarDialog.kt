@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
 import org.example.project.common.Util
 import org.example.project.common.Util.getMonthName
 import org.example.project.presentation.base.CustomOutlinedButton
@@ -25,6 +26,7 @@ import tikoncha_parents.composeapp.generated.resources.arrow_next
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun CalendarDialog(
@@ -34,12 +36,12 @@ fun CalendarDialog(
 ) {
 
     fun LocalDate.withDayOfMonth(day: Int): LocalDate {
-        return LocalDate(this.year, this.monthNumber, day)
+        return LocalDate(this.year, month.number, day)
     }
 
     fun LocalDate.lengthOfMonth(): Int {
         val nextMonth = this.plus(DatePeriod(months = 1)).withDayOfMonth(1)
-        return nextMonth.minus(DatePeriod(days = 1)).dayOfMonth
+        return nextMonth.minus(DatePeriod(days = 1)).day
     }
 
     var currentMonth by remember {
@@ -50,9 +52,10 @@ fun CalendarDialog(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
-        containerColor = BackgroundColor,
+        containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxWidth(),
         text = {
+
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 Row(
@@ -61,20 +64,22 @@ fun CalendarDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { currentMonth = currentMonth.minus(DatePeriod(months = 1)) }) {
+
                         Icon(
                             painter = painterResource(Res.drawable.arrow_down),
                             contentDescription = "Back"
                         )
                     }
 
-                    Text(
+                    CustomText(
                         text = getMonthName(currentMonth) + " ${currentMonth.year}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     IconButton(onClick = { currentMonth = currentMonth.plus(DatePeriod(months = 1)) }) {
-                        Icon(
+
+                       Icon(
                             painter = painterResource(Res.drawable.arrow_next),
                             null
                         )
@@ -88,12 +93,12 @@ fun CalendarDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(WheelPickerSelectionColor)
+                        .background(MaterialTheme.colorScheme.tertiary)
                         .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     daysOfWeek.forEach {
-                        Text(
+                        CustomText(
                             text = it,
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center
@@ -139,18 +144,17 @@ fun CalendarDialog(
                                             Box(
                                                 modifier = Modifier
                                                     .size(32.dp)
-                                                    .background(Color(0xFF4CAF50), CircleShape),
+                                                    .background(PrimaryColor, CircleShape),
                                                 contentAlignment = Alignment.Center
                                             ) {
-                                                Text(
+                                                CustomText(
                                                     text = dayCounter.toString(),
-                                                    color = Color.White
+                                                    color = MaterialTheme.colorScheme.background
                                                 )
                                             }
                                         } else {
-                                            Text(
+                                            CustomText(
                                                 text = dayCounter.toString(),
-                                                color = Color.Black
                                             )
                                         }
                                     }
@@ -196,8 +200,8 @@ fun CalendarDialog(
 fun reformattedYearDay(reformatedDate: LocalDate?): String {
     if (reformatedDate == null) return ""
 
-    val day = reformatedDate.dayOfMonth.toString().padStart(2, '0')
-    val month = reformatedDate.monthNumber.toString().padStart(2, '0')
+    val day = reformatedDate.day.toString().padStart(2, '0')
+    val month = reformatedDate.month.number.toString().padStart(2, '0')
     val year = reformatedDate.year.toString()
 
     return "$day.$month.$year"

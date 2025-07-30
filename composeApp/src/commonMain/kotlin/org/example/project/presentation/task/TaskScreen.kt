@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,14 +51,13 @@ import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.common.CustomListDialog
 import org.example.project.presentation.completedTask.CompletedTaskScreen
-import org.example.project.presentation.home.HomeEvent
-import org.example.project.presentation.home.HomeState
+import org.example.project.ui.TextFieldCornerRadius
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 
 class TaskScreen: Screen{
@@ -89,7 +89,7 @@ fun TaskUi(
     var showDialog by remember { mutableStateOf(false) }
 
     CustomListDialog(
-        title = "Farzandlaringiz",
+        title = stringResource(Res.string.farzandlaringiz),
         items = state.childList,
         show = showDialog,
         onItemSelected = {
@@ -103,7 +103,7 @@ fun TaskUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
     )
     {
@@ -118,8 +118,8 @@ fun TaskUi(
                     modifier = Modifier.size(LargeIconButtonSize),
                     onClick = { navigator?.push(CompletedTaskScreen())},
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = TonalButtonContainerColor,
-                        contentColor = TextColor
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -144,7 +144,7 @@ fun TaskUi(
                     .wrapContentSize()
                     .border(
                         1.dp,
-                        WheelPickerSelectionColor,
+                        MaterialTheme.colorScheme.secondary,
                         RoundedCornerShape(ContainerCornerRadius)
                     )
                     .padding(vertical = 10.dp, horizontal = 12.dp),
@@ -159,7 +159,7 @@ fun TaskUi(
 
                 SpaceSmall()
 
-                Text(
+                CustomText(
                     text = reformattedToday(today),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
@@ -168,10 +168,10 @@ fun TaskUi(
 
             SpaceLarge()
 
-            Text(
+            CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = SmallTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
 
@@ -190,11 +190,10 @@ fun TaskUi(
 
             SpaceMedium()
 
-            Text(
+            CustomText(
                 text = stringResource(Res.string.sizdan_vazifalar),
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
-                color = TextColor
             )
 
             SpaceSmall()
@@ -203,9 +202,9 @@ fun TaskUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(2f),
-                shape = RoundedCornerShape(CardCornerRadius),
+                shape = RoundedCornerShape(TextFieldCornerRadius),
                 colors = CardDefaults.cardColors(
-                    containerColor = WheelPickerSelectionColor
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
                 Column(
@@ -213,10 +212,10 @@ fun TaskUi(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
+                    CustomText(
                         text = stringResource(Res.string.xozir_vazifalar_yo_q),
                         fontSize = SmallTextSize,
-                        color = HintTextColor,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.W500
                     )
                 }
@@ -230,12 +229,12 @@ fun TaskUi(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(ButtonHeight),
             ) {
                 Row {
 
-                    Text(
+                    CustomText(
                         text = stringResource(Res.string.vazifa_qo_shish),
                         fontSize = 16.sp,
                         color = PrimaryColor
@@ -253,7 +252,7 @@ fun TaskUi(
 
             SpaceMedium()
 
-            Text(
+            CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
@@ -266,9 +265,9 @@ fun TaskUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(2f),
-                    shape = RoundedCornerShape(CardCornerRadius),
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = WheelPickerSelectionColor
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
                     Column(
@@ -277,10 +276,10 @@ fun TaskUi(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        Text(
+                        CustomText(
                             text = stringResource(Res.string.xozir_vazifalar_yo_q),
                             fontSize = 12.sp,
-                            color = HintTextColor,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.W500
                         )
                     }
@@ -301,10 +300,7 @@ fun TaskUi(
                     }
                 }
             }
-
-
         }
-
         Spacer(modifier = Modifier.weight(1f))
     }
 }

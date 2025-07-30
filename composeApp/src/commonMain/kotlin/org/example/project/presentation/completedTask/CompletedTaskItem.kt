@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,13 +65,13 @@ fun CompletedTaskItem(
         modifier = Modifier
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(CardCornerRadius)
+        shape = RoundedCornerShape(TextFieldCornerRadius)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 20.dp, vertical = 15.dp)
         ) {
 
@@ -95,7 +96,7 @@ fun CompletedTaskItem(
                         text = task.content,
                         fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
-                        color = HintTextColor
+                        color = MaterialTheme.colorScheme.secondary
                     )
 
                 }
@@ -129,9 +130,7 @@ fun CompletedTaskItem(
                                 .fillMaxSize()
                         )
                     }
-
                 }
-
             }
 
             Row(
@@ -155,7 +154,6 @@ fun CompletedTaskItem(
                         modifier = Modifier
                             .padding(start = 3.dp),
                         text = task.endDate,
-                        color = TextColor,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -175,7 +173,6 @@ fun CompletedTaskItem(
                         modifier = Modifier
                             .padding(start = 3.dp),
                         text = task.endTime,
-                        color = TextColor,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -195,7 +192,6 @@ fun CompletedTaskItem(
                         modifier = Modifier
                             .padding(start = 3.dp),
                         text = importance,
-                        color = TextColor,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -223,7 +219,6 @@ fun CompletedTaskItem(
                        text = "${task.progress}%",
                        modifier = Modifier
                            .padding(start = 10.dp),
-                       color = TextColor,
                        fontSize = SmallTextSize,
                        fontWeight = FontWeight.SemiBold
                    )

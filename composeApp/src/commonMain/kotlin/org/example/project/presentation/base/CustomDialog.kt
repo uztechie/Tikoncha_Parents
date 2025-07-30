@@ -10,6 +10,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.TextColor
 import org.example.project.ui.CardCornerRadius
 import org.example.project.ui.DialogButtonHeight
+import org.example.project.ui.TextFieldCornerRadius
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_circle
@@ -52,9 +54,9 @@ fun CustomDialog(
                 modifier = modifier
                     .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = BackgroundColor
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
-                shape = RoundedCornerShape(CardCornerRadius)
+                shape = RoundedCornerShape(TextFieldCornerRadius)
             )
             {
                 Column(
@@ -80,7 +82,6 @@ fun CustomDialog(
                     CustomText(
                         text = title,
                         fontSize = NormalTextSize,
-                        color = TextColor,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -92,7 +93,6 @@ fun CustomDialog(
                     CustomText(
                         text = message,
                         fontSize = NormalTextSize,
-                        color = TextColor,
                         modifier = Modifier
                             .fillMaxWidth()
                     )
@@ -106,15 +106,8 @@ fun CustomDialog(
                             .fillMaxWidth()
                             .height(DialogButtonHeight)
                     )
-
-
                 }
             }
-
-
         }
-
     }
-
-
 }

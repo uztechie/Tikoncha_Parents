@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -23,9 +24,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.add_child.ChildScreen
-import org.example.project.presentation.common.CustomOutlinedButton
-import org.example.project.presentation.common.CustomText
-import org.example.project.presentation.profile.CustomHeader
+import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.profile.ProfileHeader
 import org.example.project.ui.AppIconInnerPadding
 import org.example.project.ui.BackgroundColor
@@ -38,8 +38,6 @@ import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
-import org.example.project.ui.TextColor
-import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -59,6 +57,7 @@ import tikoncha_parents.composeapp.generated.resources.school_icon
 import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import tikoncha_parents.composeapp.generated.resources.shift_clock
 import tikoncha_parents.composeapp.generated.resources.two_users
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 class PersonalInformationScreen: Screen {
     @Composable
@@ -117,7 +116,7 @@ fun PersonalInformationUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CustomHeader(
             title = stringResource(Res.string.shaxsiy_malumotlar),
@@ -149,13 +148,12 @@ fun PersonalInformationUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(TonalButtonContainerColor)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
                     .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
             ) {
 
                 CustomText(
                     text = stringResource(Res.string.shaxsiy_malumotlar),
-                    color = TextColor,
                     fontSize = NormalLargeTextSize,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -171,7 +169,6 @@ fun PersonalInformationUi(
                     )
 
                     SpaceUltraSmall()
-
                 }
             }
 
@@ -180,7 +177,6 @@ fun PersonalInformationUi(
             CustomText(
                 text = stringResource(Res.string.farzandingiz),
                 fontSize = NormalLargeTextSize,
-                color = TextColor,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -192,7 +188,7 @@ fun PersonalInformationUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(TonalButtonContainerColor)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                         .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
                 ){
 
@@ -243,7 +239,6 @@ fun PersonalInformationUi(
 
                     CustomText(
                         text = stringResource(Res.string.shaxsiy_malumotlar),
-                        color = TextColor,
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -259,14 +254,12 @@ fun PersonalInformationUi(
                         )
 
                         SpaceUltraSmall()
-
                     }
 
                     SpaceSmall()
 
                     CustomText(
                         text = stringResource(Res.string.maktab),
-                        color = TextColor,
                         fontSize = NormalLargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -302,9 +295,8 @@ fun PersonalInformationUi(
                 onClick = { rootNavigator?.push(ChildScreen())},
                 textColor = PrimaryColor
             )
-
+            SpaceLarge()
         }
-
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +69,7 @@ fun PasswordTextField(
         label = placeholder,
 //        visualTransformation = PhoneNumberTransformation(),
         containerColor = Color.Transparent,
-        contentColor = TextColor,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         leadingIcon = {
            Image(
                painter = painterResource(Res.drawable.lock),
@@ -93,7 +94,7 @@ fun PasswordTextField(
 
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = TextColor
+                    contentColor = MaterialTheme.colorScheme.onBackground
                 )
             ) {
                 Icon(

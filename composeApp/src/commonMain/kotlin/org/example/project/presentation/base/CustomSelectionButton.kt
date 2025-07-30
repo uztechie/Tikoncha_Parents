@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,10 +44,10 @@ fun CustomSelectionButton(
     fonSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     showTrailingIcon: Boolean = true,
-    tint: Color = ChatMessageColor
+    tint: Color = MaterialTheme.colorScheme.secondary
 ) {
 
-    val color = if (text.isEmpty()) HintTextColor else TextColor
+    val color = if (text.isEmpty()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
     val newText = text.ifEmpty { label }
 
     Row(
@@ -54,7 +55,7 @@ fun CustomSelectionButton(
             .clip(RoundedCornerShape(TextFieldCornerRadius))
             .fillMaxWidth()
             .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)
             .clickable(
@@ -107,7 +108,7 @@ fun CustomSelectionButton(
                         .graphicsLayer {
                             rotationZ = 90f
                         },
-                    tint = TextColor
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

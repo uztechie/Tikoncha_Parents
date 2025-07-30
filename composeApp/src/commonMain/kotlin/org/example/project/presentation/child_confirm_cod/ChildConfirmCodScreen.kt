@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -90,13 +91,13 @@ fun ChildCodUI(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -140,7 +141,7 @@ fun ChildCodUI(
             CustomText(
                 text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
                 fontSize = UltraSmallTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
 

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -95,13 +96,13 @@ fun Login(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ){
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -138,7 +139,7 @@ fun Login(
             CustomText(
                 text = stringResource(Res.string.ro_yxatdan_o_tish),
                 fontSize = 16.sp,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
             SpaceMedium()
@@ -186,7 +187,7 @@ fun Login(
 
             ClickableText(
                 text = annotatedText,
-                style = TextStyle(fontSize = SmallTextSize, color = Color.Black),
+                style = TextStyle(fontSize = SmallTextSize, color = MaterialTheme.colorScheme.onBackground),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
                         .firstOrNull()?.let {

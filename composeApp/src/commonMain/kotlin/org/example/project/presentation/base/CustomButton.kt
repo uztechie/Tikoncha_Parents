@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,7 @@ import org.example.project.presentation.base.theme.PrimaryColor
 
 
 import org.example.project.presentation.base.theme.SmallTextSize
+import org.example.project.ui.TextFieldCornerRadius
 
 @Composable
 fun CustomButton(
@@ -30,10 +32,10 @@ fun CustomButton(
     fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
     color: Color = PrimaryColor,
-    textColor: Color = OnPrimaryColor,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     enabled:Boolean = true,
     onClick:()->Unit,
-    shape: Shape = RoundedCornerShape(ButtonCornerRadius),
+    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
 ) {
 
     val contentColor = if (enabled) textColor else DisableButtonContentColor

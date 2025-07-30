@@ -11,5 +11,11 @@ enum class LanguageType(
     val languageName: String
 ) {
     UZ("uz", iconId = Res.drawable.lang_uz, languageName = "O’zbek tili"),
-    RU("ru", iconId = Res.drawable.lang_ru, languageName = "Русский"),
+    RU("ru", iconId = Res.drawable.lang_ru, languageName = "Русский");
+
+    companion object{
+        fun getLangType(code: String?): LanguageType{
+            return entries.find { it.languageCode == code }?: LanguageType.UZ
+        }
+    }
 }

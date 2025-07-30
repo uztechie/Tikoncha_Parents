@@ -28,6 +28,7 @@ import org.example.project.ui.SpaceMedium
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.checked
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun SubscriptionOptionItem(
@@ -52,14 +53,14 @@ fun SubscriptionOptionItem(
                 onCheckedChange = onCheckedChange
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(
+            CustomText(
                 text = title,
                 fontSize = fontSize,
                 fontWeight = fontWeight
             )
         }
 
-        Text(
+        CustomText(
             text = priceUsd,
             fontSize = fontSize,
             fontWeight = fontWeight

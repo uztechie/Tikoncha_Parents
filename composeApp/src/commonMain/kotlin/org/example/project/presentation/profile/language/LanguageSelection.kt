@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import org.example.project.ui.SpaceSmall
 import org.example.project.ui.TextColor
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun LanguageSelection(
@@ -50,7 +52,7 @@ fun LanguageSelection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         LanguageType.values().forEach { language ->
             Row(
@@ -69,7 +71,7 @@ fun LanguageSelection(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .background(LanguageTonalIconColor, RoundedCornerShape(NormalIconButtonPadding)),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(NormalIconButtonPadding)),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -83,7 +85,7 @@ fun LanguageSelection(
 
                 Column{
 
-                    Text(
+                    CustomText(
                         text = language.languageName,
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500,
@@ -92,11 +94,11 @@ fun LanguageSelection(
 
                     SpaceSmall()
 
-                    Text(
+                    CustomText(
                         text = languageExpanded[language.ordinal],
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.W500,
-                        color = HintTextColor,
+                        color = MaterialTheme.colorScheme.secondary,
                         style = TextStyle()
                     )
                 }
@@ -109,7 +111,7 @@ fun LanguageSelection(
                         .size(24.dp)
                         .border(
                             width = 2.dp,
-                            color = if (selectedLanguage == language) TextColor else TextColor,
+                            color = if (selectedLanguage == language) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground,
                             shape = CircleShape
                         )
                         .padding(4.dp),
@@ -119,7 +121,7 @@ fun LanguageSelection(
                         Box(
                             modifier = Modifier
                                 .size(12.dp)
-                                .background(TextColor, CircleShape)
+                                .background(MaterialTheme.colorScheme.onBackground, CircleShape)
                         )
                     }
                 }

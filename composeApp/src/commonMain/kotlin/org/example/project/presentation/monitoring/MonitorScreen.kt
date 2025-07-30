@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,7 +100,7 @@ private fun MonitorUi(){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         CustomHeader(
@@ -118,7 +119,6 @@ private fun MonitorUi(){
             CustomText(
                 text = stringResource(Res.string.farzandingiz),
                 fontSize = SmallTextSize,
-                color = TextColor
             )
 
             SpaceUltraSmall()
@@ -131,22 +131,28 @@ private fun MonitorUi(){
                 text = selectedChild,
                 painter = painterResource(Res.drawable.person)
             )
+         
             SpaceLarge()
             SpaceLarge()
+
             DividedButton(
                 title = stringResource(Res.string.yon_atrofni_kuzatish),
                 icon = painterResource(Res.drawable.permission_camera),
                 onItemClick = {},
                 isPermission = false
             )
+
             SpaceSmall()
+
             DividedButton(
                 title = stringResource(Res.string.yon_atrofni_eshitish),
                 icon = painterResource(Res.drawable.microphonee),
                 onItemClick = {},
                 isPermission = false
             )
+
             SpaceSmall()
+
             DividedButton(
                 title = stringResource(Res.string.bolaning_ilovasini_sozligini_korish),
                 icon = painterResource(Res.drawable.permission_adminstration),
@@ -155,7 +161,9 @@ private fun MonitorUi(){
                 },
                 isPermission = false
             )
+
             SpaceSmall()
+
             DividedButton(
                 title = stringResource(Res.string.farzandingiz_bilan_suhbat),
                 icon = painterResource(Res.drawable.dialogg),
@@ -172,7 +180,6 @@ private fun MonitorUi(){
 
             SpaceLarge()
 
-
             CustomMultiLineTextField(
                 value = message,
                 onValueChange = {
@@ -184,7 +191,9 @@ private fun MonitorUi(){
                 singleLine = false,
                 label = stringResource(Res.string.xabar_yuborish),
             )
+
             SpaceMedium()
+
             CustomButton(
                 text = stringResource(Res.string.yuborish),
                 onClick = {},

@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -33,11 +34,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.common.CustomButton
+import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.common.CustomListDialog
-import org.example.project.presentation.common.CustomSelectionButton
-import org.example.project.presentation.common.CustomText
-import org.example.project.presentation.profile.CustomHeader
 import org.example.project.presentation.profile.subscription.PaymentScreen
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
@@ -71,6 +70,8 @@ import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
+import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 class CoinsScreen : Screen {
     @Composable
@@ -126,7 +127,7 @@ fun CoinsUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tangachalar),
@@ -162,7 +163,7 @@ fun CoinsUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(ContainerCornerRadius))
-                    .background(TonalButtonContainerColor)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
                     .padding(ContainerPadding)
             ) {
 
@@ -179,13 +180,12 @@ fun CoinsUi(
 
                 CustomText(
                     text = stringResource(Res.string.tangachalar_orqali),
-                    color = HintTextColor,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = NormalTextSize,
                     modifier = Modifier
                         .fillMaxWidth(),
                     style = TextStyle()
                 )
-
             }
 
             SpaceMedium()
@@ -200,7 +200,7 @@ fun CoinsUi(
                     modifier = Modifier
                         .size(SmallIconButtonSize)
                         .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(TonalButtonContainerColor),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
                     contentAlignment = Alignment.Center
                 ){
                     Image(
@@ -216,7 +216,6 @@ fun CoinsUi(
                 CustomText(
                     text = stringResource(Res.string.tangachalar),
                     fontSize = NormalTextSize,
-                    color = TextColor,
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -237,7 +236,6 @@ fun CoinsUi(
                         coinsAmount = it.toString()
                     }
                 )
-
             }
 
             SpaceLarge()
@@ -250,7 +248,7 @@ fun CoinsUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, CardColors, RoundedCornerShape(30.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(30.dp))
                     .padding(4.dp)
             ) {
 
@@ -259,7 +257,7 @@ fun CoinsUi(
                         .fillMaxWidth()
                         .height(64.dp),
                     shape = RoundedCornerShape(30.dp),
-                    colors = CardDefaults.cardColors(containerColor = CardColors),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 )
                 {
                     Column(
@@ -276,7 +274,7 @@ fun CoinsUi(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(BackgroundColor)
+                                    .background(MaterialTheme.colorScheme.background)
                                     .padding(10.dp)
                             ){
                                 Image(
@@ -295,11 +293,11 @@ fun CoinsUi(
                             )
                         }
                     }
-
                     SpaceUltraSmall()
-
                 }
+
                 SpaceLarge()
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -310,9 +308,9 @@ fun CoinsUi(
                     CustomText(
                         text = stringResource(Res.string.hammasi),
                         fontSize = NormalTextSize,
-                        color = TextColor,
                         fontWeight = FontWeight.W600
                     )
+
                     CustomText(
                         text = "${coinsAmount.toInt() * 100}.00 UZS",
                         fontSize = NormalTextSize,
@@ -335,7 +333,7 @@ fun CoinsUi(
                 enabled = true,
                 fontSize = NormalLargeTextSize
             )
-
+            SpaceLarge()
         }
     }
 }

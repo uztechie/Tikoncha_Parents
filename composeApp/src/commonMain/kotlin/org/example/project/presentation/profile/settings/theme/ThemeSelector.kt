@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.RadioButton
@@ -14,24 +13,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.common.CustomText
+import org.example.project.presentation.base.theme.TextColor
 import org.example.project.ui.NormalLargeTextSize
-import org.example.project.ui.NormalTextSize
-import org.example.project.ui.SpaceSmall
-import org.example.project.ui.SpaceUltraSmall
-import org.example.project.ui.TextColor
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.theme_dark
-import tikoncha_parents.composeapp.generated.resources.theme_light
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun ThemeSelector(
     selectedTheme: String,
     onThemeSelected: (String) -> Unit
-) {
+)
+{
 
     val themes = listOf(
         "light" to stringResource(Res.string.yorug),
@@ -83,5 +78,4 @@ fun ThemeSelector(
             }
         }
     }
-
 }

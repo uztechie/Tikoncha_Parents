@@ -23,9 +23,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.common.CustomText
-import org.example.project.presentation.profile.CustomHeader
+import org.example.project.presentation.base.CustomHeader
 import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.*
@@ -44,6 +42,8 @@ import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.ta_tanga
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import tikoncha_parents.composeapp.generated.resources.tolov
+import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 class PaymentScreen(
     private val subscriptionPrice: Int? = null,

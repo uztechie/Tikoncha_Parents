@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -21,15 +22,19 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomOutlinedButton
+import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.common.*
 import org.example.project.presentation.domain.model.Subscription
-import org.example.project.presentation.profile.CustomHeader
 import org.example.project.presentation.profile.coins.CoinsScreen
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 class SubscriptionScreen : Screen {
     @Composable
@@ -103,7 +108,7 @@ fun SubscriptionUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         CustomHeader(
@@ -142,7 +147,7 @@ fun SubscriptionUi(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(ContainerCornerRadius),
                 colors = CardDefaults.cardColors(
-                    containerColor = CardColors
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
 
@@ -158,7 +163,6 @@ fun SubscriptionUi(
                             text = stringResource(Res.string.xozir_sizning_obunangiz),
                             fontSize = NormalLargeTextSize,
                             fontWeight = FontWeight.SemiBold,
-                            color = TextColor
                         )
 
                         Spacer(Modifier.size(5.dp))
@@ -176,7 +180,7 @@ fun SubscriptionUi(
                     CustomText(
                         text = stringResource(Res.string.ilovaning_barcha_funksiyalaridan),
                         fontSize = NormalTextSize,
-                        color = HintTextColor,
+                        color = MaterialTheme.colorScheme.secondary,
                         style = TextStyle()
                     )
                 }
@@ -194,7 +198,6 @@ fun SubscriptionUi(
                     modifier = Modifier
                         .weight(1.8f)
                 ) {
-
                     CustomText(
                         text = stringResource(Res.string.pro),
                         color = PrimaryColor,
@@ -203,12 +206,11 @@ fun SubscriptionUi(
                     )
 
                     CustomText(
-                        color = HintTextColor,
+                        color = MaterialTheme.colorScheme.secondary,
                         text = stringResource(Res.string.premium_obuna_bilan),
                         fontSize = NormalTextSize,
                         style = TextStyle()
                     )
-
                 }
 
                 CustomOutlinedButton(
@@ -221,7 +223,6 @@ fun SubscriptionUi(
                         .weight(1f)
                         .height(DialogButtonHeight)
                 )
-
             }
 
             SpaceMedium()
@@ -245,7 +246,6 @@ fun SubscriptionUi(
                 if (subscription.isSelected){
                     isSelected = true
                 }
-
             }
 
             SpaceMedium()
@@ -255,7 +255,7 @@ fun SubscriptionUi(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(ContainerCornerRadius),
                 colors = CardDefaults.cardColors(
-                    containerColor = CardColors
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
 
@@ -282,7 +282,6 @@ fun SubscriptionUi(
             )
             SpaceMedium()
         }
-
     }
 }
 

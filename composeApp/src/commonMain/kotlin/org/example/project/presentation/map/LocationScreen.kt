@@ -5,13 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +19,9 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import org.example.project.platform.openLocationSettings
 import org.example.project.presentation.base.CustomDialog
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.*
 
 class LocationScreen: Screen {
     @Composable
@@ -67,9 +64,9 @@ class LocationScreen: Screen {
 
         if (showGpsDialog){
             CustomDialog(
-                title = "GPS o'chirilgan",
-                message = "Xaritadan to'liq foydalanish uchun GPS ni yoqing!",
-                buttonText = "Yoqish",
+                title = stringResource(Res.string.gps_o_chirilgan),
+                message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing),
+                buttonText = stringResource(Res.string.yoqish),
                 onDismiss = {
                     showGpsDialog = false
                 },
@@ -101,30 +98,29 @@ class LocationScreen: Screen {
         ) {
             when (permissionState) {
                 PermissionState.Granted -> {
-                    Text("Record-audio ruxsati berilgan.")
+                    Text(stringResource(Res.string.record_audio_ruxsati_berilgan))
                     locationViewModel.checkGPS()
 
                 }
 
                 PermissionState.DeniedAlways -> {
-                    Text("Ruxsat doimiy rad etilgan.")
+                    Text(stringResource(Res.string.ruxsat_doimiy_rad_etilgan))
                     Button(
                         onClick = {
                             cameFromSettings = true
                             controller.openAppSettings()
                         }
                     ) {
-                        Text("Sozlamalarni ochish")
+                        Text(stringResource(Res.string.sozlamalarni_ochish))
                     }
                 }
 
                 else -> {
                     Button(onClick = viewModel::requestPermission) {
-                        Text("Ruxsat so‘rash")
+                        Text(stringResource(Res.string.ruxsat_so_rash))
                     }
                 }
             }
         }
-
     }
 }

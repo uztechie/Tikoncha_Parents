@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,12 +38,9 @@ import org.example.project.platform.openLocationSettings
 import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.ui.ContainerPadding
-import org.example.project.ui.NormalIconButtonSize
-import org.example.project.ui.NormalIconSize
-import org.example.project.ui.TextColor
-import org.example.project.ui.TonalButtonContainerColor
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.compose.MapConfig
 import ru.sulgik.mapkit.compose.MapLogoConfig
@@ -60,8 +58,7 @@ import ru.sulgik.mapkit.logo.LogoAlignment
 import ru.sulgik.mapkit.logo.LogoHorizontalAlignment
 import ru.sulgik.mapkit.logo.LogoVerticalAlignment
 import ru.sulgik.mapkit.map.CameraPosition
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.find_location
+import tikoncha_parents.composeapp.generated.resources.*
 
 class MapScreen : Screen {
 
@@ -116,9 +113,9 @@ class MapScreen : Screen {
 
         CustomDialog(
             show = showPermissionDialog,
-            title = "Joylashuv uchun ruxsat",
-            message = "Xaritadan to'liq foydalanish uchun Joylashuvga sozlamalardan turib ruxsat bering!",
-            buttonText = "Sozlamalar",
+            title = stringResource(Res.string.joylashuv_uchun_ruxsat),
+            message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering),
+            buttonText = stringResource(Res.string.sozlamalar),
             onDismiss = {
                 showPermissionDialog = false
             },
@@ -130,9 +127,9 @@ class MapScreen : Screen {
         )
         CustomDialog(
             show = showGpsDialog,
-            title = "GPS o'chirilgan",
-            message = "Xaritadan to'liq foydalanish uchun GPS ni yoqing!",
-            buttonText = "Yoqish",
+            title = stringResource(Res.string.gps_o_chirilgan),
+            message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing),
+            buttonText = stringResource(Res.string.yoqish),
             onDismiss = {
                 showGpsDialog = false
             },
@@ -181,10 +178,10 @@ class MapScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             CustomHeader(
-                title = "Xarita"
+                title = stringResource(Res.string.xarita)
             ) {
 
             }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -99,7 +100,7 @@ fun Otp(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 20.dp)
             .imePadding()
     ) {
@@ -114,7 +115,7 @@ fun Otp(
             text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_kodni_kiriting),
             fontSize = NormalTextSize,
             fontStyle = FontStyle.Normal,
-            color = HintTextColor,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.W500,
         )
         SpaceLarge()
@@ -132,7 +133,7 @@ fun Otp(
                 text = stringResource(Res.string.siz_noto_g_ri_kodni_kirittingiz),
                 fontSize = NormalTextSize,
                 fontStyle = FontStyle.Normal,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500,
             )
             CustomText(
@@ -156,7 +157,7 @@ fun Otp(
                     text = stringResource(Res.string.kodni_qaytadan_yuborish),
                     fontSize = NormalTextSize,
                     fontStyle = FontStyle.Normal,
-                    color = HintTextColor,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.W500,
                 )
             }
@@ -165,7 +166,6 @@ fun Otp(
         CustomText(
             text = stringResource(Res.string.sekund, formattedTime),
             fontSize = NormalTextLineHeight,
-            color = TextColor,
             fontWeight = FontWeight.W600
         )
         Spacer(modifier = Modifier.weight(1f))

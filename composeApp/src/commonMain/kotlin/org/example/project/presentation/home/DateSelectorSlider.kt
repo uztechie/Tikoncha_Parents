@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,12 +28,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.common.CustomText
 import org.example.project.presentation.domain.model.UsagePeriod
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.SmallTextSize
-import org.example.project.ui.TextColor
-import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -40,6 +38,7 @@ import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_left
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_right
 import tikoncha_parents.composeapp.generated.resources.haftalik
 import tikoncha_parents.composeapp.generated.resources.kunlik
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun DateSelectorSlider(
@@ -132,7 +131,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = TonalButtonContainerColor,
+                    containerColor = MaterialTheme.colorScheme.tertiary,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier
@@ -163,12 +162,10 @@ fun DateSelectorSlider(
                 contentAlignment = Alignment.Center
             ){
                 CustomText(
-
                     text = if (selectedIndex in periodsDate.indices)
                         "$selectionType ${periodsDate[selectedIndex].label}"
                     else
                         "",
-                    color = TextColor,
                     fontSize = textSize,
                     modifier = Modifier
                 )
@@ -189,7 +186,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = TonalButtonContainerColor,
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier

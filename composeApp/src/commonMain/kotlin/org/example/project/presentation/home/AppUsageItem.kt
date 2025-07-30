@@ -14,30 +14,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.common.CustomText
-import org.example.project.ui.AppIconInnerPadding
-import org.example.project.ui.AppIconSize
-import org.example.project.ui.ButtonCornerRadius
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.NormalTextSize
-import org.example.project.ui.PrimaryColor
-import org.example.project.ui.SmallIconSize
-import org.example.project.ui.SmallTextSize
-import org.example.project.ui.TextColor
-import org.example.project.ui.TonalButtonContainerColor
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ic_launcher_foreground
 import tikoncha_parents.composeapp.generated.resources.time_icon
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun AppUsageItem(
@@ -53,7 +42,6 @@ fun AppUsageItem(
 //    }
 
 
-
     Row(
         modifier = Modifier
             .padding(vertical = 5.dp)
@@ -64,7 +52,7 @@ fun AppUsageItem(
         FilledTonalIconButton(
             onClick = {},
             shape = RoundedCornerShape(ButtonCornerRadius),
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = TonalButtonContainerColor),
+            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.scrim),
             modifier = Modifier
                 .size(AppIconSize)
         ) {
@@ -87,10 +75,10 @@ fun AppUsageItem(
 //            }
 
             Icon(
-                    painter = painterResource(Res.drawable.ic_launcher_foreground),
-                    contentDescription = "",
-                    tint = PrimaryColor
-                )
+                painter = painterResource(Res.drawable.ic_launcher_foreground),
+                contentDescription = "",
+                tint = PrimaryColor
+            )
 
         }
 
@@ -104,7 +92,6 @@ fun AppUsageItem(
             CustomText(
                 text = appUsage.name,
                 fontSize = NormalTextSize,
-                color = TextColor,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -126,25 +113,22 @@ fun AppUsageItem(
 
                 CustomText(
                     text = appUsage.usageTime,
-                    color = HintTextColor,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = SmallTextSize,
                     modifier = Modifier
                         .padding(start = 2.dp)
                 )
-
             }
-
         }
-
     }
 
 }
 
 @Preview
 @Composable
-private fun PreviewAppUsageItem(){
+private fun PreviewAppUsageItem() {
     AppUsageItem(
-        appUsage = AppUsage("", "Instagram","", "2 soat 45 minut")
+        appUsage = AppUsage("", "Instagram", "", "2 soat 45 minut")
     )
 }

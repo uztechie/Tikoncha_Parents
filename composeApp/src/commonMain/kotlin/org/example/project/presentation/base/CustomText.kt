@@ -23,7 +23,7 @@ fun CustomText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleMedium,
-    color: Color = TextColor,
+    color: Color = MaterialTheme.colorScheme.onBackground,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,
@@ -60,7 +60,7 @@ fun CustomText(
     style: TextStyle = MaterialTheme.typography.titleMedium.copy(
 
     ),
-    color: Color = TextColor,
+    color: Color = MaterialTheme.colorScheme.onBackground,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,7 +99,7 @@ class SliderScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(ContainerPadding)
         ) {
 

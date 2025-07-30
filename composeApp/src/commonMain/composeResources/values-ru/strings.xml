@@ -129,8 +129,27 @@
     <string name="pochta_orqali">Через почту</string>
     <string name="sms_orqali">Через СМС</string>
     <string name="qora">Темный</string>
+    <string name="qorong_u">Темный</string>
     <string name="standart">Стандартная</string>
     <string name="pro">ПРО</string>
     <string name="ta">шт.</string>
+    <string name="kamera">Камера</string>
+    <string name="joylashuv">Joylashuv</string>
+    <string name="monitoring">Мониторинг</string>
+    <string name="admin_ilova">Админ Приложение</string>
+    <string name="ishlash_vaqti">Время работы</string>
+    <string name="ustida_ko_rsatish">Показать поверх</string>
+    <string name="eslatma_xizmati">Служба напоминаний</string>
+    <string name="batareya_tejash">Экономия батареи</string>
+    <string name="gps">ГПС</string>
+    <string name="gps_o_chirilgan">GPS выключен</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing">Включите GPS для полноценного использования карты!</string>
+    <string name="yoqish">Включить</string>
+    <string name="record_audio_ruxsati_berilgan">Разрешение на аудиозапись получено.</string>
+    <string name="ruxsat_doimiy_rad_etilgan">Разрешение отклонено навсегда.</string>
+    <string name="sozlamalarni_ochish">Открыть настройки</string>
+    <string name="ruxsat_so_rash">Попросить разрешение</string>
+    <string name="joylashuv_uchun_ruxsat">Разрешение на определение местоположения</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">Чтобы использовать карту в полном объеме, разрешите доступ к местоположению в настройках!</string>
 
 </resources>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.DividerHorizontal
 import org.example.project.ui.HintTextColor
 import org.example.project.ui.NormalLargeTextSize
@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun ProfileNotificationItem(
@@ -47,7 +48,7 @@ fun ProfileNotificationItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
     ) {
         NotificationType.values().forEach { notification ->
             val isOn = notificationStates[notification] == true
@@ -63,13 +64,16 @@ fun ProfileNotificationItem(
                     ) { onNotificationChanged(notification) }
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+
+                    CustomText(
                         text = stringResource(notification.settingName),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium
                     )
+
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text(
+
+                    CustomText(
                         text = stringResource(notification.subtitle),
                         fontSize = SmallTextSize,
                         color = HintTextColor
@@ -80,7 +84,7 @@ fun ProfileNotificationItem(
                     modifier = Modifier
                         .size(width = 50.dp, height = 28.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(if (isOn) PrimaryColor else HintTextColor)
+                        .background(if (isOn) PrimaryColor else MaterialTheme.colorScheme.secondary)
                         .clickable {
                             onNotificationChanged(notification)
                         },
@@ -90,7 +94,7 @@ fun ProfileNotificationItem(
                         modifier = Modifier
                             .padding(4.dp)
                             .size(20.dp)
-                            .background(Color.White, CircleShape)
+                            .background(MaterialTheme.colorScheme.background, CircleShape)
                     )
                 }
             }
@@ -98,7 +102,6 @@ fun ProfileNotificationItem(
             Spacer(modifier = Modifier.height(8.dp))
             DividerHorizontal()
         }
-
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import org.example.project.presentation.common.CustomText
 import org.example.project.ui.AppIconInnerPadding
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.MainCornerRadius
@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.coin
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun UserStatsItem(
@@ -47,7 +48,7 @@ fun UserStatsItem(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(MainCornerRadius))
-            .background(TonalButtonContainerColor)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
             .padding(AppIconInnerPadding)
     ) {
 
@@ -61,7 +62,7 @@ fun UserStatsItem(
                 modifier = Modifier
                     .size(SmallIconButtonSize)
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(BackgroundColor),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ){
                 Image(
@@ -81,7 +82,6 @@ fun UserStatsItem(
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 3
             )
-
         }
 
         CustomText(
@@ -90,7 +90,6 @@ fun UserStatsItem(
             fontSize = NormalTextSize,
             fontWeight = FontWeight.SemiBold
         )
-
     }
 }
 

@@ -78,8 +78,8 @@ fun CustomMultiLineTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = Color.White,
-    contentColor: Color = TextColor,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -169,7 +169,7 @@ fun CustomMultiLineTextField(
                         CustomText(
                             text = label,
                             fontSize = fonSize,
-                            color = HintTextColor
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                     innerTextField()
@@ -188,13 +188,8 @@ fun CustomMultiLineTextField(
             ){
                 trailingIcon()
             }
-
-
         }
     }
-
-
-
 }
 
 

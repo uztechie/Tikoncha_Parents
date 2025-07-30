@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.happyemoji_icon
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun <T>CustomListDialog(
@@ -89,9 +91,9 @@ fun <T>CustomListDialog(
                         .width(dialogWidth)
                         .height(dialogHeight),
                     colors = CardDefaults.cardColors(
-                        containerColor = BackgroundColor
+                        containerColor = MaterialTheme.colorScheme.background
                     ),
-                    shape = RoundedCornerShape(CardCornerRadius)
+                    shape = RoundedCornerShape(TextFieldCornerRadius)
                 ) {
                     Column (
                         modifier = Modifier
@@ -107,7 +109,6 @@ fun <T>CustomListDialog(
                             CustomText(
                                 text = title,
                                 fontSize = NormalTextSize,
-                                color = TextColor,
                                 modifier = Modifier
                                     .weight(1f)
                             )
@@ -203,23 +204,14 @@ fun <T>CustomListDialog(
                                     CustomText(
                                         text = item.toString(),
                                         fontSize = NormalTextSize,
-                                        color = TextColor,
                                         modifier = Modifier
                                     )
                                 }
                             }
                         }
-
                     }
                 }
             }
-
-
-
         }
-
     }
-
-
-
 }

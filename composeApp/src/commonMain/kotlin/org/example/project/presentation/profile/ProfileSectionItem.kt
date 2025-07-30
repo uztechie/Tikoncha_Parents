@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
-import org.example.project.presentation.common.CustomText
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.DividerHorizontal
 import org.example.project.ui.NormalIconButtonSize
 import org.example.project.ui.NormalTextSize
@@ -35,6 +34,7 @@ import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.til
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun ProfileSectionItem(
@@ -54,7 +54,7 @@ fun ProfileSectionItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .clickable(
                 enabled = true,
                 onClick = { onItemClick(section) }
@@ -71,7 +71,7 @@ fun ProfileSectionItem(
                 modifier = Modifier
                     .size(NormalIconButtonSize)
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(TonalButtonContainerColor),
+                    .background(MaterialTheme.colorScheme.tertiaryContainer),
                 contentAlignment = Alignment.Center
             ){
                 Image(
@@ -86,19 +86,15 @@ fun ProfileSectionItem(
 
             CustomText(
                 text = title,
-                color = TextColor,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold
             )
-
         }
 
         SpaceSmall()
 
         DividerHorizontal()
-
     }
-
 }
 
 @Preview

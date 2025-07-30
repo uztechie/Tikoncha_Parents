@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -111,13 +112,13 @@ fun CreatePassword(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -157,7 +158,7 @@ fun CreatePassword(
             CustomText(
                 text = stringResource(Res.string.ro_yxatdan_o_tish_parol_yaratish),
                 fontSize = NormalTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
 
@@ -208,7 +209,6 @@ fun CreatePassword(
                 fontSize = NormalTextLineHeight
             )
             SpaceLarge()
-
         }
     }
 }

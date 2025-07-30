@@ -45,6 +45,7 @@ import org.example.project.presentation.base.theme.SmallIconButtonSize
 import org.example.project.presentation.base.theme.SmallTextSize
 import org.example.project.presentation.base.theme.SpaceSmall
 import org.example.project.presentation.base.theme.TextColor
+import org.example.project.ui.TextFieldCornerRadius
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -101,7 +102,7 @@ fun DividedButton(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
-                .border(1.dp, borderColor, shape = RoundedCornerShape(ButtonCornerRadius)),
+                .border(1.dp, borderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -118,10 +119,11 @@ fun DividedButton(
                     modifier = Modifier
                         .size(SmallIconButtonSize)
                 )
+
                 Spacer(Modifier.padding(horizontal = 10.dp))
+
                 CustomText(
                     text = title,
-                    color = TextColor,
                     fontWeight = FontWeight.Normal,
                     lineHeight = NormalTextLineHeight,
                     fontSize = SmallTextSize,
@@ -138,7 +140,7 @@ fun DividedButton(
             modifier = Modifier
                 .aspectRatio(1f)
                 .fillMaxHeight()
-                .border(1.dp, borderColor, shape = RoundedCornerShape(ButtonCornerRadius)),
+                .border(1.dp, borderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -151,7 +153,6 @@ fun DividedButton(
             )
         }
     }
-
 }
 
 @Preview

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +40,7 @@ import tikoncha_parents.composeapp.generated.resources.sesh
 import tikoncha_parents.composeapp.generated.resources.shan
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.yak
+import uz.saidburxon.newedu.presentation.base.CustomText
 import kotlin.math.ceil
 
 @Composable
@@ -73,10 +75,10 @@ fun UsageBarChart(
         ) {
             durationLabels.forEach { label ->
                 var ext = if (label == "30" || label=="0") stringResource(Res.string.daq) else stringResource(Res.string.soat)
-                Text(
+                CustomText(
                     text = "$label $ext",
                     fontSize = 12.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.offset(y = (-6).dp)
                 )
             }
@@ -103,7 +105,7 @@ fun UsageBarChart(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     for (i in 4..20 step 4) {
-                        Text(
+                        CustomText(
                             text = if (i < 10) "0$i" else "$i",
                             fontSize = 10.sp,
                             textAlign = TextAlign.Center,
@@ -120,11 +122,12 @@ fun UsageBarChart(
                 ) {
 
                     daysOfWeek.forEach {
-                        Text(
+                        CustomText(
                             text = it,
                             fontSize = 10.sp,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }

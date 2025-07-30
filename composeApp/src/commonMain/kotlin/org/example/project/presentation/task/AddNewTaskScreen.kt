@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +59,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 
@@ -139,7 +141,7 @@ fun AddNewTask(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
     ) {
 
@@ -156,7 +158,7 @@ fun AddNewTask(
                 .fillMaxSize()
                 .padding(CardCornerPadding)
         ) {
-            Text(
+            CustomText(
                 text = stringResource(Res.string.vazifa_nomi),
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.W600,
@@ -168,7 +170,7 @@ fun AddNewTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)),
                 value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
@@ -179,7 +181,7 @@ fun AddNewTask(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(ChatMessageColor)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
                     )
                 },
                 fonSize = SmallTextSize,
@@ -198,21 +200,20 @@ fun AddNewTask(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(vertical = 10.dp),
                 leadingIcon = {
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(ChatMessageColor)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
                     )
                 },
                 label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
                 fonSize = SmallTextSize,
                 minLine = true,
                 singleLine = false
-
             )
 
             SpaceMedium()
@@ -254,7 +255,7 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
@@ -280,7 +281,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = HintTextColor
+                    textColor = MaterialTheme.colorScheme.secondary
                 )
                 CustomButton(
                     fontSize = SmallTextSize,

@@ -6,25 +6,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,29 +31,17 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.common.Util.getCurrentDate
-
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.SegmentedToggle
-import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.CardCornerRadius
-import org.example.project.presentation.base.theme.ContainerCornerRadius
 import org.example.project.presentation.base.theme.ContainerPadding
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.LargeIconButtonPadding
-import org.example.project.presentation.base.theme.LargeIconButtonSize
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.PrimaryColor
 import org.example.project.presentation.base.theme.SmallTextSize
 import org.example.project.presentation.base.theme.SpaceLarge
 import org.example.project.presentation.base.theme.SpaceMedium
 import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TonalButtonContainerColor
-import org.example.project.presentation.base.theme.WheelPickerSelectionColor
+import org.example.project.presentation.base.theme.TextFieldCornerRadius
 import org.example.project.presentation.task.ImportanceType
 import org.example.project.presentation.task.TaskEvent
-import org.example.project.presentation.task.TaskItem
 import org.example.project.presentation.task.TaskState
 import org.example.project.presentation.task.TaskViewModel
 import org.example.project.presentation.task.reformattedToday
@@ -74,6 +55,7 @@ import tikoncha_parents.composeapp.generated.resources.farzandingiz_vazifalari
 import tikoncha_parents.composeapp.generated.resources.shaxsiy_vazifalar
 import tikoncha_parents.composeapp.generated.resources.sizdan_vazifalar
 import tikoncha_parents.composeapp.generated.resources.task_square2
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 class CompletedTaskScreen : Screen {
     @Composable
@@ -121,7 +103,7 @@ fun CompletedTaskUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     )
     {
 
@@ -140,8 +122,8 @@ fun CompletedTaskUi(
                     .wrapContentSize()
                     .border(
                         1.dp,
-                        WheelPickerSelectionColor,
-                        RoundedCornerShape(ContainerCornerRadius)
+                        MaterialTheme.colorScheme.secondary,
+                        RoundedCornerShape(TextFieldCornerRadius)
                     )
                     .padding(vertical = 10.dp, horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -155,7 +137,7 @@ fun CompletedTaskUi(
 
                 SpaceSmall()
 
-                Text(
+                CustomText(
                     text = reformattedToday(today),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
@@ -164,10 +146,10 @@ fun CompletedTaskUi(
 
             SpaceLarge()
 
-            Text(
+            CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = SmallTextSize,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
 
@@ -191,11 +173,10 @@ fun CompletedTaskUi(
 
             SpaceMedium()
 
-            Text(
+            CustomText(
                 text = showTask,
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
-                color = TextColor
             )
 
             SpaceSmall()
@@ -211,10 +192,10 @@ fun CompletedTaskUi(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight() // aspectRatio olib tashlandi
-                            .border(1.dp, WheelPickerSelectionColor, RoundedCornerShape(CardCornerRadius)),
-                        shape = RoundedCornerShape(CardCornerRadius),
+                            .border(1.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(TextFieldCornerRadius)),
+                        shape = RoundedCornerShape(TextFieldCornerRadius),
                         colors = CardDefaults.cardColors(
-                            containerColor = WheelPickerSelectionColor
+                            containerColor = MaterialTheme.colorScheme.secondary
                         )
                     ) {
                         CompletedTaskItem(

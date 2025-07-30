@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -18,24 +19,17 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import dev.burnoo.compose.remembersetting.rememberStringSetting
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.example.project.platform.Localization
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.domain.model.LanguageType
-import org.example.project.presentation.profile.CustomHeader
-import org.example.project.ui.BackgroundColor
+import org.example.project.presentation.base.CustomHeader
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.NormalLargeTextSize
+import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceMedium
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.koinInject
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomButton
 
 class LanguageScreen: Screen {
     @Composable
@@ -54,29 +48,18 @@ class LanguageScreen: Screen {
 fun LanguageUi(
     navigator: Navigator?
 ){
+    val controller = LocalLanguageController.current
 
-    val localization = koinInject<Localization>()
-    var languageCode by remember {
-        mutableStateOf(LanguagePrefs.loadOrDefault().languageCode)
+    var selectedLanguage by remember {
+        mutableStateOf(LanguagePrefs.loadOrDefault())
     }
 
-    val selectedLanguage by remember(languageCode) {
-        derivedStateOf {
-            LanguageType.entries.firstOrNull { it.languageCode == languageCode } ?: LanguageType.UZ
-        }
-    }
 
-    LaunchedEffect(Unit) {
-        // Agar applyLanguage og‘ir ish qilsa, main bloklamaslik uchun
-        withContext(Dispatchers.Main) {
-            localization.applyLanguage(languageCode)
-        }
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CustomHeader(
             title = stringResource(Res.string.til),
@@ -97,13 +80,7 @@ fun LanguageUi(
             LanguageSelection(
                 selectedLanguage = selectedLanguage,
                 onLanguageSelected = { type ->
-                    // ✅ 1) Local state yangilanadi
-                    val newCode = type.languageCode
-                    languageCode = newCode
-                    // ✅ 2) Diskka saqlanadi (Android/iOS)
-                    LanguagePrefs.saveCode(newCode)
-                    // ✅ 3) Darhol qo‘llanadi
-                    localization.applyLanguage(newCode)
+                    selectedLanguage = type
                 }
             )
 
@@ -120,10 +97,13 @@ fun LanguageUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
+                    LanguagePrefs.save(selectedLanguage)
+                    controller.select(selectedLanguage)
+
                     navigator!!.pop()
                 }
             )
-
+            SpaceLarge()
         }
     }
 }

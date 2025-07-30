@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -124,9 +126,10 @@ fun OtpInput(
                     textStyle = TextStyle(
                         fontSize = fontSize,
                         textAlign = TextAlign.Center,
-                        color = TextColor,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = fontWeight
-                    )
+                    ),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground)
                 )
             }
             if (index == 2) {
@@ -136,7 +139,8 @@ fun OtpInput(
                         .padding(horizontal = 4.dp)
                         .align(Alignment.CenterVertically),
                     style = TextStyle(fontSize = 24.sp),
-                    fontWeight = fontWeight
+                    fontWeight = fontWeight,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

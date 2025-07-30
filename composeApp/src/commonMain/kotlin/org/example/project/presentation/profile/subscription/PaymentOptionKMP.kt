@@ -9,9 +9,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
-import org.example.project.presentation.common.CustomText
 import org.example.project.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter

@@ -124,13 +124,33 @@
     <string name="pasport_id">Pasport ID</string>
     <string name="reklama">Reklama</string>
     <string name="yorug">Yorug`</string>
+    <string name="theme_system">Theme System</string>
     <string name="xavfli_zona">Xavfli zona</string>
     <string name="akkauntni_o_chirish">Akkauntni o’chirish</string>
     <string name="pochta_orqali">Pochta orqali</string>
     <string name="sms_orqali">Sms orqali</string>
     <string name="qora">Qora</string>
+    <string name="qorong_u">Qorong`u</string>
     <string name="standart">Standart</string>
     <string name="pro">PRO</string>
     <string name="ta">ta</string>
+    <string name="kamera">Kamera</string>
+    <string name="joylashuv">Joylashuv</string>
+    <string name="monitoring">Monitoring</string>
+    <string name="admin_ilova">Admin Ilova</string>
+    <string name="ishlash_vaqti">Ishlash vaqti</string>
+    <string name="ustida_ko_rsatish">Ustida ko'rsatish</string>
+    <string name="eslatma_xizmati">Eslatma xizmati</string>
+    <string name="batareya_tejash">Batareya tejash</string>
+    <string name="gps">GPS</string>
+    <string name="yoqish">Yoqish</string>
+    <string name="gps_o_chirilgan">GPS o'chirilgan</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing">Xaritadan to'liq foydalanish uchun GPS ni yoqing!</string>
+    <string name="record_audio_ruxsati_berilgan">Record-audio ruxsati berilgan.</string>
+    <string name="ruxsat_doimiy_rad_etilgan">Ruxsat doimiy rad etilgan.</string>
+    <string name="sozlamalarni_ochish">Sozlamalarni ochish</string>
+    <string name="ruxsat_so_rash">Ruxsat so‘rash</string>
+    <string name="joylashuv_uchun_ruxsat">Joylashuv uchun ruxsat</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">Xaritadan to'liq foydalanish uchun Joylashuvga sozlamalardan turib ruxsat bering!</string>
 
 </resources>

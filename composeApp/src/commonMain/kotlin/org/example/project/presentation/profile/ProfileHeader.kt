@@ -11,14 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import org.example.project.presentation.common.CustomText
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ProfileImageSize
@@ -32,6 +31,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
+import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun ProfileHeader(
@@ -44,7 +44,7 @@ fun ProfileHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -62,7 +62,7 @@ fun ProfileHeader(
                     image == null ||
                     image.toString() == "" ||
                     image.toString() == "null"
-                ) painterResource(Res.drawable.profile_hedgehog_img) else{
+                ) painterResource(Res.drawable.profile_hedgehog_img) else {
                     painterResource(Res.drawable.profile_hedgehog_img)
                 },
 //                    rememberAsyncImagePainter(
@@ -75,7 +75,7 @@ fun ProfileHeader(
             IconButton(
                 modifier = Modifier
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(TonalButtonContainerColor)
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
                     .size(SmallIconButtonSize),
                 onClick = {
                     onSelectImageButtonClick()
@@ -90,10 +90,7 @@ fun ProfileHeader(
                     modifier = Modifier
                         .fillMaxSize(0.75f)
                 )
-
             }
-
-
         }
 
         SpaceUltraSmall()
@@ -105,7 +102,6 @@ fun ProfileHeader(
 
             CustomText(
                 text = fullName,
-                color = TextColor,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
@@ -113,15 +109,12 @@ fun ProfileHeader(
 
             CustomText(
                 text = fathersName,
-                color = TextColor,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
             )
         }
-
     }
-
 }
 
 @Preview

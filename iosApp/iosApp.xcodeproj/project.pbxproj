@@ -18,7 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B99700CA2DC9B8D800C7335B /* Exceptions for "iosApp" folder in "iosApp" target */ = {
+		B99700CA2DC9B8D800C7335B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -31,7 +31,7 @@
 		B9DA97B32DC1472C00A4DA20 /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B99700CA2DC9B8D800C7335B /* Exceptions for "iosApp" folder in "iosApp" target */,
+				B99700CA2DC9B8D800C7335B /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -102,6 +102,7 @@
 			buildPhases = (
 				C8D256F198A648907283AF5A /* [CP] Check Pods Manifest.lock */,
 				B9DA97F42DC1497100A4DA20 /* Compile Kotlin Framework */,
+				2813251F2E38D9CF009A65D1 /* ShellScript */,
 				B9DA97AD2DC1472C00A4DA20 /* Sources */,
 				B9DA97AE2DC1472C00A4DA20 /* Frameworks */,
 				B9DA97AF2DC1472C00A4DA20 /* Resources */,
@@ -180,6 +181,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		2813251F2E38D9CF009A65D1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"===== Java info in Xcode =====\"\necho \"JAVA_HOME=${JAVA_HOME:-\"(not set)\"}\"\necho \"PATH=$PATH\"\ncommand -v java || true\n/usr/libexec/java_home -V || true\njava -version || true\necho \"================================\"U0003U0003\n\n\n# Homebrew yo'llarini PATHga qo'shib olaylik:\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\n# Diagnostika (ixtiyoriy): ko'rish uchun\necho \"PATH in Gradle phase: $PATH\"\nwhich pod || echo \"pod not found\"\npod --version || true\n";
 		};
 		B9DA97F42DC1497100A4DA20 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -364,7 +382,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = XJGCHRRY3S;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

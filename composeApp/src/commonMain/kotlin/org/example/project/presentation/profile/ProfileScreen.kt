@@ -3,13 +3,15 @@ package org.example.project.presentation.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import org.example.project.presentation.common.CustomOutlinedButton
+import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.common.TransparentQrScreen
 import org.example.project.presentation.profile.coins.CoinsScreen
 import org.example.project.presentation.profile.language.LanguageScreen
@@ -83,7 +85,7 @@ fun ProfileUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CustomHeader(
             title = stringResource(Res.string.profil),
@@ -195,10 +197,8 @@ fun ProfileUi(
                     }
                 )
             }
-
         }
     }
-
 }
 
 @Preview

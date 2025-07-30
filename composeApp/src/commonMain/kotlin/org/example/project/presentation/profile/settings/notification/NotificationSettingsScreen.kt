@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
@@ -14,19 +15,19 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.common.CustomButton
-import org.example.project.presentation.profile.CustomHeader
+import org.example.project.presentation.base.CustomHeader
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.LargeTextSize
 import org.example.project.ui.NormalLargeTextSize
+import org.example.project.ui.SpaceLarge
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
 import tikoncha_parents.composeapp.generated.resources.davom_etish
+import uz.saidburxon.newedu.presentation.base.CustomButton
 import kotlin.text.set
 
 class NotificationSettingsScreen: Screen {
@@ -56,7 +57,7 @@ fun NotificationSettingsUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CustomHeader(
             title = stringResource(Res.string.bildirishnomalar),
@@ -93,9 +94,8 @@ fun NotificationSettingsUi(
                 onClick = {
                     navigator!!.pop()
                 }
-
             )
-
+            SpaceLarge()
         }
     }
 }
