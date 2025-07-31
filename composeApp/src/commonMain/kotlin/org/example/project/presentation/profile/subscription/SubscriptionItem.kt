@@ -32,7 +32,11 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ai_icon
+import tikoncha_parents.composeapp.generated.resources.ai_yangi_imkoniyatlar
+import tikoncha_parents.composeapp.generated.resources.har_oy_dan_ortiq_tangalar
 import tikoncha_parents.composeapp.generated.resources.icon_coins
+import tikoncha_parents.composeapp.generated.resources.suniy_intelekt
+import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 

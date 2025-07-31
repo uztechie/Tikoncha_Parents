@@ -21,6 +21,8 @@ import org.example.project.presentation.profile.language.LanguageManager
 import org.example.project.presentation.profile.language.LanguagePrefs
 import org.example.project.presentation.profile.language.LocalLanguageController
 import org.example.project.ui.theme.NoteMarkTheme
+import org.example.project.ui.theme.PlatformThemeBridge
+import org.example.project.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import ru.sulgik.mapkit.MapKit
@@ -35,11 +37,16 @@ fun App() {
     LaunchedEffect(Unit) {
         customAppLocale = langController.current.languageCode
     }
+    val mode by ThemeController.mode.collectAsState()
 
     AppEnvironment {
 
+        SideEffect { PlatformThemeBridge.onModeChanged(mode) }
+
         CompositionLocalProvider(LocalLanguageController provides langController) {
-            NoteMarkTheme {
+            NoteMarkTheme(
+                mode = mode
+            ) {
                 Surface(
                     modifier = Modifier
                         .statusBarsPadding()

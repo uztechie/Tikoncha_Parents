@@ -16,5 +16,6 @@ actual object   PlatformThemeBridge {
         }
         println("PlatformThemeBridge onModeChanged=$mode")
         AppCompatDelegate.setDefaultNightMode(nightMode)
+
     }
 }

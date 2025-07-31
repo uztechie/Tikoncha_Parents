@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import org.example.project.platform.SystemBarTheme
 
 
 val LightColors = lightColorScheme(
@@ -37,15 +39,38 @@ val DarkColors = darkColorScheme(
 
 @Composable
 fun NoteMarkTheme(
+    mode: ThemeMode,
     content: @Composable ()-> Unit
 ){
 
-    val theme = if (isSystemInDarkTheme()){
+
+    val isDark = when (mode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.DARK   -> true
+        ThemeMode.LIGHT  -> false
+    }
+
+
+
+    val colorScheme = if (isDark){
         DarkColors
     }else
         LightColors
+
     MaterialTheme(
-        colorScheme = theme,
-        content = content
-    )
+        colorScheme = colorScheme,
+    ){
+
+        val statusBar = colorScheme.background
+        val navBarTransparent = colorScheme.background
+        val navBarFallback = colorScheme.background
+
+        SystemBarTheme.apply(
+            isDark = isDark,
+            statusBarColor = statusBar,
+            navigationBarColor = navBarTransparent,
+            navigationBarFallbackColor = navBarFallback,
+        )
+        content()
+    }
 }
