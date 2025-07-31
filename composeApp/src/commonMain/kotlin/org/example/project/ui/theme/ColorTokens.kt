@@ -1,6 +1,19 @@
 package org.example.project.ui.theme
 
-import org.example.project.presentation.base.theme.*
+import org.example.project.ui.Background
+import org.example.project.ui.CardColors
+import org.example.project.ui.DarkBackgroundColor
+import org.example.project.ui.DarkButtonBackgroundColors
+import org.example.project.ui.DarkCardColors
+import org.example.project.ui.DarkCardColorsButton
+import org.example.project.ui.DarkMainBorderColor
+import org.example.project.ui.DarkTextColor
+import org.example.project.ui.HintTextColor
+import org.example.project.ui.MainBorderColor
+import org.example.project.ui.OnText
+import org.example.project.ui.PrimaryColor
+import org.example.project.ui.TextColor
+import org.example.project.ui.TonalButtonContainerColor
 
 
 // Light_Color

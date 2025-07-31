@@ -33,28 +33,16 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.common.Util.getCurrentDate
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.SegmentedToggle
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.ContainerPadding
-import org.example.project.presentation.base.theme.SmallTextSize
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
 import org.example.project.presentation.task.ImportanceType
 import org.example.project.presentation.task.TaskEvent
 import org.example.project.presentation.task.TaskState
 import org.example.project.presentation.task.TaskViewModel
 import org.example.project.presentation.task.reformattedToday
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.bajarilgan_vazifalar
-import tikoncha_parents.composeapp.generated.resources.calendar_search
-import tikoncha_parents.composeapp.generated.resources.farzandingiz_vazifalari
-import tikoncha_parents.composeapp.generated.resources.shaxsiy_vazifalar
-import tikoncha_parents.composeapp.generated.resources.sizdan_vazifalar
-import tikoncha_parents.composeapp.generated.resources.task_square2
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 class CompletedTaskScreen : Screen {

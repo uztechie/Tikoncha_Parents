@@ -38,8 +38,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.russhwolf.settings.Settings
 import org.example.project.presentation.base.LogoHeader
-import org.example.project.presentation.base.theme.*
-import org.example.project.presentation.base.theme.SpaceLarge
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -162,7 +161,7 @@ fun ChildCodUI(
 
                     Text(
                         text = stringResource(Res.string.hozir_emas),
-                        fontSize = NormalTextLineHeight,
+                        fontSize = NormalTextSize,
                         color = PrimaryColor,
                         fontWeight = FontWeight.W600
                     )
@@ -179,7 +178,7 @@ fun ChildCodUI(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 text = stringResource(Res.string.davom_etish),
-                fontSize = NormalTextLineHeight,
+                fontSize = NormalTextSize,
                 fontWeight = FontWeight.W600,
             )
             SpaceLarge()

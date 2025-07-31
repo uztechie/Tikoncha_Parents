@@ -33,14 +33,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.add_child.ChildScreen
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.PasswordTextField
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.LargeTextSize
-import org.example.project.presentation.base.theme.NormalTextLineHeight
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.SpaceMedium
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -206,7 +199,7 @@ fun CreatePassword(
                 enabled = isPhoneNumberValid ,
                 text = stringResource(Res.string.keyingisi),
                 fontWeight = FontWeight.W600,
-                fontSize = NormalTextLineHeight
+                fontSize = NormalTextSize
             )
             SpaceLarge()
         }

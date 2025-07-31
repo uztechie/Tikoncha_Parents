@@ -29,28 +29,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.yourpackage.utils.formatTwoDigits
 import org.example.project.presentation.base.LogoHeader
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.LargeTextSize
-import org.example.project.presentation.base.theme.NormalTextLineHeight
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.TextColor
+import org.example.project.ui.*
 import org.example.project.presentation.register.RegisterScreen
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.keyingisi
-import tikoncha_parents.composeapp.generated.resources.kodni_qaytadan_yuborish
-import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_uchun_kodni_kiriting
-import tikoncha_parents.composeapp.generated.resources.sekund
-import tikoncha_parents.composeapp.generated.resources.siz_noto_g_ri_kodni_kirittingiz
-import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 
@@ -165,7 +149,7 @@ fun Otp(
         SpaceSmall()
         CustomText(
             text = stringResource(Res.string.sekund, formattedTime),
-            fontSize = NormalTextLineHeight,
+            fontSize = NormalTextSize,
             fontWeight = FontWeight.W600
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -179,7 +163,7 @@ fun Otp(
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
             text = stringResource(Res.string.keyingisi),
-            fontSize = NormalTextLineHeight,
+            fontSize = NormalTextSize,
             fontWeight = FontWeight.W600
 
         )

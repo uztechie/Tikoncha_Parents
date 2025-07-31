@@ -12,13 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.example.project.common.Util.currentMillis
-import org.example.project.presentation.base.theme.ChatMessageBackgroundColor
-import org.example.project.presentation.base.theme.ChatMessageCornerRadius
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SpaceUltraSmall
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.UltraSmallTextSize
-import org.example.project.ui.ChatTextSize
+import org.example.project.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.domain.model.ChatMessage
 import uz.saidburxon.newedu.presentation.base.CustomText

@@ -7,15 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.TextColor
+import org.example.project.ui.NormalTextSize
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
@@ -57,9 +55,7 @@ fun CustomText(
 fun CustomText(
     text: String,
     modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.titleMedium.copy(
-
-    ),
+    style: TextStyle = MaterialTheme.typography.titleMedium.copy(),
     color: Color = MaterialTheme.colorScheme.onBackground,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,

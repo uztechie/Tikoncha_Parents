@@ -17,18 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.CloseButtonInnerPadding
-import org.example.project.presentation.base.theme.CloseButtonSize
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.ui.CardCornerRadius
-import org.example.project.ui.DialogButtonHeight
-import org.example.project.ui.TextFieldCornerRadius
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.close_circle
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 

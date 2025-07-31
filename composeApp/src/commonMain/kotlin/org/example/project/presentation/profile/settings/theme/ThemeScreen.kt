@@ -40,6 +40,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.tema
+import uz.saidburxon.newedu.presentation.base.CustomButton
 
 class ThemeScreen: Screen {
     @Composable
@@ -57,19 +58,23 @@ class ThemeScreen: Screen {
 fun ThemeUi(
     navigator: Navigator?
 ){
-    val mode: ThemeMode = ThemeMode.SYSTEM
+//    val mode: ThemeMode = ThemeMode.SYSTEM
+//
+//    val dark = when (mode) {
+//        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+//        ThemeMode.DARK   -> true
+//        ThemeMode.LIGHT  -> false
+//    }
 
-    val dark = when (mode) {
-        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-        ThemeMode.DARK   -> true
-        ThemeMode.LIGHT  -> false
+    val current by mode.collectAsState()
+
+    var selectedTheme by remember(current) {
+        mutableStateOf(current)
     }
 
-    val current by ThemeController.mode.collectAsState()
-
-    var selectedTheme by remember {
-        mutableStateOf(ThemeMode.SYSTEM)
-    }
+//    var selectedTheme by remember {
+//        mutableStateOf(ThemeMode.SYSTEM)
+//    }
 
     Column(
         modifier = Modifier
@@ -118,7 +123,7 @@ fun ThemeUi(
                     .weight(1f)
             )
 
-            uz.saidburxon.newedu.presentation.base.CustomButton(
+          CustomButton(
                 text = stringResource(Res.string.davom_etish),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,7 +131,6 @@ fun ThemeUi(
                 enabled = true,
                 fontSize = NormalLargeTextSize,
                 onClick = {
-                    ThemePrefs.save(selectedTheme)
                     ThemeController.setMode(selectedTheme)
                 }
             )

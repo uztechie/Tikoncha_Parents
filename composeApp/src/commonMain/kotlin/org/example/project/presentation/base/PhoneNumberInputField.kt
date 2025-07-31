@@ -23,18 +23,11 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.NormalIconSize
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
-import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.call
-import tikoncha_parents.composeapp.generated.resources.telefon_nomer
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable

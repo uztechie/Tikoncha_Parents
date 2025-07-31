@@ -13,7 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import org.example.project.domain.model.PermissionItem
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.DividedButton
-import org.example.project.presentation.base.theme.*
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview

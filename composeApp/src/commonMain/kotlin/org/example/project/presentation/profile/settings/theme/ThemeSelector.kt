@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.TextColor
+import org.example.project.ui.TextColor
 import org.example.project.ui.NormalLargeTextSize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

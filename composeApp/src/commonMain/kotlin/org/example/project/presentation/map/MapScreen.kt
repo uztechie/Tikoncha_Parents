@@ -37,7 +37,6 @@ import org.example.project.platform.isLocationServiceEnabled
 import org.example.project.platform.openLocationSettings
 import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomHeader
-import org.example.project.presentation.base.theme.BackgroundColor
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

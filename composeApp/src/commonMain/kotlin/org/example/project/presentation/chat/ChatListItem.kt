@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,41 +13,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.Chat
-import org.example.project.presentation.base.theme.ChatIconSize
-import org.example.project.presentation.base.theme.ChatMessageColor
-import org.example.project.presentation.base.theme.ChatSmallIconSize
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.SmallIconButtonSize
-import org.example.project.presentation.base.theme.SmallTextSize
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.SpaceUltraSmall
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.UltraSmallTextSize
-import org.example.project.ui.OnPrimaryColor
-import org.example.project.ui.TonalButtonContainerColor
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.chat_ai_icon
-import tikoncha_parents.composeapp.generated.resources.chat_icon
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 
@@ -82,8 +59,8 @@ fun ChatListItem(
             contentDescription = "",
             modifier = Modifier
                 .clip(CircleShape)
-                .size(ChatIconSize)
-                .border(1.dp, TonalButtonContainerColor, CircleShape),
+                .size(NormalIconSize)
+                .border(1.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
         )
         SpaceSmall()
         Column(
@@ -93,7 +70,6 @@ fun ChatListItem(
         {
             CustomText(
                 text = chat.title,
-                color = TextColor,
                 fontSize = NormalTextSize,
             )
             if (chat.lastSender != null) {
@@ -106,29 +82,25 @@ fun ChatListItem(
                         contentDescription = "",
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(ChatSmallIconSize)
-                            .background(TonalButtonContainerColor)
-                            .border(1.dp, TonalButtonContainerColor, CircleShape),
+                            .size(SmallIconSize)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .border(1.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
                     )
                     SpaceUltraSmall()
                     CustomText(
                         text = "${chat.lastSender.lastname} ${chat.lastSender.name}",
-                        color = TextColor,
                         fontSize = UltraSmallTextSize,
                         maxLines = 1,
                     )
-
                 }
             }
             CustomText(
                 text = chat.lastMessage,
-                color = HintTextColor,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = UltraSmallTextSize,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-
-
         }
         SpaceSmall()
 
@@ -137,7 +109,6 @@ fun ChatListItem(
         ) {
             CustomText(
                 text = chat.time,
-                color = TextColor,
                 fontSize = UltraSmallTextSize
             )
 
@@ -161,14 +132,12 @@ fun ChatListItem(
                 }
                 CustomText(
                     text = "${chat.unReadCount}",
-                    color = OnPrimaryColor,
+                    color = MaterialTheme.colorScheme.background,
                     fontSize = textSize
                 )
             }
         }
-
     }
-
 }
 
 

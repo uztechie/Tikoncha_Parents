@@ -13,7 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.*
+import org.example.project.ui.ProgressColor1
+import org.example.project.ui.ProgressColor2
+import org.example.project.ui.ProgressColor3
+import org.example.project.ui.ProgressColor4
+import org.example.project.ui.ProgressColor5
 
 @Composable
 fun CustomLinearProgress(

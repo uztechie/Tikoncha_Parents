@@ -18,15 +18,9 @@ import org.example.project.domain.model.Chat
 import org.example.project.domain.model.User
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.SearchField
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.DividerColor
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.TextFieldHeight
-import org.example.project.presentation.monitoring.ClientPermissionStateScreen
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.stringResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.ism_orqali_qidirish
-import tikoncha_parents.composeapp.generated.resources.suhbat
+import tikoncha_parents.composeapp.generated.resources.*
 
 class ChatScreen: Screen {
     @Composable

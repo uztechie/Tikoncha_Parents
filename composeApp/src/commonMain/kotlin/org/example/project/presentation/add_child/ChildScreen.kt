@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -36,16 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,25 +48,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.LogoHeader
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.ButtonCornerRadius
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.ContainerCornerRadius
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.MainBorderColor
-import org.example.project.presentation.base.theme.NormalIconSize
-import org.example.project.presentation.base.theme.NormalTextLineHeight
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.OnPrimaryColor
-import org.example.project.presentation.base.theme.PaddingCornerRadius
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SmallTextSize
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
-import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.ui.OnPrimaryColor
+import org.example.project.ui.PrimaryColor
 import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -81,7 +60,6 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 class ChildScreen : Screen {
 
@@ -231,9 +209,9 @@ fun Child(
             ) {
                 Row {
 
-                    Text(
+                    CustomText(
                         text = stringResource(Res.string.o_tkazib_yuborish),
-                        fontSize = NormalTextLineHeight,
+                        fontSize = NormalTextSize,
                         color = PrimaryColor,
                         fontWeight = FontWeight.W500,
                     )
@@ -254,7 +232,7 @@ fun Child(
                 enabled = areAllPhoneNumbersValid,
                 text = stringResource(Res.string.keyingisi),
                 fontWeight = FontWeight.W500,
-                fontSize = NormalTextLineHeight
+                fontSize = NormalTextSize
             )
             SpaceLarge()
         }

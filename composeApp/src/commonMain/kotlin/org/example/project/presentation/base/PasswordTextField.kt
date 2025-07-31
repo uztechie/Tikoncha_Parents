@@ -25,18 +25,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.NormalIconSize
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
-import org.example.project.presentation.base.theme.TextFieldHeight
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.eye
-import tikoncha_parents.composeapp.generated.resources.eye_slash
-import tikoncha_parents.composeapp.generated.resources.lock
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun PasswordTextField(

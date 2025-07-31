@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
@@ -17,14 +16,11 @@ import kotlinx.datetime.LocalDate
 import org.example.project.common.Util
 import org.example.project.common.Util.getMonthName
 import org.example.project.presentation.base.CustomOutlinedButton
-import org.example.project.presentation.base.theme.*
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.arrow_down
-import tikoncha_parents.composeapp.generated.resources.arrow_next
-import tikoncha_parents.composeapp.generated.resources.bekor_qilish
-import tikoncha_parents.composeapp.generated.resources.saqlash
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 

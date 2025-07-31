@@ -3,15 +3,10 @@ package org.example.project.presentation.base
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -21,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,31 +30,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
-
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.min
-import org.example.project.presentation.base.theme.ChatMessageBackgroundColor
-import org.example.project.presentation.base.theme.DisableButtonColor
-import org.example.project.presentation.base.theme.DisableButtonContentColor
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.NormalIconButtonSize
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
-import org.example.project.presentation.base.theme.TextFieldHeight
-import org.example.project.presentation.base.theme.TextFieldInnerPadding
+import org.example.project.ui.*
 import org.example.project.ui.MyFontFamily
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.chat_add
-import tikoncha_parents.composeapp.generated.resources.chat_send
-import tikoncha_parents.composeapp.generated.resources.xabar_yozish
+import tikoncha_parents.composeapp.generated.resources.*
 
 import uz.saidburxon.newedu.presentation.base.CustomText
 

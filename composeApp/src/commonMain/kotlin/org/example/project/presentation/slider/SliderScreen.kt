@@ -27,28 +27,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.LogoText
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.CardCornerRadius
-import org.example.project.presentation.base.theme.ContainerPadding
-import org.example.project.presentation.base.theme.DisableButtonTextColor
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SpaceLarge
+import org.example.project.ui.*
 import org.example.project.presentation.login.LoginScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.bilimdon_bo_lishga_birinchi_qadam
-import tikoncha_parents.composeapp.generated.resources.bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin
-import tikoncha_parents.composeapp.generated.resources.o_tkazib_yuborish
-import tikoncha_parents.composeapp.generated.resources.slider_background
-import tikoncha_parents.composeapp.generated.resources.star
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 class SliderScreen : Screen {

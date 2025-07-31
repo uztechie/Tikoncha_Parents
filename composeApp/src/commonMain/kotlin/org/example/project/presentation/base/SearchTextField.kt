@@ -8,13 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import org.example.project.presentation.base.theme.SmallIconButtonSize
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TonalButtonContainerColor
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.close_circle
-import tikoncha_parents.composeapp.generated.resources.search_normal
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun SearchField(

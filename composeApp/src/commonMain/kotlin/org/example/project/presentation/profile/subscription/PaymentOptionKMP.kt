@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
@@ -31,7 +32,7 @@ fun PaymentOptionKMP(
     Box(
         modifier = modifier
             .height(72.dp)
-            .border(1.dp, HintTextColor, RoundedCornerShape(ContainerCornerRadius))
+            .border(1.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(TextFieldCornerRadius))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -53,7 +54,7 @@ fun PaymentOptionKMP(
                 selected = isSelected,
                 onClick = null,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = TextColor
+                    selectedColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }

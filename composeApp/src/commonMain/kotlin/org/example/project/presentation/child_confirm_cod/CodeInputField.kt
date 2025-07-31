@@ -23,20 +23,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.ui.CardCornerRadius
-import org.example.project.ui.ContainerCornerRadius
-import org.example.project.ui.DisableTextColor
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.PrimaryColor
-import org.example.project.ui.TextFieldIconSize
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.kodni_kiriting
-import tikoncha_parents.composeapp.generated.resources.kodni_qaytadan_yuborish
-import tikoncha_parents.composeapp.generated.resources.password_check
+import tikoncha_parents.composeapp.generated.resources.*
 
 @Composable
 fun CodeInputField(

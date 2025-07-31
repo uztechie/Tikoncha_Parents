@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -39,24 +38,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.PhoneNumberInputField
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SmallTextSize
-import org.example.project.presentation.base.theme.SpaceLarge
-import org.example.project.presentation.base.theme.SpaceMedium
+import org.example.project.ui.*
 import org.example.project.presentation.otp.OtpScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.keyingisi
-import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish
-import tikoncha_parents.composeapp.generated.resources.slider_normal
-import tikoncha_parents.composeapp.generated.resources.slider_small
-import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 

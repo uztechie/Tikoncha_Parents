@@ -28,26 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.OnPrimaryColor
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.TextFieldCornerRadius
-import org.example.project.presentation.base.theme.TextFieldHeight
-import org.example.project.presentation.base.theme.TextFieldIconSize
-import org.example.project.presentation.base.theme.TextFieldInnerPadding
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.father_icon
-import tikoncha_parents.composeapp.generated.resources.mather_icon
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable

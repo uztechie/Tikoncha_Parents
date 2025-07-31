@@ -2,13 +2,6 @@ package org.example.project.ui
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
 
 val SliderPageColor = Color(0xFF8AD194)
 
@@ -16,7 +9,6 @@ val SliderPageColor = Color(0xFF8AD194)
 val LightDark = Color(0x00800000)
 val EditTextBorder = Color(0xFFD9D9D9)
 val ColorWhite = Color(0xFFF8F8F8)
-
 
 
 val DividerColor = Color(0xFFE9E9E9)
@@ -53,6 +45,7 @@ val MostImportantButtonColor = Color(0xFFF67272)
 val Success = Color(0xFF00C853)
 val Failed = Color(0xFFFF9090)
 val Background = Color(0xFFFFFFFF)
+val OnText = Color(0xFFAFAFAF)
 
 
 val PermissionTextColor = Color(0xFF1A1A1A)
@@ -68,4 +61,16 @@ val ProgressColor2 = Color(0xFFFF6D00)
 val ProgressColor3 = Color(0xFFFFD600)
 val ProgressColor4 = Color(0xFFAEEA00)
 val ProgressColor5 = PrimaryColor
+
+val DarkBackgroundColor = Color(0xFF010D01)
+
+val DarkCardColors = Color(0xFF1A1A1A)
+
+val DarkMainBorderColor = Color(0xFF011E01)
+
+val DarkTextColor = Color(0xFFFFFFFF)
+
+val DarkButtonBackgroundColors = Color(0xFF434343)
+
+val DarkCardColorsButton = Color(0xFF282525)
 

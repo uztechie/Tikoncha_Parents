@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,21 +36,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.example.project.common.Util
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.CustomTextFieldTask
-import org.example.project.presentation.base.theme.*
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
-import org.example.project.presentation.completedTask.CompletedTaskScreen
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,16 +12,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.base.theme.ButtonCornerRadius
-import org.example.project.presentation.base.theme.ButtonHeight
-import org.example.project.presentation.base.theme.DisableButtonColor
-import org.example.project.presentation.base.theme.DisableButtonContentColor
-import org.example.project.presentation.base.theme.NormalTextSize
-import org.example.project.presentation.base.theme.OnPrimaryColor
-import org.example.project.presentation.base.theme.PrimaryColor
+import org.example.project.ui.*
 
 
-import org.example.project.presentation.base.theme.SmallTextSize
 import org.example.project.ui.TextFieldCornerRadius
 
 @Composable
@@ -32,7 +24,7 @@ fun CustomButton(
     fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
     color: Color = PrimaryColor,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    textColor: Color = OnPrimaryColor,
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),

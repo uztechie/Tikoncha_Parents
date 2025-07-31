@@ -40,44 +40,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import org.example.project.presentation.base.ChatTypingTextField
-import org.example.project.presentation.base.CustomMultiLineTextField
-import org.example.project.presentation.base.theme.BackgroundColor
-import org.example.project.presentation.base.theme.ChatMessageBackgroundColor
-import org.example.project.presentation.base.theme.ContainerPadding
-import org.example.project.presentation.base.theme.HeaderHeight
-import org.example.project.presentation.base.theme.HintTextColor
-import org.example.project.presentation.base.theme.NormalIconButtonPadding
-import org.example.project.presentation.base.theme.NormalIconButtonSize
-import org.example.project.presentation.base.theme.PrimaryColor
-import org.example.project.presentation.base.theme.SmallTextSize
-import org.example.project.presentation.base.theme.SpaceMedium
-import org.example.project.presentation.base.theme.SpaceSmall
-import org.example.project.presentation.base.theme.TextColor
-import org.example.project.presentation.base.theme.TextFieldHeight
-import org.example.project.presentation.base.theme.TonalButtonContainerColor
+import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.arrow_left
-import tikoncha_parents.composeapp.generated.resources.chat_add
-import tikoncha_parents.composeapp.generated.resources.chat_icon
-import tikoncha_parents.composeapp.generated.resources.chat_send
-import tikoncha_parents.composeapp.generated.resources.xabar_yozish
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.domain.model.ChatMessageItem
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.feature.chat.ChatEvent
-import uz.saidburxon.newedu.presentation.feature.chat.ChatState
-import uz.saidburxon.newedu.presentation.feature.chat.ChatViewModel
-import uz.saidburxon.newedu.presentation.feature.chat.MessageDateItem
-import uz.saidburxon.newedu.presentation.feature.chat.MessageReceivedItem
-import uz.saidburxon.newedu.presentation.feature.chat.MessageSentItem
+import uz.saidburxon.newedu.presentation.feature.chat.*
 
 
 class ChatMessageScreen : Screen{
