@@ -51,7 +51,7 @@ fun DividedButton(
 
     if (success){
         contentColor = PrimaryColor
-        borderColor = PermissionBorderColor
+        borderColor = BorderColor
         checkIcon = painterResource(Res.drawable.permission_granted)
     }
     else{

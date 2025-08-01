@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import org.example.project.ui.BorderColor
 import org.example.project.ui.DisableButtonColor
 import org.example.project.ui.DisableButtonContentColor
 import org.example.project.ui.HintTextColor
@@ -52,8 +53,8 @@ fun CoinGeneratorTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = Color.White,
-    contentColor: Color = TextColor,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -73,7 +74,7 @@ fun CoinGeneratorTextField(
     }
 
     var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    var borderColor  = if (enabled) BorderColor else DisableButtonContentColor
 
     var newModifier = if (hasBorder){
         modifier

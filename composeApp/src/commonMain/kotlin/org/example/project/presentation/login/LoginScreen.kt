@@ -128,7 +128,7 @@ fun Login(
                 text = stringResource(Res.string.ro_yxatdan_o_tish),
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
             )
             SpaceMedium()
             PhoneNumberInputField(
@@ -158,13 +158,13 @@ fun Login(
                 append("Авторизуясь, вы принимаете наши Условия использования и ")
                 pushStringAnnotation(
                     tag = "POLICY",
-                    annotation = "policy"
+                    annotation = "policy",
                 )
                 withStyle(
                     style = SpanStyle(
                         color = PrimaryColor,
                         textDecoration = TextDecoration.Underline,
-                        fontSize = SmallTextSize,
+                        fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500
                     )
                 ) {
@@ -175,7 +175,7 @@ fun Login(
 
             ClickableText(
                 text = annotatedText,
-                style = TextStyle(fontSize = SmallTextSize, color = MaterialTheme.colorScheme.onBackground),
+                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.colorScheme.onBackground),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
                         .firstOrNull()?.let {
@@ -185,10 +185,14 @@ fun Login(
             SpaceLarge()
         }
     }
-
 }
 
+@Composable
 @Preview
 private fun Preview() {
-    LoginScreen()
+    Login(
+        navigator = null,
+        enterPhoneState = LoginState(),
+        enterPhoneEvent = {}
+    )
 }

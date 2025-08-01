@@ -72,7 +72,7 @@ fun CustomMultiLineTextField(
     }
 
     var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    var borderColor  = if (enabled) BorderColor else DisableButtonContentColor
 
     var newModifier = if (hasBorder){
         modifier

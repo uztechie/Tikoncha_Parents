@@ -44,7 +44,7 @@ fun CustomSelectionButton(
     fonSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     showTrailingIcon: Boolean = true,
-    tint: Color = MaterialTheme.colorScheme.secondary
+    tint: Color = SliderPageColor
 ) {
 
     val color = if (text.isEmpty()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
@@ -54,7 +54,7 @@ fun CustomSelectionButton(
         modifier = modifier
             .clip(RoundedCornerShape(TextFieldCornerRadius))
             .fillMaxWidth()
-            .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)

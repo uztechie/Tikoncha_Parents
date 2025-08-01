@@ -41,6 +41,7 @@ import org.example.project.presentation.base.LogoHeader
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
@@ -139,7 +140,7 @@ fun ChildCodUI(
 
             CustomText(
                 text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
-                fontSize = UltraSmallTextSize,
+                fontSize = NormalTextSize,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
@@ -154,7 +155,7 @@ fun ChildCodUI(
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(ButtonHeight),
             ) {
                 Row {
@@ -184,5 +185,15 @@ fun ChildCodUI(
             SpaceLarge()
         }
     }
+}
+
+@Composable
+@Preview
+fun Preview(){
+    ChildCodUI(
+        navigator = null,
+        state = ChildConfirmState(),
+        event = {}
+    )
 }
 

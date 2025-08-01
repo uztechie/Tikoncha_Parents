@@ -136,7 +136,7 @@ fun Child(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
-                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else PrimaryColor, shape = RoundedCornerShape(ContainerCornerRadius)),
+                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else BorderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
                 ) {
                     Column(
@@ -174,7 +174,7 @@ fun Child(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(ButtonHeight),
             ) {
                 Row {
@@ -204,7 +204,7 @@ fun Child(
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(ButtonHeight),
             ) {
                 Row {
@@ -258,7 +258,7 @@ fun ChildPhoneInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = if (isAccepted) PrimaryColor else OnPrimaryColor,
+                    color = if (isAccepted) BorderColor else OnPrimaryColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .background(Color.Transparent)
