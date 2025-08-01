@@ -94,8 +94,8 @@ fun TimePickerDialog(
                                 .height(DialogButtonHeight)
                                 .fillMaxWidth(),
                             textColor = PrimaryColor,
-                            borderColor = PrimaryColor,
-                            shape = RoundedCornerShape(ButtonDialogCornerRadius)
+                            borderColor = BorderColor,
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -108,10 +108,10 @@ fun TimePickerDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp,
-                                    PrimaryColor, RoundedCornerShape(ButtonDialogCornerRadius))
+                                    PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                                 .height(DialogButtonHeight),
                             text = stringResource(Res.string.saqlash),
-                            shape = RoundedCornerShape(ButtonDialogCornerRadius)
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
                     }
                 }
@@ -157,7 +157,7 @@ fun TimeColumn(
         modifier = Modifier
             .width(120.dp)
             .height(70.dp)
-            .border(1.dp, PrimaryColor, RoundedCornerShape(12.dp))
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
     ) {
         LazyColumn(
             state = listState,

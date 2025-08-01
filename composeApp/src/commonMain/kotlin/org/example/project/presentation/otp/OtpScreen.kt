@@ -70,6 +70,12 @@ fun Otp(
     var previousFormattedTime by remember { mutableStateOf(formattedTime) }
     var finishedTime by remember { mutableStateOf(false) }
 
+    val borderColor = when {
+        finishedTime -> OtpErrorColor
+        isOtpCodeValid -> PrimaryColor
+        else -> BorderColor
+    }
+
     LaunchedEffect(Unit) {
         event(OtpEvent.TimeStart)
     }
@@ -105,7 +111,7 @@ fun Otp(
         SpaceLarge()
         OtpInput(
             otpLength = 6,
-            onBorderColor = if (finishedTime) true else false,
+            onBorderColor = borderColor,
             onOtpUpdate = {
                 event(OtpEvent.OnOtpUpdate(it))
             },
@@ -175,5 +181,9 @@ fun Otp(
 @Preview
 @Composable
 private fun Preview() {
-    OtpScreen()
+    Otp(
+        navigator = null,
+        state = OtpState(),
+        event = {}
+    )
 }

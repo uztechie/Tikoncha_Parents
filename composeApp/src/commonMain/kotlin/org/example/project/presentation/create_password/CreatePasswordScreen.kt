@@ -209,5 +209,9 @@ fun CreatePassword(
 @Preview()
 @Composable
 private fun Prev() {
-    CreatePasswordScreen()
+    CreatePassword(
+        navigator = null,
+        state = CreatePasswordState(),
+        event = {}
+    )
 }

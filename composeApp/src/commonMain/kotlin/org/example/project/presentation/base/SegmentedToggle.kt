@@ -60,7 +60,7 @@ fun SegmentedToggle(
             .height(TextFieldHeight)
 
             .clip(RoundedCornerShape(TextFieldCornerRadius))
-            .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(4.dp)
             .onGloballyPositioned { layoutCoordinates ->
                 val totalWidth = layoutCoordinates.size.width

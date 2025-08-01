@@ -55,6 +55,7 @@ import org.example.project.ui.SpaceLarge
 import org.example.project.ui.SpaceMedium
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
+import org.example.project.ui.TextFieldCornerRadius
 import org.example.project.ui.TextFieldHeight
 import org.example.project.ui.TonalButtonContainerColor
 import org.jetbrains.compose.resources.painterResource
@@ -248,7 +249,9 @@ fun CoinsUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(30.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(
+                        TextFieldCornerRadius
+                    ))
                     .padding(4.dp)
             ) {
 
@@ -256,7 +259,7 @@ fun CoinsUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
-                    shape = RoundedCornerShape(30.dp),
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 )
                 {

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,12 +31,14 @@ import androidx.compose.ui.unit.dp
 import org.example.project.presentation.common.CoinGeneratorTextField
 import org.example.project.ui.AppIconInnerPadding
 import org.example.project.ui.BackgroundColor
+import org.example.project.ui.BorderColor
 import org.example.project.ui.CoinTextFieldWidth
 import org.example.project.ui.NormalIconButtonSize
 import org.example.project.ui.NormalLargeTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SpaceSmall
+import org.example.project.ui.TextFieldCornerRadius
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -81,8 +84,8 @@ fun CoinAmountTextField(
                 .size(NormalIconButtonSize)
                 .border(
                     width = 1.dp,
-                    color = PrimaryColor,
-                    shape = RoundedCornerShape(ShapeCornerRadius)
+                    color = BorderColor,
+                    shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .clickable {
 
@@ -96,7 +99,7 @@ fun CoinAmountTextField(
 
                 }
                 .padding(AppIconInnerPadding)
-                .background(BackgroundColor),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
 
@@ -163,7 +166,7 @@ fun CoinAmountTextField(
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
-                .clip(RoundedCornerShape(ShapeCornerRadius))
+                .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
                     if (coinsAmount.isNotEmpty()){
                         if (coinsAmount.all { it.isDigit() }){

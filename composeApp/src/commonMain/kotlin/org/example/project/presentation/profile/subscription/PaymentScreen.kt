@@ -139,7 +139,7 @@ fun PaymentScreenUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, CardColors, RoundedCornerShape(30.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(4.dp)
             ) {
 
@@ -147,8 +147,8 @@ fun PaymentScreenUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
-                    shape = RoundedCornerShape(30.dp),
-                    colors = CardDefaults.cardColors(containerColor = CardColors),
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 )
                 {
                     Column(
@@ -165,7 +165,7 @@ fun PaymentScreenUi(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(BackgroundColor)
+                                    .background(MaterialTheme.colorScheme.background)
                                     .padding(10.dp)
                             ) {
                                 Image(
@@ -209,7 +209,6 @@ fun PaymentScreenUi(
                     CustomText(
                         text = stringResource(Res.string.hammasi),
                         fontSize = NormalTextSize,
-                        color = TextColor,
                         fontWeight = FontWeight.W600
                     )
                     CustomText(

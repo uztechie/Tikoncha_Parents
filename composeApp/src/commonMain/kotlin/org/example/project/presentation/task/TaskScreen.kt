@@ -137,8 +137,8 @@ fun TaskUi(
                     .wrapContentSize()
                     .border(
                         1.dp,
-                        MaterialTheme.colorScheme.secondary,
-                        RoundedCornerShape(ContainerCornerRadius)
+                        BorderColor,
+                        RoundedCornerShape(TextFieldCornerRadius)
                     )
                     .padding(vertical = 10.dp, horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -185,7 +185,6 @@ fun TaskUi(
 
             CustomText(
                 text = stringResource(Res.string.sizdan_vazifalar),
-                fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
             )
 
@@ -247,7 +246,6 @@ fun TaskUi(
 
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
-                fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
             )
 

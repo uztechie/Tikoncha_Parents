@@ -41,7 +41,7 @@ fun CodeInputField(
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, PrimaryColor, RoundedCornerShape(ContainerCornerRadius)),
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius)),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         textStyle = TextStyle(fontSize = fontSize, fontWeight = fontWeight),

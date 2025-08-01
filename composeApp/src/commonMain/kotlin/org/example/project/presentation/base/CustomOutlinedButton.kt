@@ -33,7 +33,7 @@ fun CustomOutlinedButton(
     borderColor: Color = PrimaryColor,
     enabled: Boolean = true,
     onClick: () -> Unit,
-    shape: Shape = RoundedCornerShape(ButtonCornerRadius),
+    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
     leadingIcon: (@Composable () -> Unit)? = null,
     endingIcon: (@Composable () -> Unit)? = null
 ) {
