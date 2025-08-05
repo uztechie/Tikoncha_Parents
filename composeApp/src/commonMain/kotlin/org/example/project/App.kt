@@ -13,7 +13,10 @@ import dev.burnoo.compose.remembersetting.rememberStringSetting
 import org.example.project.platform.AppEnvironment
 import org.example.project.platform.Localization
 import org.example.project.platform.customAppLocale
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
 import org.example.project.presentation.domain.model.LanguageType
+import org.example.project.presentation.login.LoginScreen
+import org.example.project.presentation.otp.OtpScreen
 import org.example.project.presentation.profile.ProfileScreen
 import org.example.project.presentation.profile.language.AppLanguage
 import org.example.project.presentation.profile.language.LanguageController

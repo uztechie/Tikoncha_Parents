@@ -39,10 +39,12 @@ import tikoncha_parents.composeapp.generated.resources.ming_sum
 import tikoncha_parents.composeapp.generated.resources.money_light
 import tikoncha_parents.composeapp.generated.resources.obuna_pro
 import tikoncha_parents.composeapp.generated.resources.pay_me
+import tikoncha_parents.composeapp.generated.resources.paynet
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.ta_tanga
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import tikoncha_parents.composeapp.generated.resources.tolov
+import tikoncha_parents.composeapp.generated.resources.uzum
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 
@@ -132,14 +134,34 @@ fun PaymentScreenUi(
                 )
             }
 
+            SpaceMedium()
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                PaymentOptionKMP(
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(Res.drawable.paynet),
+                    isSelected = selectedPayment == "paynet",
+                    onClick = { selectedPayment = "paynet" }
+                )
+                PaymentOptionKMP(
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(Res.drawable.uzum),
+                    isSelected = selectedPayment == "uzum",
+                    onClick = { selectedPayment = "uzum" }
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, CardColors, RoundedCornerShape(30.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(4.dp)
             ) {
 
@@ -147,8 +169,8 @@ fun PaymentScreenUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
-                    shape = RoundedCornerShape(30.dp),
-                    colors = CardDefaults.cardColors(containerColor = CardColors),
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 )
                 {
                     Column(
@@ -165,7 +187,7 @@ fun PaymentScreenUi(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(BackgroundColor)
+                                    .background(MaterialTheme.colorScheme.background)
                                     .padding(10.dp)
                             ) {
                                 Image(
@@ -209,7 +231,6 @@ fun PaymentScreenUi(
                     CustomText(
                         text = stringResource(Res.string.hammasi),
                         fontSize = NormalTextSize,
-                        color = TextColor,
                         fontWeight = FontWeight.W600
                     )
                     CustomText(

@@ -46,7 +46,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun OtpInput(
     otpLength: Int = 6,
-    onBorderColor: Boolean = false,
+    onBorderColor: Color = BorderColor,
     fontSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     onOtpUpdate: (String) -> Unit,
@@ -74,7 +74,7 @@ fun OtpInput(
                 modifier = Modifier
                     .aspectRatio(1f/1f)
                     .weight(1f)
-                    .border(1.dp, if (onBorderColor){Color.Red} else PrimaryColor, RoundedCornerShape(12.dp)),
+                    .border(1.dp, onBorderColor, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ){
                 BasicTextField(

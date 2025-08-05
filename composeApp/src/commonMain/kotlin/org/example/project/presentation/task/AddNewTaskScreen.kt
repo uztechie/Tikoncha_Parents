@@ -152,7 +152,7 @@ fun AddNewTask(
         ) {
             CustomText(
                 text = stringResource(Res.string.vazifa_nomi),
-                fontSize = NormalTextSize,
+                fontSize = NormalLargeTextSize,
                 fontWeight = FontWeight.W600,
             )
 
@@ -162,7 +162,7 @@ fun AddNewTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight)
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)),
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius)),
                 value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
@@ -173,7 +173,7 @@ fun AddNewTask(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+                        colorFilter = ColorFilter.tint(SliderPageColor)
                     )
                 },
                 fonSize = SmallTextSize,
@@ -192,14 +192,14 @@ fun AddNewTask(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(vertical = 10.dp),
                 leadingIcon = {
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+                        colorFilter = ColorFilter.tint(SliderPageColor)
                     )
                 },
                 label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
@@ -247,7 +247,7 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
@@ -310,5 +310,9 @@ fun AddNewTask(
 @Preview
 @Composable
 private fun Preview() {
-    AddNewTaskScreen()
+    AddNewTask(
+        navigator = null,
+        state = TaskState(),
+        event = {}
+    )
 }

@@ -204,5 +204,9 @@ fun Register(
 @Preview
 @Composable
 private fun Preview() {
-    RegisterScreen()
+    Register(
+        navigator = null,
+        state = RegisterState(),
+        event = {}
+    )
 }

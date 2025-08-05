@@ -32,6 +32,7 @@ import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.NormalLargeTextSize
+import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SpaceLarge
@@ -293,7 +294,7 @@ fun PersonalInformationUi(
                     )
                 },
                 onClick = { rootNavigator?.push(ChildScreen())},
-                textColor = PrimaryColor
+                textColor = PrimaryColor,
             )
             SpaceLarge()
         }

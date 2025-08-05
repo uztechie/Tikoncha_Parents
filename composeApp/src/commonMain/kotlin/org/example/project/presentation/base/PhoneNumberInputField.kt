@@ -44,7 +44,7 @@ fun PhoneNumberInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = PrimaryColor,
+                    color = BorderColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .padding(horizontal = 20.dp, vertical = 0.dp)

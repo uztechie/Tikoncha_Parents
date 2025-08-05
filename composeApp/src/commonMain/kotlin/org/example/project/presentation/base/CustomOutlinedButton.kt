@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
@@ -27,13 +28,14 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 @Composable
 fun CustomOutlinedButton(
     text: String,
+    fontSize: TextUnit = NormalTextSize,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     borderColor: Color = PrimaryColor,
     enabled: Boolean = true,
     onClick: () -> Unit,
-    shape: Shape = RoundedCornerShape(ButtonCornerRadius),
+    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
     leadingIcon: (@Composable () -> Unit)? = null,
     endingIcon: (@Composable () -> Unit)? = null
 ) {
@@ -70,7 +72,7 @@ fun CustomOutlinedButton(
                 text = text,
                 color = contentColor,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = SmallTextSize
+                fontSize = fontSize
             )
 
             if (endingIcon != null) {

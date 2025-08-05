@@ -145,7 +145,7 @@ fun SubscriptionUi(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(ContainerCornerRadius),
+                shape = RoundedCornerShape(TextFieldCornerRadius),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -253,7 +253,7 @@ fun SubscriptionUi(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(ContainerCornerRadius),
+                shape = RoundedCornerShape(TextFieldCornerRadius),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )

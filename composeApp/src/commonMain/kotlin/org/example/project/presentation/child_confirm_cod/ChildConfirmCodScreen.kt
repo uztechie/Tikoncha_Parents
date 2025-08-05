@@ -41,6 +41,7 @@ import org.example.project.presentation.base.LogoHeader
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
@@ -72,6 +73,8 @@ fun ChildCodUI(
     state: ChildConfirmState,
     event: (ChildConfirmEvent)-> Unit
 ) {
+
+    val serverCode = remember { "422017" }
 
     var code by remember { mutableStateOf("") }
 
@@ -126,20 +129,25 @@ fun ChildCodUI(
             SpaceLarge()
 
             CodeInputField(
-                value = textFieldValue,
-                onValueChange = { input ->
-                    val digits = input.text.filter { it.isDigit() }.take(6)
-                    code = digits
-                },
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.W500
-            )
+                codeDigits = serverCode,
+                onCopiedToClip = {}
+                )
+
+//            CodeInputField(
+//                value = textFieldValue,
+//                onValueChange = { input ->
+//                    val digits = input.text.filter { it.isDigit() }.take(6)
+//                    code = digits
+//                },
+//                fontSize = SmallTextSize,
+//                fontWeight = FontWeight.W500
+//            )
 
             SpaceSmall()
 
             CustomText(
                 text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
-                fontSize = UltraSmallTextSize,
+                fontSize = NormalTextSize,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
@@ -154,7 +162,7 @@ fun ChildCodUI(
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(ButtonHeight),
             ) {
                 Row {
@@ -184,5 +192,15 @@ fun ChildCodUI(
             SpaceLarge()
         }
     }
+}
+
+@Preview
+@Composable
+private fun Pre(){
+    ChildCodUI(
+        navigator = null,
+        state = ChildConfirmState(),
+        event = {}
+    )
 }
 

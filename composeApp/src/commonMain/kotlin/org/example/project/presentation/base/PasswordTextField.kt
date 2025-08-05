@@ -54,7 +54,7 @@ fun PasswordTextField(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = PrimaryColor,
+                color = BorderColor,
                 shape = RoundedCornerShape(TextFieldCornerRadius)
             )
             .height(TextFieldHeight),

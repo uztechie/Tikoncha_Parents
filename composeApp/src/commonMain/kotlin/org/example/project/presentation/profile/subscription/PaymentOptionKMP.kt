@@ -32,7 +32,8 @@ fun PaymentOptionKMP(
     Box(
         modifier = modifier
             .height(72.dp)
-            .border(1.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(BackgroundColor, RoundedCornerShape(TextFieldCornerRadius))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -48,13 +49,13 @@ fun PaymentOptionKMP(
             Image(
                 painter = painter,
                 contentDescription = null,
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier.size(60.dp),
             )
             RadioButton(
                 selected = isSelected,
                 onClick = null,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colorScheme.onBackground
+                    selectedColor = TextColor
                 )
             )
         }

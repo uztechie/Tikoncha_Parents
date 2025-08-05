@@ -14,6 +14,8 @@ val ColorWhite = Color(0xFFF8F8F8)
 val DividerColor = Color(0xFFE9E9E9)
 val BackgroundColor = Color(0xFFFFFDFD)
 val PrimaryColor = Color(0xFF4BB462)
+val BorderColor = Color(0xFFE7E7E7)
+val OtpErrorColor = Color(0xFFFF9090)
 val ChatMessageColor = Color(0xFF8AD194)
 val ChatMessageBackgroundColor = Color(0xFFF3F4F7)
 
@@ -36,8 +38,8 @@ val CheckBoxCheckBackgroundColor = Color(0xFFCBF4E2)
 val WheelPickerSelectionColor = Color(0xFFF3F4F7)
 val CardColors = Color(0xFFF3F4F7)
 val MediumButtonColor = Color(0xFF4BB462)
-val ImportantButtonColor = Color(0xFFDBEC57)
-val MostImportantButtonColor = Color(0xFFF67272)
+val ImportantButtonColor = Color(0xFFFFBC4C)
+val MostImportantButtonColor = Color(0xFFEB5B00)
 
 
 
