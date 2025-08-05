@@ -21,9 +21,12 @@ import org.example.project.ui.HintTextColor
 import org.example.project.ui.MainCornerRadius
 import org.example.project.ui.NormalIconSize
 import org.example.project.ui.PrimaryColor
+import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SmallTextSize
+import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
 import org.example.project.ui.TextColor
+import org.example.project.ui.TextFieldIconSize
 import org.example.project.ui.UltraSmallTextSize
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -42,9 +45,9 @@ fun PersonalInformationItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(MainCornerRadius))
+            .clip(RoundedCornerShape(ShapeCornerRadius))
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = ContainerPadding, vertical = 5.dp),
+            .padding(horizontal = ContainerPadding, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -53,10 +56,10 @@ fun PersonalInformationItem(
             contentDescription = "",
             tint = PrimaryColor,
             modifier = Modifier
-                .size(NormalIconSize)
+                .size(TextFieldIconSize)
         )
 
-        SpaceUltraSmall()
+        SpaceSmall()
 
         Column(
             modifier = Modifier

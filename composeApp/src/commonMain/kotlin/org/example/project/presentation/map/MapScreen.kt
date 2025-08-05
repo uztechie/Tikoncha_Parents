@@ -284,7 +284,7 @@ class MapScreen : Screen {
 
                 Placemark(
                     state = placeMarkState2,
-                    contentSize = DpSize(100.dp, 50.dp)
+                    contentSize = DpSize(100.dp, 80.dp)
                 ) {
                     MapMarker(
                         title = "Abdurahimjonbek",

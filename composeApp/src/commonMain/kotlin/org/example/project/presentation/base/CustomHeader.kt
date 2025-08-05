@@ -71,7 +71,7 @@ fun CustomHeader(
                         .size(NormalIconButtonSize),
                     onClick = onBackClick,
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.background,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     shape = RoundedCornerShape(10.dp)
@@ -174,6 +174,7 @@ private fun Preview() {
     ) {
         CustomHeader(
             title = "Title",
+            showBackButton = true
         )
     }
 }
