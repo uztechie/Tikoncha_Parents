@@ -39,7 +39,7 @@ val WheelPickerSelectionColor = Color(0xFFF3F4F7)
 val CardColors = Color(0xFFF3F4F7)
 val MediumButtonColor = Color(0xFF4BB462)
 val ImportantButtonColor = Color(0xFFFFBC4C)
-val MostImportantButtonColor = Color(0xFFF67272)
+val MostImportantButtonColor = Color(0xFFEB5B00)
 
 
 

@@ -140,7 +140,7 @@ fun TaskUi(
                         BorderColor,
                         RoundedCornerShape(TextFieldCornerRadius)
                     )
-                    .padding(vertical = 10.dp, horizontal = 12.dp),
+                    .padding(vertical = 8.dp, horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -154,7 +154,7 @@ fun TaskUi(
 
                 CustomText(
                     text = reformattedToday(today),
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -163,7 +163,7 @@ fun TaskUi(
 
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
-                fontSize = SmallTextSize,
+                fontSize = NormalTextSize,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.W500
             )
@@ -186,6 +186,7 @@ fun TaskUi(
             CustomText(
                 text = stringResource(Res.string.sizdan_vazifalar),
                 fontWeight = FontWeight.W600,
+                fontSize = NormalLargeTextSize
             )
 
             SpaceSmall()
@@ -229,7 +230,8 @@ fun TaskUi(
                     CustomText(
                         text = stringResource(Res.string.vazifa_qo_shish),
                         fontSize = 16.sp,
-                        color = PrimaryColor
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W500
                     )
 
                     SpaceMedium()
@@ -246,6 +248,7 @@ fun TaskUi(
 
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
+                fontSize = NormalLargeTextSize,
                 fontWeight = FontWeight.W600,
             )
 

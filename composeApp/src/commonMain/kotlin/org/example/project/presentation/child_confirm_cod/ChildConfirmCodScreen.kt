@@ -74,6 +74,8 @@ fun ChildCodUI(
     event: (ChildConfirmEvent)-> Unit
 ) {
 
+    val serverCode = remember { "422017" }
+
     var code by remember { mutableStateOf("") }
 
     val formatted = remember(code) { formatCode(code) }
@@ -127,14 +129,19 @@ fun ChildCodUI(
             SpaceLarge()
 
             CodeInputField(
-                value = textFieldValue,
-                onValueChange = { input ->
-                    val digits = input.text.filter { it.isDigit() }.take(6)
-                    code = digits
-                },
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.W500
-            )
+                codeDigits = serverCode,
+                onCopiedToClip = {}
+                )
+
+//            CodeInputField(
+//                value = textFieldValue,
+//                onValueChange = { input ->
+//                    val digits = input.text.filter { it.isDigit() }.take(6)
+//                    code = digits
+//                },
+//                fontSize = SmallTextSize,
+//                fontWeight = FontWeight.W500
+//            )
 
             SpaceSmall()
 
@@ -187,9 +194,9 @@ fun ChildCodUI(
     }
 }
 
-@Composable
 @Preview
-fun Preview(){
+@Composable
+private fun Pre(){
     ChildCodUI(
         navigator = null,
         state = ChildConfirmState(),

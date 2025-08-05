@@ -152,7 +152,7 @@ fun AddNewTask(
         ) {
             CustomText(
                 text = stringResource(Res.string.vazifa_nomi),
-                fontSize = NormalTextSize,
+                fontSize = NormalLargeTextSize,
                 fontWeight = FontWeight.W600,
             )
 

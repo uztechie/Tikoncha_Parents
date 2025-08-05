@@ -145,14 +145,14 @@ fun PaymentScreenUi(
                 PaymentOptionKMP(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.paynet),
-                    isSelected = selectedPayment == "payme",
-                    onClick = { selectedPayment = "payme" }
+                    isSelected = selectedPayment == "paynet",
+                    onClick = { selectedPayment = "paynet" }
                 )
                 PaymentOptionKMP(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.uzum),
-                    isSelected = selectedPayment == "click",
-                    onClick = { selectedPayment = "click" }
+                    isSelected = selectedPayment == "uzum",
+                    onClick = { selectedPayment = "uzum" }
                 )
             }
 
