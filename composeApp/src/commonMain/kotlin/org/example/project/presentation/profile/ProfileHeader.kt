@@ -2,6 +2,7 @@ package org.example.project.presentation.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ProfileImageSize
@@ -53,24 +55,32 @@ fun ProfileHeader(
                 .size(ProfileImageSize),
             contentAlignment = Alignment.BottomEnd
         ) {
-
-            Image(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(50)),
-                painter = if (
-                    image == null ||
-                    image.toString() == "" ||
-                    image.toString() == "null"
-                ) painterResource(Res.drawable.profile_hedgehog_img) else {
-                    painterResource(Res.drawable.profile_hedgehog_img)
-                },
+                    .clip(RoundedCornerShape(50))
+                    .background(MaterialTheme.colorScheme.background)
+                    .border(width = 2.dp, color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(50))
+            ){
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(50))
+                        .background(MaterialTheme.colorScheme.background),
+                    painter = if (
+                        image == null ||
+                        image.toString() == "" ||
+                        image.toString() == "null"
+                    ) painterResource(Res.drawable.profile_hedgehog_img) else {
+                        painterResource(Res.drawable.profile_hedgehog_img)
+                    },
 //                    rememberAsyncImagePainter(
 //                        model = image
 //                    ),
-                contentDescription = "",
-                contentScale = ContentScale.Crop
-            )
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             IconButton(
                 modifier = Modifier

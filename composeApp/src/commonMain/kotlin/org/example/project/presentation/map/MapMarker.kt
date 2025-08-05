@@ -55,7 +55,8 @@ fun MapMarker(
             Text(
                 text = title,
                 color = contentColor,
-                fontSize = textSizeSp.sp
+                fontSize = textSizeSp.sp,
+                maxLines = 2
             )
         }
     }
@@ -66,7 +67,7 @@ fun MapMarker(
 @Composable
 fun Pre(){
     MapMarker(
-        title = "Ibroxim",
+        title = "Mexanizatsiyalashtirilmaganimizdandir",
         icon = painterResource(Res.drawable.person),
     )
 }

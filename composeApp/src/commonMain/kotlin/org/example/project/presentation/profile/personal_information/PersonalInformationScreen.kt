@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -156,7 +157,9 @@ fun PersonalInformationUi(
                 CustomText(
                     text = stringResource(Res.string.shaxsiy_malumotlar),
                     fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(start = 6.dp)
                 )
 
                 SpaceSmall()
@@ -241,7 +244,9 @@ fun PersonalInformationUi(
                     CustomText(
                         text = stringResource(Res.string.shaxsiy_malumotlar),
                         fontSize = NormalLargeTextSize,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(start = 6.dp)
                     )
 
                     SpaceSmall()
@@ -262,7 +267,9 @@ fun PersonalInformationUi(
                     CustomText(
                         text = stringResource(Res.string.maktab),
                         fontSize = NormalLargeTextSize,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(start = 6.dp)
                     )
 
                     SpaceSmall()
