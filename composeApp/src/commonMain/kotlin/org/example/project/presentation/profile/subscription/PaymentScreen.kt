@@ -84,7 +84,6 @@ fun PaymentScreenUi(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(2.dp)
     ) {
 
         CustomHeader(
@@ -92,8 +91,7 @@ fun PaymentScreenUi(
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
-            },
-            fonWeight = FontWeight.W500,
+            }
         )
 
         SpaceMedium()
@@ -254,7 +252,7 @@ fun PaymentScreenUi(
                 onClick = { }
             )
 
-            SpaceMedium()
+            SpaceLarge()
 
         }
     }
