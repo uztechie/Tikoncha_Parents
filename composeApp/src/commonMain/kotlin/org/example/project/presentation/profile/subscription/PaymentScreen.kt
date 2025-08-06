@@ -240,7 +240,7 @@ fun PaymentScreenUi(
                 }
             }
 
-            SpaceMedium()
+            SpaceLarge()
 
             CustomButton(
                 modifier = Modifier
