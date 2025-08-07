@@ -44,6 +44,7 @@ fun CustomHeader(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .height(HeaderHeight)
             .shadow(
                 elevation = 4.dp,
                 shape = bottomRoundedShape,

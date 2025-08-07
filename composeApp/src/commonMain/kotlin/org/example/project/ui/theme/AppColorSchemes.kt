@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import org.example.project.platform.SystemBarTheme
 
@@ -65,11 +66,16 @@ fun NoteMarkTheme(
         val navBarTransparent = colorScheme.background
         val navBarFallback = colorScheme.background
 
+        val cfg = LocalBarsConfig.current.value
+
+        println("Themeeeee transparent=$cfg")
+
         SystemBarTheme.apply(
             isDark = isDark,
             statusBarColor = statusBar,
             navigationBarColor = navBarTransparent,
             navigationBarFallbackColor = navBarFallback,
+            transparentStatusBar = cfg.transparentStatusBar
         )
         content()
     }

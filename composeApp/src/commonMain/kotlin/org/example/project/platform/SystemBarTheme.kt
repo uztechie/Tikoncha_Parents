@@ -9,6 +9,7 @@ expect object SystemBarTheme {
         isDark: Boolean,
         statusBarColor: Color,
         navigationBarColor: Color,
-        navigationBarFallbackColor: Color
+        navigationBarFallbackColor: Color,
+        transparentStatusBar: Boolean
     )
 }

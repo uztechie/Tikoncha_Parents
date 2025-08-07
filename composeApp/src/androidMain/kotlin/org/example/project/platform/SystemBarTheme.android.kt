@@ -2,6 +2,7 @@ package org.example.project.platform
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -29,12 +30,14 @@ actual object SystemBarTheme {
         isDark: Boolean,
         statusBarColor: Color,
         navigationBarColor: Color,
-        navigationBarFallbackColor: Color
+        navigationBarFallbackColor: Color,
+        transparentStatusBar: Boolean
     ) {
         val view = LocalView.current
         if (view.isInEditMode) return
 
         val window = (view.context as Activity).window
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val darkIcons = isDark
 
@@ -44,22 +47,27 @@ actual object SystemBarTheme {
         }
 
 
-        Box(Modifier.fillMaxSize()) {
-            // Top inset (status bar)
-            Spacer(
-                Modifier
-                    .background(statusBarColor)
-                    .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
-            )
-            // Bottom inset (nav bar)
-            Spacer(
-                Modifier
-                    .background(statusBarColor)
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
-            )
+        Log.d("TAG", "applyyyyy: $transparentStatusBar")
+
+        if (!transparentStatusBar){
+            Box(Modifier.fillMaxSize()) {
+                // Top inset (status bar)
+                Spacer(
+                    Modifier
+                        .background(statusBarColor)
+                        .fillMaxWidth()
+                        .windowInsetsTopHeight(WindowInsets.statusBars)
+                )
+                // Bottom inset (nav bar)
+                Spacer(
+                    Modifier
+                        .background(statusBarColor)
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                )
+            }
         }
+
     }
 }

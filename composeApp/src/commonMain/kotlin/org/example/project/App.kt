@@ -8,21 +8,23 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.splash.SplashScreen
-import dev.burnoo.compose.remembersetting.rememberStringSetting
 import org.example.project.platform.AppEnvironment
-import org.example.project.platform.Localization
-import org.example.project.platform.customAppLocale
+import org.example.project.presentation.splash.SplashScreen
+
+
 import org.example.project.presentation.child_confirm_cod.ChildConfirmCodScreen
 import org.example.project.presentation.domain.model.LanguageType
 import org.example.project.presentation.login.LoginScreen
 import org.example.project.presentation.otp.OtpScreen
 import org.example.project.presentation.profile.ProfileScreen
+import org.example.project.presentation.profile.ProfileState
+import org.example.project.presentation.profile.ProfileUi
 import org.example.project.presentation.profile.language.AppLanguage
 import org.example.project.presentation.profile.language.LanguageController
-import org.example.project.presentation.profile.language.LanguageManager
 import org.example.project.presentation.profile.language.LanguagePrefs
 import org.example.project.presentation.profile.language.LocalLanguageController
+import org.example.project.ui.theme.BarConfig
+import org.example.project.ui.theme.LocalBarsConfig
 import org.example.project.ui.theme.NoteMarkTheme
 import org.example.project.ui.theme.PlatformThemeBridge
 import org.example.project.ui.theme.ThemeController
@@ -35,35 +37,40 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 @Composable
 @Preview
 fun App() {
+
     val langController = remember { LanguageController() }
 
-    LaunchedEffect(Unit) {
-        customAppLocale = langController.current.languageCode
-    }
     val mode by ThemeController.mode.collectAsState()
+    SideEffect { PlatformThemeBridge.onModeChanged(mode) }
+    val barsConfig = remember { mutableStateOf(BarConfig()) }
 
     AppEnvironment {
 
-        SideEffect { PlatformThemeBridge.onModeChanged(mode) }
-
-        CompositionLocalProvider(LocalLanguageController provides langController) {
+        CompositionLocalProvider(
+            LocalLanguageController provides langController,
+            LocalBarsConfig provides barsConfig
+        )
+        {
             NoteMarkTheme(
                 mode = mode
             ) {
+                val cfg = barsConfig.value
+                val lang = langController.current.collectAsState()
+
+
+
                 Surface(
                     modifier = Modifier
-                        .statusBarsPadding()
-                        .navigationBarsPadding()
+                        .then(if (cfg.paddingEnabled) Modifier.statusBarsPadding() else Modifier)
+                        .then(if (cfg.paddingEnabled) Modifier.navigationBarsPadding() else Modifier)
                 ) {
-                    key(customAppLocale) {
-                        Navigator(SplashScreen())
-                    }
+                    Navigator(SplashScreen())
                 }
+
             }
         }
-
-
     }
+
 
 }
 

@@ -5,19 +5,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.example.project.platform.customAppLocale
+
 import org.example.project.presentation.domain.model.LanguageType
 
 @Stable
-class LanguageController(initial: LanguageType = LanguagePrefs.loadOrDefault()) {
-    var current by mutableStateOf(initial)
-        private set
+class LanguageController {
 
+    private val _current = MutableStateFlow(LanguagePrefs.loadOrDefault())
+    val current: StateFlow<LanguageType> = _current
+
+    init {
+        customAppLocale = current.value.languageCode
+    }
     fun select(newLang: LanguageType) {
-        if (newLang == current) return
-        current = newLang
+        if (newLang == _current.value) return
+        _current.value = newLang
         LanguagePrefs.save(newLang)
-        // Runtime locale ni yangilash triggeri:
         customAppLocale = newLang.languageCode
     }
 }

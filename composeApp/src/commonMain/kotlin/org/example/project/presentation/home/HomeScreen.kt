@@ -145,6 +145,7 @@ fun HomeUi(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(HeaderHeight)
                 .shadow(
                     elevation = 4.dp,
                     shape = bottomRoundedShape,
@@ -188,7 +189,6 @@ fun HomeUi(
                 CustomText(
                     text = stringResource(Res.string.bosh_sahifa),
                     fontSize = LargeTextSize,
-                    fontWeight = FontWeight.W500,
                     maxLines = 1
                 )
 

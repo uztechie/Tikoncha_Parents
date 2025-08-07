@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,12 +49,15 @@ class LanguageScreen: Screen {
 fun LanguageUi(
     navigator: Navigator?
 ){
-    val controller = LocalLanguageController.current
+    val controller = remember {
+        LocalLanguageController
+    }.current
 
+
+    val current = controller.current.collectAsState().value
     var selectedLanguage by remember {
-        mutableStateOf(LanguagePrefs.loadOrDefault())
+        mutableStateOf(current)
     }
-
 
 
     Column(
@@ -97,9 +101,7 @@ fun LanguageUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
-                    LanguagePrefs.save(selectedLanguage)
                     controller.select(selectedLanguage)
-
                     navigator!!.pop()
                 }
             )

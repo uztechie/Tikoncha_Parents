@@ -1,6 +1,7 @@
 package org.example.project.presentation.map
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +12,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +42,9 @@ import org.example.project.platform.openLocationSettings
 import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.ui.*
+import org.example.project.ui.theme.LocalBarsConfig
+import org.example.project.ui.theme.ThemeMode
+import org.example.project.ui.theme.ThemePrefs
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -45,6 +52,7 @@ import ru.sulgik.mapkit.compose.MapConfig
 import ru.sulgik.mapkit.compose.MapLogoConfig
 import ru.sulgik.mapkit.compose.Placemark
 import ru.sulgik.mapkit.compose.YandexMap
+import ru.sulgik.mapkit.compose.YandexMapsComposeExperimentalApi
 import ru.sulgik.mapkit.compose.bindToLifecycleOwner
 import ru.sulgik.mapkit.compose.imageProvider
 import ru.sulgik.mapkit.compose.rememberAndInitializeMapKit
@@ -61,9 +69,17 @@ import tikoncha_parents.composeapp.generated.resources.*
 
 class MapScreen : Screen {
 
+    @OptIn(YandexMapsComposeExperimentalApi::class)
     @Preview
     @Composable
     override fun Content() {
+
+        val themeMode by rememberSaveable { mutableStateOf(ThemePrefs.load()) }
+        val darkTheme = when (themeMode) {
+            ThemeMode.DARK   -> true
+            ThemeMode.LIGHT  -> false
+            ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        }
 
         val TAG = "MapScreen"
 
@@ -75,10 +91,10 @@ class MapScreen : Screen {
             factory.createPermissionsController()
         }
 
-        val scope = rememberCoroutineScope ()
+        val scope = rememberCoroutineScope()
         BindEffect(controller)
 
-        val permissionViewModel = viewModel{
+        val permissionViewModel = viewModel {
             PermissionViewModel(controller)
         }
         val permissionState by permissionViewModel.state.collectAsStateWithLifecycle()
@@ -105,7 +121,7 @@ class MapScreen : Screen {
             mutableStateOf(false)
         }
 
-        println(TAG+" gpsDialog ${locationState.showGpsDialog}")
+        println(TAG + " gpsDialog ${locationState.showGpsDialog}")
 //        LaunchedEffect(locationState.showGpsDialog){
 //            showGpsDialog = locationState.showGpsDialog?:false
 //        }
@@ -139,51 +155,50 @@ class MapScreen : Screen {
             }
         )
 
-        println(TAG+ " DATAAA = "+locationState.locationData)
+        println(TAG + " DATAAA = " + locationState.locationData)
 
 
         OnScreenActive(
             launchedToSettings = cameFromSettings,
             onReturned = {
-                println(TAG+" DSASASASASASAS")
+                println(TAG + " DSASASASASASAS")
                 permissionViewModel.refresh();
                 cameFromSettings = false
             }
         )
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             permissionViewModel.requestPermission()
         }
 
-        println(TAG+" permissionState=$permissionState")
-        LaunchedEffect(permissionState){
-            when(permissionState){
+        println(TAG + " permissionState=$permissionState")
+        LaunchedEffect(permissionState) {
+            when (permissionState) {
                 PermissionState.Granted -> {
 //                    locationViewModel.checkGPS()
                     scope.launch(Dispatchers.Default) {
                         showGpsDialog = !isLocationServiceEnabled()
                     }
                 }
+
                 PermissionState.DeniedAlways -> {
                     showPermissionDialog = true
                 }
+
                 else -> {
 
                 }
             }
         }
 
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            CustomHeader(
-                title = stringResource(Res.string.xarita)
-            ) {
-
-            }
+        val bars = LocalBarsConfig.current
+        DisposableEffect(Unit) {
+            val prev = bars.value
+            bars.value = prev.copy(
+                paddingEnabled = false,
+                transparentStatusBar = true
+            )
+            onDispose { bars.value = prev }
         }
 
         Box(
@@ -195,9 +210,21 @@ class MapScreen : Screen {
 
             val userLocationState = rememberUserLocationState()
 
+
+            val locationIcon = rememberLocationIconForMapMarker(
+                title = "Abdurahim Sharipov", // → bu yerga uzun matn ketsa ham sigadi
+                backgroundColor = Color.Black,
+                contentColor = Color.White,
+                icon = painterResource(Res.drawable.person),
+                textMaxLines = 3,              // yoki Int.MAX_VALUE
+                maxWidth = 280.dp              // kerak bo'lsa oshiring/ekranga nisbiy qiling
+            )
+
+
             val startPosition = CameraPosition(
                 target = Point(
-                    locationState.locationData?.latitude?:LATITUDE, locationState.locationData?.longitude?:LONGITUDE
+                    locationState.locationData?.latitude ?: LATITUDE,
+                    locationState.locationData?.longitude ?: LONGITUDE
                 ),
                 zoom = 15f,
                 0f,
@@ -231,7 +258,7 @@ class MapScreen : Screen {
                     ),
                 ),
                 config = MapConfig(
-                    isNightModeEnabled = false,
+                    isNightModeEnabled = darkTheme,
                     logo = MapLogoConfig(
                         alignment = LogoAlignment(
                             horizontal = LogoHorizontalAlignment.LEFT,
@@ -242,7 +269,7 @@ class MapScreen : Screen {
             )
             {
 
-                println(TAG+" location data = "+locationState.locationData)
+                println(TAG + " location data = " + locationState.locationData)
 //                locationState.locationData?.let {location->
 //                    val placeMarkMine = rememberPlacemarkState(
 //                        geometry = Point(
@@ -261,30 +288,31 @@ class MapScreen : Screen {
 //                }
 
 
-
                 val placeMarkState = rememberPlacemarkState(
                     geometry = Point(
                         40.776691, 72.342787
                     ),
-                    )
+                )
                 val placeMarkState2 = rememberPlacemarkState(
                     geometry = Point(
                         40.772191, 72.34999
                     ),
 
                     )
+
                 Placemark(
                     state = placeMarkState,
-                    contentSize = DpSize(100.dp, 50.dp)
+                    contentSize = DpSize(200.dp, 80.dp)
                 ) {
                     MapMarker(
                         title = "Ibroxim",
                     )
                 }
 
+
                 Placemark(
                     state = placeMarkState2,
-                    contentSize = DpSize(100.dp, 80.dp)
+                    contentSize = DpSize(200.dp, 80.dp)
                 ) {
                     MapMarker(
                         title = "Abdurahimjonbek",
@@ -305,7 +333,7 @@ class MapScreen : Screen {
                     .align(Alignment.BottomEnd)
                     .padding(ContainerPadding)
                     .size(NormalIconButtonSize)
-            ){
+            ) {
                 Icon(
                     painter = painterResource(Res.drawable.find_location),
                     contentDescription = "",
@@ -316,6 +344,9 @@ class MapScreen : Screen {
             }
 
         }
+
+
+
 
 
     }

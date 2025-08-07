@@ -91,9 +91,9 @@ fun MainUi() {
                                 topStart = MainCornerRadius,
                                 topEnd = MainCornerRadius
                             ),
-                            clip = false // bu muhim: soyani chizish uchun
+                            clip = true // bu muhim: soyani chizish uchun
                         )
-                        .padding(top = 4.dp)
+//                        .padding(top = 4.dp)
                         .background(PrimaryColor)
                 ) {
 
@@ -105,7 +105,7 @@ fun MainUi() {
         ) { innerPadding ->
             Box(
                 modifier = Modifier
-                    .padding(innerPadding)
+//                    .padding(innerPadding)
             ) {
                 CurrentScreen()
             }
