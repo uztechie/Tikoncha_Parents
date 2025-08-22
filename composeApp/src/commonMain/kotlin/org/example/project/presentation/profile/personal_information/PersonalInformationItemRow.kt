@@ -17,15 +17,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.ui.ContainerPadding
-import org.example.project.ui.HintTextColor
-import org.example.project.ui.MainCornerRadius
-import org.example.project.ui.NormalIconSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SmallTextSize
 import org.example.project.ui.SpaceSmall
 import org.example.project.ui.SpaceUltraSmall
-import org.example.project.ui.TextColor
 import org.example.project.ui.TextFieldIconSize
 import org.example.project.ui.UltraSmallTextSize
 import org.jetbrains.compose.resources.DrawableResource
@@ -36,10 +32,10 @@ import tikoncha_parents.composeapp.generated.resources.profile
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
-fun PersonalInformationItem(
+fun PersonalInformationItemRow(
     icon: DrawableResource,
     title: String,
-    value: String
+    value: String?
 ) {
 
     Row(
@@ -77,7 +73,7 @@ fun PersonalInformationItem(
             SpaceUltraSmall()
 
             CustomText(
-                text = value,
+                text = value?:"",
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
@@ -90,7 +86,7 @@ fun PersonalInformationItem(
 @Preview
 @Composable
 private fun Pre(){
-    PersonalInformationItem(
+    PersonalInformationItemRow(
         icon = Res.drawable.profile,
         title = "Ism",
         value = "Shuxratov Saidburxon Dilmurod o'g'li"

@@ -20,7 +20,11 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -36,6 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.CustomDialog
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.PhoneNumberInputField
 import org.example.project.ui.*
@@ -54,15 +60,15 @@ class LoginScreen :Screen {
     override fun Content() {
 
         val viewModel = koinViewModel<LoginViewmodel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
         val navigator = LocalNavigator.current
 
         Login(
             navigator = navigator,
-            enterPhoneState = state.value,
-            enterPhoneEvent = event
+            state = state,
+            event = event
         )
     }
 }
@@ -73,12 +79,43 @@ class LoginScreen :Screen {
 @Composable
 fun Login(
     navigator: Navigator?,
-    enterPhoneState: LoginState,
-    enterPhoneEvent: (LoginEvent)-> Unit
+    state: LoginState,
+    event: (LoginEvent)-> Unit
 ) {
 
-    val isPhoneNumberValid = enterPhoneState.number.length == 9 && enterPhoneState.number.filter { it.isDigit() }.length == 9
+    val isPhoneNumberValid = state.number.length == 9 && state.number.filter { it.isDigit() }.length == 9
     val isKeyboardOpen = KeyboardAsState().value
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+
+    LaunchedEffect(state.errorMessage) {
+        showDialog = state.errorMessage != null
+    }
+
+    LoadingDialog(show = state.loading)
+    CustomDialog(
+        show = showDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.errorMessage?:"",
+        buttonText = stringResource(Res.string.ok),
+        onDismiss = {
+            showDialog = false
+        },
+        onButtonClick = {
+            showDialog = false
+        }
+    )
+
+    LaunchedEffect(state.success) {
+        if (state.success){
+            event(LoginEvent.Reset)
+            navigator?.push(OtpScreen(phoneNumber = state.fullNumber))
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -132,16 +169,15 @@ fun Login(
             )
             SpaceMedium()
             PhoneNumberInputField(
-                phoneNumber = enterPhoneState.number,
+                phoneNumber = state.number,
                 onPhoneNumberChange = {
-                    enterPhoneEvent(LoginEvent.OnNumberInsert(it))
+                    event(LoginEvent.OnNumberInsert(it))
                 }
             )
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
                 onClick = {
-                    enterPhoneEvent(LoginEvent.OnConfirmClicked)
-                    navigator?.push(OtpScreen())
+                    event(LoginEvent.OnConfirmClicked)
                 },
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -192,7 +228,7 @@ fun Login(
 private fun Preview() {
     Login(
         navigator = null,
-        enterPhoneState = LoginState(),
-        enterPhoneEvent = {}
+        state = LoginState(),
+        event = {}
     )
 }

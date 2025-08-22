@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.yourpackage.utils.formatTwoDigits
+import org.example.project.presentation.base.CustomDialog
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.ui.*
 import org.example.project.presentation.register.RegisterScreen
@@ -37,9 +40,12 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
 
-class OtpScreen : Screen {
+class OtpScreen(
+    private val phoneNumber: String
+) : Screen {
 
     @Composable
     override fun Content() {
@@ -47,6 +53,10 @@ class OtpScreen : Screen {
         val viewModel = koinViewModel<OtpViewmodel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        LaunchedEffect(Unit){
+            event(OtpEvent.SetPhone(phoneNumber))
+        }
 
         val navigator = LocalNavigator.current
 
@@ -86,6 +96,49 @@ fun Otp(
         }
         previousFormattedTime = formattedTime
     }
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state.errorMessage) {
+        showDialog = state.errorMessage != null
+    }
+
+    LoadingDialog(show = state.loading)
+    CustomDialog(
+        show = showDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.errorMessage?:"",
+        buttonText = stringResource(Res.string.ok),
+        onDismiss = {
+            showDialog = false
+        },
+        onButtonClick = {
+            showDialog = false
+        }
+    )
+
+
+    DisposableEffect(key1 = state.success) {
+        if (state.success && state.data != null){
+            println("OTP SUCCESSSSSS=${state.data}")
+
+            if (state.data?.user_info == null){
+                navigator?.push(RegisterScreen())
+            }
+            else{
+                navigator?.replaceAll(MainScreen())
+            }
+        }
+
+        onDispose {
+            event(OtpEvent.Reset)
+        }
+    }
+
+
+
 
     Column(
         modifier = Modifier
@@ -162,7 +215,6 @@ fun Otp(
         CustomButton(
             onClick = {
                 event(OtpEvent.OnConfirmClicked)
-                navigator?.push(RegisterScreen())
             },
             modifier = Modifier
                 .fillMaxWidth()

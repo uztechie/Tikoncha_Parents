@@ -7,4 +7,5 @@ sealed class RegisterEvent {
     data class OnIdNumberInsert(val idNumber: String): RegisterEvent()
     data class OnGenderSelected(val genderIndex: Int): RegisterEvent()
     object OnConfirmClicked: RegisterEvent()
+    object Reset: RegisterEvent()
 }

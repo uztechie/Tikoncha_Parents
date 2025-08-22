@@ -16,6 +16,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.delay
+import org.example.project.data.local.AppSettings
+import org.example.project.presentation.login.LoginScreen
 import org.example.project.ui.PrimaryColor
 import org.example.project.presentation.slider.SliderScreen
 import org.jetbrains.compose.resources.painterResource
@@ -29,19 +31,22 @@ class SplashScreen : Screen {
     @Composable
     override fun Content() {
 
-        val settings: Settings = Settings()
 
         val navigator = LocalNavigator.current
 
         LaunchedEffect(true) {
 
-            val isRegistered = settings.getBoolean("isRegistered", false)
 
             delay(1000) // 1 sekund
-            if (isRegistered){
+            if (AppSettings.hasUserLogin){
                 navigator?.replaceAll(MainScreen())
             }else{
-                navigator?.replaceAll(SliderScreen())
+                if (AppSettings.isFirstLaunch){
+                    navigator?.replaceAll(SliderScreen())
+                }
+                else{
+                    navigator?.replaceAll(LoginScreen())
+                }
             }
         }
 

@@ -97,7 +97,6 @@ fun TaskUi(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
     )
     {
 
@@ -129,7 +128,9 @@ fun TaskUi(
         )
 
         Column(
-            modifier = Modifier.padding(ContainerPadding)
+            modifier = Modifier
+                .padding(ContainerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
 
             Row(

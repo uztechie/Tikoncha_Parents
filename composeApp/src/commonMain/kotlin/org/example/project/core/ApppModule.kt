@@ -1,15 +1,22 @@
 package org.example.project.core
 
-import org.example.project.data.remote.TikonchaApi
-import org.example.project.data.remote.TikonchaApiImpl
+import org.example.project.data.remote.ChildApiService
+import org.example.project.data.remote.LoginApiService
 import org.example.project.data.remote.TikonchaClient
-import org.example.project.domain.TikonchaRepository
-import org.example.project.domain.TikonchaRepositoryImpl
+import org.example.project.data.repository.ChildRepositoryImpl
+import org.example.project.data.repository.LoginRepositoryImpl
+import org.example.project.domain.repository.ChildRepository
+import org.example.project.domain.repository.LoginRepository
+import org.example.project.domain.use_case.AddChildUseCase
+import org.example.project.domain.use_case.ChildrenUseCase
+import org.example.project.domain.use_case.RegisterUseCase
+import org.example.project.domain.use_case.SendOtpUseCase
+import org.example.project.domain.use_case.UserInfoUseCase
+import org.example.project.domain.use_case.VerifyOtpUseCase
 import org.example.project.presentation.add_child.ChildViewmodel
 import org.example.project.presentation.child_confirm_cod.ChildConfirmViewModel
 import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.profile.ProfileViewModel
-import org.example.project.presentation.profile.personal_information.PersonalInformationViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.example.project.presentation.login.LoginViewmodel
 import org.example.project.presentation.otp.OtpViewmodel
@@ -23,8 +30,6 @@ import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordVie
 
 val sharedModule = module {
     viewModelOf(::HomeViewModel)
-    viewModelOf(::PersonalInformationViewModel)
-    viewModelOf(::ProfileViewModel)
     single {
         HttpClientEngineFactory().getHttpEngine()
     }
@@ -32,16 +37,31 @@ val sharedModule = module {
     single {
         TikonchaClient(get()).client
     }
-    single<TikonchaApi> { TikonchaApiImpl(get()) }
-    single<TikonchaRepository> { TikonchaRepositoryImpl(get()) }
+    //api service
+    single { LoginApiService(get()) }
+    single { ChildApiService(get()) }
+
+    //repository
+    single<LoginRepository> { LoginRepositoryImpl(get()) }
+    single<ChildRepository> { ChildRepositoryImpl(get()) }
+
+
+    //use case module
+    single { SendOtpUseCase(get()) }
+    single { VerifyOtpUseCase(get()) }
+    single { RegisterUseCase(get()) }
+    single { UserInfoUseCase(get()) }
+    single { AddChildUseCase(get()) }
+    single { ChildrenUseCase(get()) }
 
 
 
-    viewModel { LoginViewmodel() }
-    viewModel { OtpViewmodel() }
-    viewModel { RegisterViewmodel() }
+    viewModel { LoginViewmodel(get()) }
+    viewModel { OtpViewmodel(get()) }
+    viewModel { RegisterViewmodel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
     viewModel { CreatePasswordViewmodel() }
-    viewModel { ChildViewmodel() }
+    viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel() }
     viewModel { HomeViewModel() }

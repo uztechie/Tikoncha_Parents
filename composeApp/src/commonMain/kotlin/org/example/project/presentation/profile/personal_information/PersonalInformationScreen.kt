@@ -2,10 +2,13 @@ package org.example.project.presentation.profile.personal_information
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,17 +26,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.add_child.ChildScreen
+import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomOutlinedButton
+import org.example.project.presentation.profile.ProfileEvent
 import org.example.project.presentation.profile.ProfileHeader
+import org.example.project.presentation.profile.ProfileState
+import org.example.project.presentation.profile.ProfileViewModel
 import org.example.project.ui.AppIconInnerPadding
-import org.example.project.ui.BackgroundColor
 import org.example.project.ui.ButtonHeight
 import org.example.project.ui.ContainerPadding
 import org.example.project.ui.NormalLargeTextSize
-import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ShapeCornerRadius
 import org.example.project.ui.SpaceLarge
@@ -68,7 +71,7 @@ class PersonalInformationScreen: Screen {
         val navigator = LocalNavigator.current
         val rootNavigator = navigator?.parent
 
-        val viewModel = koinViewModel<PersonalInformationViewModel>()
+        val viewModel = koinViewModel<ProfileViewModel>()
 
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
@@ -82,38 +85,12 @@ class PersonalInformationScreen: Screen {
 
 @Composable
 fun PersonalInformationUi(
-    state: PersonalInformationState,
-    event: (PersonalInformationEvent) -> Unit
+    state: ProfileState,
+    event: (ProfileEvent) -> Unit
 ){
     val rootNavigator = LocalNavigator.current
 
 
-    val personalInformationItems by remember() {
-        derivedStateOf {
-            listOf(
-                PersonalInformationItemData(
-                    icon = Res.drawable.profile,
-                    title = Res.string.ism,
-                    value = state.fullName
-                ),
-                PersonalInformationItemData(
-                    icon = Res.drawable.phone,
-                    title = Res.string.telefon_nomer,
-                    value = state.phoneNumber
-                ),
-                PersonalInformationItemData(
-                    icon = Res.drawable.two_users,
-                    title = Res.string.qarindoshligi,
-                    value = state.relativity
-                ),
-                PersonalInformationItemData(
-                    icon = Res.drawable.id_card,
-                    title = Res.string.pasport_id,
-                    value = state.passportNumber
-                )
-            )
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -128,182 +105,67 @@ fun PersonalInformationUi(
             }
         )
 
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(ContainerPadding)
+        )
+        {
 
-            ProfileHeader(
-                fullName = state.fullName,
-                fathersName = "",
-                onSelectImageButtonClick = {
-                    event(PersonalInformationEvent.OnChangeProfilePhotoClicked(null))
-                },
-                image = state.profileImage
-            )
+            item {
+                ProfileHeader(
+                    fullName = state.userInfo?.fullName?:"",
+                    fathersName = "",
+                    onSelectImageButtonClick = {
+                        event(ProfileEvent.OnChangeProfilePhotoClicked(null))
+                    },
+                    image = state.profileImage
+                )
 
-            SpaceLarge()
+                SpaceLarge()
+            }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
-                    .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
-            ) {
+            item {
+                PersonalInfoItem(state.userInfo)
+            }
+            item {
+                SpaceSmall()
 
                 CustomText(
-                    text = stringResource(Res.string.shaxsiy_malumotlar),
+                    text = stringResource(Res.string.farzandingiz),
                     fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(start = 6.dp)
+                    fontWeight = FontWeight.SemiBold
                 )
 
                 SpaceSmall()
-
-                personalInformationItems.forEach { item ->
-
-                    PersonalInformationItem(
-                        icon = item.icon,
-                        title = stringResource(item.title),
-                        value = item.value.toString()
-                    )
-
-                    SpaceUltraSmall()
-                }
             }
 
-            SpaceSmall()
-
-            CustomText(
-                text = stringResource(Res.string.farzandingiz),
-                fontSize = NormalLargeTextSize,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            SpaceSmall()
-
-            state.childrenData.forEach {child ->
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                        .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
-                ){
-
-                    val listOfPersonalInformationData = remember {
-                        mutableStateListOf(
-                            PersonalInformationItemData(
-                                icon = Res.drawable.profile,
-                                title = Res.string.ism,
-                                value = child.fullName
-                            ),
-                            PersonalInformationItemData(
-                                icon = Res.drawable.calendar,
-                                title = Res.string.yosh,
-                                value = "${child.age}-yosh"
-                            ),
-                            PersonalInformationItemData(
-                                icon = Res.drawable.two_users,
-                                title = Res.string.jins,
-                                value = child.gender
-                            ),
-                            PersonalInformationItemData(
-                                icon = Res.drawable.phone,
-                                title = Res.string.telefon_nomer,
-                                value = child.phoneNumber
-                            ),
-                        )
-                    }
-
-                    val listOfSchoolData = remember {
-                        mutableStateListOf(
-                            PersonalInformationItemData(
-                                icon = Res.drawable.school_icon,
-                                title = Res.string.maktab,
-                                value = child.school
-                            ),
-                            PersonalInformationItemData(
-                                icon = Res.drawable.class_icon,
-                                title = Res.string.sinf,
-                                value = child.className
-                            ),
-                            PersonalInformationItemData(
-                                icon = Res.drawable.shift_clock,
-                                title = Res.string.smena,
-                                value = child.shift
-                            )
-                        )
-                    }
-
-                    CustomText(
-                        text = stringResource(Res.string.shaxsiy_malumotlar),
-                        fontSize = NormalLargeTextSize,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(start = 6.dp)
-                    )
-
-                    SpaceSmall()
-
-                    listOfPersonalInformationData.forEach { item ->
-
-                        PersonalInformationItem(
-                            icon = item.icon,
-                            title = stringResource(item.title),
-                            value = item.value.toString()
-                        )
-
-                        SpaceUltraSmall()
-                    }
-
-                    SpaceSmall()
-
-                    CustomText(
-                        text = stringResource(Res.string.maktab),
-                        fontSize = NormalLargeTextSize,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(start = 6.dp)
-                    )
-
-                    SpaceSmall()
-
-                    listOfSchoolData.forEach { item ->
-
-                        PersonalInformationItem(
-                            icon = item.icon,
-                            title = stringResource(item.title),
-                            value = item.value.toString()
-                        )
-
-                        SpaceUltraSmall()
-                    }
-                }
+            items(state.children){userInfo->
+                PersonalInfoItem(userInfo)
                 SpaceMedium()
             }
 
-            CustomOutlinedButton(
-                text = stringResource(Res.string.farzand_qo_shish),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                endingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                        tint = PrimaryColor
-                    )
-                },
-                onClick = { rootNavigator?.push(ChildScreen())},
-                textColor = PrimaryColor,
-            )
-            SpaceLarge()
+
+
+            item {
+                CustomOutlinedButton(
+                    text = stringResource(Res.string.farzand_qo_shish),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                    endingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.add_square),
+                            contentDescription = "",
+                            tint = PrimaryColor
+                        )
+                    },
+                    onClick = { rootNavigator?.push(AddChildScreen())},
+                    textColor = PrimaryColor,
+                )
+            }
+
+
         }
     }
 }
@@ -312,7 +174,7 @@ fun PersonalInformationUi(
 @Composable
 private fun PreviewPersonalInformationScreen(){
     PersonalInformationUi(
-        state = PersonalInformationState(),
+        state = ProfileState(),
         event = {}
     )
 }

@@ -57,4 +57,11 @@ object Util {
         return uzbekMonths[date.monthNumber - 1]
     }
 
+
+    fun format6DigitCode(raw: String): String {
+        val digits = raw.filter { it.isDigit() }.take(6)
+        return if (digits.length <= 3) digits else "${digits.take(3)}-${digits.drop(3)}"
+    }
+
+
 }

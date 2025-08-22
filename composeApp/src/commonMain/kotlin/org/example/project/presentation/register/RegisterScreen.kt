@@ -13,6 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,7 +28,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.add_child.AddChildScreen
+import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomTextField
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.SegmentedToggle
 import org.example.project.ui.*
@@ -64,6 +72,32 @@ fun Register(
 ) {
 
     val isOtpCodeValid = state.name != "" && state.fullName != "" && state.middleName != "" && state.idNumber != ""
+
+    LoadingDialog(state.registerLoading)
+    var showRegisterErrorDialog by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(state.registerError) {
+        if (state.registerError.isNotEmpty()) {
+            showRegisterErrorDialog = true
+        }
+    }
+    CustomDialog(
+        onDismiss = {showRegisterErrorDialog = false},
+        show = showRegisterErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.registerError,
+        onButtonClick = {
+            showRegisterErrorDialog = false
+        }
+    )
+
+    LaunchedEffect(state.registerSuccess) {
+        if (state.registerSuccess) {
+            event.invoke(RegisterEvent.Reset)
+           navigator?.replaceAll(AddChildScreen())
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -186,7 +220,6 @@ fun Register(
         CustomButton(
             onClick = {
                 event(RegisterEvent.OnConfirmClicked)
-                navigator?.push(CreatePasswordScreen())
             },
             modifier = Modifier
                 .fillMaxWidth()

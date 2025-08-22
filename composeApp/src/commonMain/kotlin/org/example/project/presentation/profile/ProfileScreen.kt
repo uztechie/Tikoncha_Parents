@@ -99,11 +99,11 @@ fun ProfileUi(
 
 
             ProfileHeader(
-                fullName = state.fullName,
+                fullName = state.userInfo?.fullName?:"",
                 fathersName = "",
                 image = null,
                 onSelectImageButtonClick = {
-                    event(ProfileEvent.OnChangeProfileImageClicked(null))
+//                    event(ProfileEvent.OnChangeProfileImageClicked(null))
                 }
             )
 

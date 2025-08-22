@@ -30,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.add_child.ChildScreen
+import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.presentation.base.PasswordTextField
 import org.example.project.ui.*
@@ -190,7 +190,7 @@ fun CreatePassword(
             CustomButton(
                 onClick = {
                     event(CreatePasswordEvent.OnConfirmClicked)
-                    navigator?.push(ChildScreen())
+                    navigator?.push(AddChildScreen())
                 },
                 modifier = Modifier
                     .padding(top = 20.dp)

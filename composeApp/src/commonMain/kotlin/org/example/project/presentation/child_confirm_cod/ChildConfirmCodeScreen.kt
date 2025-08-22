@@ -3,6 +3,8 @@ package org.example.project.presentation.child_confirm_cod
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,30 +15,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import com.russhwolf.settings.Settings
+import kotlinx.coroutines.launch
+import org.example.project.common.Util.format6DigitCode
+import org.example.project.platform.copyPlainText
+import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.LogoHeader
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
@@ -49,7 +52,9 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
-class ChildConfirmCodScreen(): Screen {
+class ChildConfirmCodeScreen(
+    private val confirmCode: String
+): Screen {
     @Composable
     override fun Content() {
 
@@ -57,9 +62,13 @@ class ChildConfirmCodScreen(): Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
+        LaunchedEffect(confirmCode){
+            event(ChildConfirmEvent.SetConfirmCode(confirmCode))
+        }
+
         val navigator = LocalNavigator.current
 
-        ChildCodUI(
+        ChildConfirmCodeUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -68,43 +77,48 @@ class ChildConfirmCodScreen(): Screen {
 }
 
 @Composable
-fun ChildCodUI(
+fun ChildConfirmCodeUi(
     navigator: Navigator?,
     state: ChildConfirmState,
     event: (ChildConfirmEvent)-> Unit
-) {
+)
+{
 
-    val serverCode = remember { "422017" }
+    val scope = rememberCoroutineScope ()
+    val clipboard = LocalClipboard.current
 
-    var code by remember { mutableStateOf("") }
 
-    val formatted = remember(code) { formatCode(code) }
 
-    val textFieldValue = remember(formatted) {
-        TextFieldValue(
-            text = formatted,
-            selection = TextRange(formatted.length) // Kursor oxiriga
-        )
-    }
+    val formatted = remember(state.codeNumber) { format6DigitCode(state.codeNumber) }
 
-    val settings: Settings = Settings()
 
-    Box(
+
+
+    Column (
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+            .background(MaterialTheme.colorScheme.background),
+
+        ) {
+
+        CustomHeader(
+            title = stringResource(Res.string.farzand_qoshish),
+            showBackButton = true,
+            onBackClick = {
+                navigator?.pop()
+            }
+        )
+
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
 
-            LogoHeader()
 
             CustomText(
                 text = stringResource(Res.string.farzandingizni_tasdiqlang),
@@ -128,20 +142,37 @@ fun ChildCodUI(
             SpaceLarge()
             SpaceLarge()
 
-            CodeInputField(
-                codeDigits = serverCode,
-                onCopiedToClip = {}
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .height(TextFieldHeight),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.password_check),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(22.dp)
+                        .clickable {
+                            scope.launch {
+                                copyPlainText(clipboard, formatted)
+                            }
+                        }
+                )
+                SpaceSmall()
+
+                CustomText(
+                    text = formatted,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 22.sp
                 )
 
-//            CodeInputField(
-//                value = textFieldValue,
-//                onValueChange = { input ->
-//                    val digits = input.text.filter { it.isDigit() }.take(6)
-//                    code = digits
-//                },
-//                fontSize = SmallTextSize,
-//                fontWeight = FontWeight.W500
-//            )
+            }
+
 
             SpaceSmall()
 
@@ -155,30 +186,9 @@ fun ChildCodUI(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            TextButton(
-                onClick = {
-                    navigator?.pop()
-                },
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .fillMaxWidth()
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
-                    .height(ButtonHeight),
-            ) {
-                Row {
-
-                    Text(
-                        text = stringResource(Res.string.hozir_emas),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W600
-                    )
-                }
-            }
 
             CustomButton(
                 onClick = {
-                    settings.putBoolean("isRegistered", true)
                     navigator?.replaceAll(MainScreen())
                 },
                 modifier = Modifier
@@ -194,10 +204,12 @@ fun ChildCodUI(
     }
 }
 
+
+
 @Preview
 @Composable
 private fun Pre(){
-    ChildCodUI(
+    ChildConfirmCodeUi(
         navigator = null,
         state = ChildConfirmState(),
         event = {}

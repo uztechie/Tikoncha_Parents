@@ -12,10 +12,10 @@ class ChildConfirmViewModel(): ViewModel() {
 
     fun onEvent(event: ChildConfirmEvent){
         when(event){
-            is ChildConfirmEvent.OnNumberCod -> {
+            is ChildConfirmEvent.SetConfirmCode -> {
                 _state.update {
                     it.copy(
-                        codNumber = event.codNumber.toString()
+                        codeNumber = event.code
                     )
                 }
             }

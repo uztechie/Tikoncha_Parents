@@ -117,7 +117,7 @@
     <string name="ism">Ism</string>
     <string name="yosh">Yosh</string>
     <string name="jins">Jins</string>
-    <string name="telefon_nomer">Telefon nomer</string>
+    <string name="telefon_nomer">Telefon raqam</string>
     <string name="sinf">Sinf</string>
     <string name="smena">Smena</string>
     <string name="qarindoshligi">Qarindoshligi</string>
@@ -152,5 +152,13 @@
     <string name="ruxsat_so_rash">Ruxsat so‘rash</string>
     <string name="joylashuv_uchun_ruxsat">Joylashuv uchun ruxsat</string>
     <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">Xaritadan to'liq foydalanish uchun Joylashuvga sozlamalardan turib ruxsat bering!</string>
+    <string name="xatolik">Xatolik</string>
+    <string name="ok">Ok</string>
+    <string name="qoshish">Qo'shish</string>
+    <string name="ogil_bola">O'g'il bola</string>
+    <string name="qiz_bola">Qiz bola</string>
+    <string name="erkak">Erkak</string>
+    <string name="ayol">Ayol</string>
+    <string name="farzand_qoshish">Farzand qo'shish</string>
 
 </resources>

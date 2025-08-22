@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.data.local.AppSettings
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.common.CustomListDialog
@@ -79,6 +80,8 @@ class CoinsScreen : Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
+
+        AppSettings.hasUserLogin = false
 
         CoinsUi(
             navigator = navigator

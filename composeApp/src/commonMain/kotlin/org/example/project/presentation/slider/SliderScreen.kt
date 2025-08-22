@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.example.project.data.local.AppSettings
 import org.example.project.presentation.base.LogoText
 import org.example.project.ui.*
 import org.example.project.presentation.login.LoginScreen
@@ -55,6 +57,12 @@ class SliderScreen : Screen {
             Res.string.bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin,
             Res.string.bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin,
         )
+
+        DisposableEffect(Unit){
+            onDispose {
+                AppSettings.isFirstLaunch = false
+            }
+        }
 
         val pageItems = mutableListOf(
             painterResource(Res.drawable.slider_background),

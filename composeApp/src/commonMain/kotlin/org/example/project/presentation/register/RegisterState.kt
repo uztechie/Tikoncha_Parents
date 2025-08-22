@@ -6,5 +6,8 @@ data class RegisterState(
     val middleName: String = "",
     val idNumber: String = "",
     val genderIndex: Int = 0,
-    val accept: Boolean = false
+    val accept: Boolean = false,
+    val registerSuccess: Boolean = false,
+    val registerLoading: Boolean = false,
+    val registerError: String = "",
 )

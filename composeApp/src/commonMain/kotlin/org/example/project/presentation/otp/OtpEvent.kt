@@ -6,5 +6,6 @@ sealed class OtpEvent {
     object OnConfirmClicked: OtpEvent()
     object TimeStart: OtpEvent()
     object Tick : OtpEvent()
+    object Reset : OtpEvent()
     object ClearNavigation : OtpEvent()
 }
