@@ -160,5 +160,9 @@
     <string name="erkak">Erkak</string>
     <string name="ayol">Ayol</string>
     <string name="farzand_qoshish">Farzand qo'shish</string>
-
+    <string name="farzandingizni_tanlang">Farzandingizni tanlang</string>
+    <string name="daqiqa">daqiqa</string>
+    <string name="bugun">bugun</string>
+    <string name="bir_kunda_o_rtacha">Bir kunda o'rtacha</string>
+    <string name="eng_kop_foydalanilgan">Eng ko'p foydalanilgan</string>
 </resources>

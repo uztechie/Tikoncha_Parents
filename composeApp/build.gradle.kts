@@ -90,7 +90,7 @@ kotlin {
             implementation(libs.remember.settings)
 
 
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation("network.chaintech:qr-kit:3.1.2")
 
             implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.3.0")

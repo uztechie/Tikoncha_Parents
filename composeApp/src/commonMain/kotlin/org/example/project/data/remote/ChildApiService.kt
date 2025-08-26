@@ -1,10 +1,15 @@
 package org.example.project.data.remote
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
+import io.ktor.http.ParametersBuilder
+import io.ktor.http.parameters
+import io.ktor.http.parametersOf
 import org.example.project.data.remote.model.AddChildRequest
 import org.example.project.data.remote.model.AddChildResponse
+import org.example.project.data.remote.model.AppUsageResponse
 import org.example.project.data.remote.model.ChildrenResponse
 import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.saidburxon.newedu.data.model.SendOtpResponse
@@ -28,5 +33,17 @@ class ChildApiService(private val client: HttpClient) {
 
             }
         )
+    suspend fun appUsages(params: Map<String, Any>): AppUsageResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "data-exchange",
+            block = {
+                params.forEach {
+                    parameter(it.key, it.value)
+                }
+            }
+        )
+
+
 
 }

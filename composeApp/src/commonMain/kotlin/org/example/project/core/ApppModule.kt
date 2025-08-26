@@ -8,6 +8,7 @@ import org.example.project.data.repository.LoginRepositoryImpl
 import org.example.project.domain.repository.ChildRepository
 import org.example.project.domain.repository.LoginRepository
 import org.example.project.domain.use_case.AddChildUseCase
+import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
 import org.example.project.domain.use_case.RegisterUseCase
 import org.example.project.domain.use_case.SendOtpUseCase
@@ -53,6 +54,7 @@ val sharedModule = module {
     single { UserInfoUseCase(get()) }
     single { AddChildUseCase(get()) }
     single { ChildrenUseCase(get()) }
+    single { AppUsagesUseCase(get()) }
 
 
 
@@ -64,7 +66,7 @@ val sharedModule = module {
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel() }
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatViewModel() }
 

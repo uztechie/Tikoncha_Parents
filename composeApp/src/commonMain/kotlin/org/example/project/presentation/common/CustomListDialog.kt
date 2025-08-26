@@ -2,6 +2,7 @@ package org.example.project.presentation.common
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import org.example.project.presentation.base.Loading
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.ui.BackgroundColor
 import org.example.project.ui.CardCornerRadius
 import org.example.project.ui.CloseButtonInnerPadding
@@ -54,6 +57,8 @@ fun <T>CustomListDialog(
     title:String,
     items:List<T>,
     show:Boolean = true,
+    loading: Boolean = false,
+    errorMessage: String = "",
     onItemSelected:(T) -> Unit,
     onDismiss:() -> Unit
 ) {
@@ -132,83 +137,63 @@ fun <T>CustomListDialog(
 
                         SpaceMedium()
 
-//                        CustomTextField(
-//                            modifier = modifier
-//                                .height(TextFieldHeight)
-//                                .fillMaxWidth()
-//                                .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)),
-//                            value = searchQuery,
-//                            label = stringResource(R.string.izlash),
-//                            onValueChange = {
-//                                searchQuery = it
-//                            },
-//                            containerColor = Color.Transparent,
-//                            contentColor = TextColor,
-//                            leadingIcon = {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.search_normal),
-//                                    contentDescription = "Search",
-//                                    tint = TextColor,
-//                                    modifier = Modifier
-//                                        .size(TextFieldIconSize)
-//                                )
-//                            },
-//                            trailingIcon = {
-//                                if (searchQuery.isNotEmpty()) {
-//                                    IconButton(
-//                                        onClick = {
-//                                            searchQuery = ""
-//                                        },
-//                                        modifier = Modifier
-//                                            .size(TextFieldIconSize)
-//                                    ) {
-//                                        Icon(
-//                                            imageVector = Icons.Default.Close,
-//                                            contentDescription = "Close",
-//                                            tint = TextColor
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        )
-//
-//                        SpaceSmall()
 
-                        LazyColumn(
+
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)),
-
-                            ) {
-                            items(filteredItems){ item->
-                                Row(
+                            contentAlignment = Alignment.Center
+                        ){
+                            if (loading || errorMessage.isNotEmpty()){
+                                Loading(loading)
+                                CustomText(
+                                    text = errorMessage,
+                                    fontSize = NormalTextSize,
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(ItemHeight)
-                                        .padding(horizontal = TextFieldInnerPadding)
-                                        .clickable {
-                                            onItemSelected(item)
-                                            onDismiss()
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.happyemoji_icon),
-                                        contentDescription = "Search",
-                                        tint = PrimaryColor,
-                                        modifier = Modifier
-                                            .padding(end = TextFieldInnerPadding)
-                                            .size(TextFieldIconSize)
-                                    )
+                                )
+                            }
+                            else{
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                )
+                                {
+                                    items(filteredItems){ item->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(ItemHeight)
+                                                .padding(horizontal = TextFieldInnerPadding)
+                                                .clickable {
+                                                    onItemSelected(item)
+                                                    onDismiss()
+                                                },
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.happyemoji_icon),
+                                                contentDescription = "Search",
+                                                tint = PrimaryColor,
+                                                modifier = Modifier
+                                                    .padding(end = TextFieldInnerPadding)
+                                                    .size(TextFieldIconSize)
+                                            )
 
-                                    CustomText(
-                                        text = item.toString(),
-                                        fontSize = NormalTextSize,
-                                        modifier = Modifier
-                                    )
+                                            CustomText(
+                                                text = item.toString(),
+                                                fontSize = NormalTextSize,
+                                                modifier = Modifier
+                                            )
+                                        }
+                                    }
                                 }
                             }
+
+
                         }
+
+
                     }
                 }
             }

@@ -45,7 +45,8 @@ fun DateSelectorSlider(
     type: DateSelectionType,
     modifier: Modifier = Modifier,
     periodsDate: List<UsagePeriod>,
-    onDateSelected:(UsagePeriod) -> Unit
+    onDateSelected:(UsagePeriod) -> Unit,
+    onLastItemSelected: (Boolean) -> Unit = {}
 ) {
     if (periodsDate.isEmpty()){
         return
@@ -71,6 +72,12 @@ fun DateSelectorSlider(
         if (selectedIndex>=0 && selectedIndex < pagerState.pageCount){
             pagerState.animateScrollToPage(selectedIndex)
             onDateSelected(periodsDate[selectedIndex])
+        }
+        if (selectedIndex == periodsDate.lastIndex){
+            onLastItemSelected(true)
+        }
+        else{
+            onLastItemSelected(false)
         }
 
     }

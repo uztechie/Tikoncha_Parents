@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,30 +15,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.HourMinute
+import org.example.project.platform.AppIconLoader
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.daqiqa
 import tikoncha_parents.composeapp.generated.resources.ic_launcher_foreground
+import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.time_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun AppUsageItem(
-    appUsage: AppUsage
+    appUsageUi: AppUsageUi
 ) {
 
-//    var bitMapIcon: Bitmap? = null
-//
-//    appUsage.icon?.let { drawable ->
-//        bitMapIcon = remember(drawable) {
-//            drawable.toBitmap()
-//        }
-//    }
+
+    val loader: AppIconLoader = koinInject()
+    val icon = remember(appUsageUi.packageName) { loader.load(appUsageUi.packageName) }
+
 
 
     Row(
@@ -74,11 +77,20 @@ fun AppUsageItem(
 //                )
 //            }
 
-            Icon(
-                painter = painterResource(Res.drawable.ic_launcher_foreground),
-                contentDescription = "",
-                tint = PrimaryColor
-            )
+            if (icon == null){
+                Icon(
+                    painter = painterResource(Res.drawable.ic_launcher_foreground),
+                    contentDescription = "",
+                    tint = PrimaryColor
+                )
+            }
+            else{
+                Image(
+                    bitmap = icon,
+                    contentDescription = "",
+                )
+            }
+
 
         }
 
@@ -90,7 +102,7 @@ fun AppUsageItem(
         ) {
 
             CustomText(
-                text = appUsage.name,
+                text = appUsageUi.name,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold
             )
@@ -111,8 +123,24 @@ fun AppUsageItem(
                     tint = PrimaryColor
                 )
 
+                val soat = stringResource(Res.string.soat)
+                val daqiqa = stringResource(Res.string.daqiqa)
+                val hour = appUsageUi.usageTime.hour
+                val minute = appUsageUi.usageTime.minute
+
+                val time = StringBuilder()
+                if (hour > 0){
+                    time.append(hour.toString())
+                    time.append(" ")
+                    time.append(soat)
+                    time.append(" ")
+                }
+                time.append(minute.toString())
+                time.append(" ")
+                time.append(daqiqa)
+
                 CustomText(
-                    text = appUsage.usageTime,
+                    text = time.toString(),
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = SmallTextSize,
@@ -129,6 +157,6 @@ fun AppUsageItem(
 @Composable
 private fun PreviewAppUsageItem() {
     AppUsageItem(
-        appUsage = AppUsage("", "Instagram", "", "2 soat 45 minut")
+        appUsageUi = AppUsageUi("", "Instagram", "", HourMinute())
     )
 }

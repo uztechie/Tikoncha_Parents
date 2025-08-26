@@ -2,7 +2,6 @@ package org.example.project.presentation.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +38,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomSelectionButton
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.presentation.base.SegmentedToggle
 import org.example.project.presentation.common.CustomListDialog
 import org.example.project.ui.*
@@ -78,6 +79,9 @@ fun HomeUi(
     event: (HomeEvent) -> Unit
 ) {
 
+    LaunchedEffect(true){
+        event(HomeEvent.GetChildren)
+    }
 
     val bottomRoundedShape = RoundedCornerShape(
         topStart = 0.dp,
@@ -86,23 +90,27 @@ fun HomeUi(
         bottomEnd = ShapeCornerRadius
     )
 
-
-    val list = remember {
-        mutableStateListOf(
-            AppUsage("", "Instagram", "", "1 soat"),
-            AppUsage("", "You tube", "", "2 soat"),
-            AppUsage("", "Tik Tok", "", "3 soat"),
-            AppUsage("", "Pubg Mobile", "", "4 soat"),
-            AppUsage("", "Mobile Legends Bing Bang", "", "5 soat"),
-            AppUsage("", "Facebook", "", "6 soat"),
-            AppUsage("", "Twitter", "", "7 soat"),
-            AppUsage("", "Linkedin", "", "8 soat"),
-            AppUsage("", "Duolingo", "", "9 soat"),
-            AppUsage("", "Telegram", "", "10 soat"),
-            AppUsage("", "Chrome", "", "11 soat"),
-            AppUsage("", "Settings", "", "12 soat"),
-        )
+    LoadingDialog(state.appUsageLoading)
+    var showRegisterErrorDialog by remember {
+        mutableStateOf(false)
     }
+    LaunchedEffect(state.appUsageError) {
+        if (state.appUsageError.isNotEmpty()) {
+            showRegisterErrorDialog = true
+        }
+    }
+    CustomDialog(
+        onDismiss = {showRegisterErrorDialog = false},
+        show = showRegisterErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.appUsageError,
+        onButtonClick = {
+            showRegisterErrorDialog = false
+        }
+    )
+
+
+
 
     var showDialog by remember {
         mutableStateOf(false)
@@ -119,6 +127,8 @@ fun HomeUi(
         title = stringResource(Res.string.farzandlaringiz),
         items = state.childrenList,
         show = showDialog,
+        loading = state.childrenLoading,
+        errorMessage = state.childrenError,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
         },
@@ -241,10 +251,11 @@ fun HomeUi(
             SpaceUltraSmall()
 
             CustomSelectionButton(
+                label = stringResource(Res.string.farzandingizni_tanlang),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight),
-                text = state.selectedChildren,
+                text = state.selectedChildren?.fullName?:"",
                 painter = painterResource(Res.drawable.profile),
                 onClick = {
                     showDialog = true
@@ -275,81 +286,77 @@ fun HomeUi(
                 periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
                 onDateSelected = {
                     event(HomeEvent.GetUsageList(it, selectionType))
+                },
+                onLastItemSelected = {
+                    event(HomeEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
                 }
             )
 
             SpaceUltraSmall()
 
+            val averageTime = if (selectionType == DateSelectionType.DAY) {
+                val formatTime = state.averageUsageTime
+                buildList<String> {
+
+                    if (state.isTodaySelected) {
+                        add(stringResource(Res.string.bugun))
+                    }
+                    if (formatTime.hour > 0) {
+                        add("${formatTime.hour} ${stringResource(Res.string.soat)}")
+                    }
+                    if (formatTime.minute > 0) {
+                        add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
+                    }
+                }.joinToString(" ")
+            } else {
+
+                val formatTime = state.averageUsageTime
+                val usageTime = buildList<String> {
+                    if (formatTime.hour > 0) {
+                        add("${formatTime.hour} ${stringResource(Res.string.soat)}")
+                    }
+                    if (formatTime.minute > 0) {
+                        add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
+                    }
+                }.joinToString(" ")
+
+                "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
+            }
+
             CustomText(
-                text = "Bir kunda o'rtacha 5 soat 44 minut",
+                text = averageTime,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = UltraSmallTextSize,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier
                     .fillMaxWidth(),
-                fontSize = SmallTextSize,
-                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center
             )
 
-            SpaceUltraSmall()
+            SpaceLarge()
+
 
             UsageBarChart(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                data = if (selectionType == DateSelectionType.DAY) state.dailyChartData else state.weeklyChartData
+                data = state.dailyChartData
             )
 
-            if (state.socialAppUsageList.isNotEmpty()) {
-                SpaceMedium()
+            SpaceMedium()
 
-                CustomText(
-                    text = stringResource(Res.string.ijtimoiy_tarmoqlar),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = NormalLargeTextSize
-                )
+            CustomText(
+                text = stringResource(Res.string.eng_kop_foydalanilgan),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = NormalLargeTextSize
+            )
 
-                SpaceSmall()
+            SpaceSmall()
 
-                state.socialAppUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
-                    SpaceUltraSmall()
-                    DividerHorizontal()
-                }
-            }
-
-            if (state.gameUsageList.isNotEmpty()) {
-                SpaceMedium()
-
-                CustomText(
-                    text = stringResource(Res.string.oyinlar),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = NormalLargeTextSize
-                )
-
-                SpaceSmall()
-
-                state.gameUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
-                    SpaceUltraSmall()
-                    DividerHorizontal()
-                }
-            }
-
-            if (state.otherAppUsageList.isNotEmpty()) {
-                SpaceMedium()
-
-                CustomText(
-                    text = stringResource(Res.string.boshqalar),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = NormalLargeTextSize
-                )
-
-                SpaceSmall()
-
-                state.otherAppUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
-                    SpaceUltraSmall()
-                    DividerHorizontal()
-                }
+            state.appUsageUiList.forEach { item ->
+                AppUsageItem(appUsageUi = item)
+                SpaceUltraSmall()
+                DividerHorizontal()
             }
         }
     }

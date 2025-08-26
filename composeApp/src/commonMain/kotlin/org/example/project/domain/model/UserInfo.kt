@@ -18,4 +18,8 @@ data class UserInfo(
     val schoolClassName: String? = null,
     val schoolClassId: String? = null,
     val shift: String? = null,
-)
+){
+    override fun toString(): String {
+        return fullName
+    }
+}
