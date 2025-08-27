@@ -1,6 +1,7 @@
 package org.example.project.presentation.home
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -25,12 +30,16 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ic_launcher_foreground
+import tikoncha_parents.composeapp.generated.resources.lock
+import tikoncha_parents.composeapp.generated.resources.locked
 import tikoncha_parents.composeapp.generated.resources.time_icon
+import tikoncha_parents.composeapp.generated.resources.unlocked
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun AppUsageItem(
-    appUsage: AppUsage
+    appUsageUi: AppUsageUi,
+    onClickLock: (appUsageUi: AppUsageUi) -> Unit
 ) {
 
 //    var bitMapIcon: Bitmap? = null
@@ -41,6 +50,9 @@ fun AppUsageItem(
 //        }
 //    }
 
+    var allowed by remember {
+        mutableStateOf(appUsageUi.allowed)
+    }
 
     Row(
         modifier = Modifier
@@ -84,13 +96,13 @@ fun AppUsageItem(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .padding(start = 10.dp),
             verticalArrangement = Arrangement.Center
         ) {
 
             CustomText(
-                text = appUsage.name,
+                text = appUsageUi.name,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold
             )
@@ -112,7 +124,7 @@ fun AppUsageItem(
                 )
 
                 CustomText(
-                    text = appUsage.usageTime,
+                    text = appUsageUi.usageTime,
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = SmallTextSize,
@@ -121,6 +133,33 @@ fun AppUsageItem(
                 )
             }
         }
+
+        FilledTonalIconButton(
+            onClick = {
+                allowed = !allowed
+                onClickLock(appUsageUi.copy(allowed = allowed))
+            },
+            shape = RoundedCornerShape(ButtonCornerRadius),
+            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.background),
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(AppIconSize)
+                .border(
+                    shape = RoundedCornerShape(ButtonCornerRadius),
+                    width = 1.dp,
+                    color = if (allowed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.error
+                )
+        ) {
+
+            Icon(
+                painter = if (allowed) painterResource(Res.drawable.unlocked) else painterResource(
+                    Res.drawable.locked
+                ),
+                contentDescription = "",
+                tint = if (allowed) PrimaryColor else MaterialTheme.colorScheme.error
+            )
+
+        }
     }
 
 }
@@ -128,7 +167,21 @@ fun AppUsageItem(
 @Preview
 @Composable
 private fun PreviewAppUsageItem() {
-    AppUsageItem(
-        appUsage = AppUsage("", "Instagram", "", "2 soat 45 minut")
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)
+            .padding(ContainerPadding)
+    ) {
+        AppUsageItem(
+            appUsageUi = AppUsageUi(
+                "",
+                "Instagram",
+                "",
+                "2 soat 45 minut",
+                allowed = true,
+            ),
+            onClickLock = {}
+        )
+    }
 }

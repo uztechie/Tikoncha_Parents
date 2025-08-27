@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import org.example.project.ui.NormalTextSize
 import org.example.project.ui.PrimaryColor
 import org.example.project.ui.ProfileImageSize
@@ -39,7 +41,8 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 fun ProfileHeader(
     fullName: String,
     fathersName: String,
-    image: String?,
+    image: ImageBitmap?,
+    state: ProfileState,
     onSelectImageButtonClick: () -> Unit
 ) {
 
@@ -62,24 +65,28 @@ fun ProfileHeader(
                     .background(MaterialTheme.colorScheme.background)
                     .border(width = 2.dp, color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(50))
             ){
-                Image(
+                AsyncImage(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(50))
                         .background(MaterialTheme.colorScheme.background),
-                    painter = if (
-                        image == null ||
-                        image.toString() == "" ||
-                        image.toString() == "null"
-                    ) painterResource(Res.drawable.profile_hedgehog_img) else {
-                        painterResource(Res.drawable.profile_hedgehog_img)
-                    },
-//                    rememberAsyncImagePainter(
-//                        model = image
-//                    ),
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop
+                    model = state.profileImageUrl,
+                    placeholder = painterResource(Res.drawable.profile_hedgehog_img),
+                    error = painterResource(Res.drawable.profile_hedgehog_img),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+//                    onError = { e ->  e.result.throwable.printStackTrace()}
                 )
+
+//                Image(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .clip(RoundedCornerShape(50))
+//                        .background(MaterialTheme.colorScheme.background),
+//                    contentScale = ContentScale.Crop,
+//                    contentDescription = null,
+//                    painter = painterResource(Res.drawable.profile_hedgehog_img)
+//                )
             }
 
             IconButton(
@@ -134,6 +141,7 @@ private fun Pre() {
         fullName = "Ahmadjonov Husniddin",
         fathersName = "Nazirjon o'g'li",
         image = null,
-        onSelectImageButtonClick = {}
+        onSelectImageButtonClick = {},
+        state = ProfileState()
     )
 }

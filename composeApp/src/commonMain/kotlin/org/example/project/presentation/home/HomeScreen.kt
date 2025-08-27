@@ -2,7 +2,6 @@ package org.example.project.presentation.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -89,18 +87,18 @@ fun HomeUi(
 
     val list = remember {
         mutableStateListOf(
-            AppUsage("", "Instagram", "", "1 soat"),
-            AppUsage("", "You tube", "", "2 soat"),
-            AppUsage("", "Tik Tok", "", "3 soat"),
-            AppUsage("", "Pubg Mobile", "", "4 soat"),
-            AppUsage("", "Mobile Legends Bing Bang", "", "5 soat"),
-            AppUsage("", "Facebook", "", "6 soat"),
-            AppUsage("", "Twitter", "", "7 soat"),
-            AppUsage("", "Linkedin", "", "8 soat"),
-            AppUsage("", "Duolingo", "", "9 soat"),
-            AppUsage("", "Telegram", "", "10 soat"),
-            AppUsage("", "Chrome", "", "11 soat"),
-            AppUsage("", "Settings", "", "12 soat"),
+            AppUsageUi("", "Instagram", "", "1 soat"),
+            AppUsageUi("", "You tube", "", "2 soat"),
+            AppUsageUi("", "Tik Tok", "", "3 soat"),
+            AppUsageUi("", "Pubg Mobile", "", "4 soat"),
+            AppUsageUi("", "Mobile Legends Bing Bang", "", "5 soat"),
+            AppUsageUi("", "Facebook", "", "6 soat"),
+            AppUsageUi("", "Twitter", "", "7 soat"),
+            AppUsageUi("", "Linkedin", "", "8 soat"),
+            AppUsageUi("", "Duolingo", "", "9 soat"),
+            AppUsageUi("", "Telegram", "", "10 soat"),
+            AppUsageUi("", "Chrome", "", "11 soat"),
+            AppUsageUi("", "Settings", "", "12 soat"),
         )
     }
 
@@ -298,7 +296,7 @@ fun HomeUi(
                 data = if (selectionType == DateSelectionType.DAY) state.dailyChartData else state.weeklyChartData
             )
 
-            if (state.socialAppUsageList.isNotEmpty()) {
+            if (state.socialAppUsageUiLists.isNotEmpty()) {
                 SpaceMedium()
 
                 CustomText(
@@ -309,8 +307,13 @@ fun HomeUi(
 
                 SpaceSmall()
 
-                state.socialAppUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
+                state.socialAppUsageUiLists.forEach { item ->
+                    AppUsageItem(
+                        appUsageUi = item,
+                        onClickLock = { appUsageUi ->
+                            appUsageUi.copy(allowed = !appUsageUi.allowed)
+                        }
+                    )
                     SpaceUltraSmall()
                     DividerHorizontal()
                 }
@@ -328,13 +331,18 @@ fun HomeUi(
                 SpaceSmall()
 
                 state.gameUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
+                    AppUsageItem(
+                        appUsageUi = item,
+                        onClickLock = { appUsageUi ->
+                            appUsageUi.copy(allowed = !appUsageUi.allowed)
+                        }
+                    )
                     SpaceUltraSmall()
                     DividerHorizontal()
                 }
             }
 
-            if (state.otherAppUsageList.isNotEmpty()) {
+            if (state.otherAppUsageUiLists.isNotEmpty()) {
                 SpaceMedium()
 
                 CustomText(
@@ -345,8 +353,14 @@ fun HomeUi(
 
                 SpaceSmall()
 
-                state.otherAppUsageList.forEach { item ->
-                    AppUsageItem(appUsage = item)
+                state.otherAppUsageUiLists.forEach { item ->
+                    AppUsageItem(
+                        appUsageUi = item,
+                        onClickLock = { appUsageUi ->
+                            item.copy(allowed = appUsageUi.allowed)
+                            event(HomeEvent.OnLockClicked(appUsageUi))
+                        }
+                    )
                     SpaceUltraSmall()
                     DividerHorizontal()
                 }

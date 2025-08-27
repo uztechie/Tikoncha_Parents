@@ -1,26 +1,25 @@
 package org.example.project.presentation.home
 
-import androidx.compose.runtime.mutableStateListOf
 import org.example.project.presentation.domain.model.UsagePeriod
 
 data class HomeState(
-    val socialAppUsageList: List<AppUsage> = listOf(
-        AppUsage("", "Instagram", "", "1 soat"),
-        AppUsage("", "You tube", "", "2 soat"),
-        AppUsage("", "Tik Tok", "", "3 soat"),
-        AppUsage("", "Pubg Mobile", "", "4 soat"),
-        AppUsage("", "Mobile Legends Bing Bang", "", "5 soat"),
-        AppUsage("", "Facebook", "", "6 soat"),
-        AppUsage("", "Twitter", "", "7 soat")
+    val socialAppUsageUiLists: List<AppUsageUi> = listOf(
+        AppUsageUi("", "Instagram", "", "1 soat"),
+        AppUsageUi("", "You tube", "", "2 soat"),
+        AppUsageUi("", "Tik Tok", "", "3 soat"),
+        AppUsageUi("", "Pubg Mobile", "", "4 soat"),
+        AppUsageUi("", "Mobile Legends Bing Bang", "", "5 soat"),
+        AppUsageUi("", "Facebook", "", "6 soat"),
+        AppUsageUi("", "Twitter", "", "7 soat")
     ),
-    val gameUsageList: List<AppUsage> = listOf(
-        AppUsage("", "Telegram", "", "10 soat"),
-        AppUsage("", "Chrome", "", "11 soat"),
-        AppUsage("", "Settings", "", "12 soat"),
+    val gameUsageList: List<AppUsageUi> = listOf(
+        AppUsageUi("", "Telegram", "", "10 soat"),
+        AppUsageUi("", "Chrome", "", "11 soat"),
+        AppUsageUi("", "Settings", "", "12 soat"),
     ),
-    val otherAppUsageList: List<AppUsage> = listOf(
-        AppUsage("", "Linkedin", "", "8 soat"),
-        AppUsage("", "Duolingo", "", "9 soat")
+    val otherAppUsageUiLists: List<AppUsageUi> = listOf(
+        AppUsageUi("", "Linkedin", "", "8 soat"),
+        AppUsageUi("", "Duolingo", "", "9 soat")
     ),
     val dailyPeriods: List<UsagePeriod> = emptyList(),
     val weeklyPeriods: List<UsagePeriod> = emptyList(),

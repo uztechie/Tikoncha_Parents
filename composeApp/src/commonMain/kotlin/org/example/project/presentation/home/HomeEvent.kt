@@ -7,4 +7,5 @@ sealed interface HomeEvent {
 
     object OnChildSelectClicked: HomeEvent
     data class OnChildSelected(val child: String): HomeEvent
+    data class OnLockClicked(val appUsageUi: AppUsageUi): HomeEvent
 }

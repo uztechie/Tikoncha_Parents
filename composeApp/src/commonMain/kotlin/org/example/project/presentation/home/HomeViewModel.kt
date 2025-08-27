@@ -25,6 +25,10 @@ class HomeViewModel: ViewModel() {
                     it.copy(selectedChildren = event.child)
                 }
             }
+
+            is HomeEvent.OnLockClicked -> {
+
+            }
         }
     }
 }
