@@ -26,6 +26,10 @@ object AppSettings {
         get() = settings.get("userId") ?: ""
         set(value) = settings.set("userId", value)
 
+    var policyId: String
+        get() = settings.get("policyId") ?: ""
+        set(value) = settings.set("policyId", value)
+
     var hasUserLogin: Boolean
         get() = settings.get("hasUserLogin") ?: false
         set(value) = settings.set("hasUserLogin", value)

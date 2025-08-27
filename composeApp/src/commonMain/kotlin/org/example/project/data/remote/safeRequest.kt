@@ -14,6 +14,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
+import io.ktor.http.contentType
 import org.example.project.data.local.AppSettings
 import org.example.project.data.remote.model.RefreshTokenResponse
 
@@ -27,6 +28,7 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     val response = this.request {
         this.method = method
         url(url)
+        contentType(io.ktor.http.ContentType.Application.Json)
         block()
     }
 
@@ -40,6 +42,7 @@ suspend inline fun <reified T> HttpClient.safeRequest(
             val retryResponse = this.request {
                 this.method = method
                 url(url)
+                contentType(io.ktor.http.ContentType.Application.Json)
                 block()
             }
 

@@ -2,7 +2,6 @@ package org.example.project.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
 import androidx.lifecycle.viewModelScope
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -18,13 +17,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.data.local.AppSettings
 import org.example.project.data.mapper.toUserInfo
 import org.example.project.data.remote.model.RegisterUserRequest
 import org.example.project.domain.model.GenderType
-import org.example.project.domain.model.Resource
-import org.example.project.domain.use_case.ChildrenUseCase
-import org.example.project.domain.use_case.UserInfoUseCase
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.local.AppSettings
@@ -44,7 +39,6 @@ class ProfileViewModel(
     private val childrenUseCase: ChildrenUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
-    private val httpClient: HttpClient
 ): ViewModel() {
     val BASE_URL = "https://api.tikoncha.uz"
     var userInfoJob: Job? = null
@@ -76,18 +70,14 @@ class ProfileViewModel(
             ProfileEvent.LoadAvatarFromServer -> {
                 getAvatar()
             }
+
+            is ProfileEvent.OnChangeProfilePhotoClicked -> {
+
+            }
         }
     }
 
 
-    private fun userInfoJob(){
-        userInfoJob?.cancel()
-        userInfoJob = viewModelScope.launch {
-            val result = userInfoUseCase()
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {}
-    }
     private fun uploadAvatar(part: UploadPart){
         avatarJob?.cancel()
 

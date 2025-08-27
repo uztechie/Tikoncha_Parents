@@ -24,12 +24,18 @@ data class HomeState(
     val appUsageError: String = "",
     val rulesError: String = "",
 
+    val createRuleError: String = "",
+    val createRuleLoading: Boolean = false,
+    val createRuleSuccess: Boolean = false,
+
     val isTodaySelected: Boolean = false,
     val averageUsageTime: HourMinute = HourMinute(),
 
     val dailyChartData: Map<Int, Double> = emptyMap(),
     val weeklyChartData: Map<Int, Double> = emptyMap(),
-    val dateSelectionType: DateSelectionType = DateSelectionType.WEEK
+    val dateSelectionType: DateSelectionType = DateSelectionType.WEEK,
+
+    val selectedApp: AppUsageUi? = null
 
 
 )

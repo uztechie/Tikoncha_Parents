@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -91,21 +90,45 @@ fun HomeUi(
     )
 
     LoadingDialog(state.appUsageLoading)
-    var showRegisterErrorDialog by remember {
+    LoadingDialog(state.createRuleLoading)
+
+    var showAppUsageErrorDialog by remember {
         mutableStateOf(false)
     }
+    var showCreateRuleDialog by remember {
+        mutableStateOf(false)
+    }
+
+
     LaunchedEffect(state.appUsageError) {
         if (state.appUsageError.isNotEmpty()) {
-            showRegisterErrorDialog = true
+            showAppUsageErrorDialog = true
         }
     }
+
+    LaunchedEffect(state.createRuleError) {
+        if (state.createRuleError.isNotEmpty()) {
+            showCreateRuleDialog = true
+        }
+    }
+
     CustomDialog(
-        onDismiss = {showRegisterErrorDialog = false},
-        show = showRegisterErrorDialog,
+        onDismiss = {showAppUsageErrorDialog = false},
+        show = showAppUsageErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = state.appUsageError,
         onButtonClick = {
-            showRegisterErrorDialog = false
+            showAppUsageErrorDialog = false
+        }
+    )
+
+    CustomDialog(
+        onDismiss = {showCreateRuleDialog = false},
+        show = showCreateRuleDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.createRuleError,
+        onButtonClick = {
+            showCreateRuleDialog = false
         }
     )
 
@@ -354,7 +377,12 @@ fun HomeUi(
             SpaceSmall()
 
             state.appUsageUiList.forEach { item ->
-                AppUsageItem(appUsageUi = item)
+                AppUsageItem(
+                    appUsageUi = item,
+                    onLockClick = {
+                        event(HomeEvent.OnLockClicked(it))
+                    }
+                )
                 SpaceUltraSmall()
                 DividerHorizontal()
             }

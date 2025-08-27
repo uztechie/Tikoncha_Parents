@@ -9,33 +9,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
-import org.example.project.common.Util
+import org.example.project.data.local.AppSettings
 import org.example.project.data.mapper.mapToDailyUsagePeriods
 import org.example.project.data.mapper.mapToWeeklyUsagePeriods
 import org.example.project.data.mapper.toDailyAverage
 import org.example.project.data.mapper.toDailyUsageMinutesForChart
-import org.example.project.data.mapper.toHourMinute
 import org.example.project.data.mapper.toUsageUi
 import org.example.project.data.mapper.toUserInfo
 import org.example.project.data.mapper.toWeeklyAverage
 import org.example.project.data.mapper.toWeeklyUsageMinutesForChart
+import org.example.project.data.remote.model.CreateRuleRequest
 import org.example.project.data.remote.model.GetRulesData
+import org.example.project.domain.model.PolicyActionType
+import org.example.project.domain.model.PolicyMatcherType
+import org.example.project.domain.model.PolicyResourceType
 import org.example.project.domain.model.Resource
 import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
+import org.example.project.domain.use_case.CreateRuleUseCase
 import org.example.project.domain.use_case.RefreshRulesUseCase
 import org.example.project.platform.Logger
 import org.example.project.presentation.domain.model.UsagePeriod
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 
 class HomeViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val childrenUseCase: ChildrenUseCase,
-    private val refreshRulesUseCase: RefreshRulesUseCase
+    private val refreshRulesUseCase: RefreshRulesUseCase,
+    private val createRuleUseCase: CreateRuleUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -47,6 +49,7 @@ class HomeViewModel(
     private var childrenJob: Job? = null
     private var appUsageJob: Job? = null
     private var rulesJob: Job? = null
+    private var createRuleJob: Job? = null
 
     fun onEvent(event: HomeEvent) {
         when (event) {
@@ -91,7 +94,12 @@ class HomeViewModel(
             }
 
             is HomeEvent.OnLockClicked -> {
-
+                _state.update {
+                    it.copy(
+                        selectedApp = event.appUsageUi
+                    )
+                }
+                createRule()
             }
         }
     }
@@ -219,6 +227,7 @@ class HomeViewModel(
         }
     }
 
+
     private fun refreshRules() {
         rulesJob?.cancel()
         rulesJob = viewModelScope.launch {
@@ -260,6 +269,73 @@ class HomeViewModel(
                         it.copy(
                             rulesError = "",
                             appUsageUiList = patched
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createRule() {
+        createRuleJob?.cancel()
+        createRuleJob = viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    createRuleError = "",
+                    createRuleLoading = true,
+                    createRuleSuccess = false
+                )
+            }
+
+            val createRuleRequest = CreateRuleRequest(
+                policyId = AppSettings.policyId,
+                resource_type = PolicyResourceType.APP.name,
+                matcher = PolicyMatcherType.PACKAGE.name,
+                value = state.value.selectedApp?.packageName?:"",
+                action = if (state.value.selectedApp?.allowed == true) PolicyActionType.DENY.name
+                else PolicyActionType.ALLOW.name
+            )
+
+            val response = createRuleUseCase.invoke(
+                createRuleRequest = createRuleRequest,
+                userId = state.value.selectedChildren?.userId?:""
+            )
+            when (response) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            createRuleError = response.message,
+                            createRuleLoading = false,
+                            createRuleSuccess = false
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            createRuleError = "",
+                            createRuleLoading = false,
+                            createRuleSuccess = true
+                        )
+                    }
+
+                    val appList = state.value.appUsageUiList
+                        .map {
+                            if (it.packageName == state.value.selectedApp?.packageName){
+                                it.copy(
+                                    allowed = !it.allowed
+                                )
+                            }
+                            else{
+                                it
+                            }
+                        }
+
+                    _state.update {
+                        it.copy(
+                            appUsageUiList = appList
                         )
                     }
                 }

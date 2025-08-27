@@ -253,7 +253,8 @@ fun List<AppUsage>.toUsageUi(startDate: LocalDate?, endDate: LocalDate?): List<A
                 packageName = pkg,
                 name = usages.first().appName,   // birinchi AppUsage'dan olish mumkin
                 icon = "",                       // ⚠️ siz bu yerda haqiqiy icon path/url ni qo‘yishingiz kerak
-                usageTime = HourMinute(hours, minutes)
+                usageTime = HourMinute(hours, minutes),
+                allowed = false
             )
         }
         .sortedByDescending { it.usageTime.hour * 60 + it.usageTime.minute }

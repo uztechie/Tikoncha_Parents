@@ -33,7 +33,6 @@ import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.data.mapper.toUploadPart
 import org.example.project.platform.decodeImageBitmapOrNull
 import org.example.project.platform.rememberImagePicker
-import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.profile.ProfileEvent

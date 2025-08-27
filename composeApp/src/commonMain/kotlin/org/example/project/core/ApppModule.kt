@@ -1,20 +1,28 @@
 package org.example.project.core
 
+import org.example.project.data.remote.AvatarApiService
 import org.example.project.data.remote.ChildApiService
 import org.example.project.data.remote.LoginApiService
 import org.example.project.data.remote.RulesApiService
 import org.example.project.data.remote.TikonchaClient
+import org.example.project.data.repository.AvatarRepositoryImpl
 import org.example.project.data.repository.ChildRepositoryImpl
 import org.example.project.data.repository.LoginRepositoryImpl
 import org.example.project.data.repository.RulesRepositoryImpl
+import org.example.project.domain.repository.AvatarRepository
 import org.example.project.domain.repository.ChildRepository
 import org.example.project.domain.repository.LoginRepository
 import org.example.project.domain.repository.RulesRepository
 import org.example.project.domain.use_case.AddChildUseCase
 import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
+import org.example.project.domain.use_case.CreatePolicyUseCase
+import org.example.project.domain.use_case.CreateRuleUseCase
+import org.example.project.domain.use_case.LoadAvatarFromServerUseCase
+import org.example.project.domain.use_case.RefreshRulesUseCase
 import org.example.project.domain.use_case.RegisterUseCase
 import org.example.project.domain.use_case.SendOtpUseCase
+import org.example.project.domain.use_case.UploadAvatarToServerUseCase
 import org.example.project.domain.use_case.UserInfoUseCase
 import org.example.project.domain.use_case.VerifyOtpUseCase
 import org.example.project.presentation.add_child.ChildViewmodel
@@ -33,7 +41,6 @@ import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordV
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 
 val sharedModule = module {
-    viewModelOf(::HomeViewModel)
     single {
         HttpClientEngineFactory().getHttpEngine()
     }
@@ -65,18 +72,21 @@ val sharedModule = module {
     single { AppUsagesUseCase(get()) }
     single { UploadAvatarToServerUseCase(get()) }
     single { LoadAvatarFromServerUseCase(get()) }
+    single { RefreshRulesUseCase(get()) }
+    single { CreatePolicyUseCase(get()) }
+    single { CreateRuleUseCase(get()) }
 
 
 
     viewModel { LoginViewmodel(get()) }
     viewModel { OtpViewmodel(get()) }
     viewModel { RegisterViewmodel(get()) }
-    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel() }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatViewModel() }
 
