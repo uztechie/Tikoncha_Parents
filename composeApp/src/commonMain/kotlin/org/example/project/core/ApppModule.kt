@@ -45,11 +45,14 @@ val sharedModule = module {
     single { LoginApiService(get()) }
     single { ChildApiService(get()) }
     single { RulesApiService(get()) }
+    single { AvatarApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
     single<ChildRepository> { ChildRepositoryImpl(get()) }
     single<RulesRepository> { RulesRepositoryImpl(get()) }
+    single<AvatarRepository> { AvatarRepositoryImpl(get()) }
+
 
 
     //use case module
@@ -60,13 +63,15 @@ val sharedModule = module {
     single { AddChildUseCase(get()) }
     single { ChildrenUseCase(get()) }
     single { AppUsagesUseCase(get()) }
+    single { UploadAvatarToServerUseCase(get()) }
+    single { LoadAvatarFromServerUseCase(get()) }
 
 
 
     viewModel { LoginViewmodel(get()) }
     viewModel { OtpViewmodel(get()) }
     viewModel { RegisterViewmodel(get()) }
-    viewModel { ProfileViewModel(get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get(), get()) }
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }

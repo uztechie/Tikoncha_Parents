@@ -4,7 +4,7 @@ import org.example.project.domain.model.UserInfo
 import org.example.project.presentation.domain.model.Child
 
 data class ProfileState(
-    val profileImage: String = "",
+    val profileImageUrl: String = "",
     val fullName: String = "",
     val phoneNumber: String = "",
     val relativity: String = "",

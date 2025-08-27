@@ -12,6 +12,15 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.header
 import io.ktor.http.URLProtocol
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
+import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.example.project.data.local.AppSettings
@@ -39,6 +48,11 @@ class TikonchaClient(private val engine: HttpClientEngine) {
         install(HttpRedirect){
             checkHttpMethod = false
             allowHttpsDowngrade = true
+        }
+        install(io.ktor.client.plugins.HttpTimeout) {
+            requestTimeoutMillis = 15_000
+            connectTimeoutMillis = 10_000
+            socketTimeoutMillis = 15_000
         }
         defaultRequest {
             url {

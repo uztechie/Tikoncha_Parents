@@ -13,4 +13,6 @@ sealed interface HomeEvent {
     data object GetAppUsage: HomeEvent
 
     data class TodaySelected(val today: Boolean): HomeEvent
+    data class OnChildSelected(val child: String): HomeEvent
+    data class OnLockClicked(val appUsageUi: AppUsageUi): HomeEvent
 }

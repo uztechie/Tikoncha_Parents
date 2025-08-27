@@ -89,6 +89,10 @@ class HomeViewModel(
                     )
                 }
             }
+
+            is HomeEvent.OnLockClicked -> {
+
+            }
         }
     }
 

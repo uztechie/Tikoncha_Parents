@@ -6,10 +6,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.example.project.data.mapper.toUploadPart
+import org.example.project.platform.decodeImageBitmapOrNull
+import org.example.project.platform.rememberImagePicker
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomOutlinedButton
 import org.example.project.presentation.common.TransparentQrScreen
@@ -49,7 +53,7 @@ class ProfileScreen : Screen {
 fun ProfileUi(
     state: ProfileState,
     event: (ProfileEvent) -> Unit
-){
+) {
     val navigator = LocalNavigator.current
     val rootNavigator = navigator?.parent
 
@@ -80,6 +84,12 @@ fun ProfileUi(
         )
     }
 
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    val launchPicker = rememberImagePicker { picked ->
+        event(ProfileEvent.OnAvatarPhotoSelected(picked.toUploadPart("avatar.jpg")))
+        imageBitmap = decodeImageBitmapOrNull(picked.bytes)
+    }
+
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
 
     Column(
@@ -101,10 +111,12 @@ fun ProfileUi(
             ProfileHeader(
                 fullName = state.userInfo?.fullName?:"",
                 fathersName = "",
-                image = null,
+                image = imageBitmap,
                 onSelectImageButtonClick = {
 //                    event(ProfileEvent.OnChangeProfileImageClicked(null))
-                }
+                    launchPicker()
+                },
+                state = state
             )
 
             SpaceLarge()
@@ -203,7 +215,7 @@ fun ProfileUi(
 
 @Preview
 @Composable
-private fun PreviewProfileScreen(){1
+private fun PreviewProfileScreen(){
     ProfileUi(
         state = ProfileState(),
         event = {}

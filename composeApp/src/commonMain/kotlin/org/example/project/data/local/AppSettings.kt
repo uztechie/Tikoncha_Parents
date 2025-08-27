@@ -18,6 +18,10 @@ object AppSettings {
         get() = settings.get("accessToken") ?: ""
         set(value) = settings.set("accessToken", value)
 
+    var profileImageUrl: String
+        get() = settings.get("profileImageUrl") ?: ""
+        set(value) = settings.set("profileImageUrl", value)
+
     var userId: String
         get() = settings.get("userId") ?: ""
         set(value) = settings.set("userId", value)

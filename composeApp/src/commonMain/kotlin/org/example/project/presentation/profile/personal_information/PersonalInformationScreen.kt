@@ -18,14 +18,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.example.project.presentation.add_child.AddChildScreen
+import org.example.project.data.mapper.toUploadPart
+import org.example.project.platform.decodeImageBitmapOrNull
+import org.example.project.platform.rememberImagePicker
 import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomOutlinedButton
@@ -64,7 +71,7 @@ import tikoncha_parents.composeapp.generated.resources.shift_clock
 import tikoncha_parents.composeapp.generated.resources.two_users
 import uz.saidburxon.newedu.presentation.base.CustomText
 
-class PersonalInformationScreen: Screen {
+class PersonalInformationScreen : Screen {
     @Composable
     override fun Content() {
 
@@ -91,6 +98,12 @@ fun PersonalInformationUi(
     val rootNavigator = LocalNavigator.current
 
 
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    val launchPicker = rememberImagePicker { picked ->
+        event(ProfileEvent.OnAvatarPhotoSelected(picked.toUploadPart("avatar.jpg")))
+        imageBitmap = decodeImageBitmapOrNull(picked.bytes)
+    }
+
 
     Column(
         modifier = Modifier
@@ -114,12 +127,13 @@ fun PersonalInformationUi(
 
             item {
                 ProfileHeader(
-                    fullName = state.userInfo?.fullName?:"",
+                    fullName = state.userInfo?.fullName ?: "",
                     fathersName = "",
                     onSelectImageButtonClick = {
-                        event(ProfileEvent.OnChangeProfilePhotoClicked(null))
+                        launchPicker()
                     },
-                    image = state.profileImage
+                    image = null,
+                    state = state
                 )
 
                 SpaceLarge()
@@ -172,7 +186,7 @@ fun PersonalInformationUi(
 
 @Preview
 @Composable
-private fun PreviewPersonalInformationScreen(){
+private fun PreviewPersonalInformationScreen() {
     PersonalInformationUi(
         state = ProfileState(),
         event = {}
