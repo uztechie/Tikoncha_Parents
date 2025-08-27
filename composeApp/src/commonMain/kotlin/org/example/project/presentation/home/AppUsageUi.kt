@@ -6,6 +6,7 @@ data class AppUsageUi(
     val packageName: String,
     val name: String,
     val icon: String,
-    val usageTime: HourMinute
+    val usageTime: HourMinute,
+    val allowed: Boolean = false
 )
 

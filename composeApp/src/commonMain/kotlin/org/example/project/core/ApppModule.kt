@@ -2,11 +2,14 @@ package org.example.project.core
 
 import org.example.project.data.remote.ChildApiService
 import org.example.project.data.remote.LoginApiService
+import org.example.project.data.remote.RulesApiService
 import org.example.project.data.remote.TikonchaClient
 import org.example.project.data.repository.ChildRepositoryImpl
 import org.example.project.data.repository.LoginRepositoryImpl
+import org.example.project.data.repository.RulesRepositoryImpl
 import org.example.project.domain.repository.ChildRepository
 import org.example.project.domain.repository.LoginRepository
+import org.example.project.domain.repository.RulesRepository
 import org.example.project.domain.use_case.AddChildUseCase
 import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
@@ -41,10 +44,12 @@ val sharedModule = module {
     //api service
     single { LoginApiService(get()) }
     single { ChildApiService(get()) }
+    single { RulesApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
     single<ChildRepository> { ChildRepositoryImpl(get()) }
+    single<RulesRepository> { RulesRepositoryImpl(get()) }
 
 
     //use case module

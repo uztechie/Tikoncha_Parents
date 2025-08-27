@@ -21,9 +21,11 @@ import org.example.project.data.mapper.toUsageUi
 import org.example.project.data.mapper.toUserInfo
 import org.example.project.data.mapper.toWeeklyAverage
 import org.example.project.data.mapper.toWeeklyUsageMinutesForChart
+import org.example.project.data.remote.model.GetRulesData
 import org.example.project.domain.model.Resource
 import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
+import org.example.project.domain.use_case.RefreshRulesUseCase
 import org.example.project.platform.Logger
 import org.example.project.presentation.domain.model.UsagePeriod
 import kotlin.time.Clock
@@ -32,8 +34,9 @@ import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
-    private val childrenUseCase: ChildrenUseCase
-): ViewModel() {
+    private val childrenUseCase: ChildrenUseCase,
+    private val refreshRulesUseCase: RefreshRulesUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -43,9 +46,10 @@ class HomeViewModel(
 
     private var childrenJob: Job? = null
     private var appUsageJob: Job? = null
+    private var rulesJob: Job? = null
 
-    fun onEvent(event: HomeEvent){
-        when(event){
+    fun onEvent(event: HomeEvent) {
+        when (event) {
             is HomeEvent.GetUsageList -> {
                 _usagePeriod.value = event.usagePeriod
                 _state.update {
@@ -61,6 +65,7 @@ class HomeViewModel(
             HomeEvent.OnChildSelectClicked -> {
 
             }
+
             is HomeEvent.OnChildSelected -> {
                 _state.update {
                     it.copy(selectedChildren = event.child)
@@ -72,6 +77,7 @@ class HomeViewModel(
             HomeEvent.GetAppUsage -> {
                 loadAppUsages()
             }
+
             HomeEvent.GetChildren -> {
                 loadChildren()
             }
@@ -87,7 +93,7 @@ class HomeViewModel(
     }
 
 
-    private fun getAppUsageList(){
+    private fun getAppUsageList() {
         _state.update {
             it.copy(
                 appUsageUiList = state.value.appUsageList.toUsageUi(
@@ -98,7 +104,7 @@ class HomeViewModel(
         }
     }
 
-    private fun getChartData(){
+    private fun getChartData() {
         val weeklyChartData = state.value.appUsageList.toWeeklyUsageMinutesForChart(
             startDate = _usagePeriod.value?.startDate
         )
@@ -112,15 +118,14 @@ class HomeViewModel(
 
         println("AVER=$weeklyAverage  daily=$dailyAverage")
 
-        if (state.value.dateSelectionType == DateSelectionType.WEEK){
+        if (state.value.dateSelectionType == DateSelectionType.WEEK) {
             _state.update {
                 it.copy(
                     dailyChartData = weeklyChartData,
                     averageUsageTime = weeklyAverage
                 )
             }
-        }
-        else{
+        } else {
             _state.update {
                 it.copy(
                     dailyChartData = dailyChartData,
@@ -132,7 +137,7 @@ class HomeViewModel(
     }
 
 
-    private fun loadChildren(){
+    private fun loadChildren() {
         childrenJob?.cancel()
         childrenJob = viewModelScope.launch {
             _state.update {
@@ -143,7 +148,7 @@ class HomeViewModel(
             }
 
             val response = childrenUseCase.invoke()
-            when(response){
+            when (response) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -153,19 +158,21 @@ class HomeViewModel(
                         )
                     }
                 }
+
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
                             childrenLoading = false,
                             childrenError = "",
-                            childrenList = response.data.map { userInfoDto-> userInfoDto.toUserInfo() }
+                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
                         )
                     }
                 }
             }
         }
     }
-    private fun loadAppUsages(){
+
+    private fun loadAppUsages() {
         appUsageJob?.cancel()
         appUsageJob = viewModelScope.launch {
             _state.update {
@@ -175,8 +182,8 @@ class HomeViewModel(
                 )
             }
 
-            val response = appUsagesUseCase.invoke(state.value.selectedChildren?.userId?:"")
-            when(response){
+            val response = appUsagesUseCase.invoke(state.value.selectedChildren?.userId ?: "")
+            when (response) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -186,6 +193,7 @@ class HomeViewModel(
                         )
                     }
                 }
+
                 is Resource.Success -> {
                     val usageList = response.data
                     Logger.d("TAG", "week=${usageList.mapToWeeklyUsagePeriods()}")
@@ -197,10 +205,59 @@ class HomeViewModel(
                             dailyPeriods = usageList.mapToDailyUsagePeriods(),
                             weeklyPeriods = usageList.mapToWeeklyUsagePeriods(),
 
-                        )
+                            )
                     }
                     getAppUsageList()
                     getChartData()
+                    refreshRules()
+                }
+            }
+        }
+    }
+
+    private fun refreshRules() {
+        rulesJob?.cancel()
+        rulesJob = viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    rulesError = ""
+                )
+            }
+
+            val response: Resource<GetRulesData> =
+                refreshRulesUseCase.invoke(state.value.selectedChildren?.userId ?: "")
+            when (response) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            rulesError = response.message
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val rulesData = response.data
+                    val usageApps: List<AppUsageUi> = state.value.appUsageUiList
+
+                    val allowSet: Set<String> = rulesData.apps.allow.map { it.value }.toSet()
+                    val denySet: Set<String> = rulesData.apps.deny.map { it.value }.toSet()
+
+                    val patched: List<AppUsageUi> = usageApps.map { item ->
+                        val allowed = when {
+                            item.packageName in allowSet -> true
+                            item.packageName in denySet -> false
+                            else -> false
+                        }
+                        item.copy(allowed = allowed)
+                    }
+
+                    _state.update {
+                        it.copy(
+                            rulesError = "",
+                            appUsageUiList = patched
+                        )
+                    }
                 }
             }
         }

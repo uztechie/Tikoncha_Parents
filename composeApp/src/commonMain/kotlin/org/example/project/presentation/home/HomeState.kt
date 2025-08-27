@@ -22,6 +22,7 @@ data class HomeState(
 
     val appUsageLoading: Boolean = false,
     val appUsageError: String = "",
+    val rulesError: String = "",
 
     val isTodaySelected: Boolean = false,
     val averageUsageTime: HourMinute = HourMinute(),

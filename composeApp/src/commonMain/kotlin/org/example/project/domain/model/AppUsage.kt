@@ -9,4 +9,5 @@ data class AppUsage(
     val date: LocalDate,
     val usageMillis: Long,
     val usageTime: LocalTime,
+    val allowed: Boolean = false,
 )
