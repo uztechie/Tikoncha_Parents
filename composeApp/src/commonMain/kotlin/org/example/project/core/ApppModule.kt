@@ -23,6 +23,7 @@ import org.example.project.domain.use_case.RefreshRulesUseCase
 import org.example.project.domain.use_case.RegisterUseCase
 import org.example.project.domain.use_case.SendOtpUseCase
 import org.example.project.domain.use_case.UploadAvatarToServerUseCase
+import org.example.project.domain.use_case.UpsertRuleUseCase
 import org.example.project.domain.use_case.UserInfoUseCase
 import org.example.project.domain.use_case.VerifyOtpUseCase
 import org.example.project.presentation.add_child.ChildViewmodel
@@ -75,6 +76,7 @@ val sharedModule = module {
     single { RefreshRulesUseCase(get()) }
     single { CreatePolicyUseCase(get()) }
     single { CreateRuleUseCase(get()) }
+    single { UpsertRuleUseCase(get()) }
 
 
 

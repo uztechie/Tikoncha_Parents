@@ -4,12 +4,13 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
-import network.chaintech.cmpimagepickncrop.imagecropper.polygonPath
 import org.example.project.data.remote.model.CreatePolicyRequest
 import org.example.project.data.remote.model.CreatePolicyResponse
 import org.example.project.data.remote.model.CreateRuleRequest
 import org.example.project.data.remote.model.CreateRuleResponse
 import org.example.project.data.remote.model.GetRulesResponse
+import org.example.project.data.remote.model.UpsertRuleRequest
+import org.example.project.data.remote.model.UpsertRuleResponse
 
 class RulesApiService(private val client: HttpClient) {
 
@@ -34,14 +35,26 @@ class RulesApiService(private val client: HttpClient) {
             }
         )
 
-
-    suspend fun getRules(studentId: String): GetRulesResponse =
+    suspend fun upsertRule(upsertRuleRequest: UpsertRuleRequest): UpsertRuleResponse =
         client.safeRequest(
-            method = HttpMethod.Get,
-            url = "policies/students/${studentId}/effective",
-            block = {}
+            method = HttpMethod.Post,
+            url = "policies/parent/rule-upsert",
+            block = {
+                setBody(upsertRuleRequest)
+            }
         )
 
+
+
+    suspend fun getRules(userId: String): GetRulesResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "policies/evaluate/apps-effective",
+            block = {
+                parameter("user_id", userId)
+
+            }
+        )
 
 
 

@@ -12,20 +12,13 @@ data class GetRulesResponse(
 
 @Serializable
 data class GetRulesData(
-    val apps: GetRulesApps
+    val items: List<GetRuleItem>
 )
 
-@Serializable
-data class GetRulesApps(
-    val deny: List<GetRulesApp>,
-    val allow: List<GetRulesApp>,
-)
 
 @Serializable
-data class GetRulesApp(
-    val id: String,
-    val policy_id: String,
-    val scope_type: String,
-    val value: String,
-    val action: String,
+data class GetRuleItem(
+    val `package`: String,
+    val decision: String,
 )
+

@@ -1,11 +1,13 @@
 package org.example.project.presentation.home
 
+import org.example.project.data.remote.model.GetRuleItem
 import org.example.project.domain.model.AppUsage
 import org.example.project.domain.model.HourMinute
 import org.example.project.domain.model.UserInfo
 import org.example.project.presentation.domain.model.UsagePeriod
 
 data class HomeState(
+    val rulesAppList: List<GetRuleItem> = emptyList(),
     val appUsageUiList: List<AppUsageUi> = emptyList(),
     val dailyPeriods: List<UsagePeriod> = emptyList(),
     val appUsageList: List<AppUsage> = emptyList(),

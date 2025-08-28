@@ -9,10 +9,13 @@ import org.example.project.data.remote.model.CreatePolicyResponse
 import org.example.project.data.remote.model.CreateRuleRequest
 import org.example.project.data.remote.model.CreateRuleResponse
 import org.example.project.data.remote.model.GetRulesResponse
+import org.example.project.data.remote.model.UpsertRuleRequest
+import org.example.project.data.remote.model.UpsertRuleResponse
 
 interface RulesRepository {
 
     suspend fun getRules(studentId: String): GetRulesResponse
     suspend fun createPolicy(createPolicyRequest: CreatePolicyRequest): CreatePolicyResponse
     suspend fun createRule(createRuleRequest: CreateRuleRequest): CreateRuleResponse
+    suspend fun upsertRule(upsertRuleRequest: UpsertRuleRequest): UpsertRuleResponse
 }

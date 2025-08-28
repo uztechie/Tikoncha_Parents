@@ -10,8 +10,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.toAppUsageList
-import org.example.project.data.remote.model.AddChildRequest
-import org.example.project.data.remote.model.GetRulesApps
 import org.example.project.data.remote.model.GetRulesResponse
 import org.example.project.data.remote.model.UserInfoDto
 import org.example.project.domain.model.AppUsage

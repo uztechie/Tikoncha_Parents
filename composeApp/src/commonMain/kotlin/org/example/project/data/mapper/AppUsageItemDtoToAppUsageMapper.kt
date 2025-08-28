@@ -249,12 +249,14 @@ fun List<AppUsage>.toUsageUi(startDate: LocalDate?, endDate: LocalDate?): List<A
             val hours = (totalMinutes / 60).toInt()
             val minutes = (totalMinutes % 60).toInt()
 
+            val aggregatedAllowed = usages.all { it.allowed }
+
             AppUsageUi(
                 packageName = pkg,
                 name = usages.first().appName,   // birinchi AppUsage'dan olish mumkin
                 icon = "",                       // ⚠️ siz bu yerda haqiqiy icon path/url ni qo‘yishingiz kerak
                 usageTime = HourMinute(hours, minutes),
-                allowed = false
+                allowed = aggregatedAllowed
             )
         }
         .sortedByDescending { it.usageTime.hour * 60 + it.usageTime.minute }
