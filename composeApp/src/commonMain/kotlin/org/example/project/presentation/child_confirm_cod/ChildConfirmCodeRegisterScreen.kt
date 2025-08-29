@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -50,7 +51,9 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 
-class ChildConfirmCodeRegisterScreen(): Screen {
+class ChildConfirmCodeRegisterScreen(
+    private val confirmCode: String
+): Screen {
     @Composable
     override fun Content() {
 
@@ -59,6 +62,10 @@ class ChildConfirmCodeRegisterScreen(): Screen {
         val event = viewModel::onEvent
 
         val navigator = LocalNavigator.current
+
+        LaunchedEffect(confirmCode){
+            event(ChildConfirmEvent.SetConfirmCode(confirmCode))
+        }
 
         ChildConfirmCodeRegisterUi(
             navigator = navigator,

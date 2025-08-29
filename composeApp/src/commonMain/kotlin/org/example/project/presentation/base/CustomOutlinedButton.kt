@@ -32,7 +32,7 @@ fun CustomOutlinedButton(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
-    borderColor: Color = PrimaryColor,
+    borderColor: Color = BorderColor,
     enabled: Boolean = true,
     onClick: () -> Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),

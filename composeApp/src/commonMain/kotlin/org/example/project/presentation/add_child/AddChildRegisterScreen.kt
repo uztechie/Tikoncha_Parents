@@ -4,9 +4,7 @@ package org.example.project.presentation.add_child
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,11 +16,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +31,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.presentation.base.LogoHeader
-import org.example.project.ui.PrimaryColor
+import org.example.project.presentation.base.CustomDialog
+import org.example.project.presentation.base.CustomHeader
+import org.example.project.presentation.base.CustomOutlinedButton
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.presentation.child_confirm_cod.ChildConfirmCodeRegisterScreen
+import org.example.project.presentation.child_confirm_cod.ChildConfirmCodeScreen
+import org.example.project.ui.PrimaryColor
+import org.example.project.presentation.login.LoginEvent
+import org.example.project.presentation.otp.OtpScreen
 import org.example.project.ui.*
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -62,8 +63,8 @@ class AddChildRegisterScreen : Screen {
 
         AddChildRegisterUi(
             navigator = navigator,
-            childState = state.value,
-            childEvent = event
+            state = state.value,
+            event = event
         )
     }
 }
@@ -72,41 +73,75 @@ class AddChildRegisterScreen : Screen {
 @Composable
 fun AddChildRegisterUi(
     navigator: Navigator?,
-    childState: ChildState,
-    childEvent: (ChildEvent) -> Unit
+    state: ChildState,
+    event: (ChildEvent) -> Unit
 ) {
 
-    var children by remember { mutableStateOf(listOf(ChildState())) }
 
-
-    val areAllPhoneNumbersValid = children.all { child ->
-        child.number.length == 9 && child.number.all { it.isDigit() }
+    var showDialog by remember {
+        mutableStateOf(false)
     }
 
-    Box(
+
+    LaunchedEffect(state.errorMessage) {
+        showDialog = !state.errorMessage.isNullOrEmpty()
+    }
+
+    LoadingDialog(show = state.loading)
+    CustomDialog(
+        show = showDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.errorMessage?:"",
+        buttonText = stringResource(Res.string.ok),
+        onDismiss = {
+            showDialog = false
+        },
+        onButtonClick = {
+            showDialog = false
+        }
+    )
+
+    LaunchedEffect(state.success) {
+        if (state.success){
+            event(ChildEvent.Reset)
+            navigator?.push(ChildConfirmCodeRegisterScreen(confirmCode = state.confirmCode))
+        }
+    }
+
+
+
+    var enableButton by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state.number){
+        enableButton = state.number.length>=9
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .background(MaterialTheme.colorScheme.background)
     ) {
 
+        CustomHeader(
+            title = stringResource(Res.string.farzand_qoshish),
+            showBackButton = true,
+            onBackClick = {
+                navigator?.pop()
+            }
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
 
-            LogoHeader()
 
-            CustomText(
-                text = stringResource(Res.string.xush_kelibsiz),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.W500,
-            )
-
-            SpaceMedium()
+            SpaceLarge()
 
             CustomText(
                 text = stringResource(Res.string.farzandlaringiz),
@@ -117,107 +152,64 @@ fun AddChildRegisterUi(
 
             SpaceMedium()
 
-            // Barcha farzand telefon raqamlarini ko‘rsatish
-            children.forEachIndexed { index, childState ->
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .border(width = 1.dp, color = if (childState.accept) PrimaryColor else BorderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(PaddingCornerRadius)
-                    ) {
-                        CustomText(
-                            text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
-                            fontSize = SmallTextSize,
-                            fontWeight = FontWeight.W500
-                        )
-
-                        SpaceMedium()
-
-                        ChildPhoneInputField(
-                            phoneNumber = childState.number,
-                            onPhoneNumberChange = { newNumber ->
-                                children = children.toMutableList().also {
-                                    it[index] = it[index].copy(number = newNumber)
-                                }
-                            },
-                            isAccepted = childState.accept
-                        )
-                    }
-                }
-            }
-
-            SpaceLarge()
-
-            // ➕ Farzand qo‘shish tugmasi
-            TextButton(
-                onClick = {
-                    children = children + ChildState()
-                },
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
-                    .height(ButtonHeight),
-            ) {
-                Row {
-                    Text(
-                        text = stringResource(Res.string.farzand_qo_shish),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor
+                    .padding(vertical = 8.dp)
+                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else BorderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+            )
+            {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(PaddingCornerRadius)
+                ) {
+                    CustomText(
+                        text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
+                        fontSize = SmallTextSize,
+                        fontWeight = FontWeight.W500
                     )
 
                     SpaceMedium()
 
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                        tint = PrimaryColor
+                    ChildPhoneInputField(
+                        phoneNumber = state.number,
+                        onPhoneNumberChange = { newNumber ->
+                          event(ChildEvent.OnNumberInsert(newNumber))
+                        },
+                        isAccepted = state.accept
                     )
                 }
             }
 
+
+            SpaceLarge()
 
             Spacer(modifier = Modifier.weight(1f))
 
-            TextButton(
+
+            CustomOutlinedButton(
                 onClick = {
                     navigator?.replaceAll(MainScreen())
                 },
+                text = stringResource(Res.string.o_tkazib_yuborish),
                 modifier = Modifier
-                    .padding(top = 5.dp)
                     .fillMaxWidth()
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
-                    .height(ButtonHeight),
-            ) {
-                Row {
+                    .height(ButtonHeight)
+            )
+            SpaceMedium()
 
-                    CustomText(
-                        text = stringResource(Res.string.o_tkazib_yuborish),
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W500,
-                    )
-                }
-            }
 
             CustomButton(
                 onClick = {
-
-                    children = children.map { it.copy(accept = true) }
-
-                    navigator?.push(ChildConfirmCodeRegisterScreen())
+                    event(ChildEvent.OnAddClicked)
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                enabled = areAllPhoneNumbersValid,
+                enabled = enableButton,
                 text = stringResource(Res.string.qoshish),
                 fontWeight = FontWeight.W500,
                 fontSize = NormalTextSize
@@ -227,13 +219,12 @@ fun AddChildRegisterUi(
     }
 }
 
-
 @Composable
 @Preview
 private fun Preview() {
     AddChildRegisterUi(
         navigator = null,
-        childState = ChildState(),
-        childEvent = {}
+        state = ChildState(),
+        event = {}
     )
 }

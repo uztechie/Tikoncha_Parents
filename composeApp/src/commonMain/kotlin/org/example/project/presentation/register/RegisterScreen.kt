@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.presentation.add_child.AddChildRegisterScreen
 import org.example.project.presentation.add_child.AddChildScreen
 import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomTextField
@@ -95,7 +96,7 @@ fun Register(
     LaunchedEffect(state.registerSuccess) {
         if (state.registerSuccess) {
             event.invoke(RegisterEvent.Reset)
-           navigator?.replaceAll(AddChildScreen())
+           navigator?.replaceAll(AddChildRegisterScreen())
         }
     }
 

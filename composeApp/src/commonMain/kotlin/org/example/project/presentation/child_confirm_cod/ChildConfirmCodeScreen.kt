@@ -189,13 +189,13 @@ fun ChildConfirmCodeUi(
 
             CustomButton(
                 onClick = {
-                    navigator?.replaceAll(MainScreen())
+                    navigator?.pop()
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = stringResource(Res.string.davom_etish),
+                text = stringResource(Res.string.yakunlash),
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.W600,
             )
