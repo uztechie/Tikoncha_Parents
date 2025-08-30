@@ -10,6 +10,7 @@ import io.ktor.http.parametersOf
 import org.example.project.data.remote.model.AddChildRequest
 import org.example.project.data.remote.model.AddChildResponse
 import org.example.project.data.remote.model.AppUsageResponse
+import org.example.project.data.remote.model.ChildrenLocationResponse
 import org.example.project.data.remote.model.ChildrenResponse
 import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.saidburxon.newedu.data.model.SendOtpResponse
@@ -42,6 +43,13 @@ class ChildApiService(private val client: HttpClient) {
                     parameter(it.key, it.value)
                 }
             }
+        )
+
+    suspend fun childrenLocation(): ChildrenLocationResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "data-exchange/children/locations",
+            block = {}
         )
 
 

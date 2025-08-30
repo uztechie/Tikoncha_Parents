@@ -3,8 +3,12 @@ package org.example.project.common
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -61,6 +65,31 @@ object Util {
     fun format6DigitCode(raw: String): String {
         val digits = raw.filter { it.isDigit() }.take(6)
         return if (digits.length <= 3) digits else "${digits.take(3)}-${digits.drop(3)}"
+    }
+
+    fun reformatDateTime_dd_MM_hh_mm(input: String?): String {
+        if (input.isNullOrBlank()) return ""
+
+        val localDateTime = try {
+            val instant = Instant.parse(input)
+            instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        } catch (_: Exception) {
+            LocalDateTime.parse(input)
+        }
+        
+
+        // Formatter yaratamiz
+        val formatter = LocalDateTime.Format {
+            day(padding = Padding.ZERO) // dd
+            char('/')
+            monthNumber(padding = Padding.ZERO) // MM
+            char(' ')
+            hour(padding = Padding.ZERO) // HH (24 soat formatda)
+            char(':')
+            minute(padding = Padding.ZERO) // mm
+        }
+
+        return localDateTime.format(formatter) // Masalan: 29/08 19:32
     }
 
 

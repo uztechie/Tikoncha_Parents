@@ -1,5 +1,6 @@
 package org.example.project.core
 
+import dev.icerock.moko.geo.LocationTracker
 import org.example.project.data.remote.AvatarApiService
 import org.example.project.data.remote.ChildApiService
 import org.example.project.data.remote.LoginApiService
@@ -15,6 +16,7 @@ import org.example.project.domain.repository.LoginRepository
 import org.example.project.domain.repository.RulesRepository
 import org.example.project.domain.use_case.AddChildUseCase
 import org.example.project.domain.use_case.AppUsagesUseCase
+import org.example.project.domain.use_case.ChildrenLocationUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
 import org.example.project.domain.use_case.CreatePolicyUseCase
 import org.example.project.domain.use_case.CreateRuleUseCase
@@ -32,6 +34,7 @@ import org.example.project.presentation.home.HomeViewModel
 import org.example.project.presentation.profile.ProfileViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.example.project.presentation.login.LoginViewmodel
+import org.example.project.presentation.map.LocationViewModel
 import org.example.project.presentation.otp.OtpViewmodel
 import org.example.project.presentation.register.RegisterViewmodel
 import org.example.project.presentation.task.TaskViewModel
@@ -77,6 +80,9 @@ val sharedModule = module {
     single { CreatePolicyUseCase(get()) }
     single { CreateRuleUseCase(get()) }
     single { UpsertRuleUseCase(get()) }
+    single { ChildrenLocationUseCase(get()) }
+
+
 
 
 

@@ -12,8 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.ui.SmallTextSize
+import org.example.project.ui.UltraSmallTextSize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -22,6 +25,7 @@ import tikoncha_parents.composeapp.generated.resources.person
 @Composable
 fun MapMarker(
     title: String,
+    lastUpdated: String? = null, // qo'shildi
     icon: Painter = painterResource(Res.drawable.person),
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color(0xFF4CAF50),
@@ -31,7 +35,7 @@ fun MapMarker(
     pointerHeight: Dp = 10.dp,
     padding: Dp = 8.dp,
     iconSize: Dp = 20.dp,
-    textSizeSp: Int = 14
+    textSizeSp: TextUnit = SmallTextSize
 ) {
     Box(
         modifier = modifier
@@ -39,7 +43,6 @@ fun MapMarker(
                 color = backgroundColor,
                 shape = MarkerShape(cornerRadius, pointerWidth, pointerHeight)
             )
-            // Pastki tomonga pointerHeight qo‘shamiz, content pointerning ichiga
             .padding(bottom = pointerHeight)
             .padding(horizontal = padding, vertical = padding),
         contentAlignment = Alignment.CenterStart
@@ -52,15 +55,29 @@ fun MapMarker(
                 modifier = Modifier.size(iconSize)
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = title,
-                color = contentColor,
-                fontSize = textSizeSp.sp,
-                maxLines = 2
-            )
+            Column {
+                Text(
+                    text = title,
+                    color = contentColor,
+                    fontSize = textSizeSp,
+                    maxLines = 1,
+                    lineHeight = textSizeSp
+                )
+                // Agar sana null bo'lmasa, chiqaramiz
+                if (lastUpdated != null) {
+                    Text(
+                        lineHeight = UltraSmallTextSize,
+                        text = lastUpdated,
+                        color = contentColor.copy(alpha = 0.7f),
+                        fontSize = UltraSmallTextSize,
+                        maxLines = 1
+                    )
+                }
+            }
         }
     }
 }
+
 
 
 @Preview

@@ -4,6 +4,7 @@ import org.example.project.data.remote.ChildApiService
 import org.example.project.data.remote.model.AddChildRequest
 import org.example.project.data.remote.model.AddChildResponse
 import org.example.project.data.remote.model.AppUsageResponse
+import org.example.project.data.remote.model.ChildrenLocationResponse
 import org.example.project.data.remote.model.ChildrenResponse
 import org.example.project.domain.repository.ChildRepository
 
@@ -20,5 +21,9 @@ class ChildRepositoryImpl(
 
     override suspend fun appUsages(params: Map<String, Any>): AppUsageResponse {
         return api.appUsages(params)
+    }
+
+    override suspend fun childrenLocation(): ChildrenLocationResponse {
+        return api.childrenLocation()
     }
 }

@@ -12,8 +12,10 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.ui.SmallTextSize
 import org.jetbrains.compose.resources.painterResource
 import ru.sulgik.mapkit.compose.imageProvider
 import ru.sulgik.mapkit.compose.user_location.UserLocationConfig
@@ -33,7 +35,7 @@ fun rememberLocationIconForMapMarker(
     pointerHeight: Dp = 10.dp,
     padding: Dp = 8.dp,
     iconSize: Dp = 20.dp,
-    textSizeSp: Int = 14,
+    textSizeSp: TextUnit = SmallTextSize,
     // Dinamik o‘lcham chegaralari:
     minWidth: Dp = 50.dp,
     maxWidth: Dp = 100.dp,
@@ -56,7 +58,7 @@ fun rememberLocationIconForMapMarker(
     // Matn uslubi (MapMarker dagi bilan mos)
     val textStyle = TextStyle(
         color = contentColor,
-        fontSize = textSizeSp.sp
+        fontSize = textSizeSp
     )
 
     // 1) Cheklanmagan kenglikda xom o‘lchov (single line bo‘lsa qancha?)

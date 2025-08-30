@@ -4,16 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.geo.LocationTracker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.Resource
+import org.example.project.domain.use_case.ChildrenLocationUseCase
 import org.example.project.platform.isLocationServiceEnabled
 
 class LocationViewModel(
-    val tracker : LocationTracker
+    val tracker : LocationTracker,
+    val childrenLocationUseCase: ChildrenLocationUseCase
 ): ViewModel() {
+
+
+
+
+    private var childrenLocationJob: Job? = null
 
     private val _state = MutableStateFlow(LocationState())
     val state = _state.asStateFlow()
@@ -28,6 +37,8 @@ class LocationViewModel(
                 }
             }
         }
+
+        getChildrenLocation()
     }
 
     fun checkGPS() = viewModelScope.launch(Dispatchers.Default) {
@@ -71,5 +82,42 @@ class LocationViewModel(
             )
         }
         openGpsSettings()
+    }
+
+
+    private fun getChildrenLocation(){
+        _state.update {
+            it.copy(
+                childrenLocationList = emptyList(),
+                childrenLocationError = "",
+                childrenLocationLoading = true
+            )
+        }
+
+        childrenLocationJob?.cancel()
+        childrenLocationJob = viewModelScope.launch {
+            val result = childrenLocationUseCase()
+            when(result){
+                is Resource.Loading ->{}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            childrenLocationList = emptyList(),
+                            childrenLocationError = result.message,
+                            childrenLocationLoading = false
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            childrenLocationList = result.data,
+                            childrenLocationError = "",
+                            childrenLocationLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package org.example.project.domain.repository
 import org.example.project.data.remote.model.AddChildRequest
 import org.example.project.data.remote.model.AddChildResponse
 import org.example.project.data.remote.model.AppUsageResponse
+import org.example.project.data.remote.model.ChildrenLocationResponse
 import org.example.project.data.remote.model.ChildrenResponse
 
 interface ChildRepository {
@@ -11,4 +12,6 @@ interface ChildRepository {
     suspend fun children(): ChildrenResponse
 
     suspend fun appUsages(params: Map<String, Any>): AppUsageResponse
+
+    suspend fun childrenLocation(): ChildrenLocationResponse
 }

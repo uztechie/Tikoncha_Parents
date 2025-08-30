@@ -37,6 +37,8 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.example.project.common.Util
+import org.example.project.domain.use_case.ChildrenLocationUseCase
 import org.example.project.platform.isLocationServiceEnabled
 import org.example.project.platform.openLocationSettings
 import org.example.project.presentation.base.CustomDialog
@@ -48,6 +50,8 @@ import org.example.project.ui.theme.ThemePrefs
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
+import org.koin.compose.viewmodel.koinViewModel
 import ru.sulgik.mapkit.compose.MapConfig
 import ru.sulgik.mapkit.compose.MapLogoConfig
 import ru.sulgik.mapkit.compose.Placemark
@@ -69,10 +73,33 @@ import tikoncha_parents.composeapp.generated.resources.*
 
 class MapScreen : Screen {
 
+
+
     @OptIn(YandexMapsComposeExperimentalApi::class)
     @Preview
     @Composable
     override fun Content() {
+
+        val factory = rememberPermissionsControllerFactory()
+        val controller = remember(factory) {
+            factory.createPermissionsController()
+        }
+
+        val locationTracker = rememberLocationTrackerFactory(
+            accuracy = LocationTrackerAccuracy.Best
+        ).createLocationTracker(permissionsController = controller)
+
+        val useCase: ChildrenLocationUseCase = getKoin().get()
+
+        val locationViewModel = viewModel {
+            LocationViewModel(
+                tracker = locationTracker,
+                useCase
+            )
+        }
+
+
+        val state by locationViewModel.state.collectAsStateWithLifecycle()
 
         val themeMode by rememberSaveable { mutableStateOf(ThemePrefs.load()) }
         val darkTheme = when (themeMode) {
@@ -86,10 +113,7 @@ class MapScreen : Screen {
         val LATITUDE = 40.776691
         val LONGITUDE = 72.342787
 
-        val factory = rememberPermissionsControllerFactory()
-        val controller = remember(factory) {
-            factory.createPermissionsController()
-        }
+
 
         val scope = rememberCoroutineScope()
         BindEffect(controller)
@@ -101,15 +125,7 @@ class MapScreen : Screen {
         var cameFromSettings by remember { mutableStateOf(false) }
 
 
-        val locationTracker = rememberLocationTrackerFactory(
-            accuracy = LocationTrackerAccuracy.Best
-        ).createLocationTracker(permissionsController = controller)
 
-        val locationViewModel = viewModel {
-            LocationViewModel(
-                tracker = locationTracker
-            )
-        }
         BindLocationTrackerEffect(locationViewModel.tracker)
         val locationState by locationViewModel.state.collectAsStateWithLifecycle()
 
@@ -287,36 +303,24 @@ class MapScreen : Screen {
 //                    }
 //                }
 
+                state.childrenLocationList.forEach { item ->
+                    if (item.lat != null && item.lng != null){
+                        val placeMarkState = rememberPlacemarkState(
+                            geometry = Point(
+                                item.lat, item.lng
+                            ),
+                        )
 
-                val placeMarkState = rememberPlacemarkState(
-                    geometry = Point(
-                        40.776691, 72.342787
-                    ),
-                )
-                val placeMarkState2 = rememberPlacemarkState(
-                    geometry = Point(
-                        40.772191, 72.34999
-                    ),
-
-                    )
-
-                Placemark(
-                    state = placeMarkState,
-                    contentSize = DpSize(200.dp, 80.dp)
-                ) {
-                    MapMarker(
-                        title = "Ibroxim",
-                    )
-                }
-
-
-                Placemark(
-                    state = placeMarkState2,
-                    contentSize = DpSize(200.dp, 80.dp)
-                ) {
-                    MapMarker(
-                        title = "Abdurahimjonbek",
-                    )
+                        Placemark(
+                            state = placeMarkState,
+                            contentSize = DpSize(200.dp, 80.dp)
+                        ) {
+                            MapMarker(
+                                title = "${item.first_name}",
+                                lastUpdated = Util.reformatDateTime_dd_MM_hh_mm(item.updated_at)
+                            )
+                        }
+                    }
                 }
             }
 
