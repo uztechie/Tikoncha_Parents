@@ -2,10 +2,11 @@ package org.example.project.presentation.task
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.number
 
 fun reformattedToday(reformatedDate: LocalDate?): String {
-    val day = reformatedDate?.dayOfMonth
-    val monthUz = uzbekMonthName(reformatedDate?.monthNumber ?:0 )
+    val day = reformatedDate?.day
+    val monthUz = uzbekMonthName(reformatedDate?.let { it.month.number } ?: 0 )
     return "$day - $monthUz"
 }
 

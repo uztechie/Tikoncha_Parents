@@ -31,7 +31,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
-fun TaskItem(
+fun TaskItemUi(
     task: Task,
     onEditIconClick: (task: Task) -> Unit,
     onDetailsIconClick: (task: Task) -> Unit,
@@ -45,13 +45,13 @@ fun TaskItem(
         ImportanceType.MOST_IMPORTANT -> stringResource(Res.string.o_ta_muhim)
     }
 
-    var titleColor = if (task.progress == 0 && !task.isCompleted){
+    var titleColor = if (task.progress == 0 && !task.is_completed){
         ProgressColor1
     }
     else{
         TextColor
     }
-    var iconColor = if (task.progress == 0 && !task.isCompleted){
+    var iconColor = if (task.progress == 0 && !task.is_completed){
         ProgressColor1
     }
     else{
@@ -100,7 +100,7 @@ fun TaskItem(
 
                 IconButton(
                     onClick = {
-                        if (!task.isCompleted){
+                        if (!task.is_completed){
                             onEditIconClick(task)
                         }else{
                             onDetailsIconClick(task)
@@ -109,7 +109,7 @@ fun TaskItem(
                     modifier = Modifier.size(NormalIconButtonSize)
                 ) {
 
-                    if (!task.isCompleted){
+                    if (!task.is_completed){
                         Icon(
                             painter = painterResource(Res.drawable.edit_pen),
                             contentDescription = "",
@@ -197,7 +197,7 @@ fun TaskItem(
 
             SpaceUltraSmall()
 
-           if (!task.isCompleted){
+           if (!task.is_completed){
                Row(
                    modifier = Modifier
                        .fillMaxWidth(),
@@ -250,18 +250,17 @@ fun TaskItem(
 @Preview()
 @Composable
 private fun Pre() {
-    TaskItem(
+    TaskItemUi(
         task = Task(
-            id = 0,
             title = "40 varoq kitob o'qish",
             description = "Bir hafta davomida har kuni 40 varoqdan",
             date = "04.11.2025",
             time = "08:00",
-            importance = ImportanceType.MEDIUM,
-            isCompleted = true,
+            importance = ImportanceType.IMPORTANT,
+            is_completed = true,
             dateTime = currentMillis,
             progress = 50,
-            createdAt = currentMillis
+            created_at = currentMillis
         ),
         onEditIconClick = {},
         onDoneButtonClick = {},

@@ -31,6 +31,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.common.Util.getCurrentDate
+import org.example.project.data.mapper.toTask
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.SegmentedToggle
 import org.example.project.presentation.task.ImportanceType
@@ -42,6 +43,7 @@ import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
@@ -49,7 +51,7 @@ class CompletedTaskScreen : Screen {
     @Composable
     override fun Content() {
 
-        val viewModel = remember { TaskViewModel() }
+        val viewModel = koinViewModel <TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current
@@ -68,14 +70,6 @@ fun CompletedTaskUi(
     state: TaskState,
     event: (TaskEvent) -> Unit
 ) {
-
-    val testTasks = listOf(
-        CompletedTaskList(task = "Kitob o‘qish", content = "Har kuni 10 bet", progress = 80),
-        CompletedTaskList(task = "Masala yechish", content = "Har kuni 10 donadan", progress = 100, isCompleted = true, importance = ImportanceType.MOST_IMPORTANT),
-        CompletedTaskList(task = "KMP UI", content = "UI tugatish", progress = 100, isCompleted = true)
-    )
-    val updatedState = state.copy(completedTasksEndList = testTasks)
-
 
     val today = getCurrentDate()
 
@@ -175,7 +169,7 @@ fun CompletedTaskUi(
                     .padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(updatedState.completedTasksEndList) { task ->
+                items(state.allTaskList) { task ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -187,7 +181,7 @@ fun CompletedTaskUi(
                         )
                     ) {
                         CompletedTaskItem(
-                            task = task,
+                            task = task.toTask(),
                             onDetailsIconClick = {},
                             onEditIconClick = {},
                             onDoneButtonClick = {}

@@ -5,14 +5,17 @@ import org.example.project.data.remote.ChildApiService
 import org.example.project.data.remote.LoginApiService
 import org.example.project.data.remote.RulesApiService
 import org.example.project.data.remote.TikonchaClient
+import org.example.project.data.remote.TodoApiService
 import org.example.project.data.repository.AvatarRepositoryImpl
 import org.example.project.data.repository.ChildRepositoryImpl
 import org.example.project.data.repository.LoginRepositoryImpl
 import org.example.project.data.repository.RulesRepositoryImpl
+import org.example.project.data.repository.TodoRepositoryImpl
 import org.example.project.domain.repository.AvatarRepository
 import org.example.project.domain.repository.ChildRepository
 import org.example.project.domain.repository.LoginRepository
 import org.example.project.domain.repository.RulesRepository
+import org.example.project.domain.repository.TodoRepository
 import org.example.project.domain.use_case.AddChildUseCase
 import org.example.project.domain.use_case.AppUsagesUseCase
 import org.example.project.domain.use_case.ChildrenUseCase
@@ -22,6 +25,8 @@ import org.example.project.domain.use_case.LoadAvatarFromServerUseCase
 import org.example.project.domain.use_case.RefreshRulesUseCase
 import org.example.project.domain.use_case.RegisterUseCase
 import org.example.project.domain.use_case.SendOtpUseCase
+import org.example.project.domain.use_case.TodoListUseCase
+import org.example.project.domain.use_case.TodoUseCase
 import org.example.project.domain.use_case.UploadAvatarToServerUseCase
 import org.example.project.domain.use_case.UserInfoUseCase
 import org.example.project.domain.use_case.VerifyOtpUseCase
@@ -50,12 +55,14 @@ val sharedModule = module {
     }
     //api service
     single { LoginApiService(get()) }
+    single { TodoApiService(get()) }
     single { ChildApiService(get()) }
     single { RulesApiService(get()) }
     single { AvatarApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
+    single<TodoRepository> { TodoRepositoryImpl(get()) }
     single<ChildRepository> { ChildRepositoryImpl(get()) }
     single<RulesRepository> { RulesRepositoryImpl(get()) }
     single<AvatarRepository> { AvatarRepositoryImpl(get()) }
@@ -66,7 +73,9 @@ val sharedModule = module {
     single { SendOtpUseCase(get()) }
     single { VerifyOtpUseCase(get()) }
     single { RegisterUseCase(get()) }
+    single { TodoUseCase(get()) }
     single { UserInfoUseCase(get()) }
+    single { TodoListUseCase(get()) }
     single { AddChildUseCase(get()) }
     single { ChildrenUseCase(get()) }
     single { AppUsagesUseCase(get()) }
@@ -85,7 +94,7 @@ val sharedModule = module {
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
-    viewModel { TaskViewModel() }
+    viewModel { TaskViewModel(get (), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatViewModel() }

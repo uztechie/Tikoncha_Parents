@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.presentation.task.CustomLinearProgress
 import org.example.project.presentation.task.ImportanceType
+import org.example.project.presentation.task.Task
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -34,12 +35,15 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 
 @Composable
 fun CompletedTaskItem(
-    task: CompletedTaskList,
-    onEditIconClick: (task: CompletedTaskList) -> Unit,
-    onDetailsIconClick: (task: CompletedTaskList) -> Unit,
-    onDoneButtonClick: (task: CompletedTaskList) -> Unit
+    task: Task?,
+    onEditIconClick: (task: Task) -> Unit,
+    onDetailsIconClick: (task: Task) -> Unit,
+    onDoneButtonClick: (task: Task) -> Unit
 ) {
 
+    if (task == null){
+        return
+    }
     val importance = when(task.importance){
         ImportanceType.IMPORTANT -> "Muhim"
         ImportanceType.NONE -> ""
@@ -47,13 +51,13 @@ fun CompletedTaskItem(
         ImportanceType.MOST_IMPORTANT -> "O'ta muhim"
     }
 
-    var titleColor = if (task.progress == 0 && !task.isCompleted){
+    var titleColor = if (task.progress == 0 && !task.is_completed){
         ProgressColor1
     }
     else{
         TextColor
     }
-    var iconColor = if (task.progress == 0 && !task.isCompleted){
+    var iconColor = if (task.progress == 0 && !task.is_completed){
         ProgressColor1
     }
     else{
@@ -86,14 +90,14 @@ fun CompletedTaskItem(
                 ) {
 
                     CustomText(
-                        text = task.task,
+                        text = task.title,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = NormalTextSize,
                         color = titleColor
                     )
 
                     CustomText(
-                        text = task.content,
+                        text = task.description,
                         fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.secondary
@@ -103,7 +107,7 @@ fun CompletedTaskItem(
 
                 IconButton(
                     onClick = {
-                        if (!task.isCompleted){
+                        if (!task.is_completed){
                             onEditIconClick(task)
                         }else{
                             onDetailsIconClick(task)
@@ -112,7 +116,7 @@ fun CompletedTaskItem(
                     modifier = Modifier.size(NormalIconButtonSize)
                 ) {
 
-                    if (!task.isCompleted){
+                    if (!task.is_completed){
                         Icon(
                             painter = painterResource(Res.drawable.edit_pen),
                             contentDescription = "",
@@ -153,7 +157,7 @@ fun CompletedTaskItem(
                     CustomText(
                         modifier = Modifier
                             .padding(start = 3.dp),
-                        text = task.endDate,
+                        text = task.date,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -172,7 +176,7 @@ fun CompletedTaskItem(
                     CustomText(
                         modifier = Modifier
                             .padding(start = 3.dp),
-                        text = task.endTime,
+                        text = task.date,
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -201,7 +205,7 @@ fun CompletedTaskItem(
 
             SpaceUltraSmall()
 
-           if (!task.isCompleted){
+           if (!task.is_completed){
                Row(
                    modifier = Modifier
                        .fillMaxWidth(),
@@ -255,7 +259,7 @@ fun CompletedTaskItem(
 @Composable
 private fun Pre() {
     CompletedTaskItem(
-        task = CompletedTaskList(),
+        task = null,
         onEditIconClick = {},
         onDoneButtonClick = {},
         onDetailsIconClick = {}

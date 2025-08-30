@@ -151,5 +151,7 @@
     <string name="ruxsat_so_rash">Попросить разрешение</string>
     <string name="joylashuv_uchun_ruxsat">Разрешение на определение местоположения</string>
     <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">Чтобы использовать карту в полном объеме, разрешите доступ к местоположению в настройках!</string>
+    <string name="yangi_vazifa_yaratildi">Создана новая задача</string>
+    <string name="muvaffaqiyatli">Успешно</string>
 
 </resources>

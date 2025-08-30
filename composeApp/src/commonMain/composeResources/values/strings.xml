@@ -165,4 +165,7 @@
     <string name="bugun">bugun</string>
     <string name="bir_kunda_o_rtacha">Bir kunda o'rtacha</string>
     <string name="eng_kop_foydalanilgan">Eng ko'p foydalanilgan</string>
+    <string name="yangi_vazifa_yaratildi">Yangi vazifa yaratildi</string>
+    <string name="muvaffaqiyatli">Muvaffaqiyatli</string>
+
 </resources>

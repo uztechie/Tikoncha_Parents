@@ -26,6 +26,12 @@ object AppSettings {
         get() = settings.get("userId") ?: ""
         set(value) = settings.set("userId", value)
 
+
+    var selectedChildId: String
+        get() = settings.get("selectedChildId") ?: ""
+        set(value) = settings.set("selectedChildId", value)
+
+
     var policyId: String
         get() = settings.get("policyId") ?: ""
         set(value) = settings.set("policyId", value)

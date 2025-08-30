@@ -36,13 +36,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
 import org.example.project.common.Util
+import org.example.project.presentation.base.CustomDialog
 import org.example.project.presentation.base.CustomHeader
 import org.example.project.presentation.base.CustomSelectionButton
 import org.example.project.presentation.base.CustomTextField
 import org.example.project.presentation.base.CustomTextFieldTask
+import org.example.project.presentation.base.LoadingDialog
 import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -84,10 +84,10 @@ fun AddNewTask(
     event: (TaskEvent) -> Unit,
 ) {
 
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    var selectedTime by remember { mutableStateOf<LocalTime?>(null) }
-    val dateText = selectedDate?.let { reformattedYearDay(it) } ?: ""
-    val timeText = selectedTime?.let { formatTime(it) } ?: ""
+    var selectedDate by remember { mutableStateOf(state.date) }
+    var selectedTime by remember { mutableStateOf(state.time) }
+    val dateText = state.date?.let { reformattedYearDay(it) } ?: ""
+    val timeText = state.time?.let { formatTime(it) } ?: ""
 
 
     var showDialogData by remember { mutableStateOf(false) }
@@ -95,8 +95,53 @@ fun AddNewTask(
     val timeAnd = state.time?.let { formatTime(it) } ?: ""
     val dateAnd = state.date?.let { reformattedToday(it) } ?: ""
 
-    val onClick = state.title.isNotBlank() && state.desc.isNotBlank() && selectedDate != null && selectedTime != null && state.importance != ImportanceType.NONE
+    val onClick = state.title.isNotBlank() &&
+            state.desc.isNotBlank() &&
+            state.date != null &&
+            state.time != null &&
+            state.importance != ImportanceType.NONE
 
+    var showTaskSuccessDialog by remember { mutableStateOf(false) }
+
+    LoadingDialog(state.taskLoading)
+    var showTaskErrorDialog by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state.taskError) {
+        if (state.taskError.isNotEmpty()) {
+            showTaskErrorDialog = true
+        }
+    }
+
+    CustomDialog(
+        onDismiss = {showTaskErrorDialog = false},
+        show = showTaskErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = state.taskError,
+        onButtonClick = {
+            showTaskErrorDialog = false
+        }
+    )
+
+    if (showTaskSuccessDialog){
+        CustomDialog(
+            title = stringResource(Res.string.muvaffaqiyatli),
+            message = stringResource(Res.string.yangi_vazifa_yaratildi),
+            onDismiss = { showTaskSuccessDialog = false},
+            onButtonClick = {
+                navigator?.replaceAll(TaskScreen())
+                showTaskSuccessDialog = false
+            }
+        )
+    }
+
+    LaunchedEffect(state.taskSuccess) {
+        if (state.taskSuccess) {
+            showTaskSuccessDialog = true
+            event.invoke(TaskEvent.OnReset)
+        }
+    }
 
     LaunchedEffect(state.completed) {
         if (state.completed == true) {
@@ -110,7 +155,7 @@ fun AddNewTask(
             onDismissRequest = { showDialogData = false },
             onDateSelected = {
                 println("AAAA = $dateAnd")
-                selectedDate = it
+                event(TaskEvent.OnDateChange(it))
                 showDialogData = false
             }
         )
@@ -124,11 +169,10 @@ fun AddNewTask(
             onDismiss = { showDialogTime = false },
             onTimeSelected = {
                 println("AAAA = $timeAnd")
-                selectedTime = it
+                event(TaskEvent.OnTimeChange(it))
             }
         )
     }
-
 
     Column(
         modifier = Modifier
@@ -294,7 +338,7 @@ fun AddNewTask(
 
         CustomButton(
             onClick = {
-                navigator?.push(TaskScreen())
+                event(TaskEvent.OnConfirmClicked)
             },
             modifier = Modifier
                 .padding(20.dp)
