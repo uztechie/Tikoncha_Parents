@@ -2,6 +2,8 @@ package org.example.project.presentation.task
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import org.example.project.data.remote.model.TodoDto
+import org.example.project.domain.model.UserInfo
 import org.example.project.presentation.completedTask.CompletedTaskList
 
 
@@ -14,13 +16,26 @@ data class TaskState(
     var isSaveButtonEnabled: Boolean = false,
     var completed: Boolean? = null,
     var showMineAll: Boolean = false,
-    var task: Task? = null,
-    val newTasksFull: List<Task> = emptyList(),
-    val newTasks: List<Task> = emptyList(),
-    val completedTasks: List<Task> = emptyList(),
-    val completedTasksEndList: List<CompletedTaskList> = emptyList(),
-    val completedTasksFull: List<Task> = emptyList(),
-    val childList: List<String> = listOf("Saidburkhon","Abror","Axror","Muhtor","Asror","Anvar"),
-    val child: String = childList[0],
+
+    val childrenList: List<UserInfo> = emptyList(),
+    val selectedChildren: UserInfo? = null,
     val genderIndex: Int = 0,
-)
+
+    val taskSuccess: Boolean = false,
+    val taskLoading: Boolean = false,
+    val taskError: String = "",
+
+    val childrenLoading: Boolean = false,
+    val childrenError: String = "",
+
+    val listLoading: Boolean = false,
+    val listError: String = "",
+
+
+    val selectedTaskList: List<Task> = emptyList(),
+    val childrenTaskList: List<Task> = emptyList(),
+    val parentTaskList: List<Task> = emptyList(),
+    val allTaskList: List<TodoDto> = emptyList(),
+
+
+    )

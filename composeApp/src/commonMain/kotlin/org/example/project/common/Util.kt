@@ -10,6 +10,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -37,9 +38,9 @@ object Util {
 
     private fun formatDateDdMmYyyy(date: LocalDate): String {
         return buildString {
-            append(date.dayOfMonth.toString().padStart(2, '0'))
+            append(date.day.toString().padStart(2, '0'))
             append(".")
-            append(date.monthNumber.toString().padStart(2, '0'))
+            append(date.month.number.toString().padStart(2, '0'))
             append(".")
             append(date.year)
         }
@@ -58,7 +59,7 @@ object Util {
             "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
             "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
         )
-        return uzbekMonths[date.monthNumber - 1]
+        return uzbekMonths[date.month.number - 1]
     }
 
 

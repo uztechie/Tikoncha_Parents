@@ -25,10 +25,12 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,7 @@ import org.example.project.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
@@ -56,10 +59,10 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 class TaskScreen: Screen{
     @Composable
     override fun Content() {
-        val viewModel = remember { TaskViewModel() }
+        val viewModel = koinViewModel <TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
-        val navigator = LocalNavigator.current
+        val navigator = LocalNavigator.current?.parent
 
         TaskUi(
             navigator = navigator,
@@ -79,12 +82,18 @@ fun TaskUi(
 
     val today = Util.getCurrentDate()
 
+    var selectedText by rememberSaveable {
+        mutableStateOf(state.selectedChildren?.fullName?:"")
+    }
+
     var showDialog by remember { mutableStateOf(false) }
 
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
-        items = state.childList,
+        items = state.childrenList,
         show = showDialog,
+        loading = state.taskLoading,
+        errorMessage = state.childrenError,
         onItemSelected = {
             event(TaskEvent.OnChildSelected(it))
         },
@@ -92,6 +101,10 @@ fun TaskUi(
             showDialog = false
         }
     )
+
+    LaunchedEffect(true){
+        event(TaskEvent.GetChildren)
+    }
 
     Column(
         modifier = Modifier
@@ -172,7 +185,7 @@ fun TaskUi(
             SpaceMedium()
 
             CustomSelectionButton(
-                text = state.child,
+                text = selectedText,
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = { showDialog = true },
@@ -192,28 +205,41 @@ fun TaskUi(
 
             SpaceSmall()
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f),
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CustomText(
-                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                        fontSize = SmallTextSize,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.W500
+            if (state.parentTaskList.isEmpty()){
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(2f),
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
+                )
+                {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        CustomText(
+                            text = stringResource(Res.string.xozir_vazifalar_yo_q),
+                            fontSize = SmallTextSize,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.W500
+                        )
+                    }
                 }
             }
+            else{
+                TaskItemUi(
+                    task = state.parentTaskList.first(),
+                    onEditIconClick = { },
+                    onDoneButtonClick = { },
+                    onDetailsIconClick = { }
+                )
+            }
+
 
             SpaceMedium()
 
@@ -255,7 +281,7 @@ fun TaskUi(
 
             SpaceSmall()
 
-            if (state.newTasks.isEmpty()) {
+            if (state.childrenTaskList.isEmpty()){
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -264,7 +290,8 @@ fun TaskUi(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
-                ) {
+                )
+                {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -273,28 +300,22 @@ fun TaskUi(
 
                         CustomText(
                             text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                            fontSize = 12.sp,
+                            fontSize = SmallTextSize,
                             color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.W500
                         )
                     }
                 }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    state.newTasks.forEach {
-                        TaskItem(
-                            task = it,
-                            onEditIconClick = { },
-                            onDoneButtonClick = { },
-                            onDetailsIconClick = { }
-                        )
-                    }
-                }
             }
+            else{
+                TaskItemUi(
+                    task = state.childrenTaskList.first(),
+                    onEditIconClick = { },
+                    onDoneButtonClick = { },
+                    onDetailsIconClick = { }
+                )
+            }
+
         }
         Spacer(modifier = Modifier.weight(1f))
     }

@@ -75,6 +75,7 @@ class HomeViewModel(
                 _state.update {
                     it.copy(selectedChildren = event.child)
                 }
+                AppSettings.selectedChildId = event.child.userId
                 loadAppUsages()
 
             }
