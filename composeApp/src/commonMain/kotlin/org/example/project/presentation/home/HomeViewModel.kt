@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.data.local.AppSettings
 import org.example.project.data.mapper.mapToDailyUsagePeriods
 import org.example.project.data.mapper.mapToWeeklyUsagePeriods
 import org.example.project.data.mapper.toDailyAverage

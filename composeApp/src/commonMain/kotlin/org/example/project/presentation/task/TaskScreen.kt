@@ -142,8 +142,9 @@ fun TaskUi(
 
         Column(
             modifier = Modifier
-                .padding(ContainerPadding)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(ContainerPadding)
         ) {
 
             Row(
@@ -185,7 +186,7 @@ fun TaskUi(
             SpaceMedium()
 
             CustomSelectionButton(
-                text = selectedText,
+                text = state.selectedChildren?.name?:"",
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = { showDialog = true },
