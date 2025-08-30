@@ -20,6 +20,6 @@ data class UserInfo(
     val shift: String? = null,
 ){
     override fun toString(): String {
-        return fullName
+        return name
     }
 }

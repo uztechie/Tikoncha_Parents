@@ -126,7 +126,7 @@ fun PersonalInformationUi(
 
             item {
                 ProfileHeader(
-                    fullName = state.userInfo?.fullName ?: "",
+                    fullName = state.userInfo?.name ?: "",
                     fathersName = "",
                     onSelectImageButtonClick = {
                         launchPicker()

@@ -65,7 +65,7 @@ fun PersonalInfoItem(userInfo: UserInfo?){
         PersonalInformationItemRow(
             icon = Res.drawable.profile,
             title = stringResource(Res.string.ism),
-            value = userInfo?.fullName?:""
+            value = userInfo?.name?:""
         )
         SpaceUltraSmall()
         PersonalInformationItemRow(

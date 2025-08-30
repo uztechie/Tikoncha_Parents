@@ -294,7 +294,7 @@ fun HomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(TextFieldHeight),
-                    text = state.selectedChildren?.fullName?:"",
+                    text = state.selectedChildren?.name?:"",
                     painter = painterResource(Res.drawable.profile),
                     onClick = {
                         showDialog = true

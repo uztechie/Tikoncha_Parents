@@ -109,7 +109,7 @@ fun ProfileUi(
 
 
             ProfileHeader(
-                fullName = state.userInfo?.fullName?:"",
+                fullName = state.userInfo?.name?:"",
                 fathersName = "",
                 image = imageBitmap,
                 onSelectImageButtonClick = {
