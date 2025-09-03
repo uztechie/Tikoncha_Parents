@@ -125,7 +125,7 @@ class TaskViewModel (
             }
 
             is TaskEvent.OnCompletedTask -> {
-               updateTodo(task = event.task)
+               updateTodo(task = event.task.copy(isCompleted = true))
             }
 
             is TaskEvent.ShowMineAll -> {

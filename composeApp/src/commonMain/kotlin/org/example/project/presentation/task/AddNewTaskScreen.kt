@@ -130,7 +130,7 @@ fun AddNewTask(
             message = stringResource(Res.string.yangi_vazifa_yaratildi),
             onDismiss = { showTaskSuccessDialog = false},
             onButtonClick = {
-                navigator?.replaceAll(TaskScreen())
+                navigator?.pop()
                 showTaskSuccessDialog = false
             }
         )

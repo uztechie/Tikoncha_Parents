@@ -1,6 +1,8 @@
 package org.example.project.presentation.task
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,45 +61,41 @@ fun TaskItemUi(
     }
 
 
-    Card(
+    Column(
         modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(TextFieldCornerRadius)
-    ) {
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .padding(horizontal = 20.dp, vertical = 15.dp)
+    )
+    {
 
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 20.dp, vertical = 15.dp)
         ) {
 
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
             ) {
 
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
+                CustomText(
+                    text = task.title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = NormalTextSize,
+                    color = titleColor
+                )
 
-                    CustomText(
-                        text = task.title,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = NormalTextSize,
-                        color = titleColor
-                    )
+                CustomText(
+                    text = task.description,
+                    fontSize = UltraSmallTextSize,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
 
-                    CustomText(
-                        text = task.description,
-                        fontSize = UltraSmallTextSize,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-
+            if (task.isMine){
                 IconButton(
                     onClick = {
                         if (!task.isCompleted){
@@ -107,7 +105,8 @@ fun TaskItemUi(
                         }
                     },
                     modifier = Modifier.size(NormalIconButtonSize)
-                ) {
+                )
+                {
 
                     if (!task.isCompleted){
                         Icon(
@@ -130,119 +129,124 @@ fun TaskItemUi(
                 }
             }
 
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.calendar),
+                    tint = iconColor,
+                    contentDescription = "",
+                    modifier = Modifier.size(TextFieldIconSize)
+                )
+
+                CustomText(
+                    modifier = Modifier
+                        .padding(start = 3.dp),
+                    text = task.date,
+                    fontSize = SmallTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.alarm),
+                    tint = iconColor,
+                    contentDescription = "",
+                    modifier = Modifier.size(TextFieldIconSize)
+                )
+
+                CustomText(
+                    modifier = Modifier
+                        .padding(start = 3.dp),
+                    text = task.time,
+                    fontSize = SmallTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.zap),
+                    tint = iconColor,
+                    contentDescription = "",
+                    modifier = Modifier.size(TextFieldIconSize)
+                )
+
+                CustomText(
+                    modifier = Modifier
+                        .padding(start = 3.dp),
+                    text = importance,
+                    fontSize = SmallTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        SpaceUltraSmall()
+
+        if (!task.isCompleted){
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.calendar),
-                        tint = iconColor,
-                        contentDescription = "",
-                        modifier = Modifier.size(TextFieldIconSize)
-                    )
+                CustomLinearProgress(
+                    progress = (task.progress.toDouble() / 100).toFloat(),
+                    modifier = Modifier
+                        .weight(1f),
+                    height = LinearProgressIndicatorHeight
+                )
 
-                    CustomText(
-                        modifier = Modifier
-                            .padding(start = 3.dp),
-                        text = task.date,
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.alarm),
-                        tint = iconColor,
-                        contentDescription = "",
-                        modifier = Modifier.size(TextFieldIconSize)
-                    )
-
-                    CustomText(
-                        modifier = Modifier
-                            .padding(start = 3.dp),
-                        text = task.time,
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.zap),
-                        tint = iconColor,
-                        contentDescription = "",
-                        modifier = Modifier.size(TextFieldIconSize)
-                    )
-
-                    CustomText(
-                        modifier = Modifier
-                            .padding(start = 3.dp),
-                        text = importance,
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+                CustomText(
+                    text = "${task.progress}%",
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                    fontSize = SmallTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
-            SpaceUltraSmall()
+            SpaceMedium()
 
-           if (!task.isCompleted){
-               Row(
-                   modifier = Modifier
-                       .fillMaxWidth(),
-                   verticalAlignment = Alignment.CenterVertically
-               ) {
+            if (task.isMine){
+                CustomButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(DialogButtonHeight),
+                    onClick = {
+                        onDoneButtonClick(task)
+                    },
+                    enabled = true,
+                    text = stringResource(Res.string.bajarildi)
+                )
+            }
 
-                   CustomLinearProgress(
-                       progress = (task.progress.toDouble() / 100).toFloat(),
-                       modifier = Modifier
-                           .weight(1f),
-                       height = LinearProgressIndicatorHeight
-                   )
 
-                   CustomText(
-                       text = "${task.progress}%",
-                       modifier = Modifier
-                           .padding(start = 10.dp),
-                       fontSize = SmallTextSize,
-                       fontWeight = FontWeight.SemiBold
-                   )
-               }
+        }else{
 
-               SpaceMedium()
+            SpaceLarge()
 
-               CustomButton(
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .height(DialogButtonHeight),
-                   onClick = {
-                       onDoneButtonClick(task)
-                   },
-                   enabled = true,
-                   text = stringResource(Res.string.bajarildi)
-               )
-           }else{
-
-               SpaceLarge()
-
-               CustomText(
-                   text = stringResource(Res.string.bajarilgan),
-                   color = PrimaryColor,
-                   fontSize = NormalTextSize,
-                   fontWeight = FontWeight.SemiBold
-               )
-           }
+            CustomText(
+                text = stringResource(Res.string.bajarilgan),
+                color = PrimaryColor,
+                fontSize = NormalTextSize,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
@@ -262,7 +266,8 @@ private fun Pre() {
             progress = 50,
             createdAt = currentMillis,
             targetUserId = "",
-            authorId = ""
+            authorId = "",
+            isMine = true
         ),
         onEditIconClick = {},
         onDoneButtonClick = {},

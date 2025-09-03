@@ -8,6 +8,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.example.project.common.DateTimeUtil
 import org.example.project.common.DateTimeUtil.fromServerToLocalDateTime
 import org.example.project.common.DateTimeUtil.serverDateTimeToMillis
+import org.example.project.data.local.AppSettings
 import org.example.project.data.remote.model.TodoDto
 import org.example.project.presentation.task.Task
 import kotlin.time.ExperimentalTime
@@ -28,7 +29,8 @@ fun TodoDto.toTask(): Task {
         createdAt = created_at.serverDateTimeToMillis(),
         id = this.id ?:"",
         targetUserId = this.target_user_id?:"",
-        authorId = this.author_id?:""
+        authorId = this.author_id?:"",
+        isMine = author_id == AppSettings.userId
     )
 }
 

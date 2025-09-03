@@ -12,6 +12,7 @@ data class Task(
     val dateTime: Long,
     val importance: ImportanceType,
     val isCompleted: Boolean,
+    val isMine: Boolean,
     val authorId: String,
     val targetUserId: String,
     val progress: Int,
