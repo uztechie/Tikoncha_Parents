@@ -9,25 +9,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import org.example.project.common.DateTimeUtil
+import org.example.project.common.SessionStore
 import org.example.project.data.local.AppSettings
-import org.example.project.data.mapper.toImportanceType
 import org.example.project.data.mapper.toServerType
 import org.example.project.data.mapper.toTask
+import org.example.project.data.mapper.toTodoDto
 import org.example.project.data.mapper.toUserInfo
-import org.example.project.data.remote.model.TodoDto
 import org.example.project.data.remote.model.TodoRequest
 import org.example.project.domain.model.Resource
 import org.example.project.domain.use_case.ChildrenUseCase
 import org.example.project.domain.use_case.TodoListUseCase
 import org.example.project.domain.use_case.TodoUseCase
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -39,6 +33,7 @@ class TaskViewModel (
 ) : ViewModel() {
 
     private var requestTodoJob: Job? = null
+    private var updateTodoJob: Job? = null
 
     private var childrenJob: Job? = null
 
@@ -95,7 +90,7 @@ class TaskViewModel (
                 _state.update {
                     it.copy(selectedChildren = event.child)
                 }
-                AppSettings.selectedChildId = event.child.userId
+                SessionStore.selectedChildId = event.child.userId
                 loadTasks()
             }
 
@@ -129,6 +124,17 @@ class TaskViewModel (
                 loadTasks()
             }
 
+            is TaskEvent.OnCompletedTask -> {
+               updateTodo(task = event.task)
+            }
+
+            is TaskEvent.ShowMineAll -> {
+                _state.update {
+                    it.copy(
+                        showMineAll = !it.showMineAll
+                    )
+                }
+            }
         }
     }
 
@@ -142,20 +148,26 @@ class TaskViewModel (
                     taskSuccess = false
                 )
             }
+
+            val  selectedChildUserId = SessionStore.selectedChildId
+
             val request = TodoRequest(
                 title = _state.value.title,
                 description = _state.value.desc,
                 importance = _state.value.importance.toServerType(),
-                due_date = formatToIsoString(localDate = _state.value.date, localTime = _state.value.time),
-                created_at = getCurrentIsoDateTime(),
-                target_user_id = AppSettings.userId,
-                id = Uuid.random().toString()
+                due_date = DateTimeUtil.formatToIsoString(localDate = _state.value.date, localTime = _state.value.time),
+                created_at = DateTimeUtil.getCurrentIsoDateTime(),
+                target_user_id = selectedChildUserId,
+                id = Uuid.random().toString(),
+                is_completed = _state.value.completed
             )
 
             val result = todoUseCase(request)
 
             when(result){
+
                 is Resource.Loading -> {}
+
                 is Resource.Error -> {
                     _state.update {
                         println("result = $result.")
@@ -166,13 +178,80 @@ class TaskViewModel (
                         )
                     }
                 }
+
                 is Resource.Success -> {
-
-
 
                     val toDo = result.data
                     val allList = state.value.allTaskList.toMutableList()
                     allList.add(toDo)
+
+                    _state.update {
+                        it.copy(
+                            allTaskList = allList,
+                            taskLoading = false,
+                            taskError = "",
+                            taskSuccess = true
+                        )
+                    }
+                    manageTaskList()
+                }
+            }
+        }
+    }
+
+    private fun updateTodo(task: Task){
+        updateTodoJob?.cancel()
+        updateTodoJob = viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    taskLoading = true,
+                    taskError = "",
+                    taskSuccess = false
+                )
+            }
+
+
+            val request = TodoRequest(
+                id = task.id,
+                title = task.title,
+                description = task.description,
+                importance = task.importance.toServerType(),
+                due_date = DateTimeUtil.formatToIsoString(millis = task.dateTime),
+                created_at = DateTimeUtil.formatToIsoString(millis = task.createdAt),
+                target_user_id = task.targetUserId,
+                is_completed = task.isCompleted
+            )
+
+            val result = todoUseCase(request)
+
+            when(result){
+
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Error -> {
+                    _state.update {
+                        println("result = $result.")
+                        it.copy(
+                            taskSuccess = false,
+                            taskError = result.message,
+                            taskLoading = false
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    loadTasks()
+
+                    val allList = state.value.allTaskList.map { dto->
+                        if (dto.id == task.id){
+                            task.toTodoDto()
+                        }
+                        else{
+                            dto
+                        }
+                    }
 
                     _state.update {
                         it.copy(
@@ -213,15 +292,20 @@ class TaskViewModel (
                 is Resource.Success -> {
 
                     val list = response.data.map { it.toUserInfo() }
-                    val savedId = AppSettings.selectedChildId
-                    val selected = list.firstOrNull{ it.userId == savedId} ?: list.firstOrNull()
+                    val savedId = SessionStore.selectedChildId
+                    val selected = savedId.let { id -> list.firstOrNull() {it.userId == id} }
 
                     _state.update {
                         it.copy(
                             childrenLoading = false,
                             childrenError = "",
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
+                            childrenList = list,
+                            selectedChildren = selected
                         )
+                    }
+
+                    if (selected != null){
+                        loadTasks()
                     }
                 }
             }
@@ -230,17 +314,22 @@ class TaskViewModel (
 
     private fun loadTasks(){
         listJob?.cancel()
-        listJob =   viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    listError = "",
-                    listLoading = true,
-                    allTaskList = emptyList()
-                )
+        listJob = viewModelScope.launch {
+
+            val selectedId = SessionStore.selectedChildId
+
+            if (selectedId == null){
+                _state.update {
+                    it.copy(
+                        listError = "",
+                        listLoading = true,
+                        allTaskList = emptyList()
+                    )
+                }
+                return@launch
             }
 
-
-            val result = todoListUseCase.invoke(AppSettings.selectedChildId)
+            val result = todoListUseCase.invoke(selectedId)
 
             when(result){
                 is Resource.Loading -> {}
@@ -270,54 +359,18 @@ class TaskViewModel (
 
     private fun manageTaskList(){
         val allList = state.value.allTaskList
+
         _state.update {
             it.copy(
-                childrenTaskList = allList.filter { it.author_id == null }.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
-                parentTaskList = allList.filter { it.author_id != null }.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                childrenTaskList = allList.filter { it.author_id != AppSettings.userId && !it.is_completed }.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                parentTaskList = allList.filter { it.author_id == AppSettings.userId && !it.is_completed}.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
             )
         }
     }
 
-    fun getCurrentIsoDateTime(): String {
-        val nowInstant = Clock.System.now()
-        val localDateTime = nowInstant.toLocalDateTime(TimeZone.currentSystemDefault())
-
-        val year = localDateTime.year.toString().padStart(4, '0')
-        val month = localDateTime.month.ordinal.toString().padStart(2, '0')
-        val day = localDateTime.day.toString().padStart(2, '0')
-        val hour = localDateTime.hour.toString().padStart(2, '0')
-        val minute = localDateTime.minute.toString().padStart(2, '0')
-        val second = localDateTime.second.toString().padStart(2, '0')
-        val millis = (localDateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
-
-        return "$year-$month-${day}T$hour:$minute:$second.${millis}"
-    }
 
 
 
 
 
-
-
-    fun formatToIsoString(
-        localDate: LocalDate?,
-        localTime: LocalTime?,
-        timeZone: TimeZone = TimeZone.UTC
-    ): String {
-        if (localTime == null || localDate == null){
-            return ""
-        }
-        // Combine LocalDate + LocalTime into LocalDateTime
-        val localDateTime = LocalDateTime(localDate, localTime)
-
-        val year = localDateTime.year.toString().padStart(4, '0')
-        val month = localDateTime.month.ordinal.toString().padStart(2, '0')
-        val day = localDateTime.day.toString().padStart(2, '0')
-        val hour = localDateTime.hour.toString().padStart(2, '0')
-        val minute = localDateTime.minute.toString().padStart(2, '0')
-        val second = localDateTime.second.toString().padStart(2, '0')
-        val millis = (localDateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
-
-        return "$year-$month-${day}T$hour:$minute:$second.${millis}"
-    }
 }

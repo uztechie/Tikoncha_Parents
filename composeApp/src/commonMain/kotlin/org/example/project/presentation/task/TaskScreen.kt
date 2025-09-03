@@ -3,6 +3,7 @@ package org.example.project.presentation.task
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,10 +57,10 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
 
-class TaskScreen: Screen{
+class TaskScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = koinViewModel <TaskViewModel>()
+        val viewModel = koinViewModel<TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current?.parent
@@ -82,10 +83,6 @@ fun TaskUi(
 
     val today = Util.getCurrentDate()
 
-    var selectedText by rememberSaveable {
-        mutableStateOf(state.selectedChildren?.fullName?:"")
-    }
-
     var showDialog by remember { mutableStateOf(false) }
 
     CustomListDialog(
@@ -96,13 +93,14 @@ fun TaskUi(
         errorMessage = state.childrenError,
         onItemSelected = {
             event(TaskEvent.OnChildSelected(it))
+
         },
         onDismiss = {
             showDialog = false
         }
     )
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         event(TaskEvent.GetChildren)
     }
 
@@ -121,7 +119,9 @@ fun TaskUi(
 
                 FilledTonalIconButton(
                     modifier = Modifier.size(LargeIconButtonSize),
-                    onClick = { navigator?.push(CompletedTaskScreen())},
+                    onClick = {
+                        navigator?.push(CompletedTaskScreen())
+                    },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onBackground
@@ -185,7 +185,8 @@ fun TaskUi(
             SpaceMedium()
 
             CustomSelectionButton(
-                text = selectedText,
+                text = state.selectedChildren?.fullName
+                    ?: stringResource(Res.string.farzandlaringiz),
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = { showDialog = true },
@@ -197,15 +198,36 @@ fun TaskUi(
 
             SpaceMedium()
 
-            CustomText(
-                text = stringResource(Res.string.sizdan_vazifalar),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalLargeTextSize
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CustomText(
+                    text = stringResource(Res.string.sizdan_vazifalar),
+                    fontWeight = FontWeight.W600,
+                    fontSize = NormalLargeTextSize
+                )
+
+                if (state.parentTaskList.isNotEmpty()) {
+
+                    CustomText(
+                        text = if (!state.showMineAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
+                            Res.string.qisqartirish
+                        ),
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W600,
+                        fontSize = NormalLargeTextSize,
+                        modifier = Modifier
+                            .clickable {
+                                event(TaskEvent.ShowMineAll)
+                            }
+                    )
+                }
+            }
 
             SpaceSmall()
 
-            if (state.parentTaskList.isEmpty()){
+            if (state.parentTaskList.isEmpty()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -230,14 +252,39 @@ fun TaskUi(
                         )
                     }
                 }
-            }
-            else{
-                TaskItemUi(
-                    task = state.parentTaskList.first(),
-                    onEditIconClick = { },
-                    onDoneButtonClick = { },
-                    onDetailsIconClick = { }
-                )
+            } else {
+
+                if (state.showMineAll) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        state.parentTaskList.forEach { task ->
+                            TaskItemUi(
+                                task = task,
+                                onDoneButtonClick = {
+                                    event(
+                                        TaskEvent.OnCompletedTask(
+                                           task
+                                        )
+                                    )
+                                },
+                                onEditIconClick = {},
+                                onDetailsIconClick = {}
+                            )
+                        }
+                    }
+                } else {
+                    TaskItemUi(
+                        task = state.parentTaskList.first(),
+                        onDoneButtonClick = { task ->
+                            event(TaskEvent.OnCompletedTask(task))
+                        },
+                        onEditIconClick = { },
+                        onDetailsIconClick = { }
+                    )
+                }
             }
 
 
@@ -281,7 +328,7 @@ fun TaskUi(
 
             SpaceSmall()
 
-            if (state.childrenTaskList.isEmpty()){
+            if (state.childrenTaskList.isEmpty()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -306,8 +353,7 @@ fun TaskUi(
                         )
                     }
                 }
-            }
-            else{
+            } else {
                 TaskItemUi(
                     task = state.childrenTaskList.first(),
                     onEditIconClick = { },

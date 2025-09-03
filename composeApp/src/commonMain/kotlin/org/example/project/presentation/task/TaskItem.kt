@@ -45,13 +45,13 @@ fun TaskItemUi(
         ImportanceType.MOST_IMPORTANT -> stringResource(Res.string.o_ta_muhim)
     }
 
-    var titleColor = if (task.progress == 0 && !task.is_completed){
+    var titleColor = if (task.progress == 0 && !task.isCompleted){
         ProgressColor1
     }
     else{
         TextColor
     }
-    var iconColor = if (task.progress == 0 && !task.is_completed){
+    var iconColor = if (task.progress == 0 && !task.isCompleted){
         ProgressColor1
     }
     else{
@@ -100,7 +100,7 @@ fun TaskItemUi(
 
                 IconButton(
                     onClick = {
-                        if (!task.is_completed){
+                        if (!task.isCompleted){
                             onEditIconClick(task)
                         }else{
                             onDetailsIconClick(task)
@@ -109,7 +109,7 @@ fun TaskItemUi(
                     modifier = Modifier.size(NormalIconButtonSize)
                 ) {
 
-                    if (!task.is_completed){
+                    if (!task.isCompleted){
                         Icon(
                             painter = painterResource(Res.drawable.edit_pen),
                             contentDescription = "",
@@ -197,7 +197,7 @@ fun TaskItemUi(
 
             SpaceUltraSmall()
 
-           if (!task.is_completed){
+           if (!task.isCompleted){
                Row(
                    modifier = Modifier
                        .fillMaxWidth(),
@@ -257,10 +257,12 @@ private fun Pre() {
             date = "04.11.2025",
             time = "08:00",
             importance = ImportanceType.IMPORTANT,
-            is_completed = true,
+            isCompleted = true,
             dateTime = currentMillis,
             progress = 50,
-            created_at = currentMillis
+            createdAt = currentMillis,
+            targetUserId = "",
+            authorId = ""
         ),
         onEditIconClick = {},
         onDoneButtonClick = {},
