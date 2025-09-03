@@ -105,7 +105,7 @@ fun MainUi() {
         ) { innerPadding ->
             Box(
                 modifier = Modifier
-//                    .padding(innerPadding)
+                    .padding(innerPadding)
             ) {
                 CurrentScreen()
             }

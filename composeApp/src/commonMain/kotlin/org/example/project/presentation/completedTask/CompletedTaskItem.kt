@@ -51,13 +51,13 @@ fun CompletedTaskItem(
         ImportanceType.MOST_IMPORTANT -> "O'ta muhim"
     }
 
-    var titleColor = if (task.progress == 0 && !task.is_completed){
+    var titleColor = if (task.progress == 0 && !task.isCompleted){
         ProgressColor1
     }
     else{
         TextColor
     }
-    var iconColor = if (task.progress == 0 && !task.is_completed){
+    var iconColor = if (task.progress == 0 && !task.isCompleted){
         ProgressColor1
     }
     else{
@@ -107,7 +107,7 @@ fun CompletedTaskItem(
 
                 IconButton(
                     onClick = {
-                        if (!task.is_completed){
+                        if (!task.isCompleted){
                             onEditIconClick(task)
                         }else{
                             onDetailsIconClick(task)
@@ -116,7 +116,7 @@ fun CompletedTaskItem(
                     modifier = Modifier.size(NormalIconButtonSize)
                 ) {
 
-                    if (!task.is_completed){
+                    if (!task.isCompleted){
                         Icon(
                             painter = painterResource(Res.drawable.edit_pen),
                             contentDescription = "",
@@ -205,7 +205,7 @@ fun CompletedTaskItem(
 
             SpaceUltraSmall()
 
-           if (!task.is_completed){
+           if (!task.isCompleted){
                Row(
                    modifier = Modifier
                        .fillMaxWidth(),

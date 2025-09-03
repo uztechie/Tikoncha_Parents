@@ -3,8 +3,6 @@ package org.example.project.presentation.task
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.example.project.domain.model.UserInfo
-import org.example.project.presentation.completedTask.CompletedTaskEvent
-import org.example.project.presentation.home.HomeEvent
 
 
 sealed interface TaskEvent {
@@ -12,6 +10,9 @@ sealed interface TaskEvent {
     object OnReset: TaskEvent
     object LoadTasks: TaskEvent
     object GetChildren: TaskEvent
+    object ShowMineAll : TaskEvent
+
+    data class OnCompletedTask(val task: Task): TaskEvent
     data class OnTitleChange(val title: String) : TaskEvent
     data class OnDescChange(val desc: String) : TaskEvent
     data class OnDateChange(val date: LocalDate) : TaskEvent

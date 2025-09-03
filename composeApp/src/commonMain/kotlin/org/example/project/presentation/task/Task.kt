@@ -4,13 +4,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Task(
+    val id: String = "",
     val title: String,
     val description: String,
     val date: String,
     val time: String,
     val dateTime: Long,
     val importance: ImportanceType,
-    val is_completed: Boolean,
+    val isCompleted: Boolean,
+    val authorId: String,
+    val targetUserId: String,
     val progress: Int,
-    val created_at: Long
+    val createdAt: Long
 )

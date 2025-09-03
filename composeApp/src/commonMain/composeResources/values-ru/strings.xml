@@ -153,5 +153,6 @@
     <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">Чтобы использовать карту в полном объеме, разрешите доступ к местоположению в настройках!</string>
     <string name="yangi_vazifa_yaratildi">Создана новая задача</string>
     <string name="muvaffaqiyatli">Успешно</string>
+    <string name="qisqartirish">Сокращение</string>
 
 </resources>
