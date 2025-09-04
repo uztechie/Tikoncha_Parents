@@ -1,0 +1,78 @@
+package uz.tikoncha_parent.ui
+
+import androidx.compose.ui.graphics.Color
+
+
+val SliderPageColor = Color(0xFF8AD194)
+
+
+val LightDark = Color(0x00800000)
+val EditTextBorder = Color(0xFFD9D9D9)
+val ColorWhite = Color(0xFFF8F8F8)
+
+
+val DividerColor = Color(0xFFE9E9E9)
+val BackgroundColor = Color(0xFFFFFDFD)
+val PrimaryColor = Color(0xFF4BB462)
+val BorderColor = Color(0xFFE7E7E7)
+val OtpErrorColor = Color(0xFFFF9090)
+val ChatMessageColor = Color(0xFF8AD194)
+val ChatMessageBackgroundColor = Color(0xFFF3F4F7)
+
+val HintTextColor = Color(0xFFAFAFAF)
+val TextColor = Color(0xFF1A1A1A)
+val MainDisableColor = Color(0xFF1A1A1A)
+val OnPrimaryColor = Color(0xFFFFFFFF)
+val MainBorderColor = Color(0xFFF3F4F7)
+val LanguageTonalIconColor = Color(0xFFF1F1F1)
+
+val DisableTextColor = Color(0xFFFFFFFF)
+val DisableButtonColor = Color(0xFFDCDCDC)
+val DisableButtonContentColor = Color(0xFFA5A5A5)
+val DisableButtonTextColor = Color(0xFFFFFFFF)
+
+val CheckBoxUncheckBorderColor = Color(0xFFE7E8E9)
+val CheckBoxCheckBorderColor = PrimaryColor
+val CheckBoxUncheckBackgroundColor = Color(0xFFFBFCFD)
+val CheckBoxCheckBackgroundColor = Color(0xFFCBF4E2)
+val WheelPickerSelectionColor = Color(0xFFF3F4F7)
+val CardColors = Color(0xFFF3F4F7)
+val MediumButtonColor = Color(0xFF4BB462)
+val ImportantButtonColor = Color(0xFFFFBC4C)
+val MostImportantButtonColor = Color(0xFFEB5B00)
+
+
+
+
+val Success = Color(0xFF00C853)
+val Failed = Color(0xFFFF9090)
+val Background = Color(0xFFFFFFFF)
+val OnText = Color(0xFFAFAFAF)
+
+
+val PermissionTextColor = Color(0xFF1A1A1A)
+val PermissionBorderColor = Color(0xFFE1E1E1)
+
+val TonalButtonContainerColor = Color(0xFFF3F4F7)
+
+
+
+
+val ProgressColor1 = Color(0xFFD50000)
+val ProgressColor2 = Color(0xFFFF6D00)
+val ProgressColor3 = Color(0xFFFFD600)
+val ProgressColor4 = Color(0xFFAEEA00)
+val ProgressColor5 = PrimaryColor
+
+val DarkBackgroundColor = Color(0xFF010D01)
+
+val DarkCardColors = Color(0xFF1A1A1A)
+
+val DarkMainBorderColor = Color(0xFF011E01)
+
+val DarkTextColor = Color(0xFFFFFFFF)
+
+val DarkButtonBackgroundColors = Color(0xFF434343)
+
+val DarkCardColorsButton = Color(0xFF282525)
+

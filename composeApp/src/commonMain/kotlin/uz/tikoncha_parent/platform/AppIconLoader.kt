@@ -1,0 +1,8 @@
+package uz.tikoncha_parent.platform
+
+import androidx.compose.ui.graphics.ImageBitmap
+
+
+interface AppIconLoader {
+    fun load(packageName: String): ImageBitmap?
+}

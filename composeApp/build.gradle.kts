@@ -152,11 +152,11 @@ project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
 }
 
 android {
-    namespace = "org.example.project"
+    namespace = "uz.tikoncha_parent"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "org.example.project"
+        applicationId = "uz.tikoncha_parent"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
