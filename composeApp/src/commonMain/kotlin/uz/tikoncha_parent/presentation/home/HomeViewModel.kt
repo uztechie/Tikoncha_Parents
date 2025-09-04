@@ -364,6 +364,9 @@ class HomeViewModel(
                 dailyChartData to dailyAverage
             }
 
+            println("AVERAGE week=$weeklyAverage  day=$dailyAverage  avg=$avg")
+
+
             _state.update {
                 it.copy(
                     appUsageUiList = uiList,

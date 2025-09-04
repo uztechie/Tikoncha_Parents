@@ -61,6 +61,7 @@ fun List<AppUsage>.mapToDailyUsagePeriods(): List<UsagePeriod> {
         .distinct()
         .sortedDescending()
 
+
     val formatter = LocalDate.Format {
         day() // dd
         char('.')
@@ -198,11 +199,14 @@ fun List<AppUsage>.toWeeklyUsageMinutesForChart(startDate: LocalDate?): Map<Int,
 
 }
 fun List<AppUsage>.toWeeklyAverage(startDate: LocalDate?): HourMinute {
+
+
     if (startDate == null){
         return HourMinute()
     }
     // startDate haftaning boshini topamiz (dushanba)
     val startOfWeek = startDate.minus(startDate.dayOfWeek.ordinal.toLong(), DateTimeUnit.DAY)
+
 
     // Shu haftaning 7 kunlik sanalarini olamiz (dushanba..yakshanba)
     val weekDays = (0..6).map { startOfWeek.plus(it, DateTimeUnit.DAY) }
@@ -213,13 +217,15 @@ fun List<AppUsage>.toWeeklyAverage(startDate: LocalDate?): HourMinute {
             usages.sumOf { it.usageMillis }
         }
 
+
     // Faqat mavjud (nol bo‘lmagan) usage millis
     val values = weekDays.mapNotNull { day ->
-        groupedByDate[day]?.takeIf { it == 0L}
+        groupedByDate[day]?.takeIf { it > 0L}
     }
 
     // O‘rtacha millis hisoblash
     val avgMillis = if (values.isEmpty()) 0L else (values.average().toLong())
+
 
     // HourMinute ga aylantirish
     return avgMillis.toHourMinute()
@@ -238,14 +244,17 @@ fun List<AppUsage>.toDailyAverage(startDate: LocalDate?): HourMinute{
 
 
 fun List<AppUsage>.toUsageUi(startDate: LocalDate?, endDate: LocalDate?): List<AppUsageUi> {
+    val minMillis: Long = 60*1000
     if (startDate == null || endDate == null){
         return emptyList()
     }
     return this
-        .filter { it.date == startDate && it.date == endDate}
+        .filter { it.date >= startDate && it.date<=endDate}
         .groupBy { it.packageName }
-        .map { (pkg, usages) ->
+        .mapNotNull { (pkg, usages) ->
             val totalMillis = usages.sumOf { it.usageMillis }
+            if (totalMillis < minMillis) return@mapNotNull null
+
             val totalMinutes = totalMillis / 60_000
             val hours = (totalMinutes / 60).toInt()
             val minutes = (totalMinutes % 60).toInt()

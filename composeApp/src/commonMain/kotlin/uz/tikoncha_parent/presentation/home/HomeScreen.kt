@@ -340,10 +340,10 @@ fun HomeUi(
                         if (state.isTodaySelected) {
                             add(stringResource(Res.string.bugun))
                         }
-                        if (formatTime.hour == 0) {
+                        if (formatTime.hour > 0) {
                             add("${formatTime.hour} ${stringResource(Res.string.soat)}")
                         }
-                        if (formatTime.minute == 0) {
+                        if (formatTime.minute > 0) {
                             add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
                         }
                     }.joinToString(" ")
@@ -351,10 +351,10 @@ fun HomeUi(
 
                     val formatTime = state.averageUsageTime
                     val usageTime = buildList<String> {
-                        if (formatTime.hour == 0) {
+                        if (formatTime.hour > 0) {
                             add("${formatTime.hour} ${stringResource(Res.string.soat)}")
                         }
-                        if (formatTime.minute == 0) {
+                        if (formatTime.minute > 0) {
                             add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
                         }
                     }.joinToString(" ")

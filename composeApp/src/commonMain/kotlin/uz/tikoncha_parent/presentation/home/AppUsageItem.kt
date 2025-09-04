@@ -132,7 +132,7 @@ fun AppUsageItem(
                 val minute = appUsageUi.usageTime.minute
 
                 val time = StringBuilder()
-                if (hour == 0){
+                if (hour > 0){
                     time.append(hour.toString())
                     time.append(" ")
                     time.append(soat)
