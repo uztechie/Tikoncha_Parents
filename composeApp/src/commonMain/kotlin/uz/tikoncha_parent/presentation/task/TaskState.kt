@@ -30,6 +30,9 @@ data class TaskState(
     val listLoading: Boolean = false,
     val listError: String = "",
 
+    val taskId: String? = null,
+    val isEditing: Boolean = false,
+    val editingTaskId: String? = null,
 
     val selectedTaskList: List<Task> = emptyList(),
 

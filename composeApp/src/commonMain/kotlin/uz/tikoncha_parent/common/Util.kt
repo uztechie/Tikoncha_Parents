@@ -11,6 +11,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.number
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -99,51 +100,56 @@ object Util {
         dueAt: Long,
         now: Long = Clock.System.now().toEpochMilliseconds()
     ): Int {
-
         if (dueAt <= createdAt) {
-            return if (now >= dueAt) 100 else 0
+            // yaroqsiz muddat: due kelmaguncha 100, keyin 0
+            return if (now < dueAt) 100 else 0
         }
         val total = dueAt - createdAt
-        val elapsed = (now - createdAt).coerceAtLeast(0)
-        val pct = (elapsed.toDouble() / total.toDouble() * 100.0)
-        return pct.roundToInt().coerceIn(0, 100)
+        val left = (dueAt - now).coerceIn(0L, total) // qolgan vaqt
+        val pct = (left.toDouble() / total.toDouble()) * 100.0
+        return pct.roundToInt().coerceIn(0, 100)     // 100 → 0
     }
 
-    fun formatDateDdMmYyyy(millis: Long, tz: TimeZone = TimeZone.currentSystemDefault()): String {
+    fun formatTimeHHmm(
+        millis: Long,
+        tz: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        val ldt = Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz)
+        val hh = if (ldt.hour < 10) "0${ldt.hour}" else "${ldt.hour}"
+        val mm = if (ldt.minute < 10) "0${ldt.minute}" else "${ldt.minute}"
+        return "$hh:$mm"
+    }
+
+    fun formatDateDdMmYyyy(
+        millis: Long,
+        delimiter: Char = '.',
+        tz: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
         val ldt = Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz)
         val d = ldt.date
-        return "${d.day.toString().padStart(2,'0')}." +
-                "${d.month.number.toString().padStart(2,'0')}." +
-                d.year.toString().padStart(4,'0')
+        val dd = d.day.toString().padStart(2, '0')
+        val mm = d.month.number.toString().padStart(2, '0')
+        val yyyy = d.year.toString().padStart(4, '0')
+        return "$dd$delimiter$mm$delimiter$yyyy"
     }
 
-    fun formatTimeHHmm(millis: Long, tz: TimeZone = TimeZone.currentSystemDefault()): String {
-        val ldt = Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz)
-        val h = ldt.hour.toString().padStart(2,'0')
-        val m = ldt.minute.toString().padStart(2,'0')
-        return "$h:$m"
+    fun millisToLocalDate(
+        millis: Long,
+        tz: TimeZone = TimeZone.currentSystemDefault()
+    ): LocalDate {
+        return Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz).date
     }
 
-//    fun formatTimeHHmm(
-//        millis: Long,
-//        tz: TimeZone = TimeZone.currentSystemDefault()
-//    ): String {
-//        val ldt = Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz)
-//        val hh = if (ldt.hour < 10) "0${ldt.hour}" else "${ldt.hour}"
-//        val mm = if (ldt.minute < 10) "0${ldt.minute}" else "${ldt.minute}"
-//        return "$hh:$mm"
-//    }
-//
-//    fun formatDateDdMmYyyy(
-//        millis: Long,
-//        delimiter: Char = '.',
-//        tz: TimeZone = TimeZone.currentSystemDefault()
-//    ): String {
-//        val ldt = Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz)
-//        val d = ldt.date
-//        val dd = d.day.toString().padStart(2, '0')
-//        val mm = d.month.number.toString().padStart(2, '0')
-//        val yyyy = d.year.toString().padStart(4, '0')
-//        return "$dd$delimiter$mm$delimiter$yyyy"
-//    }
+    fun millisToLocalTime(
+        millis: Long,
+        tz: TimeZone = TimeZone.currentSystemDefault()
+    ): LocalTime {
+        return Instant.fromEpochMilliseconds(millis).toLocalDateTime(tz).time
+    }
+
+    fun toMillis(date: LocalDate?, time: LocalTime?): Long {
+        if (date == null || time == null) return 0L
+        val ldt = LocalDateTime(date, time)
+        return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+    }
 }

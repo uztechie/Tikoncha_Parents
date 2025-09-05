@@ -6,6 +6,7 @@ import uz.tikoncha_parent.domain.model.UserInfo
 
 
 sealed interface TaskEvent {
+
     object OnConfirmClicked: TaskEvent
     object OnReset: TaskEvent
     object LoadTasks: TaskEvent
@@ -20,4 +21,5 @@ sealed interface TaskEvent {
     data class OnImportanceChange(val importance: ImportanceType) : TaskEvent
     data class OnChildSelected(val child: UserInfo): TaskEvent
     data class OnGenderSelected(val genderIndex: Int): TaskEvent
+    data class OnEditTask(val task: Task) : TaskEvent
 }

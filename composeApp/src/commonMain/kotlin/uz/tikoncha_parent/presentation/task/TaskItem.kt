@@ -15,11 +15,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import uz.tikoncha_parent.common.Util.computeTimeProgress
 import uz.tikoncha_parent.common.Util.currentMillis
 import uz.tikoncha_parent.common.Util.formatDateDdMmYyyy
@@ -48,15 +54,24 @@ fun TaskItemUi(
         ImportanceType.MOST_IMPORTANT -> stringResource(Res.string.o_ta_muhim)
     }
 
-    val timeProgress = remember(task.createdAt, task.dateTime, task.isCompleted) {
-        if (task.isCompleted) 100 else computeTimeProgress(task.createdAt, task.dateTime)
+    val shownTime = remember(task.id, task.dateTime) {
+        formatTimeHHmm(task.dateTime)
     }
+
+    val shownDate = remember(task.id, task.dateTime) {
+        formatDateDdMmYyyy(task.dateTime)
+    }
+
+    var timeProgress by remember(task.id, task.createdAt, task.dateTime) {
+        mutableStateOf(computeTimeProgress(task.createdAt, task.dateTime))
+    }
+
 
     var titleColor = if (timeProgress == 0 && !task.isCompleted){
         ProgressColor1
     }
     else{
-        TextColor
+        MaterialTheme.colorScheme.onBackground
     }
 
     var iconColor = if (timeProgress == 0 && !task.isCompleted){
@@ -66,25 +81,12 @@ fun TaskItemUi(
         PrimaryColor.copy(alpha = 0.7f)
     }
 
-    val shownTime = remember(task.id, task.dateTime) {
-        formatTimeHHmm(task.dateTime)
+    LaunchedEffect(task.id, task.createdAt, task.dateTime) {
+        while (true) {
+            timeProgress = computeTimeProgress(task.createdAt, task.dateTime)
+            delay(1_000)
+        }
     }
-
-    val shownDate = remember(task.id, task.dateTime) {
-        formatDateDdMmYyyy(task.dateTime)
-    }
-
-//    val shownTime = remember(task.id, task.isCompleted, task.createdAt,task.dateTime){
-//        val base = if (task.isCompleted) task.createdAt
-//        else task.dateTime
-//        formatTimeHHmm(base)
-//    }
-//
-//    val shownDate = remember(task.id, task.isCompleted, task.createdAt,task.dateTime){
-//        val base = if (task.isCompleted) task.createdAt
-//        else task.dateTime
-//        formatDateDdMmYyyy(base)
-//    }
 
     Column(
         modifier = Modifier
@@ -231,7 +233,7 @@ fun TaskItemUi(
             ) {
 
                 CustomLinearProgress(
-                    progress = (timeProgress / 100).toFloat(),
+                    progress = timeProgress / 100f,
                     modifier = Modifier
                         .weight(1f),
                     height = LinearProgressIndicatorHeight

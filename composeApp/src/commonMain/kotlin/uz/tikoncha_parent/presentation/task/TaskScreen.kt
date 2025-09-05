@@ -262,7 +262,9 @@ fun TaskUi(
                                 onDoneButtonClick = {
                                     event(TaskEvent.OnCompletedTask(task))
                                 },
-                                onEditIconClick = {},
+                                onEditIconClick = {
+                                    navigator?.push(AddNewTaskScreen(task))
+                                },
                                 onDetailsIconClick = {}
                             )
                         }

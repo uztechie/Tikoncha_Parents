@@ -51,10 +51,6 @@ fun CompletedTaskItem(
         ImportanceType.MOST_IMPORTANT -> "O'ta muhim"
     }
 
-    val timeProgress = remember(task.createdAt, task.dateTime, task.isCompleted) {
-        if (task.isCompleted) 100 else computeTimeProgress(task.createdAt, task.dateTime)
-    }
-
     val shownTime = remember(task.id, task.dateTime) {
         formatTimeHHmm(task.dateTime)
     }
@@ -62,18 +58,6 @@ fun CompletedTaskItem(
     val shownDate = remember(task.id, task.dateTime) {
         formatDateDdMmYyyy(task.dateTime)
     }
-
-    var titleColor = if (timeProgress == 0 && !task.isCompleted) {
-        ProgressColor1
-    } else {
-        TextColor
-    }
-    var iconColor = if (timeProgress == 0 && !task.isCompleted) {
-        ProgressColor1
-    } else {
-        PrimaryColor.copy(alpha = 0.7f)
-    }
-
 
     Card(
         modifier = Modifier
@@ -103,7 +87,6 @@ fun CompletedTaskItem(
                         text = task.title,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = NormalTextSize,
-                        color = titleColor
                     )
 
                     CustomText(
@@ -155,7 +138,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.calendar),
-                        tint = iconColor,
+                        tint = PrimaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -174,7 +157,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.alarm),
-                        tint = iconColor,
+                        tint = PrimaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -193,7 +176,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.zap),
-                        tint = iconColor,
+                        tint = PrimaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -208,31 +191,6 @@ fun CompletedTaskItem(
                 }
 
             }
-
-            SpaceUltraSmall()
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                CustomLinearProgress(
-                    progress = (timeProgress / 100).toFloat(),
-                    modifier = Modifier
-                        .weight(1f),
-                    height = LinearProgressIndicatorHeight
-                )
-
-                CustomText(
-                    text = "${timeProgress}%",
-                    modifier = Modifier
-                        .padding(start = 10.dp),
-                    fontSize = SmallTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
             SpaceMedium()
 
             CustomText(

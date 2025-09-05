@@ -56,7 +56,9 @@ import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 
 
-class AddNewTaskScreen : Screen {
+class AddNewTaskScreen(
+    private val taskToEdit: Task? = null
+) : Screen {
 
     @Composable
     override fun Content() {
@@ -64,6 +66,10 @@ class AddNewTaskScreen : Screen {
         val viewModel = koinViewModel<TaskViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        LaunchedEffect(taskToEdit) {
+            taskToEdit?.let { event(TaskEvent.OnEditTask(it)) }
+        }
 
         val navigator = LocalNavigator.current
 
@@ -103,6 +109,11 @@ fun AddNewTask(
 
     var showTaskSuccessDialog by remember { mutableStateOf(false) }
 
+    val successMessage = if (state.isEditing)
+        stringResource(Res.string.vazifa_tahrirlandi)
+    else
+        stringResource(Res.string.yangi_vazifa_yaratildi)
+
     LoadingDialog(state.taskLoading)
     var showTaskErrorDialog by remember {
         mutableStateOf(false)
@@ -127,7 +138,7 @@ fun AddNewTask(
     if (showTaskSuccessDialog){
         CustomDialog(
             title = stringResource(Res.string.muvaffaqiyatli),
-            message = stringResource(Res.string.yangi_vazifa_yaratildi),
+            message = successMessage,
             onDismiss = { showTaskSuccessDialog = false},
             onButtonClick = {
                 navigator?.pop()

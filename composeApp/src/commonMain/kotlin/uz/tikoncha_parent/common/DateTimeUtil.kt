@@ -16,7 +16,7 @@ object DateTimeUtil {
     fun formatToIsoString(
         localDate: LocalDate?,
         localTime: LocalTime?,
-        timeZone: TimeZone = TimeZone.UTC
+        timeZone: TimeZone = TimeZone.currentSystemDefault()
     ): String {
         if (localTime == null || localDate == null){
             return ""
@@ -25,7 +25,7 @@ object DateTimeUtil {
         val localDateTime = LocalDateTime(localDate, localTime)
 
         val year = localDateTime.year.toString().padStart(4, '0')
-        val month = localDateTime.month.ordinal.toString().padStart(2, '0')
+        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
         val day = localDateTime.day.toString().padStart(2, '0')
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')
@@ -37,7 +37,7 @@ object DateTimeUtil {
 
     fun formatToIsoString(
         millis: Long,
-        timeZone: TimeZone = TimeZone.UTC
+        timeZone: TimeZone = TimeZone.currentSystemDefault()
     ): String {
         println("formatToIsoString millis=$millis")
         val instant = Instant.fromEpochMilliseconds(millis)
@@ -45,7 +45,7 @@ object DateTimeUtil {
 
 
         val year = localDateTime.year.toString().padStart(4, '0')
-        val month = localDateTime.month.ordinal.toString().padStart(2, '0')
+        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
         val day = localDateTime.day.toString().padStart(2, '0')
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')
@@ -61,7 +61,7 @@ object DateTimeUtil {
         val localDateTime = nowInstant.toLocalDateTime(TimeZone.currentSystemDefault())
 
         val year = localDateTime.year.toString().padStart(4, '0')
-        val month = localDateTime.month.ordinal.toString().padStart(2, '0')
+        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
         val day = localDateTime.day.toString().padStart(2, '0')
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')

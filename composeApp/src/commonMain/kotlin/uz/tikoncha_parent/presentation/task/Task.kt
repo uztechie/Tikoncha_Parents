@@ -7,14 +7,14 @@ data class Task(
     val id: String = "",
     val title: String,
     val description: String,
-    val date: String,
-    val time: String,
+    val date: String ="",
+    val time: String = "",
     val dateTime: Long,
     val importance: ImportanceType,
     val isCompleted: Boolean,
     val isMine: Boolean,
     val authorId: String,
     val targetUserId: String,
-    val progress: Int,
+    val progress: Int = 0,
     val createdAt: Long
 )

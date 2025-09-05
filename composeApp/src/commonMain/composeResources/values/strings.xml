@@ -169,5 +169,6 @@
     <string name="yangi_vazifa_yaratildi">Yangi vazifa yaratildi</string>
     <string name="muvaffaqiyatli">Muvaffaqiyatli</string>
     <string name="qisqartirish">Qisqartirish</string>
+    <string name="vazifa_tahrirlandi">Vazifa tahrirlandi</string>
 
 </resources>

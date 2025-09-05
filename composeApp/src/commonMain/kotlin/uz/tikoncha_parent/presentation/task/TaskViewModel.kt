@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.common.SessionStore
+import uz.tikoncha_parent.common.Util.millisToLocalDate
+import uz.tikoncha_parent.common.Util.millisToLocalTime
+import uz.tikoncha_parent.common.Util.toMillis
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toServerType
 import uz.tikoncha_parent.data.mapper.toTask
@@ -21,9 +24,11 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
 
 class TaskViewModel (
     private val todoUseCase: TodoUseCase,
@@ -104,7 +109,15 @@ class TaskViewModel (
             }
 
             TaskEvent.OnConfirmClicked -> {
-                requestTodo()
+                val editingId = state.value.editingTaskId
+                if (state.value.isEditing && !editingId.isNullOrEmpty()){
+                    val editedTask = buildEditedTaskFromState()
+                    updateTodo(editedTask)
+                }
+                else {
+                    println("AAAAAA = ${requestTodo()}")
+                    requestTodo()
+                }
             }
 
             TaskEvent.GetChildren->{
@@ -133,6 +146,22 @@ class TaskViewModel (
                 _state.update {
                     it.copy(
                         showMineAll = !it.showMineAll
+                    )
+                }
+            }
+
+            is TaskEvent.OnEditTask -> {
+                _state.update {
+                    it.copy(
+                        title = event.task.title,
+                        desc = event.task.description,
+                        date = millisToLocalDate(event.task.dateTime),
+                        time = millisToLocalTime(event.task.dateTime),
+                        importance = event.task.importance,
+                        completed = event.task.isCompleted,
+                        isEditing = true,
+                        editingTaskId = event.task.id
+
                     )
                 }
             }
@@ -270,6 +299,26 @@ class TaskViewModel (
         }
     }
 
+    private fun buildEditedTaskFromState(): Task {
+        val state = this@TaskViewModel.state.value
+
+        val dueMillis = toMillis(state.date, state.time)
+        val editedNowMillis = Clock.System.now().toEpochMilliseconds()
+
+        return Task(
+            id = state.editingTaskId ?: "",
+            title = state.title,
+            description = state.desc,
+            importance = state.importance,
+            isCompleted = state.completed == true,
+            dateTime = dueMillis,
+            createdAt = editedNowMillis,
+            targetUserId = SessionStore.selectedChildId ?: "",
+            authorId = AppSettings.userId ?: "",
+            isMine = true,
+        )
+    }
+
     private fun loadChildren() {
         childrenJob?.cancel()
         childrenJob = viewModelScope.launch {
@@ -360,6 +409,7 @@ class TaskViewModel (
             }
         }
     }
+
 
     private fun manageTaskList(){
         val allList = state.value.allTaskList
