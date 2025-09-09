@@ -4,6 +4,7 @@ import TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -89,6 +91,8 @@ fun AddNewTask(
     state: TaskState,
     event: (TaskEvent) -> Unit,
 ) {
+
+    val hidKeyboard = rememberHideKeyboard()
 
     var selectedDate by remember { mutableStateOf(state.date) }
     var selectedTime by remember { mutableStateOf(state.time) }
@@ -190,6 +194,9 @@ fun AddNewTask(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .pointerInput(Unit){
+                detectTapGestures(onTap =  { hidKeyboard() })
+            }
     ) {
 
         CustomHeader(
@@ -233,7 +240,7 @@ fun AddNewTask(
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
+                    capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Next,
                 )
             )
