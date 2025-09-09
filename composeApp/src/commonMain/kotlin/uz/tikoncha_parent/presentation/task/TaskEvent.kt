@@ -12,6 +12,7 @@ sealed interface TaskEvent {
     object LoadTasks: TaskEvent
     object GetChildren: TaskEvent
     object ShowMineAll : TaskEvent
+    object ShowChildrenAll : TaskEvent
 
     data class OnCompletedTask(val task: Task): TaskEvent
     data class OnTitleChange(val title: String) : TaskEvent

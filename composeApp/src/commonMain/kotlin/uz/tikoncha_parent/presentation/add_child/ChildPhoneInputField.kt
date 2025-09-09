@@ -82,7 +82,7 @@ fun ChildPhoneInputField(
                 value = phoneNumber,
                 onValueChange = { input ->
                     val digits = input.filter { it.isDigit() }
-                    if (digits.length == 9) {
+                    if (digits.length <= 9) {
                         onPhoneNumberChange(digits)
                     }
 

@@ -45,6 +45,14 @@ class ChildViewmodel(
                     )
                 }
             }
+
+            ChildEvent.Clear -> {
+                _state.update {
+                    it.copy(
+                        number = ""
+                    )
+                }
+            }
         }
     }
 

@@ -15,6 +15,7 @@ data class TaskState(
     var isSaveButtonEnabled: Boolean = false,
     var completed: Boolean? = null,
     var showMineAll: Boolean = false,
+    var showChildrenAll: Boolean = false,
 
     val childrenList: List<UserInfo> = emptyList(),
     val selectedChildren: UserInfo? = null,

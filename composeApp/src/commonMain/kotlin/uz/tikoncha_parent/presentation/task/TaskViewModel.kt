@@ -150,6 +150,14 @@ class TaskViewModel (
                 }
             }
 
+            is TaskEvent.ShowChildrenAll -> {
+                _state.update {
+                    it.copy(
+                        showChildrenAll = !it.showChildrenAll
+                    )
+                }
+            }
+
             is TaskEvent.OnEditTask -> {
                 _state.update {
                     it.copy(

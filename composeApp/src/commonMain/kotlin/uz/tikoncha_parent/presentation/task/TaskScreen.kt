@@ -182,7 +182,7 @@ fun TaskUi(
             SpaceMedium()
 
             CustomSelectionButton(
-                text = state.selectedChildren?.name?:"",
+                text = state.selectedChildren?.name ?: "",
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = { showDialog = true },
@@ -313,12 +313,32 @@ fun TaskUi(
             }
 
             SpaceMedium()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CustomText(
+                    text = stringResource(Res.string.farzandingiz_vazifalari),
+                    fontSize = NormalLargeTextSize,
+                    fontWeight = FontWeight.W600,
+                )
 
-            CustomText(
-                text = stringResource(Res.string.farzandingiz_vazifalari),
-                fontSize = NormalLargeTextSize,
-                fontWeight = FontWeight.W600,
-            )
+                if (state.childrenTaskList.isNotEmpty()) {
+
+                    CustomText(
+                        text = if (!state.showChildrenAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
+                            Res.string.qisqartirish
+                        ),
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W600,
+                        fontSize = NormalLargeTextSize,
+                        modifier = Modifier
+                            .clickable {
+                                event(TaskEvent.ShowChildrenAll)
+                            }
+                    )
+                }
+            }
 
             SpaceSmall()
 
@@ -348,17 +368,35 @@ fun TaskUi(
                     }
                 }
             } else {
-                TaskItemUi(
-                    task = state.childrenTaskList.first(),
-                    onEditIconClick = { },
-                    onDoneButtonClick = { },
-                    onDetailsIconClick = { }
-                )
-            }
 
+                if (state.showChildrenAll) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        state.childrenTaskList.forEach { task ->
+                            TaskItemUi(
+                                task = task,
+                                onDoneButtonClick = {},
+                                onEditIconClick = {},
+                                onDetailsIconClick = {}
+                            )
+                        }
+                    }
+                } else {
+                    TaskItemUi(
+                        task = state.childrenTaskList.first(),
+                        onEditIconClick = { },
+                        onDoneButtonClick = { },
+                        onDetailsIconClick = { }
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            SpaceLarge()
         }
-        Spacer(modifier = Modifier.weight(1f))
-        SpaceLarge()
     }
 }
 
