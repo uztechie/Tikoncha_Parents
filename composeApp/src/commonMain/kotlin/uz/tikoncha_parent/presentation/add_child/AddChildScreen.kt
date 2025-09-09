@@ -51,14 +51,14 @@ class AddChildScreen : Screen {
     override fun Content() {
 
         val viewModel = koinViewModel<ChildViewmodel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
         val navigator = LocalNavigator.current
 
         AddChildUi(
             navigator = navigator,
-            state = state.value,
+            state = state,
             event = event
         )
     }
@@ -187,6 +187,7 @@ fun AddChildUi(
             CustomButton(
                 onClick = {
                     event(ChildEvent.OnAddClicked)
+                    event(ChildEvent.Clear)
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)

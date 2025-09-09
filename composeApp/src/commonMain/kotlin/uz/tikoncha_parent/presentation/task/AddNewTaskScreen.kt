@@ -4,6 +4,7 @@ import TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -56,7 +58,9 @@ import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 
 
-class AddNewTaskScreen : Screen {
+class AddNewTaskScreen(
+    private val taskToEdit: Task? = null
+) : Screen {
 
     @Composable
     override fun Content() {
@@ -64,6 +68,10 @@ class AddNewTaskScreen : Screen {
         val viewModel = koinViewModel<TaskViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        LaunchedEffect(taskToEdit) {
+            taskToEdit?.let { event(TaskEvent.OnEditTask(it)) }
+        }
 
         val navigator = LocalNavigator.current
 
@@ -84,6 +92,8 @@ fun AddNewTask(
     event: (TaskEvent) -> Unit,
 ) {
 
+    val hidKeyboard = rememberHideKeyboard()
+
     var selectedDate by remember { mutableStateOf(state.date) }
     var selectedTime by remember { mutableStateOf(state.time) }
     val dateText = state.date?.let { reformattedYearDay(it) } ?: ""
@@ -102,6 +112,11 @@ fun AddNewTask(
             state.importance != ImportanceType.NONE
 
     var showTaskSuccessDialog by remember { mutableStateOf(false) }
+
+    val successMessage = if (state.isEditing)
+        stringResource(Res.string.vazifa_tahrirlandi)
+    else
+        stringResource(Res.string.yangi_vazifa_yaratildi)
 
     LoadingDialog(state.taskLoading)
     var showTaskErrorDialog by remember {
@@ -127,7 +142,7 @@ fun AddNewTask(
     if (showTaskSuccessDialog){
         CustomDialog(
             title = stringResource(Res.string.muvaffaqiyatli),
-            message = stringResource(Res.string.yangi_vazifa_yaratildi),
+            message = successMessage,
             onDismiss = { showTaskSuccessDialog = false},
             onButtonClick = {
                 navigator?.pop()
@@ -179,6 +194,9 @@ fun AddNewTask(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .pointerInput(Unit){
+                detectTapGestures(onTap =  { hidKeyboard() })
+            }
     ) {
 
         CustomHeader(
@@ -222,7 +240,7 @@ fun AddNewTask(
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
+                    capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Next,
                 )
             )

@@ -154,5 +154,6 @@
     <string name="yangi_vazifa_yaratildi">Создана новая задача</string>
     <string name="muvaffaqiyatli">Успешно</string>
     <string name="qisqartirish">Сокращение</string>
+    <string name="vazifa_tahrirlandi">Задание отредактировано</string>
 
 </resources>
