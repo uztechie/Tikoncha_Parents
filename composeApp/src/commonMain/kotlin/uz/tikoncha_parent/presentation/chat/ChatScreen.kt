@@ -20,6 +20,7 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.SearchField
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 
 class ChatScreen: Screen {
@@ -29,7 +30,7 @@ class ChatScreen: Screen {
     }
 }
 
-
+@Preview
 @Composable
 fun ChatUi(modifier: Modifier = Modifier) {
     val navigator = LocalNavigator.current

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.domain.model.Chat
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 
@@ -59,7 +60,7 @@ fun ChatListItem(
             contentDescription = "",
             modifier = Modifier
                 .clip(CircleShape)
-                .size(NormalIconSize)
+                .size(UltraLargeIconButtonSize)
                 .border(1.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
         )
         SpaceSmall()
@@ -70,7 +71,7 @@ fun ChatListItem(
         {
             CustomText(
                 text = chat.title,
-                fontSize = NormalTextSize,
+                fontSize = NormalLargeTextSize,
             )
             if (chat.lastSender != null) {
 
@@ -121,7 +122,7 @@ fun ChatListItem(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(ChatMessageColor)
-                    .size(SmallIconButtonSize),
+                    .size(UltraSmallIconButtonSize),
                 contentAlignment = Alignment.Center
             ){
                 val textSize = if (chat.unReadCount == 9){
@@ -138,6 +139,22 @@ fun ChatListItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreCHat(){
+    ChatListItem(
+        chat = Chat(
+            id = 0,
+            title = "Tikoncha",
+            lastMessage = "IA",
+            time = "12:00",
+            unReadCount = 10,
+            isRead = false
+        ),
+        onClick = {}
+    )
 }
 
 

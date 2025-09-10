@@ -28,9 +28,11 @@ val DialogButtonHeight = 40.dp
 
 val LinearProgressIndicatorHeight = 10.dp
 
+val UltraLargeIconButtonSize = 50.dp
 val LargeIconButtonSize = 45.dp
 val NormalIconButtonSize = 35.dp
 val SmallIconButtonSize = 30.dp
+val UltraSmallIconButtonSize = 25.dp
 val LargeIconButtonPadding = 12.dp
 val NormalIconButtonPadding = 8.dp
 val SmallIconButtonPadding = 5.dp
@@ -59,15 +61,15 @@ val CoinTextFieldWidth = 90.dp
 val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 
+val NormalTextSizeSp = 16.sp
 val ContainerPadding = 15.dp
-val HeaderHeight = 60.dp
 
+val HeaderHeight = 60.dp
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
 val ChatTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
 val UltraLargeTextSize:TextUnit @Composable get() =  20.sp //.responsiveSp()
 val SmallTextSize:TextUnit @Composable get() =  12.sp //.responsiveSp()
 val NormalTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
-val NormalTextSizeSp = 16.sp
 val LargeTextSize:TextUnit @Composable get() =  18.sp //.responsiveSp()
 val UltraSmallTextSize:TextUnit @Composable get() =  10.sp //.responsiveSp()
 val NormalLargeTextSize:TextUnit @Composable get() =  16.sp //.responsiveSp()
