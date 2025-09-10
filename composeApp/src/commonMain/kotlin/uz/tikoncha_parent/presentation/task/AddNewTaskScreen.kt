@@ -222,7 +222,7 @@ fun AddNewTask(
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
+                    capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Next,
                 )
             )

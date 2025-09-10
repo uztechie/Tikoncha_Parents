@@ -45,7 +45,7 @@ fun CustomTextFieldTask(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
