@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import androidx.compose.ui.platform.Clipboard
 import kotlinx.coroutines.Dispatchers

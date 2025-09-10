@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import androidx.compose.ui.graphics.ImageBitmap
 import uz.tikoncha_parent.platform.AppIconLoader

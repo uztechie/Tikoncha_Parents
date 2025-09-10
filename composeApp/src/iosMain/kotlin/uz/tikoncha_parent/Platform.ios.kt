@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project
+package uz.tikoncha_parent
 
 import platform.UIKit.UIDevice
 import uz.tikoncha_parent.Platform

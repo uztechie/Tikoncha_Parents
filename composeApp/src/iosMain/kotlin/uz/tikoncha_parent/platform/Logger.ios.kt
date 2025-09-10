@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import platform.Foundation.NSLog
 import uz.tikoncha_parent.platform.KmpLogger

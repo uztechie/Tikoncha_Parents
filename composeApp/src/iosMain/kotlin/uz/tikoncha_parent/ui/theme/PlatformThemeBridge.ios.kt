@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.ui.theme
+package uz.tikoncha_parent.ui.theme
 
 import platform.UIKit.*
 import platform.darwin.dispatch_async

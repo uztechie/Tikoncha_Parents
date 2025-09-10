@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter

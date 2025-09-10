@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.core
+package uz.tikoncha_parent.core
 
 import io.ktor.client.engine.darwin.Darwin
 

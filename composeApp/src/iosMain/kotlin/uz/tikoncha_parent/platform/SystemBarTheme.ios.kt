@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

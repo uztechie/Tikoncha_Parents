@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.project.platform
+package uz.tikoncha_parent.platform
 
 import platform.CoreLocation.CLLocationManager
 import platform.Foundation.NSURL
