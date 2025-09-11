@@ -101,7 +101,7 @@ fun ProfileHeader(
                 Icon(
                     painter = painterResource(Res.drawable.camera),
                     contentDescription = "",
-                    tint = PrimaryColor.copy(alpha = 0.8f),
+                    tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = 0.8f),
                     modifier = Modifier
                         .fillMaxSize(0.75f)
                 )

@@ -75,12 +75,9 @@ fun App() {
                 ) {
                     Navigator(SplashScreen())
                 }
-
             }
         }
     }
-
-
 }
 
 fun initMapKit() {

@@ -80,7 +80,7 @@ fun MainUi() {
                     modifier = Modifier
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.extendedColor.borderColor,
+                            color = MaterialTheme.extendedColor.tonalButtonColor,
                             shape = RoundedCornerShape(
                                 topStart = MainCornerRadius,
                                 topEnd = MainCornerRadius

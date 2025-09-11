@@ -7,12 +7,13 @@ import uz.tikoncha_parent.ui.DarkBackgroundColor
 import uz.tikoncha_parent.ui.DarkButtonBackgroundColors
 import uz.tikoncha_parent.ui.DarkCardColors
 import uz.tikoncha_parent.ui.DarkCardColorsButton
-import uz.tikoncha_parent.ui.DarkMainBorderColor
+import uz.tikoncha_parent.ui.DarkGrayColor
 import uz.tikoncha_parent.ui.DarkTextColor
+import uz.tikoncha_parent.ui.GrayColor
 import uz.tikoncha_parent.ui.HintTextColor
-import uz.tikoncha_parent.ui.MainBorderColor
 import uz.tikoncha_parent.ui.OnText
 import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.PrimaryGraColor
 import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TonalButtonContainerColor
 
@@ -27,21 +28,21 @@ val md_light_button_menu = TextColor
 val md_light_button_background = CardColors
 val md_light_icon_button = CardColors
 val md_light_tonal_button_container = TonalButtonContainerColor
-val md_light_notification = TextColor
+val md_light_shadow = GrayColor
 
-val md_light_primary = HintTextColor
+val md_light_primary = PrimaryColor
 
 
 
 // Dark_Color
-val md_dark_hint = OnText
+val md_dark_hint = HintTextColor
 val md_dark_background = DarkBackgroundColor
-val md_dark_border = BorderColor
+val md_dark_border = DarkGrayColor
 val md_dark_text = DarkTextColor
 val md_dark_card = DarkCardColors
 val md_dark_button_menu = HintTextColor
 val md_dark_button_background = DarkButtonBackgroundColors
 val md_dark_icon_button = DarkCardColorsButton
 val md_dark_tonal_button_container = DarkCardColors
-val md_dark_notification = DarkButtonBackgroundColors
+val md_dark_shadow = PrimaryGraColor
 val md_dark_primary = PrimaryColor

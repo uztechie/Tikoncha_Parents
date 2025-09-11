@@ -324,7 +324,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_rtacha),
                     color = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) MediumButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) Color.White else HintTextColor
+                    textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -336,7 +336,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = MaterialTheme.extendedColor.hintColor
+                    textColor = if(state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -348,7 +348,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.o_ta_muhim),
                     color = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) MostImportantButtonColor else Color.Transparent,
-                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) Color.White else HintTextColor
+                    textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
             }
         }
