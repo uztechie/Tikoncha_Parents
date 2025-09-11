@@ -340,12 +340,6 @@ class MapScreen : Screen {
 
                 )
             }
-
         }
-
-
-
-
-
     }
 }

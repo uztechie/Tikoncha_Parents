@@ -54,6 +54,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class TaskScreen : Screen {
@@ -109,7 +110,7 @@ fun TaskUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     )
     {
 
@@ -125,7 +126,7 @@ fun TaskUi(
                         navigator?.push(CompletedTaskScreen())
                     },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        containerColor = MaterialTheme.extendedColor.buttonColor,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
                     shape = RoundedCornerShape(10.dp)
@@ -181,7 +182,7 @@ fun TaskUi(
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = NormalTextSize,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 
@@ -236,7 +237,7 @@ fun TaskUi(
                         .aspectRatio(2f),
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        containerColor = MaterialTheme.extendedColor.cardColor
                     )
                 )
                 {
@@ -249,7 +250,7 @@ fun TaskUi(
                         CustomText(
                             text = stringResource(Res.string.xozir_vazifalar_yo_q),
                             fontSize = SmallTextSize,
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = MaterialTheme.extendedColor.hintColor,
                             fontWeight = FontWeight.W500
                         )
                     }
@@ -355,7 +356,7 @@ fun TaskUi(
                         .aspectRatio(2f),
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        containerColor = MaterialTheme.extendedColor.cardColor
                     )
                 )
                 {
@@ -368,7 +369,7 @@ fun TaskUi(
                         CustomText(
                             text = stringResource(Res.string.xozir_vazifalar_yo_q),
                             fontSize = SmallTextSize,
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = MaterialTheme.extendedColor.hintColor,
                             fontWeight = FontWeight.W500
                         )
                     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import uz.tikoncha_parent.ui.BackgroundColor
 import qrgenerator.qrkitpainter.QrPainter
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun TransparentQrScreen(
@@ -37,7 +38,7 @@ fun TransparentQrScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f))
+                .background(MaterialTheme.extendedColor.onBackgroundColor.copy(alpha = 0.3f))
                 .clickable { onDismissRequest() },
             contentAlignment = Alignment.Center
         ) {

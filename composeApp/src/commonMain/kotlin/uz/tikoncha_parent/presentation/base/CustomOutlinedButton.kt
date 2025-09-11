@@ -24,15 +24,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomOutlinedButton(
     text: String,
     fontSize: TextUnit = NormalTextSize,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
-    borderColor: Color = BorderColor,
+    backgroundColor: Color = MaterialTheme.extendedColor.backgroundColor,
+    textColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
+    borderColor: Color = MaterialTheme.extendedColor.borderColor,
     enabled: Boolean = true,
     onClick: () -> Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),

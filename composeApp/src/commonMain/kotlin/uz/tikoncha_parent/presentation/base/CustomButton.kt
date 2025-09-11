@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +17,7 @@ import uz.tikoncha_parent.ui.*
 
 
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomButton(
@@ -23,8 +25,8 @@ fun CustomButton(
     fontSize:TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
-    color: Color = PrimaryColor,
-    textColor: Color = OnPrimaryColor,
+    color: Color = MaterialTheme.extendedColor.primaryColor,
+    textColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),

@@ -48,6 +48,7 @@ import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_parol_y
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class CreatePasswordScreen : Screen {
@@ -105,13 +106,13 @@ fun CreatePassword(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -151,7 +152,7 @@ fun CreatePassword(
             CustomText(
                 text = stringResource(Res.string.ro_yxatdan_o_tish_parol_yaratish),
                 fontSize = NormalTextSize,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 

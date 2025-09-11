@@ -29,6 +29,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class LanguageScreen: Screen {
     @Composable
@@ -61,7 +62,7 @@ fun LanguageUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
             title = stringResource(Res.string.til),

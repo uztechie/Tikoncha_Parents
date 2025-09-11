@@ -48,6 +48,7 @@ import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class PersonalInformationScreen : Screen {
     @Composable
@@ -86,7 +87,7 @@ fun PersonalInformationUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
             title = stringResource(Res.string.shaxsiy_malumotlar),

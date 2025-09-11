@@ -40,7 +40,6 @@ fun MessageDateItem(
         )
         CustomText(
             text = date,
-            color = TextColor,
             fontSize = ChatTextSize,
             modifier = Modifier
                 .padding(horizontal = 20.dp)

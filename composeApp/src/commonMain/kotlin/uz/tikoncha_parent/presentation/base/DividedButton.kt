@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
@@ -50,8 +52,8 @@ fun DividedButton(
     var checkIcon = painterResource(Res.drawable.permission_granted)
 
     if (success){
-        contentColor = PrimaryColor
-        borderColor = BorderColor
+        contentColor = MaterialTheme.extendedColor.primaryColor
+        borderColor = MaterialTheme.extendedColor.borderColor
         checkIcon = painterResource(Res.drawable.permission_granted)
     }
     else{

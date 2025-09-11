@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.domain.model.ChatMessage
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
@@ -43,7 +45,6 @@ fun MessageReceivedItem(
         ) {
             CustomText(
                 text = chatMessage.message,
-                color = TextColor,
                 fontSize = ChatTextSize,
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
@@ -51,7 +52,7 @@ fun MessageReceivedItem(
             SpaceUltraSmall()
             CustomText(
                 text = chatMessage.time,
-                color = PrimaryColor,
+                color = MaterialTheme.extendedColor.primaryColor,
                 fontSize = UltraSmallTextSize,
                 lineHeight = UltraSmallTextSize,
                 modifier = Modifier

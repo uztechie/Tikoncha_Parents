@@ -36,6 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.telefon_nomer
 import tikoncha_parents.composeapp.generated.resources.two_users
 import tikoncha_parents.composeapp.generated.resources.yosh
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PersonalInfoItem(userInfo: UserInfo?){
@@ -43,7 +44,7 @@ fun PersonalInfoItem(userInfo: UserInfo?){
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(CardCornerRadius))
-            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .background(MaterialTheme.extendedColor.tonalButtonColor)
             .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
     )
     {
@@ -126,9 +127,5 @@ fun PersonalInfoItem(userInfo: UserInfo?){
                 SpaceSmall()
             }
         }
-
-
-
-
     }
 }

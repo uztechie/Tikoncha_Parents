@@ -55,6 +55,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class LoginScreen :Screen {
 
@@ -127,13 +128,13 @@ fun Login(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ){
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -170,7 +171,7 @@ fun Login(
             CustomText(
                 text = stringResource(Res.string.ro_yxatdan_o_tish),
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500,
             )
             SpaceMedium()
@@ -204,7 +205,7 @@ fun Login(
                 )
                 withStyle(
                     style = SpanStyle(
-                        color = PrimaryColor,
+                        color = MaterialTheme.extendedColor.primaryColor,
                         textDecoration = TextDecoration.Underline,
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500
@@ -217,7 +218,7 @@ fun Login(
 
             ClickableText(
                 text = annotatedText,
-                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.colorScheme.onBackground),
+                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.extendedColor.onBackgroundColor),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
                         .firstOrNull()?.let {

@@ -45,6 +45,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.happyemoji_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun <T>CustomListDialog(
@@ -91,7 +92,7 @@ fun <T>CustomListDialog(
                         .width(dialogWidth)
                         .height(dialogHeight),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = MaterialTheme.extendedColor.backgroundColor
                     ),
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 ) {
@@ -184,11 +185,7 @@ fun <T>CustomListDialog(
                                     }
                                 }
                             }
-
-
                         }
-
-
                     }
                 }
             }

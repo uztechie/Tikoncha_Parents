@@ -38,6 +38,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun TaskItemUi(
@@ -71,7 +72,7 @@ fun TaskItemUi(
         ProgressColor1
     }
     else{
-        MaterialTheme.colorScheme.onBackground
+        MaterialTheme.extendedColor.onBackgroundColor
     }
 
     var iconColor = if (timeProgress == 0 && !task.isCompleted){
@@ -91,8 +92,8 @@ fun TaskItemUi(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(MaterialTheme.extendedColor.backgroundColor)
+            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(horizontal = 20.dp, vertical = 15.dp)
     )
     {
@@ -118,7 +119,7 @@ fun TaskItemUi(
                     text = task.description,
                     fontSize = UltraSmallTextSize,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.extendedColor.hintColor
                 )
             }
 

@@ -39,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun TimePickerDialog(
@@ -55,7 +56,7 @@ fun TimePickerDialog(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -157,7 +158,7 @@ fun TimeColumn(
         modifier = Modifier
             .width(120.dp)
             .height(70.dp)
-            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
     ) {
         LazyColumn(
             state = listState,
@@ -173,7 +174,7 @@ fun TimeColumn(
                     text = value.toString().padStart(2, '0'),
                     fontSize = if (isSelected) 16.sp else 12.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary,
+                    color = if (isSelected) MaterialTheme.extendedColor.onBackgroundColor else MaterialTheme.extendedColor.hintColor,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }
@@ -186,7 +187,7 @@ fun TimeColumn(
                 .fillMaxWidth()
                 .height(24.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.5f),
+                    color = MaterialTheme.extendedColor.buttonMenuColor.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(6.dp)
                 )
                 .zIndex(1f)

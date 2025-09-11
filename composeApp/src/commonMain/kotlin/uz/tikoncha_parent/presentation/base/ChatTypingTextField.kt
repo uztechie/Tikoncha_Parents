@@ -41,6 +41,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ChatTypingTextField(
@@ -54,9 +55,9 @@ fun ChatTypingTextField(
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     containerColor: Color = Color.White,
-    contentColor: Color = TextColor,
+    contentColor: Color = MaterialTheme.extendedColor.textColor,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
@@ -73,7 +74,7 @@ fun ChatTypingTextField(
     }
 
     var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    var borderColor  = if (enabled) MaterialTheme.extendedColor.primaryColor else DisableButtonContentColor
 
     var newModifier = if (hasBorder){
         modifier
@@ -141,14 +142,12 @@ fun ChatTypingTextField(
                         CustomText(
                             text = label,
                             fontSize = fonSize,
-                            color = HintTextColor
+                            color = MaterialTheme.extendedColor.hintColor
                         )
                     }
                     innerTextField()
                 }
             }
-
-
         )
         if (trailingIcon != null){
             SpaceSmall()
@@ -159,13 +158,8 @@ fun ChatTypingTextField(
             ){
                 trailingIcon()
             }
-
-
         }
     }
-
-
-
 }
 
 

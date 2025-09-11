@@ -38,6 +38,7 @@ import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.call
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ChildPhoneInputField(
@@ -59,7 +60,7 @@ fun ChildPhoneInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = if (isAccepted) BorderColor else OnPrimaryColor,
+                    color = if (isAccepted) MaterialTheme.extendedColor.borderColor else OnPrimaryColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .background(Color.Transparent)
@@ -74,7 +75,7 @@ fun ChildPhoneInputField(
             CustomText(
                 text = "+998",
                 fontSize = NormalTextSize,
-                color = if (isAccepted) PrimaryColor else MaterialTheme.colorScheme.onBackground,
+                color = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor,
                 fontWeight = FontWeight.W500
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -96,7 +97,7 @@ fun ChildPhoneInputField(
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = Color.Transparent,
-                contentColor = if (isAccepted) PrimaryColor else MaterialTheme.colorScheme.onBackground,
+                contentColor = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor,
                 fontWeight = FontWeight.W500
             )
         }

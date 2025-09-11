@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class LoginPasswordScreen :Screen {
@@ -87,13 +89,13 @@ fun LoginPassword(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(BackgroundColor)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ){
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {

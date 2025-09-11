@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
@@ -61,7 +62,7 @@ fun ChatListItem(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(UltraLargeIconButtonSize)
-                .border(1.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
         )
         SpaceSmall()
         Column(
@@ -84,8 +85,8 @@ fun ChatListItem(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(SmallIconSize)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                            .border(1.dp, MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                            .background(MaterialTheme.extendedColor.cardColor)
+                            .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
                     )
                     SpaceUltraSmall()
                     CustomText(
@@ -97,7 +98,7 @@ fun ChatListItem(
             }
             CustomText(
                 text = chat.lastMessage,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontSize = UltraSmallTextSize,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -133,7 +134,7 @@ fun ChatListItem(
                 }
                 CustomText(
                     text = "${chat.unReadCount}",
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.extendedColor.backgroundColor,
                     fontSize = textSize
                 )
             }

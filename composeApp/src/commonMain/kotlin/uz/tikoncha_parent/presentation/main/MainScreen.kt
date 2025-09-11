@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class MainScreen : Screen {
@@ -72,14 +73,14 @@ fun MainUi() {
     Navigator(HomeScreen()) {
         val mainNavigator = LocalNavigator.current
         Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = MaterialTheme.extendedColor.backgroundColor,
             bottomBar = {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = MaterialTheme.extendedColor.backgroundColor,
                     modifier = Modifier
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.colorScheme.tertiary,
+                            color = MaterialTheme.extendedColor.borderColor,
                             shape = RoundedCornerShape(
                                 topStart = MainCornerRadius,
                                 topEnd = MainCornerRadius
@@ -94,7 +95,7 @@ fun MainUi() {
                             clip = true // bu muhim: soyani chizish uchun
                         )
 //                        .padding(top = 4.dp)
-                        .background(PrimaryColor)
+                        .background(MaterialTheme.extendedColor.primaryColor)
                 ) {
 
                     bottomNavItems.forEach { item ->
@@ -117,7 +118,7 @@ fun MainUi() {
 private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigator?) {
     val isSelected = mainNavigator?.lastItem?.key == item.screen.key
     println("isSelected=${isSelected}  MAINNAvigator=${mainNavigator?.lastItem?.key}  key=${item.screen.key}")
-    val color = if (isSelected) PrimaryColor else MaterialTheme.colorScheme.surfaceBright
+    val color = if (isSelected) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.buttonMenuColor
 
     NavigationBarItem(
         selected = isSelected,
@@ -151,8 +152,8 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
             }
         },
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = PrimaryColor,
-            selectedTextColor = PrimaryColor,
+            selectedIconColor = MaterialTheme.extendedColor.primaryColor,
+            selectedTextColor = MaterialTheme.extendedColor.primaryColor,
             unselectedIconColor = MainDisableColor,
             unselectedTextColor = MainDisableColor,
             indicatorColor = Color.Transparent,

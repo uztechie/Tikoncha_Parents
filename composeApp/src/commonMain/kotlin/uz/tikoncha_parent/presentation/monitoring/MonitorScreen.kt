@@ -30,6 +30,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class MonitorScreen: Screen {
@@ -75,14 +76,12 @@ private fun MonitorUi(){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         CustomHeader(
             title = stringResource(Res.string.kuzatuv)
-        ) {
-
-        }
+        )
 
         Column(
             modifier = Modifier

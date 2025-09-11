@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
@@ -35,7 +36,7 @@ fun LoadingDialog(
                 .size(100.dp),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = MaterialTheme.extendedColor.backgroundColor
             )
         ) {
             Box(
@@ -46,14 +47,11 @@ fun LoadingDialog(
 
             ){
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.extendedColor.primaryColor,
                     modifier = Modifier
                         .fillMaxSize()
                 )
             }
-
-
-
         }
     }
 }

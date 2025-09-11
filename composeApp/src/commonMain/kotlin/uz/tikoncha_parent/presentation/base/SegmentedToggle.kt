@@ -39,6 +39,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun SegmentedToggle(
@@ -60,7 +61,7 @@ fun SegmentedToggle(
             .height(TextFieldHeight)
 
             .clip(RoundedCornerShape(TextFieldCornerRadius))
-            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(4.dp)
             .onGloballyPositioned { layoutCoordinates ->
                 val totalWidth = layoutCoordinates.size.width
@@ -92,7 +93,7 @@ fun SegmentedToggle(
                 val isSelected = index == selectedIndex
 
                 val contentColor by animateColorAsState(
-                    targetValue = if (isSelected) OnPrimaryColor else MaterialTheme.colorScheme.secondary,
+                    targetValue = if (isSelected) OnPrimaryColor else MaterialTheme.extendedColor.hintColor,
                     label = "ContentColor"
                 )
 

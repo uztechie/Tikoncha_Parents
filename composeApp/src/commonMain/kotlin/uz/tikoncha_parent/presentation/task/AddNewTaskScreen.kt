@@ -58,6 +58,7 @@ import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class AddNewTaskScreen(
@@ -198,7 +199,7 @@ fun AddNewTask(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .verticalScroll(rememberScrollState())
             .pointerInput(Unit){
                 detectTapGestures(onTap =  { hidKeyboard() })
@@ -230,7 +231,7 @@ fun AddNewTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight)
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius)),
+                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius)),
                 value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
@@ -260,7 +261,7 @@ fun AddNewTask(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(vertical = 10.dp),
                 leadingIcon = {
                     Image(
@@ -315,7 +316,7 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
@@ -341,7 +342,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = MaterialTheme.colorScheme.secondary
+                    textColor = MaterialTheme.extendedColor.hintColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,

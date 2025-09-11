@@ -42,6 +42,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.star_setting
 import tikoncha_parents.composeapp.generated.resources.warning_1
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileSettingsItem(
@@ -54,7 +55,7 @@ fun ProfileSettingsItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.extendedColor.backgroundColor),
     ) {
 
         SettingType.values().forEach { setting ->
@@ -78,7 +79,7 @@ fun ProfileSettingsItem(
                     modifier = Modifier
                         .size(36.dp)
                         .background(
-                            MaterialTheme.colorScheme.tertiaryContainer,
+                            MaterialTheme.extendedColor.tonalButtonColor,
                             RoundedCornerShape(NormalIconButtonPadding)
                         ),
                     contentAlignment = Alignment.Center
@@ -106,7 +107,7 @@ fun ProfileSettingsItem(
                         text = stringResource(setting.subtitle),
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.W500,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.extendedColor.hintColor
                     )
                 }
 
@@ -121,7 +122,7 @@ fun ProfileSettingsItem(
                     Image(
                         painter = painterResource(Res.drawable.arrow_right),
                         contentDescription = "",
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.onBackgroundColor)
                     )
                 }
             }

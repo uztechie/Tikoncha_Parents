@@ -46,6 +46,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 
@@ -124,7 +125,7 @@ fun AddChildRegisterUi(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         CustomHeader(
@@ -148,7 +149,7 @@ fun AddChildRegisterUi(
             CustomText(
                 text = stringResource(Res.string.farzandlaringiz),
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 
@@ -158,8 +159,8 @@ fun AddChildRegisterUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else BorderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else MaterialTheme.extendedColor.borderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
             )
             {
                 Column(

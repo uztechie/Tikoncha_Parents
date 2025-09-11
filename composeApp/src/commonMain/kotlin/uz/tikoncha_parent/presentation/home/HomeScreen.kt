@@ -54,6 +54,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 
@@ -203,7 +204,7 @@ fun HomeUi(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.extendedColor.backgroundColor)
         )
         {
 
@@ -215,13 +216,13 @@ fun HomeUi(
                     .shadow(
                         elevation = 4.dp,
                         shape = bottomRoundedShape,
-                        ambientColor = MaterialTheme.colorScheme.primary, // 🌈 Soya rangi shu yerda
-                        spotColor = MaterialTheme.colorScheme.primary     // Android 12+ uchun
+                        ambientColor = MaterialTheme.extendedColor.primaryColor, // 🌈 Soya rangi shu yerda
+                        spotColor = MaterialTheme.extendedColor.primaryColor     // Android 12+ uchun
                     )
                     .padding(bottom = 4.dp),
                 shape = bottomRoundedShape,
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = MaterialTheme.extendedColor.backgroundColor
                 ),
             ) {
                 Row(
@@ -237,8 +238,8 @@ fun HomeUi(
                             .size(NormalIconButtonSize),
                         onClick = {},
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.scrim,
-                            contentColor = MaterialTheme.colorScheme.onBackground
+                            containerColor = MaterialTheme.extendedColor.buttonColor,
+                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
                         ),
                         shape = RoundedCornerShape(10.dp)
                     ) {
@@ -268,8 +269,8 @@ fun HomeUi(
 
                         },
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.scrim,
-                            contentColor = MaterialTheme.colorScheme.onBackground
+                            containerColor = MaterialTheme.extendedColor.buttonColor,
+                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
                         ),
                         shape = CircleShape
                     ) {
@@ -299,7 +300,7 @@ fun HomeUi(
 
                 CustomText(
                     text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     fontSize = NormalTextSize,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -381,7 +382,7 @@ fun HomeUi(
 
                 CustomText(
                     text = averageTime,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     fontSize = UltraSmallTextSize,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier

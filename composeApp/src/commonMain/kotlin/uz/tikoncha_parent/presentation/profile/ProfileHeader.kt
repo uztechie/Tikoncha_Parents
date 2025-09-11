@@ -33,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileHeader(
@@ -46,7 +47,7 @@ fun ProfileHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.extendedColor.backgroundColor),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -59,14 +60,14 @@ fun ProfileHeader(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.background)
-                    .border(width = 2.dp, color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(50))
+                    .background(MaterialTheme.extendedColor.backgroundColor)
+                    .border(width = 2.dp, color = MaterialTheme.extendedColor.cardColor, shape = RoundedCornerShape(50))
             ){
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.background),
+                        .background(MaterialTheme.extendedColor.backgroundColor),
                     model = state.profileImageUrl,
                     placeholder = painterResource(Res.drawable.profile_hedgehog_img),
                     error = painterResource(Res.drawable.profile_hedgehog_img),
@@ -89,7 +90,7 @@ fun ProfileHeader(
             IconButton(
                 modifier = Modifier
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .background(MaterialTheme.extendedColor.tonalButtonColor)
                     .size(SmallIconButtonSize),
                 onClick = {
                     onSelectImageButtonClick()

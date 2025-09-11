@@ -68,6 +68,7 @@ import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class CoinsScreen : Screen {
     @Composable
@@ -125,7 +126,7 @@ fun CoinsUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tangachalar),
@@ -161,7 +162,7 @@ fun CoinsUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(ContainerCornerRadius))
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+                    .background(MaterialTheme.extendedColor.cardColor)
                     .padding(ContainerPadding)
             ) {
 
@@ -178,7 +179,7 @@ fun CoinsUi(
 
                 CustomText(
                     text = stringResource(Res.string.tangachalar_orqali),
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     fontSize = NormalTextSize,
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -198,7 +199,7 @@ fun CoinsUi(
                     modifier = Modifier
                         .size(SmallIconButtonSize)
                         .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                        .background(MaterialTheme.extendedColor.cardColor),
                     contentAlignment = Alignment.Center
                 ){
                     Image(

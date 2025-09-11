@@ -40,6 +40,7 @@ import tikoncha_parents.composeapp.generated.resources.shan
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.yak
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.ceil
 
 @Composable
@@ -77,7 +78,7 @@ fun UsageBarChart(
                 CustomText(
                     text = "$label $ext",
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     modifier = Modifier.offset(y = (-6).dp)
                 )
             }
@@ -126,7 +127,7 @@ fun UsageBarChart(
                             fontSize = 10.sp,
                             textAlign = TextAlign.Center,
                             modifier = Modifier,
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.extendedColor.hintColor
                         )
                     }
                 }

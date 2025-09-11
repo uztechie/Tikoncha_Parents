@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomTextFieldTask(
@@ -42,8 +43,8 @@ fun CustomTextFieldTask(
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     minLine: Boolean = true,
-    containerColor: Color = MaterialTheme.colorScheme.background,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
+    contentColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -113,7 +114,7 @@ fun CustomTextFieldTask(
                         CustomText(
                             text = label,
                             fontSize = fonSize,
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.extendedColor.hintColor
                         )
                     }
                     innerTextField()

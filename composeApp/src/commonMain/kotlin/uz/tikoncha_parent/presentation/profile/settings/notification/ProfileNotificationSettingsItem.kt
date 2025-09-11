@@ -32,6 +32,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileNotificationItem(
@@ -44,7 +45,7 @@ fun ProfileNotificationItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.extendedColor.backgroundColor),
     ) {
         NotificationType.values().forEach { notification ->
             val isOn = notificationStates[notification] == true
@@ -80,7 +81,7 @@ fun ProfileNotificationItem(
                     modifier = Modifier
                         .size(width = 50.dp, height = 28.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(if (isOn) PrimaryColor else MaterialTheme.colorScheme.secondary)
+                        .background(if (isOn) PrimaryColor else MaterialTheme.extendedColor.hintColor)
                         .clickable {
                             onNotificationChanged(notification)
                         },
@@ -90,7 +91,7 @@ fun ProfileNotificationItem(
                         modifier = Modifier
                             .padding(4.dp)
                             .size(20.dp)
-                            .background(MaterialTheme.colorScheme.background, CircleShape)
+                            .background(MaterialTheme.extendedColor.backgroundColor, CircleShape)
                     )
                 }
             }

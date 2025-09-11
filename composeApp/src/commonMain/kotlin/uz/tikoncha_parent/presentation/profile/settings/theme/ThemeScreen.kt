@@ -37,6 +37,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.tema
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ThemeScreen: Screen {
     @Composable
@@ -75,7 +76,7 @@ fun ThemeUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tema),
