@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.data.remote.model.TodoDto
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 
 data class TaskState(
@@ -21,15 +22,10 @@ data class TaskState(
     val selectedChildren: UserInfo? = null,
     val genderIndex: Int = 0,
 
-    val taskSuccess: Boolean = false,
-    val taskLoading: Boolean = false,
-    val taskError: String = "",
+    val taskResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val listResponseState: ResponseState<Nothing> = ResponseState.Idle,
 
-    val childrenLoading: Boolean = false,
-    val childrenError: String = "",
-
-    val listLoading: Boolean = false,
-    val listError: String = "",
 
     val taskId: String? = null,
     val isEditing: Boolean = false,

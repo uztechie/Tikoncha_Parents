@@ -54,6 +54,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 
 class HomeScreen : Screen {
@@ -95,8 +97,23 @@ fun HomeUi(
         bottomEnd = ShapeCornerRadius
     )
 
-    LoadingDialog(state.appUsageLoading)
-    LoadingDialog(state.createRuleLoading)
+
+
+    val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
+    val appUsageErrorText = state.appUsageResponseState.errorText()
+    val appUsageSuccess = state.appUsageResponseState is ResponseState.Success
+
+
+    val createRuleLoading = state.createRuleResponseState is ResponseState.Loading
+    val createRuleErrorText = state.createRuleResponseState.errorText()
+    val createRuleSuccess = state.createRuleResponseState is ResponseState.Success
+
+    val childrenLoading = state.childrenResponseState is ResponseState.Loading
+    val childrenErrorText = state.childrenResponseState.errorText()
+
+
+    LoadingDialog(appUsageLoading)
+    LoadingDialog(createRuleLoading)
 
     var showAppUsageErrorDialog by remember {
         mutableStateOf(false)
@@ -106,14 +123,14 @@ fun HomeUi(
     }
 
 
-    LaunchedEffect(state.appUsageError) {
-        if (state.appUsageError.isNotEmpty()) {
+    LaunchedEffect(appUsageErrorText) {
+        if (appUsageErrorText.isNotEmpty()) {
             showAppUsageErrorDialog = true
         }
     }
 
-    LaunchedEffect(state.createRuleError) {
-        if (state.createRuleError.isNotEmpty()) {
+    LaunchedEffect(createRuleErrorText) {
+        if (createRuleErrorText.isNotEmpty()) {
             showCreateRuleDialog = true
         }
     }
@@ -122,7 +139,7 @@ fun HomeUi(
         onDismiss = {showAppUsageErrorDialog = false},
         show = showAppUsageErrorDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.appUsageError,
+        message = appUsageErrorText,
         onButtonClick = {
             showAppUsageErrorDialog = false
         }
@@ -132,7 +149,7 @@ fun HomeUi(
         onDismiss = {showCreateRuleDialog = false},
         show = showCreateRuleDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.createRuleError,
+        message = createRuleErrorText,
         onButtonClick = {
             showCreateRuleDialog = false
         }
@@ -156,8 +173,8 @@ fun HomeUi(
         title = stringResource(Res.string.farzandlaringiz),
         items = state.childrenList,
         show = showDialog,
-        loading = state.childrenLoading,
-        errorMessage = state.childrenError,
+        loading = childrenLoading,
+        errorMessage = childrenErrorText,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
         },

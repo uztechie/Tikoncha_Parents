@@ -7,6 +7,8 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toAppUsageList
 import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.Resource
@@ -51,15 +53,18 @@ class AppUsagesUseCase(
             if (response.success && response.data != null){
                 Resource.Success(response.data.toAppUsageList())
             }
-            else{
-                Resource.Error(response.error?: "")
+            else {
+                Resource.Error(
+                    message = response.error,
+                    resId = Res.string.server_connection_error
+                )
             }
-        }
-
-        catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            Logger.e("XATOOOO", "message: ",e)
-            Resource.Error("Xatolik")
+            Resource.Error(
+                resId = Res.string.server_connection_error,
+                cause = e
+            )
         }
     }
 }

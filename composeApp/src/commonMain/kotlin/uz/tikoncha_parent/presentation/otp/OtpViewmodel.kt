@@ -14,6 +14,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class OtpViewmodel(
     private val verifyOtpUseCase: VerifyOtpUseCase
@@ -73,10 +74,7 @@ class OtpViewmodel(
             OtpEvent.Reset -> {
                 _state.update {
                     it.copy(
-                        loading = false,
-                        success = false,
-                        errorMessage = null,
-                        data = null
+                       responseState = ResponseState.Idle
                     )
                 }
             }
@@ -91,10 +89,7 @@ class OtpViewmodel(
         verifyOtpJob = viewModelScope.launch() {
             _state.update {
                 it.copy(
-                    loading = true,
-                    success = false,
-                    errorMessage = null,
-                    data = null
+                    responseState = ResponseState.Loading,
                 )
             }
             val request = VerifyOtpRequest(
@@ -108,10 +103,10 @@ class OtpViewmodel(
                     _state.update {
                         it.copy(
 
-                            loading = false,
-                            errorMessage = response.message,
-                            success = false,
-                            data = null
+                            responseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
 
                         )
                     }
@@ -129,10 +124,9 @@ class OtpViewmodel(
 
                     _state.update {
                         it.copy(
-                            loading = false,
-                            errorMessage = null,
-                            data = response.data,
-                            success = true
+                            responseState = ResponseState.Success(
+                                data = response.data
+                            )
                         )
                     }
                 }

@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.domain.use_case
 
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.AvatarDto
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.AvatarRepository
@@ -13,13 +15,18 @@ class LoadAvatarFromServerUseCase(
             val response = repository.getAvatarFromServer()
             if (response.success && response.data != null){
                 Resource.Success(response.data)
-            }else{
-                Resource.Error(response.error ?: "")
+            }else {
+                Resource.Error(
+                    message = response.error,
+                    resId = Res.string.server_connection_error
+                )
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            Logger.e("AvatarApi", "message: ", e)
-            Resource.Error(e.message ?: "Xatolik")
+            Resource.Error(
+                resId = Res.string.server_connection_error,
+                cause = e
+            )
         }
     }
 }

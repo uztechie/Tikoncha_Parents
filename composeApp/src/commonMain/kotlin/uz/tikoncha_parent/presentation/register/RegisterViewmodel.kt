@@ -13,6 +13,7 @@ import uz.tikoncha_parent.data.remote.model.RegisterUserRequest
 import uz.tikoncha_parent.domain.model.GenderType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.RegisterUseCase
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class RegisterViewmodel(
     private val registerUseCase: RegisterUseCase
@@ -67,9 +68,7 @@ class RegisterViewmodel(
             RegisterEvent.Reset -> {
                 _state.update {
                     it.copy(
-                        registerLoading = false,
-                        registerError = "",
-                        registerSuccess = false
+                        registerResponseState = ResponseState.Idle
 
                     )
                 }
@@ -83,9 +82,7 @@ class RegisterViewmodel(
         registerJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    registerLoading = true,
-                    registerError = "",
-                    registerSuccess = false
+                    registerResponseState = ResponseState.Loading
 
                 )
             }
@@ -106,9 +103,10 @@ class RegisterViewmodel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            registerLoading = false,
-                            registerError = result.message,
-                            registerSuccess = false
+                            registerResponseState = ResponseState.Error(
+                                res = result.resId,
+                                message = result.message
+                            )
                         )
                     }
                 }
@@ -117,9 +115,7 @@ class RegisterViewmodel(
                     AppSettings.userInfo = result.data.toUserInfo()
                     _state.update {
                         it.copy(
-                            registerLoading = false,
-                            registerError = "",
-                            registerSuccess = true
+                            registerResponseState = ResponseState.Success()
                         )
                     }
                 }

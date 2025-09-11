@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.domain.use_case
 
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.UpsertRuleRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.RulesRepository
@@ -13,19 +15,18 @@ class UpsertRuleUseCase(
             if (response.success){
                 Resource.Success(true)
             }
-            else{
-                Resource.Error(response.error?: "")
+            else {
+                Resource.Error(
+                    message = response.error,
+                    resId = Res.string.server_connection_error
+                )
             }
-
-
-        }
-        catch (e: Exception){
-            Resource.Error("Xatolik")
-
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            Resource.Error("Xatolik")
+            Resource.Error(
+                resId = Res.string.server_connection_error,
+                cause = e
+            )
         }
 
     }

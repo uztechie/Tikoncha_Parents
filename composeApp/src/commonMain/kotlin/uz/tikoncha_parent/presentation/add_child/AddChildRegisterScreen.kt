@@ -46,6 +46,8 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 class AddChildRegisterScreen : Screen {
 
@@ -79,16 +81,19 @@ fun AddChildRegisterUi(
         mutableStateOf(false)
     }
 
+    val isLoading = state.responseState is ResponseState.Loading
+    val errorText = state.responseState.errorText()
+    val isSuccess = state.responseState is ResponseState.Success
 
-    LaunchedEffect(state.errorMessage) {
-        showDialog = !state.errorMessage.isNullOrEmpty()
+    LoadingDialog(isLoading)
+    LaunchedEffect(errorText) {
+        showDialog = errorText.isNotEmpty()
     }
 
-    LoadingDialog(show = state.loading)
     CustomDialog(
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.errorMessage?:"",
+        message = state.responseState.errorText(),
         buttonText = stringResource(Res.string.ok),
         onDismiss = {
             showDialog = false
@@ -98,8 +103,8 @@ fun AddChildRegisterUi(
         }
     )
 
-    LaunchedEffect(state.success) {
-        if (state.success){
+    LaunchedEffect(isSuccess) {
+        if (isSuccess){
             event(ChildEvent.Reset)
             navigator?.push(ChildConfirmCodeRegisterScreen(confirmCode = state.confirmCode))
         }

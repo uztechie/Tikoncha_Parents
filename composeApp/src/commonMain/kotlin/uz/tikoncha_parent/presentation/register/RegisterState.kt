@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.presentation.register
 
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+
 data class RegisterState(
     val name: String = "",
     val fullName: String = "",
@@ -7,7 +9,5 @@ data class RegisterState(
     val idNumber: String = "",
     val genderIndex: Int = 0,
     val accept: Boolean = false,
-    val registerSuccess: Boolean = false,
-    val registerLoading: Boolean = false,
-    val registerError: String = "",
+    val registerResponseState: ResponseState<Nothing> = ResponseState.Idle
 )

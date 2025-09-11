@@ -42,6 +42,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 
 class RegisterScreen : Screen {
@@ -72,12 +74,16 @@ fun Register(
 
     val isOtpCodeValid = state.name != "" && state.fullName != "" && state.middleName != "" && state.idNumber != ""
 
-    LoadingDialog(state.registerLoading)
+    val registerLoading = state.registerResponseState is ResponseState.Loading
+    val registerErrorText = state.registerResponseState.errorText()
+    val registerSuccess = state.registerResponseState is ResponseState.Success
+
+    LoadingDialog(registerLoading)
     var showRegisterErrorDialog by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(state.registerError) {
-        if (state.registerError.isNotEmpty()) {
+    LaunchedEffect(registerErrorText) {
+        if (registerErrorText.isNotEmpty()) {
             showRegisterErrorDialog = true
         }
     }
@@ -85,14 +91,14 @@ fun Register(
         onDismiss = {showRegisterErrorDialog = false},
         show = showRegisterErrorDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.registerError,
+        message = registerErrorText,
         onButtonClick = {
             showRegisterErrorDialog = false
         }
     )
 
-    LaunchedEffect(state.registerSuccess) {
-        if (state.registerSuccess) {
+    LaunchedEffect(registerSuccess) {
+        if (registerSuccess) {
             event.invoke(RegisterEvent.Reset)
            navigator?.replaceAll(AddChildRegisterScreen())
         }

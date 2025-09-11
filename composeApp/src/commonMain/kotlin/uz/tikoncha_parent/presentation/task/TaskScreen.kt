@@ -52,6 +52,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 
 class TaskScreen : Screen {
@@ -82,12 +84,16 @@ fun TaskUi(
 
     var showDialog by remember { mutableStateOf(false) }
 
+    val taskLoading = state.taskResponseState is ResponseState.Loading
+    val taskErrorText = state.taskResponseState.errorText()
+    val taskSuccess = state.taskResponseState is ResponseState.Success
+
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
         items = state.childrenList,
         show = showDialog,
-        loading = state.taskLoading,
-        errorMessage = state.childrenError,
+        loading = taskLoading,
+        errorMessage = taskErrorText,
         onItemSelected = {
             event(TaskEvent.OnChildSelected(it))
         },

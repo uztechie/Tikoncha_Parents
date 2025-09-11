@@ -31,6 +31,7 @@ import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
 import uz.tikoncha_parent.domain.use_case.UpsertRuleUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
 
@@ -158,8 +159,7 @@ class HomeViewModel(
         childrenJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    childrenLoading = true,
-                    childrenError = ""
+                    childrenResponseState = ResponseState.Loading
                 )
             }
 
@@ -169,8 +169,10 @@ class HomeViewModel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            childrenLoading = false,
-                            childrenError = response.message
+                            childrenResponseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
                         )
                     }
                 }
@@ -178,8 +180,7 @@ class HomeViewModel(
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
-                            childrenLoading = false,
-                            childrenError = "",
+                            childrenResponseState = ResponseState.Success(),
                             childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
                         )
                     }
@@ -193,10 +194,10 @@ class HomeViewModel(
         appUsageJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    appUsageLoading = true,
-                    appUsageError = ""
+                    appUsageResponseState = ResponseState.Loading,
                 )
             }
+
 
             val response = appUsagesUseCase.invoke(state.value.selectedChildren?.userId ?: "")
             when (response) {
@@ -204,8 +205,10 @@ class HomeViewModel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            appUsageLoading = false,
-                            appUsageError = response.message
+                            appUsageResponseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
                         )
                     }
                 }
@@ -215,8 +218,7 @@ class HomeViewModel(
                     Logger.d("TAG", "week=${usageList.mapToWeeklyUsagePeriods()}")
                     _state.update {
                         it.copy(
-                            appUsageLoading = false,
-                            appUsageError = "",
+                            appUsageResponseState = ResponseState.Success(),
                             appUsageList = usageList,
                             dailyPeriods = usageList.mapToDailyUsagePeriods(),
                             weeklyPeriods = usageList.mapToWeeklyUsagePeriods(),
@@ -247,7 +249,7 @@ class HomeViewModel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            rulesError = response.message
+                            rulesError = response.message?:""
                         )
                     }
                 }
@@ -281,9 +283,7 @@ class HomeViewModel(
         upsertRuleJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    createRuleError = "",
-                    createRuleLoading = true,
-                    createRuleSuccess = false
+                    createRuleResponseState = ResponseState.Loading,
                 )
             }
 
@@ -302,9 +302,10 @@ class HomeViewModel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            createRuleError = response.message,
-                            createRuleLoading = false,
-                            createRuleSuccess = false
+                            createRuleResponseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
                         )
                     }
                 }
@@ -312,9 +313,7 @@ class HomeViewModel(
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
-                            createRuleError = "",
-                            createRuleLoading = false,
-                            createRuleSuccess = true
+                            createRuleResponseState = ResponseState.Success(),
                         )
                     }
                     refreshRules()

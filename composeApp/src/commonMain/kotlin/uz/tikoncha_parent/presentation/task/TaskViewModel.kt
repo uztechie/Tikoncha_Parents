@@ -24,6 +24,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
@@ -127,9 +128,7 @@ class TaskViewModel (
             TaskEvent.OnReset -> {
                 _state.update {
                     it.copy(
-                        taskSuccess = false,
-                        taskLoading = false,
-                        taskError = ""
+                        taskResponseState = ResponseState.Idle
                     )
                 }
             }
@@ -181,9 +180,7 @@ class TaskViewModel (
         requestTodoJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    taskLoading = true,
-                    taskError = "",
-                    taskSuccess = false
+                    taskResponseState = ResponseState.Loading,
                 )
             }
 
@@ -210,9 +207,10 @@ class TaskViewModel (
                     _state.update {
                         println("result = $result.")
                         it.copy(
-                            taskSuccess = false,
-                            taskError = result.message,
-                            taskLoading = false
+                            taskResponseState = ResponseState.Error(
+                                res = result.resId,
+                                message = result.message
+                            )
                         )
                     }
                 }
@@ -226,9 +224,7 @@ class TaskViewModel (
                     _state.update {
                         it.copy(
                             allTaskList = allList,
-                            taskLoading = false,
-                            taskError = "",
-                            taskSuccess = true
+                            taskResponseState = ResponseState.Success()
                         )
                     }
                     manageCompletedTaskList()
@@ -243,9 +239,7 @@ class TaskViewModel (
         updateTodoJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    taskLoading = true,
-                    taskError = "",
-                    taskSuccess = false
+                    taskResponseState = ResponseState.Loading
                 )
             }
 
@@ -273,9 +267,10 @@ class TaskViewModel (
                     _state.update {
                         println("result = $result.")
                         it.copy(
-                            taskSuccess = false,
-                            taskError = result.message,
-                            taskLoading = false
+                            taskResponseState = ResponseState.Error(
+                                res = result.resId,
+                                message = result.message
+                            )
                         )
                     }
                 }
@@ -295,9 +290,7 @@ class TaskViewModel (
                     _state.update {
                         it.copy(
                             allTaskList = allList,
-                            taskLoading = false,
-                            taskError = "",
-                            taskSuccess = true
+                           taskResponseState = ResponseState.Success()
                         )
                     }
                     manageCompletedTaskList()
@@ -332,8 +325,7 @@ class TaskViewModel (
         childrenJob = viewModelScope.launch {
             _state.update {
                 it.copy(
-                    childrenLoading = true,
-                    childrenError = ""
+                    childrenResponseState = ResponseState.Loading
                 )
             }
 
@@ -343,8 +335,10 @@ class TaskViewModel (
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            childrenLoading = false,
-                            childrenError = response.message
+                            childrenResponseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
                         )
                     }
                 }
@@ -357,8 +351,7 @@ class TaskViewModel (
 
                     _state.update {
                         it.copy(
-                            childrenLoading = false,
-                            childrenError = "",
+                            childrenResponseState = ResponseState.Success(),
                             childrenList = list,
                             selectedChildren = selected
                         )
@@ -381,8 +374,7 @@ class TaskViewModel (
             if (selectedId == null){
                 _state.update {
                     it.copy(
-                        listError = "",
-                        listLoading = true,
+                        listResponseState = ResponseState.Loading,
                         allTaskList = emptyList()
                     )
                 }
@@ -396,8 +388,10 @@ class TaskViewModel (
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            listLoading = false,
-                            listError = result.message,
+                           listResponseState = ResponseState.Error(
+                               res = result.resId,
+                               message = result.message
+                           ),
                             allTaskList = emptyList()
                         )
                     }
@@ -406,8 +400,7 @@ class TaskViewModel (
 
                     _state.update {
                         it.copy(
-                            listLoading = false,
-                            listError = "",
+                            listResponseState = ResponseState.Success(),
                             allTaskList = result.data
                         )
                     }

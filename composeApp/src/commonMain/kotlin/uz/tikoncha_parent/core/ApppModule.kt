@@ -45,6 +45,10 @@ import org.koin.dsl.module
 import uz.saidburxon.newedu.presentation.feature.chat.ChatViewModel
 import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
+import uz.tikoncha_parent.data.remote.ChatApiService
+import uz.tikoncha_parent.data.remote.ChatSocketService
+import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
+import uz.tikoncha_parent.domain.repository.ChatRepository
 
 val sharedModule = module {
     single {
@@ -60,6 +64,8 @@ val sharedModule = module {
     single { ChildApiService(get()) }
     single { RulesApiService(get()) }
     single { AvatarApiService(get()) }
+    single { ChatApiService(get()) }
+    single { ChatSocketService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -67,6 +73,7 @@ val sharedModule = module {
     single<ChildRepository> { ChildRepositoryImpl(get()) }
     single<RulesRepository> { RulesRepositoryImpl(get()) }
     single<AvatarRepository> { AvatarRepositoryImpl(get()) }
+    single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
 
 
 

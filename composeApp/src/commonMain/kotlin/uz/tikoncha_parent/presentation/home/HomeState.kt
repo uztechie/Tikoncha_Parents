@@ -5,6 +5,7 @@ import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class HomeState(
     val rulesAppList: List<GetRuleItem> = emptyList(),
@@ -18,17 +19,12 @@ data class HomeState(
     val childrenList: List<UserInfo> = emptyList(),
     val selectedChildren: UserInfo? = null,
 
+    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val appUsageResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val createRuleResponseState: ResponseState<Nothing> = ResponseState.Idle,
 
-    val childrenLoading: Boolean = false,
-    val childrenError: String = "",
 
-    val appUsageLoading: Boolean = false,
-    val appUsageError: String = "",
     val rulesError: String = "",
-
-    val createRuleError: String = "",
-    val createRuleLoading: Boolean = false,
-    val createRuleSuccess: Boolean = false,
 
     val isTodaySelected: Boolean = false,
     val averageUsageTime: HourMinute = HourMinute(),

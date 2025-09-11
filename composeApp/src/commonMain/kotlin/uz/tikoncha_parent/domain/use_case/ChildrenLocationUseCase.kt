@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.domain.use_case
 
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationItemDto
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.ChildRepository
@@ -15,17 +17,18 @@ class ChildrenLocationUseCase(
             if (response.success && response.data != null){
                 Resource.Success(response.data.items)
             }
-            else{
-                Resource.Error(response.error?: "")
+            else {
+                Resource.Error(
+                    message = response.error,
+                    resId = Res.string.server_connection_error
+                )
             }
-
-
-        }
-
-        catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            Logger.e("XATOOOO", "message: ",e)
-            Resource.Error("Xatolik")
+            Resource.Error(
+                resId = Res.string.server_connection_error,
+                cause = e
+            )
         }
 
     }

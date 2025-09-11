@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
 import uz.saidburxon.newedu.data.model.SendOtpRequest
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class LoginViewmodel(
     private val sendOtpUseCase: SendOtpUseCase
@@ -38,9 +39,7 @@ class LoginViewmodel(
             LoginEvent.Reset -> {
                 _state.update {
                     it.copy(
-                        loading = false,
-                        success = false,
-                        errorMessage =  null
+                        responseState = ResponseState.Idle,
                     )
                 }
             }
@@ -54,9 +53,7 @@ class LoginViewmodel(
 
         _state.update {
             it.copy(
-                loading = true,
-                success = false,
-                errorMessage =  null
+                responseState = ResponseState.Loading,
             )
         }
 
@@ -72,9 +69,10 @@ class LoginViewmodel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            loading = false,
-                            errorMessage = response.message,
-                            success = false
+                            responseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
                         )
                     }
                 }
@@ -82,9 +80,7 @@ class LoginViewmodel(
                 is Resource.Success -> {
                     _state.update {
                         it.copy(
-                            loading = false,
-                            errorMessage = null,
-                            success = true
+                            responseState = ResponseState.Success()
                         )
                     }
                 }

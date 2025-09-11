@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.remote.model.AddChildRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.AddChildUseCase
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ChildViewmodel(
     private val addChildUseCase: AddChildUseCase
@@ -39,9 +40,7 @@ class ChildViewmodel(
             ChildEvent.Reset -> {
                 _state.update {
                     it.copy(
-                        loading = false,
-                        success = false,
-                        errorMessage =  null
+                        responseState = ResponseState.Idle,
                     )
                 }
             }
@@ -59,14 +58,17 @@ class ChildViewmodel(
 
     private fun addChild() {
 
-
         _state.update {
             it.copy(
-                loading = true,
-                success = false,
-                errorMessage = null
+                responseState = ResponseState.Idle,
             )
         }
+        _state.update {
+            it.copy(
+                responseState = ResponseState.Loading,
+            )
+        }
+
         addChildJob?.cancel()
         addChildJob = viewModelScope.launch{
 
@@ -81,9 +83,10 @@ class ChildViewmodel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            loading = false,
-                            errorMessage = response.message,
-                            success = false
+                            responseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            ),
                         )
                     }
                 }
@@ -92,9 +95,7 @@ class ChildViewmodel(
                     _state.update {
                         it.copy(
                             confirmCode = response.data,
-                            loading = false,
-                            errorMessage = null,
-                            success = true
+                            responseState = ResponseState.Success(),
                         )
                     }
                 }

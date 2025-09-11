@@ -41,6 +41,8 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 
 class OtpScreen(
@@ -100,16 +102,19 @@ fun Otp(
     var showDialog by remember {
         mutableStateOf(false)
     }
+    val otpLoading = state.responseState is ResponseState.Loading
+    val otpErrorText = state.responseState.errorText()
+    val otpSuccess = state.responseState is ResponseState.Success
 
-    LaunchedEffect(state.errorMessage) {
-        showDialog = state.errorMessage != null
+    LaunchedEffect(otpErrorText) {
+        showDialog = otpErrorText.isNotEmpty()
     }
 
-    LoadingDialog(show = state.loading)
+    LoadingDialog(show = otpLoading)
     CustomDialog(
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.errorMessage?:"",
+        message = otpErrorText,
         buttonText = stringResource(Res.string.ok),
         onDismiss = {
             showDialog = false
@@ -120,11 +125,11 @@ fun Otp(
     )
 
 
-    DisposableEffect(key1 = state.success) {
-        if (state.success && state.data != null){
-            println("OTP SUCCESSSSSS=${state.data}")
+    DisposableEffect(key1 = otpSuccess) {
+        if (otpSuccess && state.responseState.data != null){
 
-            if (state.data?.user_info == null){
+
+            if (state.responseState.data.user_info == null){
                 navigator?.push(RegisterScreen())
             }
             else{

@@ -1,0 +1,49 @@
+package uz.tikoncha_parent.data.remote
+
+import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
+import io.ktor.http.HttpMethod
+import uz.tikoncha_parent.data.remote.model.ChatListResponse
+import uz.tikoncha_parent.data.remote.model.ChatMessagesResponse
+import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
+import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
+
+class ChatApiService (
+    private val httpClient: HttpClient
+) {
+    suspend fun chatList(): ChatListResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Get,
+            url = "chat/chats/",
+            block = {}
+        )
+
+    suspend fun chatMessages(params: Map<String, Any>): ChatMessagesResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Get,
+            url = "chat/messages/",
+            block = {
+                params.forEach {
+                    parameter(it.key, it.value)
+                }
+            }
+        )
+
+    suspend fun chatStatus(chatId: String): ChatStatusResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Get,
+            url = "chat/status",
+            block = {
+                parameter("chat_id", chatId)
+            }
+        )
+
+    suspend fun chatUnreadCount(): ChatUnreadCountResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Get,
+            url = "chat/unread-counts",
+            block = {
+
+            }
+        )
+}

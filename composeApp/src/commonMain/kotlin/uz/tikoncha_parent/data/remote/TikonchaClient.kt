@@ -18,7 +18,12 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 
 class TikonchaClient(private val engine: HttpClientEngine) {
-    val BASE_URL = "api.tikoncha.uz"
+
+    companion object{
+        val BASE_URL = "api.tikoncha.uz"
+        val BASE_URL_WITH_HTTPS = "https://api.tikoncha.uz"
+    }
+
     val client = HttpClient(engine){
         install(ContentNegotiation){
             json(Json {

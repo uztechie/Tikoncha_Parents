@@ -44,6 +44,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 class AddChildScreen : Screen {
 
@@ -78,15 +80,19 @@ fun AddChildUi(
     }
 
 
-    LaunchedEffect(state.errorMessage) {
-        showDialog = !state.errorMessage.isNullOrEmpty()
+    val isLoading = state.responseState is ResponseState.Loading
+    val errorText = state.responseState.errorText()
+    val isSuccess = state.responseState is ResponseState.Success
+
+    LoadingDialog(isLoading)
+    LaunchedEffect(errorText) {
+        showDialog = errorText.isNotEmpty()
     }
 
-    LoadingDialog(show = state.loading)
     CustomDialog(
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.errorMessage?:"",
+        message = state.responseState.errorText(),
         buttonText = stringResource(Res.string.ok),
         onDismiss = {
             showDialog = false
@@ -96,8 +102,9 @@ fun AddChildUi(
         }
     )
 
-    LaunchedEffect(state.success) {
-        if (state.success){
+
+    LaunchedEffect(isSuccess) {
+        if (isSuccess){
             event(ChildEvent.Reset)
             navigator?.push(ChildConfirmCodeScreen(confirmCode = state.confirmCode))
         }

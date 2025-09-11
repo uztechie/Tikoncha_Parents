@@ -1,17 +1,92 @@
 package uz.tikoncha_parent.common
 
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.char
+import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bugun
+import tikoncha_parents.composeapp.generated.resources.kecha
+import uz.tikoncha_parent.presentation.task.formatTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 object DateTimeUtil {
+
+    private fun Int.two(): String = if (this < 10) "0$this" else toString()
+
+    fun toMillisUtc(s: String?): Long {
+        if (s == null) return  0L
+        val noOffsetFmt = LocalDateTime.Format {
+            year(); char('-'); monthNumber(); char('-'); day()
+            char('T'); hour(); char(':'); minute(); char(':'); second()
+        }
+
+        val ldt = LocalDateTime.parse(s, noOffsetFmt)
+        return ldt.toInstant(TimeZone.UTC).toEpochMilliseconds()
+    }
+
+    private fun formatTimeHHmm(t: LocalTime): String {
+        val h = t.hour
+        val m = t.minute
+        return "${h.two()}${":"}${m.two()   }"
+    }
+
+    fun formatTime(millis: Long): String {
+        val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
+        return "${t.hour.two()}:${t.minute.two()}"
+    }
+
+    private fun formatDate_ddMMyyyy(d: LocalDate): String {
+        val day = d.day
+        val mon = d.month.ordinal
+        val yr = d.year
+        return "${day.two()}.${mon.two()}.$yr"
+    }
+
+    fun formatDateTimeForChatUserStatus(
+        millis: Long,
+        bugun: String,
+        kecha: String,
+        zone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (millis == 0L) return ""
+
+        val instant = Instant.fromEpochMilliseconds(millis)
+        val localDT = instant.toLocalDateTime(zone)
+        val date = localDT.date
+
+        val nowDate = Clock.System.now().toLocalDateTime(zone).date
+        val yesterday = nowDate.minus(DatePeriod(days = 1))
+
+        return when (date) {
+            nowDate -> "$bugun ${formatTimeHHmm(localDT.time)}"
+            yesterday -> "$kecha ${formatTimeHHmm(localDT.time)}"
+            else -> formatDate_ddMMyyyy(date)
+        }
+    }
+
+    fun formatDateTimeForChat(
+        longDate: Long,
+        zone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (longDate == 0L) return ""
+        val instant = Instant.fromEpochMilliseconds(longDate)
+
+        val date = instant.toLocalDateTime(zone).date
+        val today = Clock.System.now().toLocalDateTime(zone).date
+
+        return if (date == today) formatTime(longDate) else formatDate_ddMMyyyy(date)
+    }
+
 
     fun formatToIsoString(
         localDate: LocalDate?,

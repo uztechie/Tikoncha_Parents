@@ -103,7 +103,7 @@ class LocationViewModel(
                     _state.update {
                         it.copy(
                             childrenLocationList = emptyList(),
-                            childrenLocationError = result.message,
+                            childrenLocationError = result.message?:"",
                             childrenLocationLoading = false
                         )
                     }

@@ -56,6 +56,8 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 
 class AddNewTaskScreen(
@@ -118,13 +120,17 @@ fun AddNewTask(
     else
         stringResource(Res.string.yangi_vazifa_yaratildi)
 
-    LoadingDialog(state.taskLoading)
+    val taskLoading = state.taskResponseState is ResponseState.Loading
+    val taskErrorText = state.taskResponseState.errorText()
+    val taskSuccess = state.taskResponseState is ResponseState.Success
+
+    LoadingDialog(taskLoading)
     var showTaskErrorDialog by remember {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(state.taskError) {
-        if (state.taskError.isNotEmpty()) {
+    LaunchedEffect(taskErrorText) {
+        if (taskErrorText.isNotEmpty()) {
             showTaskErrorDialog = true
         }
     }
@@ -133,7 +139,7 @@ fun AddNewTask(
         onDismiss = {showTaskErrorDialog = false},
         show = showTaskErrorDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.taskError,
+        message = taskErrorText,
         onButtonClick = {
             showTaskErrorDialog = false
         }
@@ -151,8 +157,8 @@ fun AddNewTask(
         )
     }
 
-    LaunchedEffect(state.taskSuccess) {
-        if (state.taskSuccess) {
+    LaunchedEffect(taskSuccess) {
+        if (taskSuccess) {
             showTaskSuccessDialog = true
             event.invoke(TaskEvent.OnReset)
         }

@@ -1,0 +1,34 @@
+package uz.tikoncha_parent.domain.repository
+
+import kotlinx.coroutines.flow.Flow
+import uz.tikoncha_parent.data.remote.model.ChatListResponse
+import uz.tikoncha_parent.data.remote.model.ChatMessagesResponse
+import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
+import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
+import uz.tikoncha_parent.data.remote.model.ChatWsEvent
+
+
+interface ChatRepository {
+
+    //http API
+    suspend fun chatList(): ChatListResponse
+    suspend fun chatMessages(params: Map<String, Any>): ChatMessagesResponse
+
+    suspend fun chatStatus(chatId: String): ChatStatusResponse
+
+    suspend fun chatUnreadCount(): ChatUnreadCountResponse
+
+
+    // WS control
+    fun connect()
+    fun disconnect()
+
+    // WS events
+    fun observeEvents(): Flow<ChatWsEvent>
+
+    // WS actions
+    suspend fun sendMessage(chatId: String, text: String, clientMsgId: String? = null)
+    suspend fun editMessage(messageId: String, newText: String)
+    suspend fun markRead(chatId: String, messageId: String)
+    suspend fun markUnread(chatId: String, messageId: String)
+}

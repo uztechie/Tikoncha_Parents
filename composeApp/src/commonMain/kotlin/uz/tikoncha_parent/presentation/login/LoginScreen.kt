@@ -53,6 +53,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 
 class LoginScreen :Screen {
 
@@ -90,16 +92,20 @@ fun Login(
         mutableStateOf(false)
     }
 
+    val otpLoading = state.responseState is ResponseState.Loading
+    val otpErrorText = state.responseState.errorText()
+    val otpSuccess = state.responseState is ResponseState.Success
 
-    LaunchedEffect(state.errorMessage) {
-        showDialog = state.errorMessage != null
+
+    LaunchedEffect(otpErrorText) {
+        showDialog = otpErrorText.isNotEmpty()
     }
 
-    LoadingDialog(show = state.loading)
+    LoadingDialog(show = otpLoading)
     CustomDialog(
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.errorMessage?:"",
+        message = otpErrorText,
         buttonText = stringResource(Res.string.ok),
         onDismiss = {
             showDialog = false
@@ -109,8 +115,8 @@ fun Login(
         }
     )
 
-    LaunchedEffect(state.success) {
-        if (state.success){
+    LaunchedEffect(otpSuccess) {
+        if (otpSuccess){
             event(LoginEvent.Reset)
             navigator?.push(OtpScreen(phoneNumber = state.fullNumber))
         }
