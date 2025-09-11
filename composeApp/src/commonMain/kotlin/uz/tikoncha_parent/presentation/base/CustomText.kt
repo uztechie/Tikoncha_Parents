@@ -16,12 +16,14 @@ import androidx.compose.ui.unit.TextUnit
 import uz.tikoncha_parent.ui.NormalTextSize
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.extendedColor
+
 @Composable
 fun CustomText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleMedium,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = MaterialTheme.extendedColor.onBackgroundColor,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,
@@ -56,7 +58,7 @@ fun CustomText(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleMedium.copy(),
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = MaterialTheme.extendedColor.onBackgroundColor,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,

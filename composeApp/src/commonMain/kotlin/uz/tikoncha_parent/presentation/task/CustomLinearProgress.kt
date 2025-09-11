@@ -18,12 +18,13 @@ import uz.tikoncha_parent.ui.ProgressColor2
 import uz.tikoncha_parent.ui.ProgressColor3
 import uz.tikoncha_parent.ui.ProgressColor4
 import uz.tikoncha_parent.ui.ProgressColor5
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomLinearProgress(
     progress: Float,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
+    backgroundColor: Color = MaterialTheme.extendedColor.onBackgroundColor.copy(alpha = 0.1f),
     height: Dp = 6.dp
 ) {
 

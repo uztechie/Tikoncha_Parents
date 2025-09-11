@@ -24,6 +24,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,6 +53,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.domain.model.ChatMessageItem
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.chat.*
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class ChatMessageScreen : Screen{
@@ -86,7 +88,7 @@ fun ChatMessageUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.extendedColor.backgroundColor)
 
 
     ) {
@@ -111,8 +113,8 @@ fun ChatMessageUi(
                         navigator?.pop()
                     },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = TonalButtonContainerColor,
-                        contentColor = TextColor
+                        containerColor = MaterialTheme.extendedColor.tonalButtonColor,
+                        contentColor = MaterialTheme.extendedColor.textColor
                     ),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -130,7 +132,7 @@ fun ChatMessageUi(
                     painter = painterResource(Res.drawable.chat_icon),
                     contentDescription = "",
                     modifier = Modifier.size(NormalIconButtonSize)
-                        .border(1.dp, TonalButtonContainerColor, CircleShape)
+                        .border(1.dp, MaterialTheme.extendedColor.tonalButtonColor, CircleShape)
                         .clip(CircleShape)
 
                 )
@@ -142,14 +144,14 @@ fun ChatMessageUi(
                     val styledText = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = TextColor
+                                color = MaterialTheme.extendedColor.textColor
                             )
                         ) {
                             append("Ustoz /")
                         }
                         withStyle(
                             style = SpanStyle(
-                                color = HintTextColor
+                                color = MaterialTheme.extendedColor.hintColor
                             )
                         ) {
                             append(" Ibroxim Odilov")
@@ -167,7 +169,7 @@ fun ChatMessageUi(
                         text = "online",
                         fontSize = SmallTextSize,
                         maxLines = 1,
-                        color = PrimaryColor,
+                        color = MaterialTheme.extendedColor.primaryColor,
                         lineHeight = SmallTextSize,
                         fontWeight = FontWeight.W500
                     )
@@ -245,7 +247,7 @@ fun ChatMessageUi(
                             painter = painterResource(Res.drawable.chat_add),
                             contentDescription = "",
                             modifier = Modifier,
-                            tint = PrimaryColor
+                            tint = MaterialTheme.extendedColor.primaryColor
                         )
                     }
 
@@ -264,18 +266,14 @@ fun ChatMessageUi(
                                 painter = painterResource(Res.drawable.chat_send),
                                 contentDescription = "",
                                 modifier = Modifier,
-                                tint = PrimaryColor
+                                tint = MaterialTheme.extendedColor.primaryColor
                             )
                         }
                     }
-
                 }
             )
         }
-
-
     }
-
 }
 
 @Preview

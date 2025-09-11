@@ -30,6 +30,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PersonalInformationItemRow(
@@ -42,7 +43,7 @@ fun PersonalInformationItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(ShapeCornerRadius))
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(horizontal = ContainerPadding, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -65,7 +66,7 @@ fun PersonalInformationItemRow(
             CustomText(
                 text = title,
                 fontSize = UltraSmallTextSize,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.SemiBold,
                 style = TextStyle()
             )

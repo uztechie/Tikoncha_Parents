@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
@@ -31,7 +32,7 @@ fun Loading(
 
         ){
         CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.extendedColor.primaryColor,
             modifier = Modifier
                 .fillMaxSize()
         )

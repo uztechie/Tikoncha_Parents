@@ -42,6 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class RegisterScreen : Screen {
@@ -101,7 +102,7 @@ fun Register(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(horizontal = 20.dp)
             .imePadding()
     ) {
@@ -116,7 +117,7 @@ fun Register(
             text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring),
             fontSize = NormalTextSize,
             fontStyle = FontStyle.Normal,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.extendedColor.hintColor,
             fontWeight = FontWeight.W500,
         )
 
@@ -147,7 +148,7 @@ fun Register(
             hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.familiyangizni_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
             leadingIcon = {
                 Image(
                     painter = painterResource(Res.drawable.parent),
@@ -166,7 +167,7 @@ fun Register(
             hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.otangizni_ismini_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
             leadingIcon = {
                 Image(
                     painter = painterResource(Res.drawable.parent),

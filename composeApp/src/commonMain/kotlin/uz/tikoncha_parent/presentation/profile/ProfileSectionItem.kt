@@ -33,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.til
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileSectionItem(
@@ -52,7 +53,7 @@ fun ProfileSectionItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .clickable(
                 enabled = true,
                 onClick = { onItemClick(section) }
@@ -69,7 +70,7 @@ fun ProfileSectionItem(
                 modifier = Modifier
                     .size(NormalIconButtonSize)
                     .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(MaterialTheme.colorScheme.tertiaryContainer),
+                    .background(MaterialTheme.extendedColor.tonalButtonColor),
                 contentAlignment = Alignment.Center
             ){
                 Image(

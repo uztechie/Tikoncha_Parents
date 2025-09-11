@@ -41,6 +41,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class OtpScreen(
@@ -143,7 +144,7 @@ fun Otp(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(horizontal = 20.dp)
             .imePadding()
     ) {
@@ -158,7 +159,7 @@ fun Otp(
             text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_kodni_kiriting),
             fontSize = NormalTextSize,
             fontStyle = FontStyle.Normal,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.extendedColor.hintColor,
             fontWeight = FontWeight.W500,
         )
         SpaceLarge()
@@ -176,14 +177,14 @@ fun Otp(
                 text = stringResource(Res.string.siz_noto_g_ri_kodni_kirittingiz),
                 fontSize = NormalTextSize,
                 fontStyle = FontStyle.Normal,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500,
             )
             CustomText(
                 text = stringResource(Res.string.kodni_qaytadan_yuborish),
                 fontSize = NormalTextSize,
                 fontStyle = FontStyle.Normal,
-                color = PrimaryColor,
+                color = MaterialTheme.extendedColor.primaryColor,
                 fontWeight = FontWeight.W500,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
@@ -200,7 +201,7 @@ fun Otp(
                     text = stringResource(Res.string.kodni_qaytadan_yuborish),
                     fontSize = NormalTextSize,
                     fontStyle = FontStyle.Normal,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     fontWeight = FontWeight.W500,
                 )
             }

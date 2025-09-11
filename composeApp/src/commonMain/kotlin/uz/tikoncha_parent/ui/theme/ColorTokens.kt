@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.ui.theme
 
 import uz.tikoncha_parent.ui.Background
+import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.CardColors
 import uz.tikoncha_parent.ui.DarkBackgroundColor
 import uz.tikoncha_parent.ui.DarkButtonBackgroundColors
@@ -19,7 +20,7 @@ import uz.tikoncha_parent.ui.TonalButtonContainerColor
 // Light_Color
 val md_light_hint = HintTextColor
 val md_light_background = Background
-val md_light_border = MainBorderColor
+val md_light_border = BorderColor
 val md_light_text = TextColor
 val md_light_card = CardColors
 val md_light_button_menu = TextColor
@@ -35,7 +36,7 @@ val md_light_primary = HintTextColor
 // Dark_Color
 val md_dark_hint = OnText
 val md_dark_background = DarkBackgroundColor
-val md_dark_border = DarkMainBorderColor
+val md_dark_border = BorderColor
 val md_dark_text = DarkTextColor
 val md_dark_card = DarkCardColors
 val md_dark_button_menu = HintTextColor

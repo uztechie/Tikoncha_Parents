@@ -42,11 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun OtpInput(
     otpLength: Int = 6,
-    onBorderColor: Color = BorderColor,
+    onBorderColor: Color = MaterialTheme.extendedColor.borderColor,
     fontSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     onOtpUpdate: (String) -> Unit,
@@ -124,10 +125,10 @@ fun OtpInput(
                     textStyle = TextStyle(
                         fontSize = fontSize,
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.extendedColor.onBackgroundColor,
                         fontWeight = fontWeight
                     ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground)
+                    cursorBrush = SolidColor(MaterialTheme.extendedColor.onBackgroundColor)
                 )
             }
             if (index == 2) {
@@ -138,7 +139,7 @@ fun OtpInput(
                         .align(Alignment.CenterVertically),
                     style = TextStyle(fontSize = 24.sp),
                     fontWeight = fontWeight,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.extendedColor.onBackgroundColor
                 )
             }
         }

@@ -22,6 +22,7 @@ import tikoncha_parents.composeapp.generated.resources.inter_tight_bold
 import tikoncha_parents.composeapp.generated.resources.inter_tight_italic
 import tikoncha_parents.composeapp.generated.resources.inter_tight_regular
 import tikoncha_parents.composeapp.generated.resources.inter_tight_semibold
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 val ButtonHeight = 50.dp
 val DialogButtonHeight = 40.dp
@@ -116,7 +117,7 @@ fun DividerHorizontal() {
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp),
-        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+        color = MaterialTheme.extendedColor.onBackgroundColor.copy(alpha = 0.1f)
     )
 }
 

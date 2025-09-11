@@ -32,6 +32,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomSelectionButton(
@@ -47,15 +48,15 @@ fun CustomSelectionButton(
     tint: Color = SliderPageColor
 ) {
 
-    val color = if (text.isEmpty()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.onBackgroundColor
     val newText = text.ifEmpty { label }
 
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(TextFieldCornerRadius))
             .fillMaxWidth()
-            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
-            .background(MaterialTheme.colorScheme.background)
+            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)
             .clickable(
@@ -95,7 +96,7 @@ fun CustomSelectionButton(
 
             if (loading) {
                 CircularProgressIndicator(
-                    color = PrimaryColor,
+                    color = MaterialTheme.extendedColor.primaryColor,
                     modifier = Modifier.size(20.dp),
                     strokeWidth = 2.dp,
                 )
@@ -108,7 +109,7 @@ fun CustomSelectionButton(
                         .graphicsLayer {
                             rotationZ = 90f
                         },
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.extendedColor.onBackgroundColor
                 )
             }
         }

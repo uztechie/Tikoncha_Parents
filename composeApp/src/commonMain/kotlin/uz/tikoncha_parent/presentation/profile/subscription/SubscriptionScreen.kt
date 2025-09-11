@@ -35,6 +35,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.text.set
 
 class SubscriptionScreen : Screen {
@@ -109,7 +110,7 @@ fun SubscriptionUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         CustomHeader(
@@ -148,7 +149,7 @@ fun SubscriptionUi(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(TextFieldCornerRadius),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.extendedColor.cardColor
                 )
             ) {
 
@@ -256,7 +257,7 @@ fun SubscriptionUi(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(TextFieldCornerRadius),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.extendedColor.cardColor
                 )
             ) {
 

@@ -23,6 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CalendarDialog(
@@ -48,7 +49,7 @@ fun CalendarDialog(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.extendedColor.backgroundColor,
         modifier = Modifier.fillMaxWidth(),
         text = {
 
@@ -89,7 +90,7 @@ fun CalendarDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.tertiary)
+                        .background(MaterialTheme.extendedColor.borderColor)
                         .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
@@ -145,7 +146,7 @@ fun CalendarDialog(
                                             ) {
                                                 CustomText(
                                                     text = dayCounter.toString(),
-                                                    color = MaterialTheme.colorScheme.background
+                                                    color = MaterialTheme.extendedColor.backgroundColor
                                                 )
                                             }
                                         } else {

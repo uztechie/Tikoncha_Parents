@@ -44,6 +44,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class AddChildScreen : Screen {
 
@@ -117,7 +118,7 @@ fun AddChildUi(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         CustomHeader(
@@ -141,7 +142,7 @@ fun AddChildUi(
             CustomText(
                 text = stringResource(Res.string.farzandlaringiz),
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 
@@ -151,8 +152,8 @@ fun AddChildUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else BorderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else MaterialTheme.extendedColor.borderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
             )
             {
                 Column(

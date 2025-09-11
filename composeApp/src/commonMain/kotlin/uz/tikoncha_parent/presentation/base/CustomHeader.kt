@@ -22,6 +22,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomHeader(
@@ -48,18 +49,18 @@ fun CustomHeader(
             .shadow(
                 elevation = 4.dp,
                 shape = bottomRoundedShape,
-                ambientColor = MaterialTheme.colorScheme.primary, // 🌈 Soya rangi shu yerda
-                spotColor = MaterialTheme.colorScheme.primary     // Android 12+ uchun
+                ambientColor = MaterialTheme.extendedColor.primaryColor, // 🌈 Soya rangi shu yerda
+                spotColor = MaterialTheme.extendedColor.primaryColor     // Android 12+ uchun
             )
             .padding(bottom = 4.dp),
         shape = bottomRoundedShape,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.extendedColor.backgroundColor
         ),
     ) {
         Row(
             modifier = modifier
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .fillMaxWidth()
                 .height(HeaderHeight)
                 .padding(horizontal = ContainerPadding),
@@ -72,8 +73,8 @@ fun CustomHeader(
                         .size(NormalIconButtonSize),
                     onClick = onBackClick,
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onBackground
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
                     ),
                     shape = RoundedCornerShape(10.dp)
                 ) {

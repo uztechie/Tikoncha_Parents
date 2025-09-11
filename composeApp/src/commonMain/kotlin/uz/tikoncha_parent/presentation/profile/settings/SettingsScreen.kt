@@ -26,6 +26,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SettingsScreen: Screen {
     @Composable
@@ -46,7 +47,7 @@ fun SettingsUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
             title = stringResource(Res.string.sozlamalar),

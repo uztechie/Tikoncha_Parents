@@ -23,6 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomDialog(
@@ -46,7 +47,7 @@ fun CustomDialog(
                 modifier = modifier
                     .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = MaterialTheme.extendedColor.backgroundColor
                 ),
                 shape = RoundedCornerShape(TextFieldCornerRadius)
             )

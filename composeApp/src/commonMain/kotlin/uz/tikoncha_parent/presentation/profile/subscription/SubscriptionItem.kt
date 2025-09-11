@@ -37,6 +37,7 @@ import tikoncha_parents.composeapp.generated.resources.icon_coins
 import tikoncha_parents.composeapp.generated.resources.suniy_intelekt
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun SubscriptionItem(
@@ -69,7 +70,7 @@ fun SubscriptionItem(
                     modifier = Modifier
                         .size(36.dp)
                         .background(
-                            MaterialTheme.colorScheme.tertiaryContainer,
+                            MaterialTheme.extendedColor.tonalButtonColor,
                             RoundedCornerShape(NormalIconButtonPadding)
                         ),
                     contentAlignment = Alignment.Center
@@ -98,7 +99,7 @@ fun SubscriptionItem(
                         text = stringResource(subscription.subtitle),
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.extendedColor.hintColor,
                         style = TextStyle()
                     )
                 }

@@ -34,6 +34,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CompletedTaskItem(
@@ -69,7 +70,7 @@ fun CompletedTaskItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.extendedColor.cardColor)
                 .padding(horizontal = 20.dp, vertical = 15.dp)
         ) {
 
@@ -93,7 +94,7 @@ fun CompletedTaskItem(
                         text = task.description,
                         fontSize = UltraSmallTextSize,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.extendedColor.hintColor
                     )
 
                 }
@@ -109,7 +110,7 @@ fun CompletedTaskItem(
                         Icon(
                             painter = painterResource(Res.drawable.edit_pen),
                             contentDescription = "",
-                            tint = PrimaryColor,
+                            tint = MaterialTheme.extendedColor.primaryColor,
                             modifier = Modifier.padding(SmallIconButtonPadding)
                                 .fillMaxSize()
 
@@ -118,7 +119,7 @@ fun CompletedTaskItem(
                         Icon(
                             painter = painterResource(Res.drawable.primary_arrow_right),
                             contentDescription = "",
-                            tint = PrimaryColor,
+                            tint = MaterialTheme.extendedColor.primaryColor,
                             modifier = Modifier.padding(SmallIconButtonPadding)
                                 .fillMaxSize()
                         )
@@ -138,7 +139,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.calendar),
-                        tint = PrimaryColor,
+                        tint = MaterialTheme.extendedColor.primaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -157,7 +158,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.alarm),
-                        tint = PrimaryColor,
+                        tint = MaterialTheme.extendedColor.primaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -176,7 +177,7 @@ fun CompletedTaskItem(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.zap),
-                        tint = PrimaryColor,
+                        tint = MaterialTheme.extendedColor.primaryColor,
                         contentDescription = "",
                         modifier = Modifier.size(TextFieldIconSize)
                     )
@@ -195,7 +196,7 @@ fun CompletedTaskItem(
 
             CustomText(
                 text = stringResource(Res.string.bajarilgan),
-                color = PrimaryColor,
+                color = MaterialTheme.extendedColor.primaryColor,
                 fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold
             )

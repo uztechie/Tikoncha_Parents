@@ -37,6 +37,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class CompletedTaskScreen : Screen {
     @Composable
@@ -80,7 +81,7 @@ fun CompletedTaskUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     )
     {
 
@@ -126,7 +127,7 @@ fun CompletedTaskUi(
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = SmallTextSize,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 
@@ -172,12 +173,12 @@ fun CompletedTaskUi(
                             .wrapContentHeight()
                             .border(
                                 1.dp,
-                                MaterialTheme.colorScheme.tertiary,
+                                MaterialTheme.extendedColor.borderColor,
                                 RoundedCornerShape(TextFieldCornerRadius)
                             ),
                         shape = RoundedCornerShape(TextFieldCornerRadius),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
+                            containerColor = MaterialTheme.extendedColor.cardColor
                         )
                     ) {
                         CompletedTaskItem(

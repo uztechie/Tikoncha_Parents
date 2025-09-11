@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PhoneNumberInputField(
@@ -44,7 +46,7 @@ fun PhoneNumberInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = BorderColor,
+                    color = MaterialTheme.extendedColor.borderColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .padding(horizontal = 20.dp, vertical = 0.dp)
@@ -52,7 +54,7 @@ fun PhoneNumberInputField(
             Icon(
                 painter = painterResource(Res.drawable.call),
                 contentDescription = "Phone Icon",
-                tint = PrimaryColor,
+                tint = MaterialTheme.extendedColor.primaryColor,
                 modifier = Modifier.padding(end = 8.dp).size(NormalIconSize)
             )
             CustomText(

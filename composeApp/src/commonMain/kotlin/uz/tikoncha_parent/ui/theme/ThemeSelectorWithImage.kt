@@ -59,7 +59,7 @@ fun ThemeSelectorWithImage(
                 onClick = {
                     onThemeSelected(selectedTheme)
                 },
-                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.onBackground)
+                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.extendedColor.onBackgroundColor)
             )
 
             CustomText(

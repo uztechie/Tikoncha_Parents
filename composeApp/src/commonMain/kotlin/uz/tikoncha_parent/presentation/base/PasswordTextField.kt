@@ -29,6 +29,7 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PasswordTextField(
@@ -54,14 +55,14 @@ fun PasswordTextField(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = BorderColor,
+                color = MaterialTheme.extendedColor.borderColor,
                 shape = RoundedCornerShape(TextFieldCornerRadius)
             )
             .height(TextFieldHeight),
         label = placeholder,
 //        visualTransformation = PhoneNumberTransformation(),
         containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.extendedColor.onBackgroundColor,
         leadingIcon = {
            Image(
                painter = painterResource(Res.drawable.lock),
@@ -86,7 +87,7 @@ fun PasswordTextField(
 
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onBackground
+                    contentColor = MaterialTheme.extendedColor.onBackgroundColor
                 )
             ) {
                 Icon(

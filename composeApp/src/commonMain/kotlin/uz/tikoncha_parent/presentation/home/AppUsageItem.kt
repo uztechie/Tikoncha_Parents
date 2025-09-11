@@ -36,6 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.locked
 import tikoncha_parents.composeapp.generated.resources.time_icon
 import tikoncha_parents.composeapp.generated.resources.unlocked
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun AppUsageItem(
@@ -58,7 +59,7 @@ fun AppUsageItem(
         FilledTonalIconButton(
             onClick = {},
             shape = RoundedCornerShape(ButtonCornerRadius),
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.scrim),
+            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.extendedColor.buttonColor),
             modifier = Modifier
                 .size(AppIconSize)
         ) {
@@ -144,7 +145,7 @@ fun AppUsageItem(
 
                 CustomText(
                     text = time.toString(),
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.extendedColor.hintColor,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = SmallTextSize,
                     modifier = Modifier
@@ -158,14 +159,14 @@ fun AppUsageItem(
                 onLockClick(appUsageUi)
             },
             shape = RoundedCornerShape(ButtonCornerRadius),
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.background),
+            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.extendedColor.backgroundColor),
             modifier = Modifier
                 .padding(start = 10.dp)
                 .size(AppIconSize)
                 .border(
                     shape = RoundedCornerShape(ButtonCornerRadius),
                     width = 1.dp,
-                    color = if (appUsageUi.allowed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.error
+                    color = if (appUsageUi.allowed) MaterialTheme.extendedColor.primaryColor else MaterialTheme.colorScheme.error
                 )
         ) {
 

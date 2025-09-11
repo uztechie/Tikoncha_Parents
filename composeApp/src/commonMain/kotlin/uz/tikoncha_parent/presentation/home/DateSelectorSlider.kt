@@ -39,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_righ
 import tikoncha_parents.composeapp.generated.resources.haftalik
 import tikoncha_parents.composeapp.generated.resources.kunlik
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun DateSelectorSlider(
@@ -138,7 +139,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    containerColor = MaterialTheme.extendedColor.borderColor,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier
@@ -193,7 +194,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    containerColor = MaterialTheme.extendedColor.buttonMenuColor,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier

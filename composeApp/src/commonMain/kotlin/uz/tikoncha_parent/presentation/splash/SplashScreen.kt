@@ -24,6 +24,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tikoncha_logo
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SplashScreen : Screen {
 
@@ -52,14 +53,14 @@ class SplashScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.extendedColor.backgroundColor),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 painter = painterResource(Res.drawable.tikoncha_logo),
                 contentDescription = null,
-                tint = PrimaryColor,
+                tint = MaterialTheme.extendedColor.primaryColor,
                 modifier = Modifier.size(200.dp)
             )
         }

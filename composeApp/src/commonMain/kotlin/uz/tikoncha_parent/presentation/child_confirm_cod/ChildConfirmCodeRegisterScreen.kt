@@ -50,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ChildConfirmCodeRegisterScreen(
     private val confirmCode: String
@@ -97,13 +98,13 @@ fun ChildConfirmCodeRegisterUi(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -136,7 +137,7 @@ fun ChildConfirmCodeRegisterUi(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(TextFieldHeight),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -144,7 +145,7 @@ fun ChildConfirmCodeRegisterUi(
                 Icon(
                     painter = painterResource(Res.drawable.password_check),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = MaterialTheme.extendedColor.hintColor,
                     modifier = Modifier
                         .size(22.dp)
                         .clickable {
@@ -169,7 +170,7 @@ fun ChildConfirmCodeRegisterUi(
             CustomText(
                 text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
                 fontSize = NormalTextSize,
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
 

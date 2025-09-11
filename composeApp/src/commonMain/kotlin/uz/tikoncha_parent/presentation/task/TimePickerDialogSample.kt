@@ -31,6 +31,7 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun TimePickerDialog(
@@ -45,7 +46,7 @@ fun TimePickerDialog(
         Surface(
             shape = RoundedCornerShape(16.dp),
             tonalElevation = 8.dp,
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.extendedColor.backgroundColor
         ) {
             Column(
                 modifier = Modifier
@@ -125,7 +126,7 @@ fun NumberPicker(
                         textAlign = TextAlign.Center,
                         fontSize = 18.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) PrimaryColor else MaterialTheme.colorScheme.onBackground
+                        color = if (isSelected) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor
                     )
                 }
             }

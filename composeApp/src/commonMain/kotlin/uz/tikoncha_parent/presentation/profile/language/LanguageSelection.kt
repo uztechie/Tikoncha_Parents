@@ -32,6 +32,7 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun LanguageSelection(
@@ -47,7 +48,7 @@ fun LanguageSelection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         LanguageType.values().forEach { language ->
             Row(
@@ -66,7 +67,7 @@ fun LanguageSelection(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(NormalIconButtonPadding)),
+                        .background(MaterialTheme.extendedColor.tonalButtonColor, RoundedCornerShape(NormalIconButtonPadding)),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -106,7 +107,7 @@ fun LanguageSelection(
                         .size(24.dp)
                         .border(
                             width = 2.dp,
-                            color = if (selectedLanguage == language) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground,
+                            color = if (selectedLanguage == language) MaterialTheme.extendedColor.onBackgroundColor else MaterialTheme.colorScheme.onBackground,
                             shape = CircleShape
                         )
                         .padding(4.dp),
@@ -116,7 +117,7 @@ fun LanguageSelection(
                         Box(
                             modifier = Modifier
                                 .size(12.dp)
-                                .background(MaterialTheme.colorScheme.onBackground, CircleShape)
+                                .background(MaterialTheme.extendedColor.onBackgroundColor, CircleShape)
                         )
                     }
                 }

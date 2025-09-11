@@ -33,6 +33,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ProfileScreen : Screen {
     @Composable
@@ -97,7 +98,7 @@ fun ProfileUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .verticalScroll(rememberScrollState())
     ) {
         CustomHeader(
