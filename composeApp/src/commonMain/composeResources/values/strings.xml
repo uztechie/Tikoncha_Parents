@@ -170,5 +170,7 @@
     <string name="muvaffaqiyatli">Muvaffaqiyatli</string>
     <string name="qisqartirish">Qisqartirish</string>
     <string name="vazifa_tahrirlandi">Vazifa tahrirlandi</string>
+    <string name="ekranni_kuzatish">Ekranni kuzatish</string>
+    <string name="internetdagi_tarix">Internetdagi tarix</string>
 
 </resources>
