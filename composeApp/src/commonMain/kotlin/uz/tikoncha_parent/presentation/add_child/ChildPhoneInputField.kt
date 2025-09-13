@@ -60,7 +60,7 @@ fun ChildPhoneInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = if (isAccepted) MaterialTheme.extendedColor.borderColor else OnPrimaryColor,
+                    color = if (isAccepted) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.buttonColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .background(Color.Transparent)
@@ -69,7 +69,7 @@ fun ChildPhoneInputField(
             Icon(
                 painter = painterResource(Res.drawable.call),
                 contentDescription = "Phone Icon",
-                tint = PrimaryColor,
+                tint = MaterialTheme.extendedColor.primaryColor,
                 modifier = Modifier.padding(end = 8.dp).size(NormalIconSize)
             )
             CustomText(

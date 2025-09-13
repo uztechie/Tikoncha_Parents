@@ -119,7 +119,7 @@ fun DividerHorizontal() {
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp),
-        color = MaterialTheme.extendedColor.onBackgroundColor.copy(alpha = 0.1f)
+        color = MaterialTheme.extendedColor.hintColor.copy(alpha = 0.1f)
     )
 }
 

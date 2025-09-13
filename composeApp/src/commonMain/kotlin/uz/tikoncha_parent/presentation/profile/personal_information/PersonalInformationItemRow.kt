@@ -51,7 +51,7 @@ fun PersonalInformationItemRow(
         Icon(
             painter = painterResource(icon),
             contentDescription = "",
-            tint = PrimaryColor,
+            tint = MaterialTheme.extendedColor.primaryColor,
             modifier = Modifier
                 .size(TextFieldIconSize)
         )

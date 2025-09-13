@@ -168,6 +168,15 @@ private fun MonitorUi(
                 SpaceLarge()
 
                 DividedButton(
+                    title = stringResource(Res.string.ekranni_kuzatish),
+                    icon = painterResource(Res.drawable.monitor_screen),
+                    onItemClick = {},
+                    isPermission = false
+                )
+
+                SpaceSmall()
+
+                DividedButton(
                     title = stringResource(Res.string.yon_atrofni_kuzatish),
                     icon = painterResource(Res.drawable.permission_camera),
                     onItemClick = {},
@@ -201,6 +210,16 @@ private fun MonitorUi(
                     icon = painterResource(Res.drawable.dialogg),
                     onItemClick = {
                         rootNavigator?.push(ChatScreen())
+                    },
+                    isPermission = false
+                )
+                SpaceSmall()
+
+                DividedButton(
+                    title = stringResource(Res.string.internetdagi_tarix),
+                    icon = painterResource(Res.drawable.clock),
+                    onItemClick = {
+
                     },
                     isPermission = false
                 )

@@ -155,5 +155,7 @@
     <string name="muvaffaqiyatli">Успешно</string>
     <string name="qisqartirish">Сокращение</string>
     <string name="vazifa_tahrirlandi">Задание отредактировано</string>
+    <string name="ekranni_kuzatish">Наблюдение за экраном</string>
+    <string name="internetdagi_tarix">История интернета</string>
 
 </resources>

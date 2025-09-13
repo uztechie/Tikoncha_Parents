@@ -94,7 +94,7 @@ val LightExtended = ExtendedColors(
     borderColor = md_light_border,
     buttonMenuColor = md_light_button_menu,
     disabledColor = md_light_icon_button,
-    shadowColor = md_light_notification,
+    shadowColor = md_light_shadow,
     buttonColor = md_light_button_background,
     tonalButtonColor = TonalButtonContainerColor
 )
@@ -110,7 +110,7 @@ val DarkExtended = ExtendedColors(
     borderColor = md_dark_border,
     buttonMenuColor = md_dark_button_menu,
     disabledColor = md_dark_icon_button,
-    shadowColor = md_dark_notification,
+    shadowColor = md_dark_shadow,
     buttonColor = md_dark_button_background,
     tonalButtonColor = DarkCardColors
 )

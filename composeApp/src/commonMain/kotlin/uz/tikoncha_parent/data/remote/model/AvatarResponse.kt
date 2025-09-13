@@ -12,5 +12,5 @@ data class AvatarResponse(
 
 @Serializable
 data class AvatarDto(
-    val avatar_url: String
+    val avatar_url: String?
 )

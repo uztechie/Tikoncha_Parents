@@ -90,7 +90,7 @@ fun SubscriptionUi(
         mutableStateOf(false)
     }
 
-    var isSelected by remember { mutableStateOf(false) }
+    var isSelected = subscriptions.values.any { it.isSelected }
 
     val selectedPrice = subscriptions.values.find { it.isSelected }?.price
 
@@ -202,13 +202,13 @@ fun SubscriptionUi(
                 ) {
                     CustomText(
                         text = stringResource(Res.string.pro),
-                        color = PrimaryColor,
+                        color = MaterialTheme.extendedColor.primaryColor,
                         fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
 
                     CustomText(
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.extendedColor.hintColor,
                         text = stringResource(Res.string.premium_obuna_bilan),
                         fontSize = NormalTextSize,
                         style = TextStyle()
@@ -220,7 +220,7 @@ fun SubscriptionUi(
                     onClick = {
                         navigator!!.push(CoinsScreen())
                     },
-                    textColor = PrimaryColor,
+                    textColor = MaterialTheme.extendedColor.primaryColor,
                     modifier = Modifier
                         .weight(1f)
                         .height(DialogButtonHeight)
@@ -238,16 +238,16 @@ fun SubscriptionUi(
                     priceUsd = subscription.price.toString(),
                     isSelected = subscription.isSelected,
                     onCheckedChange = { selected ->
-                        subscriptions.forEach { (i, sub) ->
-                            subscriptions[i]?.copy(isSelected = i == index)
+                        subscriptions.forEach { (i, _) ->
+                            subscriptions[i] = subscriptions[i]!!.copy(isSelected = i == index)
                         }
                     },
                     fontWeight = FontWeight.W500
                 )
 
-                if (subscription.isSelected){
-                    isSelected = true
-                }
+//                if (subscription.isSelected){
+//                    isSelected = true
+//                }
             }
 
             SpaceMedium()
@@ -268,6 +268,8 @@ fun SubscriptionUi(
             }
 
             Spacer(Modifier.weight(1f))
+
+            SpaceMedium()
 
             CustomButton(
                 modifier = Modifier

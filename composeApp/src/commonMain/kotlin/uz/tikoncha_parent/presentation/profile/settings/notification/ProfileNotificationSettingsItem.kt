@@ -81,7 +81,7 @@ fun ProfileNotificationItem(
                     modifier = Modifier
                         .size(width = 50.dp, height = 28.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(if (isOn) PrimaryColor else MaterialTheme.extendedColor.hintColor)
+                        .background(if (isOn) PrimaryColor else MaterialTheme.extendedColor.buttonColor)
                         .clickable {
                             onNotificationChanged(notification)
                         },

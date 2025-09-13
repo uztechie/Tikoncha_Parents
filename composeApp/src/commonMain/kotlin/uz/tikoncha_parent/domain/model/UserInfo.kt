@@ -12,7 +12,7 @@ data class UserInfo(
     val patronymic: String,
     val genderType: GenderType,
     val passportId: String? = null,
-    val age:Int? = null,
+    val age: Int? = null,
     val schoolId: String? = null,
     val schoolName: String? = null,
     val schoolClassName: String? = null,

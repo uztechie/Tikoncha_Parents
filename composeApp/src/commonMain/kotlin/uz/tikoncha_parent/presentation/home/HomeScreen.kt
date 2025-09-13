@@ -200,15 +200,12 @@ fun HomeUi(
 
         }
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.extendedColor.backgroundColor)
         )
         {
-
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -216,8 +213,8 @@ fun HomeUi(
                     .shadow(
                         elevation = 4.dp,
                         shape = bottomRoundedShape,
-                        ambientColor = MaterialTheme.extendedColor.primaryColor, // 🌈 Soya rangi shu yerda
-                        spotColor = MaterialTheme.extendedColor.primaryColor     // Android 12+ uchun
+                        ambientColor = MaterialTheme.extendedColor.shadowColor, // 🌈 Soya rangi shu yerda
+                        spotColor = MaterialTheme.extendedColor.shadowColor     // Android 12+ uchun
                     )
                     .padding(bottom = 4.dp),
                 shape = bottomRoundedShape,

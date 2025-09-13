@@ -138,7 +138,7 @@ fun <T>CustomListDialog(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)),
+                                .border(1.dp, MaterialTheme.extendedColor.primaryColor, RoundedCornerShape(TextFieldCornerRadius)),
                             contentAlignment = Alignment.Center
                         ){
                             if (loading || errorMessage.isNotEmpty()){
@@ -170,7 +170,7 @@ fun <T>CustomListDialog(
                                             Icon(
                                                 painter = painterResource(Res.drawable.happyemoji_icon),
                                                 contentDescription = "Search",
-                                                tint = PrimaryColor,
+                                                tint = MaterialTheme.extendedColor.primaryColor,
                                                 modifier = Modifier
                                                     .padding(end = TextFieldInnerPadding)
                                                     .size(TextFieldIconSize)

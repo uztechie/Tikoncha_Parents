@@ -48,9 +48,6 @@ fun PersonalInfoItem(userInfo: UserInfo?){
             .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
     )
     {
-
-
-
         CustomText(
             text = stringResource(Res.string.shaxsiy_malumotlar),
             fontSize = NormalLargeTextSize,
