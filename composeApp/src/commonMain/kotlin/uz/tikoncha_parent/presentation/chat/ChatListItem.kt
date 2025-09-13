@@ -1,10 +1,8 @@
 package uz.tikoncha_parent.presentation.chat
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,149 +11,191 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.domain.model.Chat
-import uz.tikoncha_parent.ui.*
+import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.ai_icon
+import tikoncha_parents.composeapp.generated.resources.chat_ai_icon
+import tikoncha_parents.composeapp.generated.resources.chat_bot
+import tikoncha_parents.composeapp.generated.resources.chat_group
+import tikoncha_parents.composeapp.generated.resources.chat_icon
+import tikoncha_parents.composeapp.generated.resources.chat_person
+import tikoncha_parents.composeapp.generated.resources.message_read
+import tikoncha_parents.composeapp.generated.resources.message_sent
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CircularBadge
+import uz.tikoncha_parent.presentation.model.ChatType
+import uz.tikoncha_parent.presentation.model.ChatUi
+import uz.tikoncha_parent.ui.ChatMessageColor
+import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.SmallIconSize
+import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
 fun ChatListItem(
+    chatUi: ChatUi,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-    chat: Chat
+    onClick: () -> Unit = {}
 ) {
-
-    val icon = if (chat.isAI){
-        painterResource(Res.drawable.chat_ai_icon)
-    }
-    else{
-        painterResource(Res.drawable.chat_icon)
-    }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = onClick
-            ),
-        verticalAlignment = Alignment.CenterVertically
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = icon,
-            contentDescription = "",
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(UltraLargeIconButtonSize)
-                .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
-        )
-        SpaceSmall()
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        )
-        {
-            CustomText(
-                text = chat.title,
-                fontSize = NormalLargeTextSize,
-            )
-            if (chat.lastSender != null) {
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(Res.drawable.chat_icon),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(SmallIconSize)
-                            .background(MaterialTheme.extendedColor.cardColor)
-                            .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
-                    )
-                    SpaceUltraSmall()
-                    CustomText(
-                        text = "${chat.lastSender.lastname} ${chat.lastSender.name}",
-                        fontSize = UltraSmallTextSize,
-                        maxLines = 1,
-                    )
-                }
-            }
-            CustomText(
-                text = chat.lastMessage,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontSize = UltraSmallTextSize,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+        val avatar = if (chatUi.type == ChatType.BOT){
+            painterResource(Res.drawable.chat_ai_icon)
         }
-        SpaceSmall()
+        else{
+            painterResource(Res.drawable.chat_icon)
+        }
 
-        Column(
-            horizontalAlignment = Alignment.End
-        ) {
-            CustomText(
-                text = chat.time,
-                fontSize = UltraSmallTextSize
-            )
+        AsyncImage(
+            model = chatUi.avatar,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape),
+            error = avatar,
+            placeholder = avatar
 
-            SpaceSmall()
-            if (chat.unReadCount == 0) {
-                Spacer(Modifier.height(4.dp))
+        )
 
-            }
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(ChatMessageColor)
-                    .size(UltraSmallIconButtonSize),
-                contentAlignment = Alignment.Center
-            ){
-                val textSize = if (chat.unReadCount == 9){
-                    UltraSmallTextSize
+        Spacer(Modifier.width(12.dp))
+
+        Column(Modifier.weight(1f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val icon = when(chatUi.type){
+                    ChatType.BOT -> {painterResource(Res.drawable.chat_bot)}
+                    ChatType.PARENT_CHILD -> {painterResource(Res.drawable.chat_person)}
+                    ChatType.CLASS -> {painterResource(Res.drawable.chat_group)}
+                    else ->  {painterResource(Res.drawable.chat_person)}
                 }
-                else{
-                    SmallTextSize
-                }
+
+                Icon(
+                    painter = icon,
+                    contentDescription = "",
+                    modifier = Modifier.size(SmallIconSize),
+                    tint = MaterialTheme.extendedColor.textColor
+                )
+                SpaceUltraSmall()
                 CustomText(
-                    text = "${chat.unReadCount}",
-                    color = MaterialTheme.extendedColor.backgroundColor,
-                    fontSize = textSize
+                    text = chatUi.title,
+                    fontWeight = FontWeight.W500,
+                    fontSize = NormalTextSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+                SpaceMedium()
+                CustomText(
+                    text = chatUi.dateTime,
+                    fontWeight = FontWeight.W500,
+                    fontSize = SmallTextSize,
                 )
             }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomText(
+                    text = chatUi.lastMessage,
+                    fontWeight = FontWeight.W500,
+                    maxLines = 1,
+                    fontSize = SmallTextSize,
+                    color = MaterialTheme.extendedColor.hintColor,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+                if (chatUi.unreadCount > 0 && !chatUi.lastMessageIsMine) {
+                    SpaceMedium()
+                    CircularBadge(
+                        count = chatUi.unreadCount,
+                    )
+                }
+                else if (chatUi.lastMessageIsMine){
+                    SpaceMedium()
+                    val icon = if (chatUi.lastMessageIsRead){
+                        painterResource(Res.drawable.message_read)
+                    }
+                    else{
+                        painterResource(Res.drawable.message_sent)
+                    }
+                    Icon(
+                        painter = icon,
+                        contentDescription = "",
+                        modifier = Modifier.size(SmallIconSize),
+                        tint = MaterialTheme.extendedColor.primaryColor
+                    )
+                }
+            }
+
+
         }
+
+
+
     }
 }
 
+
 @Preview
 @Composable
-fun PreCHat(){
-    ChatListItem(
-        chat = Chat(
-            id = 0,
-            title = "Tikoncha",
-            lastMessage = "IA",
-            time = "12:00",
-            unReadCount = 10,
-            isRead = false
-        ),
-        onClick = {}
-    )
+private fun Preview() {
+    TikonchaParentTheme(ThemeMode.LIGHT){
+        ChatListItem(
+            chatUi = ChatUi(
+                title = "Tikoncha",
+                lastMessage = "Barcha savollaringizga javob beraman",
+                unreadCount =10,
+                chatId = "",
+                dateTime = "20.10.2025",
+                type = ChatType.BOT,
+                lastMessageIsMine = false,
+                lastMessageIsRead = true,
+                avatar = ""
+            ),
+            onClick = {
+
+            },
+
+            )
+    }
+
 }
-
-

@@ -12,20 +12,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import uz.saidburxon.newedu.R
-import uz.saidburxon.newedu.ui.theme.LargeIconButtonSize
-import uz.saidburxon.newedu.ui.theme.NormalTextSize
-import uz.saidburxon.newedu.ui.theme.SpaceMedium
-import uz.saidburxon.newedu.ui.theme.TonalButtonContainerColor
-import uz.saidburxon.newedu.ui.theme.UltraSmallTextSize
-import uz.saidburxon.newedu.ui.theme.extendedColor
+import coil3.compose.AsyncImage
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.chat_icon
+import tikoncha_parents.composeapp.generated.resources.faol
+import tikoncha_parents.composeapp.generated.resources.ohirgi_faollik
+import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.model.ChatMemberUi
+import uz.tikoncha_parent.ui.LargeIconButtonSize
+import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ChatMemberItem(chatMemberUi: ChatMemberUi) {
@@ -38,12 +42,12 @@ fun ChatMemberItem(chatMemberUi: ChatMemberUi) {
     {
         AsyncImage(
             model = chatMemberUi.avatar,
-            error = painterResource(R.drawable.chat_icon),
-            placeholder = painterResource(R.drawable.chat_icon),
+            error = painterResource(Res.drawable.chat_icon),
+            placeholder = painterResource(Res.drawable.chat_icon),
             contentDescription = null,
             modifier = Modifier
                 .size(LargeIconButtonSize)
-                .border(1.dp, TonalButtonContainerColor, CircleShape)
+                .border(1.dp, MaterialTheme.extendedColor.borderColor, CircleShape)
                 .clip(CircleShape)
 
         )
@@ -65,9 +69,9 @@ fun ChatMemberItem(chatMemberUi: ChatMemberUi) {
 
             val memberBuilder = StringBuilder()
             if (chatMemberUi.isOnline){
-                memberBuilder.append(stringResource(R.string.faol))
+                memberBuilder.append(stringResource(Res.string.faol))
             }else{
-                memberBuilder.append(stringResource(R.string.ohirgi_faollik))
+                memberBuilder.append(stringResource(Res.string.ohirgi_faollik))
                 memberBuilder.append(": ")
                 memberBuilder.append(chatMemberUi.lastSeen)
             }

@@ -1,10 +1,12 @@
 package uz.tikoncha_parent.presentation.chat
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,28 +15,25 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -43,25 +42,54 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import uz.tikoncha_parent.presentation.base.ChatTypingTextField
+import coil3.compose.AsyncImage
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.domain.model.ChatMessageItem
+import uz.tikoncha_parent.domain.model.ChatMessageItem
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.chat.*
+import uz.tikoncha_parent.presentation.base.CustomMultiLineTextField
+import uz.tikoncha_parent.presentation.chat_details.ChatDetailsScreen
+import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
-class ChatMessageScreen : Screen{
+class ChatMessageScreen(
+    private val chatId: String,
+    private val chatAvatar: String,
+    private val chatTitle: String,
+    private val chatType: ChatType
+) : Screen{
     @Composable
     override fun Content() {
         val viewModel: ChatViewModel = koinViewModel ()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        val bugun = stringResource(Res.string.bugun)
+        val kecha = stringResource(Res.string.kecha)
+
+        LaunchedEffect(Unit){
+            event(ChatEvent.SetChatData(
+                chatId = chatId,
+                chatAvatar = chatAvatar,
+                chatTitle = chatTitle,
+                chatType = chatType,
+                bugun = bugun,
+                kecha = kecha
+            ))
+        }
+        DisposableEffect(Unit) {
+            event(ChatEvent.Open("ChatMessageScreen"))
+            onDispose {
+                event(ChatEvent.Close("ChatMessageScreen"))
+            }
+        }
+
         ChatMessageUi(
             state = state,
             event = event
@@ -70,20 +98,35 @@ class ChatMessageScreen : Screen{
 
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ChatMessageUi(
     state: ChatState,
-    event: (ChatEvent) -> Unit
-) {
+    event: (ChatEvent) -> Unit,
+)
+{
 
+    val bottomShape = RoundedCornerShape(
+        topStart = 0.dp,
+        topEnd = 0.dp,
+        bottomStart = ShapeCornerRadius,
+        bottomEnd = ShapeCornerRadius
+    )
     val navigator = LocalNavigator.current
 
     val listState = rememberLazyListState()
-    LaunchedEffect(state.messages.size) {
-        if (state.messages.isNotEmpty()) {
-            listState.animateScrollToItem(state.messages.lastIndex)
-        }
+
+
+
+
+    LaunchedEffect(true) {
+        event(ChatEvent.OnScrollLastMessage)
+        ChatUnreadEventBus.tryEmit(
+            ChatUnreadEventBus.ChatUnreadEvent.MessageReceived(state.lastMessage?.id?:"")
+        )
     }
+
+
 
     Column(
         modifier = Modifier
@@ -95,99 +138,154 @@ fun ChatMessageUi(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
                 .height(HeaderHeight),
             verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                modifier = Modifier
+        )
+        {
+            Box(
+                Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = ContainerPadding),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                FilledTonalIconButton(
-                    modifier = Modifier.size(NormalIconButtonSize),
-                    onClick = {
-                        navigator?.pop()
-                    },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.tonalButtonColor,
-                        contentColor = MaterialTheme.extendedColor.textColor
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow_left),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(NormalIconButtonPadding)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = bottomShape,
+                        ambientColor = MaterialTheme.extendedColor.shadowColor,
+                        spotColor = MaterialTheme.extendedColor.shadowColor
                     )
-                }
+                    .background(
+                        color = MaterialTheme.extendedColor.backgroundColor,
+                        shape = bottomShape
+                    )
 
-                SpaceSmall()
-                Image(
-                    painter = painterResource(Res.drawable.chat_icon),
-                    contentDescription = "",
-                    modifier = Modifier.size(NormalIconButtonSize)
-                        .border(1.dp, MaterialTheme.extendedColor.tonalButtonColor, CircleShape)
-                        .clip(CircleShape)
-
-                )
-                SpaceSmall()
-                Column(
+            )
+            {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                ) {
-                    val styledText = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.extendedColor.textColor
-                            )
-                        ) {
-                            append("Ustoz /")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.extendedColor.hintColor
-                            )
-                        ) {
-                            append(" Ibroxim Odilov")
-                        }
+                        .height(HeaderHeight)
+                        .padding(horizontal = ContainerPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+
+                    FilledTonalIconButton(
+                        modifier = Modifier
+                            .size(NormalIconButtonSize),
+                        onClick = {
+                            navigator?.pop()
+                        },
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.extendedColor.cardColor,
+                            contentColor = MaterialTheme.extendedColor.textColor
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.arrow_left),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(NormalIconButtonPadding)
+                        )
                     }
 
-                    CustomText(
-                        text = styledText,
-                        fontSize = SmallTextSize,
-                        maxLines = 1,
-                        lineHeight = SmallTextSize,
-                        fontWeight = FontWeight.W500
-                    )
-                    CustomText(
-                        text = "online",
-                        fontSize = SmallTextSize,
-                        maxLines = 1,
-                        color = MaterialTheme.extendedColor.primaryColor,
-                        lineHeight = SmallTextSize,
-                        fontWeight = FontWeight.W500
-                    )
-                }
+                    SpaceSmall()
 
+                    AsyncImage(
+                        model = state.chatAvatar,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(NormalIconButtonSize)
+                            .border(1.dp, TonalButtonContainerColor, CircleShape)
+                            .clip(CircleShape),
+                        error = painterResource(Res.drawable.chat_icon),
+                        placeholder = painterResource(Res.drawable.chat_icon)
+
+                    )
+
+
+                    SpaceSmall()
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                indication = null,
+                                interactionSource = null,
+                                onClick = {
+                                    if (state.chatType == ChatType.CLASS){
+                                        navigator?.push(
+                                            ChatDetailsScreen(
+                                                chatId = state.chatId,
+                                                chatAvatar = state.chatAvatar,
+                                                chatTitle = state.chatTitle
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                    ) {
+                        val styledText = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.extendedColor.textColor
+                                )
+                            ) {
+                                append("Ustoz /")
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.extendedColor.hintColor
+                                )
+                            ) {
+                                append(" Ibroxim Odilov")
+                            }
+                        }
+
+                        CustomText(
+                            text = state.chatTitle,
+                            fontSize = SmallTextSize,
+                            maxLines = 1,
+                            lineHeight = SmallTextSize,
+                            fontWeight = FontWeight.W500
+                        )
+
+                        val status = when(state.chatType){
+                            ChatType.CLASS -> {
+                                "${stringResource(Res.string.azolar)}: ${state.chatMembersCount}"
+                            }
+                            else -> {
+                                when (state.isUserOnline) {
+                                    true -> stringResource(Res.string.faol)
+                                    false -> "${stringResource(Res.string.ohirgi_faollik)}: ${state.lastTimeOnline}"
+                                }
+                            }
+                        }
+
+                        val headerTextColor =  if (state.isUserOnline && state.chatType != ChatType.CLASS) {
+                            MaterialTheme.extendedColor.primaryColor
+                        } else {MaterialTheme.extendedColor.hintColor }
+
+                        CustomText(
+                            text = status,
+                            fontSize = UltraSmallTextSize,
+                            maxLines = 1,
+                            color = headerTextColor,
+                            lineHeight = SmallTextSize,
+                            fontWeight = FontWeight.W500
+                        )
+                    }
+
+                }
             }
-            HorizontalDivider(
-                modifier = Modifier
-                    .shadow(elevation = 2.dp)
-            )
         }
 
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .imePadding()
                 .padding(ContainerPadding)
+                .imePadding()
+
         ) {
 
 
@@ -196,8 +294,10 @@ fun ChatMessageUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                reverseLayout = true
+            )
+            {
 
                 items(state.messages) { messageItem ->
                     when (messageItem) {
@@ -208,10 +308,15 @@ fun ChatMessageUi(
                         }
 
                         is ChatMessageItem.Message -> {
-                            if (messageItem.chatMessage.isMine) {
-                                MessageSentItem(chatMessage = messageItem.chatMessage)
+                            if (messageItem.chatMessageUi.isMine) {
+                                MessageSentItem(
+                                    chatMessageUi = messageItem.chatMessageUi
+                                )
                             } else {
-                                MessageReceivedItem(chatMessage = messageItem.chatMessage)
+                                MessageReceivedItem(
+                                    chatMessageUi = messageItem.chatMessageUi,
+                                    showSender = if (state.chatType == ChatType.CLASS) true else false
+                                )
                             }
                         }
                     }
@@ -221,12 +326,7 @@ fun ChatMessageUi(
 
             SpaceMedium()
 
-            var textFieldHeight by remember {
-                mutableStateOf(0.dp)
-            }
-
-
-            ChatTypingTextField(
+            CustomMultiLineTextField(
                 value = state.message,
                 onValueChange = {
                     event(ChatEvent.OnMessageChange(it))
@@ -234,44 +334,54 @@ fun ChatMessageUi(
                 singleLine = false,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = TextFieldHeight, max = TextFieldHeight*5),
+                    .heightIn(min = TextFieldHeight, max = TextFieldHeight * 5)
+                    .imePadding(),
                 label = stringResource(Res.string.xabar_yozish),
-                containerColor = ChatMessageBackgroundColor,
+                containerColor = MaterialTheme.extendedColor.cardColor,
                 shape = RoundedCornerShape(20.dp),
                 leadingIcon = {
                     IconButton(
                         onClick = {},
-                        modifier = Modifier.size(NormalIconButtonSize)
+                        modifier = Modifier
+                            .size(NormalIconButtonSize)
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.chat_add),
                             contentDescription = "",
                             modifier = Modifier,
-                            tint = MaterialTheme.extendedColor.primaryColor
+                            tint = PrimaryColor
                         )
                     }
-
-
                 },
                 trailingIcon = {
-                    if (state.message.isNotEmpty()){
+                    if (state.message.isNotEmpty()) {
                         IconButton(
                             onClick = {
                                 event(ChatEvent.SendMessage)
                             },
-                            modifier = Modifier.size(NormalIconButtonSize)
+                            modifier = Modifier
+                                .size(NormalIconButtonSize)
 
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.chat_send),
                                 contentDescription = "",
                                 modifier = Modifier,
-                                tint = MaterialTheme.extendedColor.primaryColor
+                                tint = PrimaryColor
                             )
                         }
                     }
-                }
-            )
+//                    if (state.isReceivingMessage) {
+//                        CircularProgressIndicator(
+//                            modifier = Modifier
+//                                .size(SmallIconButtonSize)
+//                        )
+//                    }
+
+                },
+                readOnly = false,
+
+                )
         }
     }
 }

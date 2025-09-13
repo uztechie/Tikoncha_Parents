@@ -6,8 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import uz.tikoncha_parent.platform.AppEnvironment
 import uz.tikoncha_parent.presentation.splash.SplashScreen
 
@@ -16,42 +14,28 @@ import uz.tikoncha_parent.presentation.profile.language.LanguageController
 import uz.tikoncha_parent.presentation.profile.language.LocalLanguageController
 import uz.tikoncha_parent.ui.theme.BarConfig
 import uz.tikoncha_parent.ui.theme.LocalBarsConfig
-import uz.tikoncha_parent.ui.theme.NoteMarkTheme
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import uz.tikoncha_parent.ui.theme.ThemeMode
 
-@OptIn(ExperimentalTime::class)
-fun getCurrentIsoDateTime(): String {
-    val nowInstant = Clock.System.now()
-    val localDateTime = nowInstant.toLocalDateTime(TimeZone.UTC)
-
-    val year = localDateTime.year.toString().padStart(4, '0')
-    val month = localDateTime.monthNumber.toString().padStart(2, '0')
-    val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
-    val hour = localDateTime.hour.toString().padStart(2, '0')
-    val minute = localDateTime.minute.toString().padStart(2, '0')
-    val second = localDateTime.second.toString().padStart(2, '0')
-    val millis = (localDateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
-
-    return "$year-$month-${day}T$hour:$minute:$second.${millis}"
-}
 
 @Composable
 @Preview
 fun App() {
 
 
-    println("ASASASAS=${getCurrentIsoDateTime()}")
-
     val langController = remember { LanguageController() }
-
-    val mode by ThemeController.mode.collectAsState()
-    SideEffect { PlatformThemeBridge.onModeChanged(mode) }
     val barsConfig = remember { mutableStateOf(BarConfig()) }
+
+    val mode by ThemeController.mode.collectAsState(initial = ThemeMode.LIGHT)
+
+    val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
+    if (!inPreview) {
+        SideEffect { PlatformThemeBridge.onModeChanged(mode) }
+    }
 
     AppEnvironment {
 
@@ -60,19 +44,17 @@ fun App() {
             LocalBarsConfig provides barsConfig
         )
         {
-            NoteMarkTheme(
+            TikonchaParentTheme(
                 mode = mode
             ) {
                 val cfg = barsConfig.value
-                val lang = langController.current.collectAsState()
-
-
 
                 Surface(
                     modifier = Modifier
                         .then(if (cfg.paddingEnabled) Modifier.statusBarsPadding() else Modifier)
                         .then(if (cfg.paddingEnabled) Modifier.navigationBarsPadding() else Modifier)
                 ) {
+                    
                     Navigator(SplashScreen())
                 }
 

@@ -8,6 +8,8 @@ import uz.tikoncha_parent.data.remote.model.ChatMessagesResponse
 import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
 import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
+import uz.tikoncha_parent.data.remote.model.SendMessageRequest
+import uz.tikoncha_parent.data.remote.model.SendMessageResponse
 import uz.tikoncha_parent.domain.repository.ChatRepository
 class ChatRepositoryImpl(
     private val socket: ChatSocketService,
@@ -19,6 +21,10 @@ class ChatRepositoryImpl(
 
     override suspend fun chatMessages(params: Map<String, Any>): ChatMessagesResponse {
         return api.chatMessages(params)
+    }
+
+    override suspend fun sendMessageApi(request: SendMessageRequest): SendMessageResponse {
+        return api.chatSendMessage(request)
     }
 
     override suspend fun chatStatus(chatId: String): ChatStatusResponse {

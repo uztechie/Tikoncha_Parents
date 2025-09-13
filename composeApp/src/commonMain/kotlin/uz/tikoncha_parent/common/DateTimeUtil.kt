@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.common
 
 import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -9,6 +10,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.StringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bugun
@@ -24,13 +26,39 @@ object DateTimeUtil {
     private fun Int.two(): String = if (this < 10) "0$this" else toString()
 
     fun toMillisUtc(s: String?): Long {
-        if (s == null) return  0L
-        val noOffsetFmt = LocalDateTime.Format {
-            year(); char('-'); monthNumber(); char('-'); day()
-            char('T'); hour(); char(':'); minute(); char(':'); second()
+        if (s.isNullOrBlank()) return 0L
+        val input = s.trim()
+
+        // Capture date, time, and optional fractional seconds (any length)
+        val re = Regex(
+            pattern = """^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,}))?""",
+            option = RegexOption.IGNORE_CASE
+        )
+
+        val m = re.find(input) ?: return 0L
+
+        val year   = m.groupValues[1].toInt()
+        val month  = m.groupValues[2].toInt()
+        val day    = m.groupValues[3].toInt()
+        val hour   = m.groupValues[4].toInt()
+        val minute = m.groupValues[5].toInt()
+        val second = m.groupValues[6].toInt()
+
+        val frac = m.groupValues.getOrNull(7).orEmpty()
+        // milliseconds = first 3 digits (truncate) or pad with zeros if shorter
+        val ms = when {
+            frac.isEmpty()      -> 0
+            frac.length >= 3    -> frac.substring(0, 3).toInt()
+            else                -> (frac + "000").substring(0, 3).toInt()
         }
 
-        val ldt = LocalDateTime.parse(s, noOffsetFmt)
+        val ldt = LocalDateTime(
+            year, month, day,
+            hour, minute, second,
+            ms * 1_000_000 // nanos
+        )
+
+        // Interpret the naive timestamp as UTC (no offset in the string)
         return ldt.toInstant(TimeZone.UTC).toEpochMilliseconds()
     }
 
@@ -50,6 +78,29 @@ object DateTimeUtil {
         val mon = d.month.ordinal
         val yr = d.year
         return "${day.two()}.${mon.two()}.$yr"
+    }
+
+    fun formatDateForChatUserStatus(
+        localDate: LocalDate?,
+        bugun: String,
+        kecha: String,
+        timeZone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (localDate == null) return ""
+
+        val today = Clock.System.todayIn(timeZone)
+        val yesterday = today.minus(1, DateTimeUnit.DAY)
+
+        return when (localDate) {
+            today -> bugun
+            yesterday -> kecha
+            else -> {
+                val d = localDate.day.toString().padStart(2, '0')
+                val m = localDate.month.ordinal.toString().padStart(2, '0')
+                val y = localDate.year.toString()
+                "$d.$m.$y"
+            }
+        }
     }
 
     fun formatDateTimeForChatUserStatus(
@@ -98,14 +149,17 @@ object DateTimeUtil {
         }
         // Combine LocalDate + LocalTime into LocalDateTime
         val localDateTime = LocalDateTime(localDate, localTime)
+        val instant = localDateTime.toInstant(TimeZone.currentSystemDefault())
+        val utcLdt = instant.toLocalDateTime(timeZone)
 
-        val year = localDateTime.year.toString().padStart(4, '0')
-        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
-        val day = localDateTime.day.toString().padStart(2, '0')
-        val hour = localDateTime.hour.toString().padStart(2, '0')
-        val minute = localDateTime.minute.toString().padStart(2, '0')
-        val second = localDateTime.second.toString().padStart(2, '0')
-        val millis = (localDateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
+
+        val year = utcLdt.year.toString().padStart(4, '0')
+        val month = (utcLdt.month.ordinal+1).toString().padStart(2, '0')
+        val day = utcLdt.day.toString().padStart(2, '0')
+        val hour = utcLdt.hour.toString().padStart(2, '0')
+        val minute = utcLdt.minute.toString().padStart(2, '0')
+        val second = utcLdt.second.toString().padStart(2, '0')
+        val millis = (utcLdt.nanosecond / 1_000_000).toString().padStart(3, '0')
 
         return "$year-$month-${day}T$hour:$minute:$second.${millis}"
     }
@@ -131,9 +185,10 @@ object DateTimeUtil {
     }
 
 
-    fun getCurrentIsoDateTime(): String {
+
+    fun getCurrentIsoDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
         val nowInstant = Clock.System.now()
-        val localDateTime = nowInstant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDateTime = nowInstant.toLocalDateTime(timeZone)
 
         val year = localDateTime.year.toString().padStart(4, '0')
         val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')

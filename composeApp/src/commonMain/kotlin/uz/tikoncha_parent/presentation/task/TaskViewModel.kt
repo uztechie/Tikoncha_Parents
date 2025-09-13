@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.common.SessionStore
 import uz.tikoncha_parent.common.Util.millisToLocalDate
@@ -190,8 +191,8 @@ class TaskViewModel (
                 title = _state.value.title,
                 description = _state.value.desc,
                 importance = _state.value.importance.toServerType(),
-                due_date = DateTimeUtil.formatToIsoString(localDate = _state.value.date, localTime = _state.value.time),
-                created_at = DateTimeUtil.getCurrentIsoDateTime(),
+                due_date = DateTimeUtil.formatToIsoString(localDate = _state.value.date, localTime = _state.value.time, timeZone = TimeZone.UTC),
+                created_at = DateTimeUtil.getCurrentIsoDateTime(timeZone = TimeZone.UTC),
                 target_user_id = selectedChildUserId,
                 id = Uuid.random().toString(),
                 is_completed = _state.value.completed
@@ -249,8 +250,8 @@ class TaskViewModel (
                 title = task.title,
                 description = task.description,
                 importance = task.importance.toServerType(),
-                due_date = DateTimeUtil.formatToIsoString(millis = task.dateTime),
-                created_at = DateTimeUtil.formatToIsoString(millis = task.createdAt),
+                due_date = DateTimeUtil.formatToIsoString(millis = task.dateTime, timeZone = TimeZone.UTC),
+                created_at = DateTimeUtil.formatToIsoString(millis = task.createdAt, timeZone = TimeZone.UTC),
                 target_user_id = task.targetUserId,
                 is_completed = task.isCompleted
             )
@@ -278,21 +279,21 @@ class TaskViewModel (
                 is Resource.Success -> {
                     loadTasks()
 
-                    val allList = state.value.allTaskList.map { dto->
-                        if (dto.id == task.id){
-                            task.toTodoDto()
-                        }
-                        else{
-                            dto
-                        }
-                    }
-
-                    _state.update {
-                        it.copy(
-                            allTaskList = allList,
-                           taskResponseState = ResponseState.Success()
-                        )
-                    }
+//                    val allList = state.value.allTaskList.map { dto->
+//                        if (dto.id == task.id){
+//                            task.toTodoDto()
+//                        }
+//                        else{
+//                            dto
+//                        }
+//                    }
+//
+//                    _state.update {
+//                        it.copy(
+//                            allTaskList = allList,
+//                           taskResponseState = ResponseState.Success()
+//                        )
+//                    }
                     manageCompletedTaskList()
                     manageTaskList()
                 }

@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat.chat_details
+package uz.tikoncha_parent.presentation.chat_details
 
 sealed interface ChatDetailEvent {
 

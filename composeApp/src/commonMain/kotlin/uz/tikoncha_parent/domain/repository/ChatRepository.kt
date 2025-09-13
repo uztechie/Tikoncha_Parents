@@ -6,6 +6,8 @@ import uz.tikoncha_parent.data.remote.model.ChatMessagesResponse
 import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
 import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
+import uz.tikoncha_parent.data.remote.model.SendMessageRequest
+import uz.tikoncha_parent.data.remote.model.SendMessageResponse
 
 
 interface ChatRepository {
@@ -13,6 +15,7 @@ interface ChatRepository {
     //http API
     suspend fun chatList(): ChatListResponse
     suspend fun chatMessages(params: Map<String, Any>): ChatMessagesResponse
+    suspend fun sendMessageApi(request: SendMessageRequest): SendMessageResponse
 
     suspend fun chatStatus(chatId: String): ChatStatusResponse
 

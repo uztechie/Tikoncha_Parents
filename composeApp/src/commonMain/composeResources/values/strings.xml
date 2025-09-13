@@ -173,4 +173,11 @@
     <string name="vazifa_tahrirlandi">Vazifa tahrirlandi</string>
     <string name="server_connection_error">Server bilan bog\'lanishda xatolik!</string>
 
+    <string name="faol">Faol</string>
+    <string name="faol_emas">Faol emas</string>
+    <string name="ohirgi_faollik">Ohirgi faollik</string>
+    <string name="qabul_qildim">Qabul qildim</string>
+    <string name="azolar">A'zolar</string>
+    <string name="azo">A'zo</string>
+
 </resources>

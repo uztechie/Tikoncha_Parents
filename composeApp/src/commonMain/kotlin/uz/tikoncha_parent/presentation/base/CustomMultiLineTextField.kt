@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,16 +52,14 @@ fun CustomMultiLineTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
-    contentColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
+    containerColor: Color = MaterialTheme.extendedColor.cardColor,
+    contentColor: Color = MaterialTheme.extendedColor.textColor,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
-    fonSize: TextUnit = NormalTextSize,
-    maxLines:Int = 5,
-    minLines:Int = 3,
+    fonSize: TextUnit = NormalTextSize
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -73,7 +72,7 @@ fun CustomMultiLineTextField(
     }
 
     var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) MaterialTheme.extendedColor.borderColor else DisableButtonContentColor
+    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
 
     var newModifier = if (hasBorder){
         modifier
@@ -89,6 +88,7 @@ fun CustomMultiLineTextField(
             .clip(shape)
             .background(backgroundColor)
             .fillMaxWidth()
+            .wrapContentHeight()
             .padding(horizontal = TextFieldInnerPadding),
         verticalAlignment = Alignment.Bottom
     ) {
@@ -118,15 +118,13 @@ fun CustomMultiLineTextField(
             enabled = enabled,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .heightIn(min = TextFieldHeight*minLines, max = TextFieldHeight*maxLines)
-                .padding(TextFieldInnerPadding)
                 .align(Alignment.CenterVertically),
             singleLine = singleLine,
-            maxLines = if(singleLine) 1 else maxLines,
+            maxLines = if(singleLine) 1 else 5,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 color = contentColor,
-                fontSize = fonSize
+                fontSize = fonSize,
+                lineHeight = fonSize * 1.3
             ),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
@@ -136,7 +134,9 @@ fun CustomMultiLineTextField(
 
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
                     if (value.isEmpty()) {
                         CustomText(
@@ -148,8 +148,6 @@ fun CustomMultiLineTextField(
                     innerTextField()
                 }
             }
-
-
         )
         if (trailingIcon != null){
             SpaceSmall()

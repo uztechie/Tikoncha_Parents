@@ -3,6 +3,7 @@
 package uz.tikoncha_parent.data.mapper
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.common.DateTimeUtil.fromServerToLocalDateTime
@@ -21,11 +22,11 @@ fun TodoDto.toTask(): Task {
         description = description,
         date = due.toUIData(),
         time = due.toUiTime(),
-        dateTime = due_date.serverDateTimeToMillis(),
+        dateTime = DateTimeUtil.toMillisUtc(due_date),
         importance = importance.toImportanceType(),
         isCompleted = is_completed,
         progress = 0,
-        createdAt = created_at.serverDateTimeToMillis(),
+        createdAt =  DateTimeUtil.toMillisUtc(created_at),
         id = this.id ?:"",
         targetUserId = this.target_user_id?:"",
         authorId = this.author_id?:"",
@@ -40,10 +41,10 @@ fun Task.toTodoDto(): TodoDto{
         target_user_id = targetUserId,
         title = title,
         description = description,
-        due_date = DateTimeUtil.formatToIsoString(dateTime),
+        due_date = DateTimeUtil.formatToIsoString(dateTime, timeZone = TimeZone.currentSystemDefault()),
         importance = importance.toServerType(),
         is_completed = isCompleted,
-        created_at = DateTimeUtil.formatToIsoString(createdAt),
+        created_at = DateTimeUtil.formatToIsoString(createdAt, timeZone = TimeZone.currentSystemDefault()),
         modified_at = null
     )
 }

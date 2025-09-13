@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat.chat_details
+package uz.tikoncha_parent.presentation.chat_details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,13 +27,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_left
+import tikoncha_parents.composeapp.generated.resources.azo
+import tikoncha_parents.composeapp.generated.resources.azolar
+import tikoncha_parents.composeapp.generated.resources.chat_icon
+import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HeaderHeight
+import uz.tikoncha_parent.ui.NormalIconButtonPadding
+import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.ShapeCornerRadius
+import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ChatDetailsHeader(
-    navController: NavController,
     state: ChatDetailState,
+    onBackPressed: () -> Unit
 ) {
 
     val bottomShape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomStart = ShapeCornerRadius, bottomEnd = ShapeCornerRadius)
@@ -68,16 +87,16 @@ fun ChatDetailsHeader(
             )
             {
                 FilledTonalIconButton(
-                    modifier = size(NormalIconButtonSize),
-                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.size(NormalIconButtonSize),
+                    onClick = onBackPressed,
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.secondaryBackgroundColor,
+                        containerColor = MaterialTheme.extendedColor.cardColor,
                         contentColor = MaterialTheme.extendedColor.textColor
                     ),
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.arrow_left),
+                        painter = painterResource(Res.drawable.arrow_left),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()
@@ -89,11 +108,11 @@ fun ChatDetailsHeader(
 
                 AsyncImage(
                     model = state.chatAvatar,
-                    error = painterResource(R.drawable.chat_icon),
-                    placeholder = painterResource(R.drawable.chat_icon),
+                    error = painterResource(Res.drawable.chat_icon),
+                    placeholder = painterResource(Res.drawable.chat_icon),
                     contentDescription = null,
-                    modifier = size(NormalIconButtonSize)
-                        .border(1.dp, TonalButtonContainerColor, CircleShape)
+                    modifier = Modifier.size(NormalIconButtonSize)
+                        .border(1.dp, MaterialTheme.extendedColor.borderColor, CircleShape)
                         .clip(CircleShape)
 
                 )
@@ -114,9 +133,9 @@ fun ChatDetailsHeader(
 
                     val memberBuilder = StringBuilder()
                     if (state.memberCount>1){
-                        memberBuilder.append(stringResource(R.string.azolar))
+                        memberBuilder.append(stringResource(Res.string.azolar))
                     }else{
-                        memberBuilder.append(stringResource(R.string.azo))
+                        memberBuilder.append(stringResource(Res.string.azo))
                     }
 
                     memberBuilder.append(": ")
@@ -141,11 +160,11 @@ fun ChatDetailsHeader(
 @Preview
 @Composable
 private fun Preview() {
-    NewEduTheme {
-        ChatDetailsHeader(
-            navController = rememberNavController(),
-            state = ChatDetailState()
-        )
-    }
+    TikonchaParentTheme(mode = ThemeMode.LIGHT){
+       ChatDetailsHeader(
+           state = ChatDetailState(),
+           onBackPressed = {}
+       )
+   }
 
 }

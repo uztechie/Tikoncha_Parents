@@ -32,6 +32,7 @@ fun CustomDialog(
     message: String,
     show: Boolean = true,
     buttonText: String = "Ok",
+    showCloseButton: Boolean = false,
     onButtonClick: () -> Unit,
     onDismiss: () -> Unit
 ) {

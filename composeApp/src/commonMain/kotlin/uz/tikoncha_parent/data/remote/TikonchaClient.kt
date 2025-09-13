@@ -9,6 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.header
 
 import io.ktor.http.URLProtocol
@@ -25,6 +26,11 @@ class TikonchaClient(private val engine: HttpClientEngine) {
     }
 
     val client = HttpClient(engine){
+
+        install(WebSockets){
+            pingIntervalMillis = 20_000
+        }
+
         install(ContentNegotiation){
             json(Json {
                 prettyPrint = true

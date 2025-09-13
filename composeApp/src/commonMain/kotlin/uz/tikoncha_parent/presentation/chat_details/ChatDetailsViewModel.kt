@@ -1,6 +1,5 @@
-package uz.tikoncha_parent.presentation.chat.chat_details
+package uz.tikoncha_parent.presentation.chat_details
 
-import androidx.compose.runtime.key
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job

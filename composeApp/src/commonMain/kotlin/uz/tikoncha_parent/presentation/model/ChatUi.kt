@@ -10,4 +10,8 @@ data class ChatUi(
     val dateTime: String,
     val lastMessageIsMine: Boolean = false,
     val lastMessageIsRead: Boolean = false,
-)
+){
+    override fun toString(): String {
+        return title
+    }
+}

@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -42,6 +45,11 @@ class MainScreen : Screen {
 
 @Composable
 fun MainUi() {
+
+    val density = LocalDensity.current
+    val imeBottomPx = WindowInsets.ime.getBottom(density)
+    val imeVisible = imeBottomPx > 0
+
     val bottomNavItems = listOf(
         BottomNavItem(
             HomeScreen(),
@@ -74,7 +82,11 @@ fun MainUi() {
         val mainNavigator = LocalNavigator.current
         Scaffold(
             containerColor = MaterialTheme.extendedColor.backgroundColor,
+            contentWindowInsets = WindowInsets(0),
             bottomBar = {
+                if (imeVisible){
+                    return@Scaffold
+                }
                 NavigationBar(
                     containerColor = MaterialTheme.extendedColor.backgroundColor,
                     modifier = Modifier

@@ -2,11 +2,14 @@ package uz.tikoncha_parent.data.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
+import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
 import uz.tikoncha_parent.data.remote.model.ChatListResponse
 import uz.tikoncha_parent.data.remote.model.ChatMessagesResponse
 import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
 import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
+import uz.tikoncha_parent.data.remote.model.SendMessageRequest
+import uz.tikoncha_parent.data.remote.model.SendMessageResponse
 
 class ChatApiService (
     private val httpClient: HttpClient
@@ -26,6 +29,15 @@ class ChatApiService (
                 params.forEach {
                     parameter(it.key, it.value)
                 }
+            }
+        )
+
+    suspend fun chatSendMessage(request: SendMessageRequest): SendMessageResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Post,
+            url = "chat/messages/",
+            block = {
+                setBody(request)
             }
         )
 

@@ -117,7 +117,7 @@ val DarkExtended = ExtendedColors(
 
 
 @Composable
-fun NoteMarkTheme(
+fun TikonchaParentTheme(
     mode: ThemeMode,
     content: @Composable () -> Unit
 ) {
@@ -132,18 +132,18 @@ fun NoteMarkTheme(
 
     MaterialTheme(colorScheme = colorScheme) {
         ProvideExtendedColors(extended) {
-            val statusBar = colorScheme.background
-            val navBarTransparent = colorScheme.background
-            val navBarFallback = colorScheme.background
+            val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
 
-            val cfg = LocalBarsConfig.current.value
-            SystemBarTheme.apply(
-                isDark = isDark,
-                statusBarColor = statusBar,
-                navigationBarColor = navBarTransparent,
-                navigationBarFallbackColor = navBarFallback,
-                transparentStatusBar = cfg.transparentStatusBar
-            )
+            if (!inPreview) {
+                val cfg = LocalBarsConfig.current.value
+                SystemBarTheme.apply(
+                    isDark = isDark,
+                    statusBarColor = colorScheme.background,
+                    navigationBarColor = colorScheme.background,
+                    navigationBarFallbackColor = colorScheme.background,
+                    transparentStatusBar = cfg.transparentStatusBar
+                )
+            }
             content()
         }
     }
