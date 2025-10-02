@@ -25,6 +25,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -36,7 +37,7 @@ class TaskViewModel (
     private val todoUseCase: TodoUseCase,
     private val childrenUseCase: ChildrenUseCase,
     private val todoListUseCase: TodoListUseCase,
-
+    private val updateTodoUseCase: UpdateTodoUseCase
 ) : ViewModel() {
 
     private var requestTodoJob: Job? = null
@@ -129,7 +130,9 @@ class TaskViewModel (
             TaskEvent.OnReset -> {
                 _state.update {
                     it.copy(
-                        taskResponseState = ResponseState.Idle
+                        taskResponseState = ResponseState.Idle,
+                        editingTaskId = null,
+                        editingTaskCreatedAt = null
                     )
                 }
             }
@@ -168,8 +171,8 @@ class TaskViewModel (
                         importance = event.task.importance,
                         completed = event.task.isCompleted,
                         isEditing = true,
-                        editingTaskId = event.task.id
-
+                        editingTaskId = event.task.id,
+                        editingTaskCreatedAt = event.task.createdAt
                     )
                 }
             }
@@ -256,7 +259,7 @@ class TaskViewModel (
                 is_completed = task.isCompleted
             )
 
-            val result = todoUseCase(request)
+            val result = updateTodoUseCase(request)
 
             when(result){
 
@@ -277,25 +280,13 @@ class TaskViewModel (
                 }
 
                 is Resource.Success -> {
-                    loadTasks()
+                    _state.update {
+                        it.copy(
+                            taskResponseState = ResponseState.Success()
+                        )
+                    }
 
-//                    val allList = state.value.allTaskList.map { dto->
-//                        if (dto.id == task.id){
-//                            task.toTodoDto()
-//                        }
-//                        else{
-//                            dto
-//                        }
-//                    }
-//
-//                    _state.update {
-//                        it.copy(
-//                            allTaskList = allList,
-//                           taskResponseState = ResponseState.Success()
-//                        )
-//                    }
-                    manageCompletedTaskList()
-                    manageTaskList()
+                    loadTasks()
                 }
             }
         }

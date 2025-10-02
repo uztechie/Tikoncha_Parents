@@ -16,4 +16,8 @@ class TodoRepositoryImpl(private val api: TodoApiService): TodoRepository {
         return api.todoList(userId)
     }
 
+    override suspend fun updateTodo(request: TodoRequest): TodoResponse {
+        return api.updateTodo(request)
+    }
+
 }

@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
+import tikoncha_parents.composeapp.generated.resources.Res
 import uz.tikoncha_parent.data.remote.model.TodoListResponse
 import uz.tikoncha_parent.data.remote.model.TodoRequest
 import uz.tikoncha_parent.data.remote.model.TodoResponse
@@ -25,6 +26,15 @@ class TodoApiService(private val client: HttpClient) {
             url = "todos",
             block = {
                 parameter("target_user_id", userId)
+            }
+        )
+
+    suspend fun updateTodo(request: TodoRequest): TodoResponse =
+        client.safeRequest(
+            method = HttpMethod.Patch,
+            url = "todos/${requireNotNull(request.id) { "id is required for update" }}",
+            block = {
+                setBody(request)
             }
         )
 }

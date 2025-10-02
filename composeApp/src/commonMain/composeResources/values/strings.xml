@@ -171,8 +171,7 @@
     <string name="muvaffaqiyatli">Muvaffaqiyatli</string>
     <string name="qisqartirish">Qisqartirish</string>
     <string name="vazifa_tahrirlandi">Vazifa tahrirlandi</string>
-    <string name="server_connection_error">Server bilan bog\'lanishda xatolik!</string>
-
+    <string name="server_connection_error">Server bilan bog'lanishda xatolik!</string>
     <string name="faol">Faol</string>
     <string name="faol_emas">Faol emas</string>
     <string name="ohirgi_faollik">Ohirgi faollik</string>

@@ -61,6 +61,7 @@ import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
+import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
@@ -99,6 +100,7 @@ val sharedModule = module {
     single { TodoUseCase(get()) }
     single { UserInfoUseCase(get()) }
     single { TodoListUseCase(get()) }
+    single { UpdateTodoUseCase(get()) }
     single { AddChildUseCase(get()) }
     single { ChildrenUseCase(get()) }
     single { AppUsagesUseCase(get()) }
@@ -137,7 +139,7 @@ val sharedModule = module {
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
-    viewModel { TaskViewModel(get (), get(), get()) }
+    viewModel { TaskViewModel(get (), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatDetailsViewModel(get()) }

@@ -270,6 +270,7 @@ fun TaskUi(
                                     event(TaskEvent.OnCompletedTask(task))
                                 },
                                 onEditIconClick = {
+                                    println("onEditIconClick = $task")
                                     navigator?.push(AddNewTaskScreen(task))
                                 },
                                 onDetailsIconClick = {}
@@ -282,7 +283,9 @@ fun TaskUi(
                         onDoneButtonClick = { task ->
                             event(TaskEvent.OnCompletedTask(task))
                         },
-                        onEditIconClick = { },
+                        onEditIconClick = {
+                            navigator?.push(AddNewTaskScreen(state.parentTaskList.first()))
+                        },
                         onDetailsIconClick = { }
                     )
                 }
