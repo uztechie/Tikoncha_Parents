@@ -195,7 +195,7 @@ fun AddNewTask(
     if (showDialogTime) {
         TimePickerDialog(
             show = showDialogTime,
-            initialTime = selectedTime ?: Util.getCurrentTime(), // helper function
+            initialTime = selectedTime ?: Util.getCurrentTime(),
             onDismiss = { showDialogTime = false },
             onTimeSelected = {
                 println("AAAA = $timeAnd")
@@ -382,7 +382,7 @@ fun AddNewTask(
 
             CustomText(
                 text = stringResource(Res.string.tangachalar_sovg_a_qiling),
-                fontSize = LargeTextSize,
+                fontSize = NormalLargeTextSize,
                 fontWeight = FontWeight.W600
             )
 
