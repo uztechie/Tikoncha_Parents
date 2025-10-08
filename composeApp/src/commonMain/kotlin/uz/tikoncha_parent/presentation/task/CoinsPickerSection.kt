@@ -1,33 +1,51 @@
-package uz.tikoncha_parent.presentation.profile.coins
+package uz.tikoncha_parent.presentation.task
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.add
+import tikoncha_parents.composeapp.generated.resources.coin
+import tikoncha_parents.composeapp.generated.resources.sizda_mavjud_tangachalar
+import tikoncha_parents.composeapp.generated.resources.subtruct_icon
+import tikoncha_parents.composeapp.generated.resources.tangachalar
 import uz.tikoncha_parent.presentation.common.CoinGeneratorTextField
 import uz.tikoncha_parent.ui.AppIconInnerPadding
 import uz.tikoncha_parent.ui.BackgroundColor
@@ -38,47 +56,37 @@ import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.add
-import tikoncha_parents.composeapp.generated.resources.subtruct_icon
 import uz.tikoncha_parent.ui.theme.extendedColor
-
 @Composable
 fun CoinAmountTextField(
-    coinsAmount: String,
-    onAddCoinClicked: (Int) -> Unit,
-    onSubtractButtonClicked: (Int) -> Unit,
-    onValueChange: (String) -> Unit
+    coinsAmount: String,                         // tanlangan miqdor (matn ko‘rinishida)
+    onAddCoinClicked: (Int) -> Unit,             // "+" bosilganda qaytariladigan yangi qiymat
+    onSubtractButtonClicked: (Int) -> Unit,      // "–" bosilganda qaytariladigan yangi qiymat
+    onValueChange: (String) -> Unit,             // qo‘lda kiritilganda
+    maxAvailable: Int = 50                       // ✅ mavjud tangalar limiti ("50 ta")
 ) {
-
-    var textState by remember { mutableStateOf(coinsAmount.toString()) }
-
-    var textFieldValueState by remember {
+    // Ichki matn holati (kursorni oxirida ushlab turish uchun TextFieldValue ishlatyapsiz)
+    var textFieldValueState by remember(coinsAmount) {
         mutableStateOf(
             TextFieldValue(
                 text = coinsAmount,
-                selection = TextRange(coinsAmount.length) // Place cursor at the end
+                selection = TextRange(coinsAmount.length)
             )
         )
     }
 
+    // coinsAmount tashqaridan o‘zgarsa, inputni sync qilib qo‘yamiz (kursor oxirida qolsin)
     LaunchedEffect(coinsAmount) {
-        textState = coinsAmount.toString()
-    }
-
-    LaunchedEffect(coinsAmount) {
-        // Only update if the text is different, to avoid resetting cursor during typing
         if (textFieldValueState.text != coinsAmount) {
             textFieldValueState = TextFieldValue(
                 text = coinsAmount,
-                selection = TextRange(coinsAmount.length) // Keep cursor at the end
+                selection = TextRange(coinsAmount.length)
             )
         }
     }
 
-    Row() {
+    Row {
+        // -------------------- "–" tugma --------------------
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
@@ -88,126 +96,86 @@ fun CoinAmountTextField(
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .clickable {
-
-                    val currentAmount = coinsAmount.toIntOrNull()
-                    if (currentAmount != null && currentAmount > 1) {
-                        onSubtractButtonClicked(currentAmount - 1)
+                    val current = coinsAmount.toIntOrNull() ?: 0
+                    // ✅ 0 dan pastga tushirmaymiz
+                    val next = (current - 1).coerceAtLeast(0)
+                    if (next != current) {
+                        onSubtractButtonClicked(next)
                     }
-                    if (currentAmount == null){
-                        onSubtractButtonClicked(0)
-                    }
-
                 }
                 .padding(AppIconInnerPadding)
                 .background(MaterialTheme.extendedColor.backgroundColor),
             contentAlignment = Alignment.Center
         ) {
-
             Icon(
                 painter = painterResource(Res.drawable.subtruct_icon),
                 tint = PrimaryColor,
                 contentDescription = ""
             )
-
         }
 
         SpaceSmall()
 
+        // -------------------- Raqamli input --------------------
         CoinGeneratorTextField(
             modifier = Modifier
                 .width(CoinTextFieldWidth)
                 .height(NormalIconButtonSize),
             singleLine = true,
-            onValueChange = { newTextFieldValue ->
-
-                val newText = newTextFieldValue.text
-
-//                if ((newValue.all { it.isDigit() }) || newValue.isEmpty()) {
-//                    if (newValue.isNotEmpty() && newValue.toInt() <= 9999){
-//                        textState = newValue
-//                        onValueChange(newValue)
-//                    }
-//
-//                    if (newValue.isEmpty()){
-//                        textState = newValue
-//                        onValueChange(newValue)
-//                    }
-//                }
-
-                if (newText.isEmpty() || newText.all { it.isDigit() }) {
-
-                    if (newText.isEmpty()){
-                        onValueChange("0")
-                        textFieldValueState = newTextFieldValue.copy(
-                            text = "0", selection = TextRange(newText.length + 1)
-                        )
-                    }else{
-                        if ((newText.length == 4 && newText.toInt() < 9999)) {
-                            textFieldValueState = newTextFieldValue.copy(
-                                selection = TextRange(newText.length)
-                            )
-                            onValueChange(newText.toInt().toString())
-                        }
-                    }
-                }
-
-            },
             value = textFieldValueState,
             hasBorder = true,
             fonSize = NormalLargeTextSize,
             contentColor = PrimaryColor,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isCenteredText = true
-        )
+            isCenteredText = true,
+            onValueChange = { newTFV ->
+                val raw = newTFV.text
 
+                // Faqat raqamlarni qoldiramiz
+                val digitsOnly = raw.filter { it.isDigit() }
+
+                // Bo‘sh bo‘lsa 0 deb olaylik
+                val parsed = digitsOnly.toIntOrNull() ?: 0
+
+                // ✅ 0…maxAvailable oralig‘iga majburlaymiz
+                val coerced = parsed.coerceIn(0, maxAvailable)
+
+                // TextFieldValue’ni yangilaymiz (kursor oxirida qolsin)
+                val coercedText = coerced.toString()
+                textFieldValueState = newTFV.copy(
+                    text = coercedText,
+                    selection = TextRange(coercedText.length)
+                )
+
+                // Tashqi state’ga ham xabar beramiz
+                onValueChange(coercedText)
+            }
+        )
 
         SpaceSmall()
 
+        // -------------------- "+" tugma --------------------
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
                 .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
-                    if (coinsAmount.isNotEmpty()){
-                        if (coinsAmount.all { it.isDigit() }){
-                            val current = coinsAmount.toInt()
-                            val maxAvailable = 50
-                            if (current < maxAvailable) {
-                                onAddCoinClicked(current + 1)
-                            }
-                        }
+                    val current = coinsAmount.toIntOrNull() ?: 0
+                    // ✅ maxAvailable dan oshirmaymiz
+                    val next = (current + 1).coerceAtMost(maxAvailable)
+                    if (next != current) {
+                        onAddCoinClicked(next)
                     }
                 }
                 .background(PrimaryColor)
                 .padding(AppIconInnerPadding),
             contentAlignment = Alignment.Center
         ) {
-
             Icon(
                 painter = painterResource(Res.drawable.add),
                 tint = BackgroundColor,
                 contentDescription = ""
             )
-
         }
-
-    }
-
-}
-
-@Preview
-@Composable
-private fun PreviewCoinAmountTextField() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)
-    ) {
-        CoinAmountTextField(
-            coinsAmount = "12",
-            onAddCoinClicked = {},
-            onSubtractButtonClicked = {},
-            onValueChange = {}
-        )
     }
 }

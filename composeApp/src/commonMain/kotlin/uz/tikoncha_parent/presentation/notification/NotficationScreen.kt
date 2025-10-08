@@ -1,0 +1,138 @@
+package uz.tikoncha_parent.presentation.notification
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
+import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.notification
+import uz.tikoncha_parent.data.mapper.toUi
+import uz.tikoncha_parent.data.remote.model.NewsDto
+import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
+import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.theme.extendedColor
+
+class NotificationScreen : Screen {
+    @Composable
+    override fun Content() {
+
+        val navigator = LocalNavigator.current
+
+        val viewModel = koinViewModel<NotificationViewModel>()
+        val state = viewModel.state.collectAsStateWithLifecycle()
+
+        NotificationUi(
+            items = state.value.items,
+            navigator = navigator!!,
+        )
+    }
+}
+
+@Composable
+fun NotificationUi(
+    items: List<NewsDto>,
+    language: String = "uz",
+    navigator: Navigator?,
+    viewModel: NotificationViewModel = koinViewModel()
+) {
+    val rootNavigator = navigator?.parent
+    val navigator = rootNavigator ?: LocalNavigator.currentOrThrow
+
+    val language = remember {
+        if (LanguagePrefs.loadOrDefault() == LanguageType.UZ) "uz" else "ru"
+    }
+
+    val uiItems = remember(items, language) {
+        items.map { it.toUi(language) }
+    }
+
+    LaunchedEffect(Unit){viewModel.load()}
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.extendedColor.backgroundColor)
+    ) {
+        CustomHeader(
+            title = stringResource(Res.string.notification),
+            onBackClick = {
+                navigator.pop()
+            },
+            showBackButton = true,
+            trailingIcon = {
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .size(LargeIconButtonSize),
+                    onClick = {
+                        viewModel.markAllReadOptimistic()
+                    },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.textColor
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.read_notification),
+                        contentDescription = "Barchsi o`qildi",
+                        tint = PrimaryColor,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(LargeIconButtonPadding)
+                    )
+                }
+            }
+        )
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = ContainerPadding)
+        ) {
+            items(uiItems, key = { it.id }) { item ->
+                NotificationItem(
+                    item = item,
+                    onClick = {
+                        viewModel.markReadOptimistic(item.id)
+                        navigator.push(NotificationVerifyScreen(newsId = item.id))
+                    }
+                )
+            }
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun Preview(){
+
+    NotificationUi(
+        items = listOf(),
+        navigator = null
+    )
+}

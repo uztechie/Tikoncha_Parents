@@ -47,8 +47,12 @@ import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordV
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
+import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
+import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
+import uz.tikoncha_parent.domain.repository.NewsRepository
+import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
@@ -65,6 +69,7 @@ import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
+import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 
 val sharedModule = module {
     single {
@@ -82,6 +87,7 @@ val sharedModule = module {
     single { AvatarApiService(get()) }
     single { ChatApiService(get()) }
     single { ChatSocketService(get()) }
+    single { NewApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -90,6 +96,7 @@ val sharedModule = module {
     single<RulesRepository> { RulesRepositoryImpl(get()) }
     single<AvatarRepository> { AvatarRepositoryImpl(get()) }
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
+    single<NewsRepository> { NewsRepositoryImpl(get()) }
 
 
 
@@ -124,6 +131,7 @@ val sharedModule = module {
     single { ObserveChatEventUseCase(get()) }
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
+    single { NewsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
 
@@ -153,6 +161,7 @@ val sharedModule = module {
         get()
     ) }
     viewModel { MonitorViewModel(get(), get()) }
+    viewModel { NotificationViewModel(get(), get()) }
 
 
 
