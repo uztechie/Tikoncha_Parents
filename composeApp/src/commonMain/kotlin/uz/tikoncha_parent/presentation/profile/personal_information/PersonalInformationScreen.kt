@@ -46,11 +46,12 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzandingiz
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class PersonalInformationScreen : Screen {
+class   PersonalInformationScreen : Screen {
     @Composable
     override fun Content() {
 
@@ -125,7 +126,7 @@ fun PersonalInformationUi(
                 SpaceSmall()
 
                 CustomText(
-                    text = stringResource(Res.string.farzandingiz),
+                    text = stringResource(Res.string.farzandlaringiz),
                     fontSize = NormalLargeTextSize,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -155,6 +156,7 @@ fun PersonalInformationUi(
                     },
                     onClick = { rootNavigator?.push(AddChildScreen())},
                     textColor = PrimaryColor,
+                    borderColor = PrimaryColor
                 )
             }
 

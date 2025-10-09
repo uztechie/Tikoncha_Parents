@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -300,7 +301,7 @@ fun HomeUi(
                 CustomText(
                     text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
                     color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = NormalTextSize,
+                    fontSize = 13.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
 

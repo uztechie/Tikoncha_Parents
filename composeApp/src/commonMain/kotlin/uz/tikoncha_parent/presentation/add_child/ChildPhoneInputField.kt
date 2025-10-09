@@ -52,6 +52,7 @@ fun ChildPhoneInputField(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.extendedColor.backgroundColor,RoundedCornerShape(TextFieldCornerRadius))
             .clip(RoundedCornerShape(TextFieldCornerRadius))
     ) {
         Row(
