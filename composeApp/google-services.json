@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "935823573557",
+    "project_id": "tikoncha-d0995",
+    "storage_bucket": "tikoncha-d0995.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935823573557:android:6df5fd6e325f54b047a77c",
+        "android_client_info": {
+          "package_name": "uz.saidburxon.newedu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3Wc_12fIjK-aObUZewzYWHfB1XbeJDHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935823573557:android:2b1516a2c2d70aa747a77c",
+        "android_client_info": {
+          "package_name": "uz.tikoncha.student"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3Wc_12fIjK-aObUZewzYWHfB1XbeJDHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935823573557:android:49cf0028e952616b47a77c",
+        "android_client_info": {
+          "package_name": "uz.tikoncha_parent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3Wc_12fIjK-aObUZewzYWHfB1XbeJDHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

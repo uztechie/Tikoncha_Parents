@@ -11,9 +11,6 @@ val LocalExtendedColors = staticCompositionLocalOf<ExtendedColors> {
     error("No ExtendedColors provided")
 }
 
-val androidx.compose.material3.MaterialTheme.extendedColor: ExtendedColors
-    @Composable get() = LocalExtendedColors.current
-
 @Composable
 fun ProvideExtendedColors(
     colors: ExtendedColors,

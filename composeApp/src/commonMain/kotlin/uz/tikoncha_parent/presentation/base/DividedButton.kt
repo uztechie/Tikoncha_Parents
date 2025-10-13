@@ -33,6 +33,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -138,16 +140,19 @@ fun DividedButton(
 @Preview
 @Composable
 private fun Preview() {
-    DividedButton(
-        modifier = Modifier
-            .background(Color.White),
-        onItemClick = {},
-        title = "Title\n titl",
-        icon = painterResource(Res.drawable.arrow_right),
-        success = true,
-        isPermission = false
+    TikonchaParentTheme(mode = ThemeMode.DARK){
+        DividedButton(
+            modifier = Modifier
+                .background(Color.White),
+            onItemClick = {},
+            title = "Title\n titl",
+            icon = painterResource(Res.drawable.arrow_right),
+            success = true,
+            isPermission = false
 
-    )
+        )
+    }
+
 
 
 

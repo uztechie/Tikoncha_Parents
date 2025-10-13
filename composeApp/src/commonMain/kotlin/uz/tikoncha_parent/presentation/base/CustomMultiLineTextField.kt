@@ -52,7 +52,7 @@ fun CustomMultiLineTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.cardColor,
+    containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
     contentColor: Color = MaterialTheme.extendedColor.textColor,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -72,7 +72,7 @@ fun CustomMultiLineTextField(
     }
 
     var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    var borderColor  = if (enabled) MaterialTheme.extendedColor.borderColor else DisableButtonContentColor
 
     var newModifier = if (hasBorder){
         modifier

@@ -6,6 +6,7 @@ target 'iosApp' do
 
    pod 'YandexMapsMobile', '4.17.0-lite'
 #      pod 'Google-Maps-iOS-Utils', '6.0.0'
+  pod 'Firebase/Messaging'
 
 
 end

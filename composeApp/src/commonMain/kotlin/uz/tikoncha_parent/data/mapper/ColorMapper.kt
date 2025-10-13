@@ -22,34 +22,3 @@ data class ExtendedColors(
     val buttonColor: Color,
     val tonalButtonColor: Color,
 )
-fun toLightColorScheme(x: ExtendedColors) = lightColorScheme(
-    primary = x.primaryColor,
-    onPrimary = LightColor, // if Primary is dark — use light content
-    secondary = x.primaryLightColor,
-    onSecondary = DarkColor,
-    background = x.backgroundColor,
-    onBackground = x.onBackgroundColor,
-    surface = x.backgroundColor,
-    onSurface = x.onBackgroundColor,
-    surfaceVariant = x.cardColor,
-    onSurfaceVariant = x.textColor,
-    outline = x.borderColor,
-    error = Color(0xFFDC2626),
-    onError = LightColor,
-)
-
-fun toDarkColorScheme(x: ExtendedColors) = darkColorScheme(
-    primary = x.primaryColor,
-    onPrimary = LightColor,
-    secondary = x.primaryLightColor,
-    onSecondary = DarkColor,
-    background = x.backgroundColor,
-    onBackground = x.onBackgroundColor,
-    surface = x.backgroundColor,
-    onSurface = x.onBackgroundColor,
-    surfaceVariant = x.cardColor,
-    onSurfaceVariant = x.textColor,
-    outline = x.borderColor,
-    error = Color(0xFFF87171),
-    onError = DarkColor,
-)

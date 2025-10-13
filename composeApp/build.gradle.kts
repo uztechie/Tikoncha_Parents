@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.cocoapods)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
@@ -48,6 +49,7 @@ kotlin {
         pod("YandexMapsMobile") {
             version = "4.17.0-lite"
         }
+//        pod("Firebase/Messaging")
     }
     
     sourceSets {
@@ -58,6 +60,10 @@ kotlin {
 
             implementation(libs.ktor.client.okhttp)
             implementation("com.google.android.gms:play-services-location:21.2.0")
+
+            //firebase
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.5.1"))
+            implementation("com.google.firebase:firebase-messaging-ktx")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -120,6 +126,9 @@ kotlin {
             // Coil
             implementation("io.coil-kt.coil3:coil-compose:3.3.0")
             implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
+
+
+
 
         }
 

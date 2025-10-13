@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.monitoring
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -40,6 +42,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomLoadingButton
+import uz.tikoncha_parent.presentation.task.rememberHideKeyboard
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -73,6 +76,8 @@ private fun MonitorUi(
     val mainNavigator = LocalNavigator.current
     val rootNavigator = mainNavigator?.parent
 
+
+    val hidKeyboard = rememberHideKeyboard()
 
 
     var showDialog by remember {
@@ -128,6 +133,9 @@ private fun MonitorUi(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
+            .pointerInput(Unit){
+                detectTapGestures(onTap =  { hidKeyboard() })
+            }
     ) {
 
         CustomHeader(
