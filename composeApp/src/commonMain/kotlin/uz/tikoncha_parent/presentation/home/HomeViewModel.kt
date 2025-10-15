@@ -19,6 +19,7 @@ import uz.tikoncha_parent.data.mapper.toUsageUi
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
 import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
+import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.data.remote.model.GetRuleItem
 import uz.tikoncha_parent.data.remote.model.GetRulesData
 import uz.tikoncha_parent.data.remote.model.UpsertRuleRequest
@@ -28,8 +29,10 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
+import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.UpsertRuleUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
@@ -39,9 +42,12 @@ class HomeViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val childrenUseCase: ChildrenUseCase,
     private val refreshRulesUseCase: RefreshRulesUseCase,
-    private val upsertRuleUseCase: UpsertRuleUseCase
+    private val upsertRuleUseCase: UpsertRuleUseCase,
+    private val registerDeviceUseCase: RegisterDeviceUseCase
 ) : ViewModel()
 {
+
+    private val hasLoaded = MutableStateFlow(false)
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -55,6 +61,16 @@ class HomeViewModel(
     private var computeAllJob: Job? = null
     private var computeAppListJob: Job? = null
     private var upsertRuleJob: Job? = null
+
+    init {
+        loadOnce()
+    }
+
+    fun loadOnce(){
+        val setOk = hasLoaded.compareAndSet(expect = false, update = true)
+        if (!setOk) return
+        sendDeviceInfo()
+    }
 
     fun onEvent(event: HomeEvent) {
         when (event) {
@@ -109,49 +125,22 @@ class HomeViewModel(
         }
     }
 
-
-    private fun getAppUsageList() {
-        _state.update {
-            it.copy(
-                appUsageUiList = state.value.appUsageList.toUsageUi(
-                    startDate = _usagePeriod.value?.startDate,
-                    endDate = _usagePeriod.value?.endDate
-                )
+    private fun sendDeviceInfo(){
+        viewModelScope.launch {
+            val token = AppSettings.fcmToken
+            val info = getDeviceInfo()
+            val request = DeviceRegisterRequest(
+                fcm_token = token,
+                manufacturer = info.manufacturer,
+                model_name = info.modelName,
+                os_version = info.osVersion,
+                os = info.os
             )
+            registerDeviceUseCase.invoke(request)
         }
     }
 
-    private fun getChartData() {
-        val weeklyChartData = state.value.appUsageList.toWeeklyUsageMinutesForChart(
-            startDate = _usagePeriod.value?.startDate
-        )
 
-        val dailyChartData = state.value.appUsageList.toDailyUsageMinutesForChart(
-            startDate = _usagePeriod.value?.startDate
-        )
-        val weeklyAverage = state.value.appUsageList.toWeeklyAverage(_usagePeriod.value?.startDate)
-        val dailyAverage = state.value.appUsageList.toDailyAverage(_usagePeriod.value?.startDate)
-
-
-        println("AVER=$weeklyAverage  daily=$dailyAverage")
-
-        if (state.value.dateSelectionType == DateSelectionType.WEEK) {
-            _state.update {
-                it.copy(
-                    dailyChartData = weeklyChartData,
-                    averageUsageTime = weeklyAverage
-                )
-            }
-        } else {
-            _state.update {
-                it.copy(
-                    dailyChartData = dailyChartData,
-                    averageUsageTime = dailyAverage
-                )
-            }
-        }
-
-    }
 
 
     private fun loadChildren() {

@@ -19,6 +19,7 @@ import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
+import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.ui.theme.ThemeMode
 
 
@@ -36,6 +37,24 @@ fun App() {
     if (!inPreview) {
         SideEffect { PlatformThemeBridge.onModeChanged(mode) }
     }
+
+    FcmEventListenerEffect(
+        onApp = { app ->
+            // AppRuleEntity ga map qilib saqlash va hokazo
+        },
+        onTodo = { todo, title, message ->
+            // Floating overlay yoki notification
+        },
+        onNews = { news, title, message ->
+            // NewsRefreshEventBus.notifyRefresh(), notification ko'rsatish, deep link
+        },
+        onChat = { msg, title, message ->
+            // createChatPendingIntent(...), ChatUnreadEventBus.tryEmit(...)
+        },
+        onGeneral = { title, message ->
+            // Oddiy bildirish noma
+        }
+    )
 
     AppEnvironment {
 

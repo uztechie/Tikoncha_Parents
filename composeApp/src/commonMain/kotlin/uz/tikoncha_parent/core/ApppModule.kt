@@ -47,8 +47,12 @@ import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordV
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
+import uz.tikoncha_parent.data.remote.DeviceApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
+import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
+import uz.tikoncha_parent.domain.repository.DeviceRepository
+import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
@@ -81,6 +85,7 @@ val sharedModule = module {
     single { AvatarApiService(get()) }
     single { ChatApiService(get()) }
     single { ChatSocketService(get()) }
+    single { DeviceApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -89,6 +94,7 @@ val sharedModule = module {
     single<RulesRepository> { RulesRepositoryImpl(get()) }
     single<AvatarRepository> { AvatarRepositoryImpl(get()) }
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
+    single<DeviceRepository> { DeviceRepositoryImpl(get()) }
 
 
 
@@ -122,6 +128,7 @@ val sharedModule = module {
     single { ObserveChatEventUseCase(get()) }
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
+    single { RegisterDeviceUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
 
@@ -138,7 +145,7 @@ val sharedModule = module {
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
     viewModel { TaskViewModel(get (), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatDetailsViewModel(get()) }
     viewModel { ChatViewModel(

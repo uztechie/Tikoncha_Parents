@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- doimiy fon kuzatuv kerak bo‘lsa (API 29+) -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 
     <application
@@ -27,6 +28,9 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="myapp"/>
             </intent-filter>
         </activity>
         

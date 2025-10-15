@@ -17,25 +17,20 @@ import java.util.Locale
 object AndroidNotificationHelper {
     private const val CHANNEL_ID = "general channel"
 
-    private fun ensureChannel(ctx: Context){
+    fun ensureChannel(ctx: Context){
         val ch = NotificationChannel(CHANNEL_ID, "General", NotificationManager.IMPORTANCE_DEFAULT)
         (ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
             .createNotificationChannel(ch)
     }
 
-    fun show(ctx: Context, title: String?, body: String?, dateMillis: Long) {
+    fun show(ctx: Context, title: String?, body: String?) {
         ensureChannel(ctx)
-        val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(
-            Date(
-                dateMillis
-            )
-        )
-        val text = listOfNotNull(body, dateStr).joinToString(" • ")
+
 
         val n = NotificationCompat.Builder(ctx, CHANNEL_ID)
             .setSmallIcon(R.drawable.notification) // o'zingizning ikona
             .setContentTitle(title ?: "New message")
-            .setContentText(text)
+            .setContentText(body)
             .setAutoCancel(true)
             .build()
 

@@ -9,6 +9,12 @@ import uz.tikoncha_parent.domain.model.UserInfo
 object AppSettings {
     private val settings = Settings()
 
+
+    var fcmToken: String
+        get() = settings.get("fcmToken") ?: ""
+        set(value) = settings.set("fcmToken", value)
+
+
     var refreshToken: String
         get() = settings.get("refreshToken") ?: ""
         set(value) = settings.set("refreshToken", value)
