@@ -60,7 +60,7 @@ fun ProfileSettingsItem(
 
         SettingType.values().forEach { setting ->
 
-            SpaceMedium()
+            SpaceSmall()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -101,8 +101,6 @@ fun ProfileSettingsItem(
                         fontWeight = FontWeight.W500
                     )
 
-                    SpaceUltraSmall()
-
                     CustomText(
                         text = stringResource(setting.subtitle),
                         fontSize = SmallTextSize,
@@ -131,7 +129,6 @@ fun ProfileSettingsItem(
 
             DividerHorizontal()
         }
-        SpaceLarge()
     }
 }
 

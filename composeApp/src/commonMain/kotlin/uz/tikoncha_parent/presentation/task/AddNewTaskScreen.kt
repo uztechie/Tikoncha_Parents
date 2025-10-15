@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,13 +21,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -56,6 +60,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
+import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -94,6 +99,9 @@ fun AddNewTask(
     state: TaskState,
     event: (TaskEvent) -> Unit,
 ) {
+    var coinsAmount by remember { mutableStateOf("0") }
+    val maxAvailable = 50
+    val remaining = (maxAvailable - (coinsAmount.toIntOrNull() ?: 0)).coerceAtLeast(0)
 
     val hidKeyboard = rememberHideKeyboard()
 
@@ -137,7 +145,7 @@ fun AddNewTask(
     }
 
     CustomDialog(
-        onDismiss = {showTaskErrorDialog = false},
+        onDismiss = { showTaskErrorDialog = false },
         show = showTaskErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = taskErrorText,
@@ -146,11 +154,11 @@ fun AddNewTask(
         }
     )
 
-    if (showTaskSuccessDialog){
+    if (showTaskSuccessDialog) {
         CustomDialog(
             title = stringResource(Res.string.muvaffaqiyatli),
             message = successMessage,
-            onDismiss = { showTaskSuccessDialog = false},
+            onDismiss = { showTaskSuccessDialog = false },
             onButtonClick = {
                 navigator?.pop()
                 showTaskSuccessDialog = false
@@ -187,7 +195,7 @@ fun AddNewTask(
     if (showDialogTime) {
         TimePickerDialog(
             show = showDialogTime,
-            initialTime = selectedTime ?: Util.getCurrentTime(), // helper function
+            initialTime = selectedTime ?: Util.getCurrentTime(),
             onDismiss = { showDialogTime = false },
             onTimeSelected = {
                 println("AAAA = $timeAnd")
@@ -201,8 +209,8 @@ fun AddNewTask(
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
             .verticalScroll(rememberScrollState())
-            .pointerInput(Unit){
-                detectTapGestures(onTap =  { hidKeyboard() })
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { hidKeyboard() })
             }
     ) {
 
@@ -231,7 +239,11 @@ fun AddNewTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight)
-                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius)),
+                    .border(
+                        1.dp,
+                        MaterialTheme.extendedColor.borderColor,
+                        RoundedCornerShape(TextFieldCornerRadius)
+                    ),
                 value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
@@ -261,7 +273,11 @@ fun AddNewTask(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(
+                        1.dp,
+                        MaterialTheme.extendedColor.borderColor,
+                        RoundedCornerShape(TextFieldCornerRadius)
+                    )
                     .padding(vertical = 10.dp),
                 leadingIcon = {
                     Image(
@@ -316,7 +332,11 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(
+                        1.dp,
+                        MaterialTheme.extendedColor.borderColor,
+                        RoundedCornerShape(TextFieldCornerRadius)
+                    )
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
@@ -342,7 +362,7 @@ fun AddNewTask(
                     },
                     text = stringResource(Res.string.muhim),
                     color = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) ImportantButtonColor else Color.Transparent,
-                    textColor = if(state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
+                    textColor = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(
                     fontSize = SmallTextSize,
@@ -355,6 +375,75 @@ fun AddNewTask(
                     text = stringResource(Res.string.o_ta_muhim),
                     color = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) MostImportantButtonColor else Color.Transparent,
                     textColor = if (state.importance == ImportanceType.MOST_IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
+                )
+            }
+
+            SpaceLarge()
+
+            CustomText(
+                text = stringResource(Res.string.tangachalar_sovg_a_qiling),
+                fontSize = NormalLargeTextSize,
+                fontWeight = FontWeight.W600
+            )
+
+            SpaceMedium()
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CustomText(
+                    text = stringResource(Res.string.sizda_mavjud_tangachalar),
+                    fontSize = NormalLargeTextSize,
+                )
+                SpaceSmall()
+                Text(text = "$remaining ${stringResource(Res.string.ta)}")
+            }
+
+            SpaceMedium()
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .size(SmallIconButtonSize)
+                        .clip(RoundedCornerShape(ShapeCornerRadius))
+                        .background(MaterialTheme.extendedColor.cardColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.coin),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxSize(0.7f)
+                    )
+                }
+
+                SpaceUltraSmall()
+
+                CustomText(
+                    text = stringResource(Res.string.tangachalar),
+                    fontSize = NormalTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                )
+
+                CoinAmountTextField(
+                    coinsAmount = coinsAmount,
+                    onValueChange = {
+                        coinsAmount = it
+                    },
+                    onAddCoinClicked = {
+                        coinsAmount = it.toString()
+                    },
+                    onSubtractButtonClicked = {
+                        coinsAmount = it.toString()
+                    }
                 )
             }
         }

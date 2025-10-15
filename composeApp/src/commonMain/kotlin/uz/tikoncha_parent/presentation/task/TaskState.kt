@@ -42,4 +42,7 @@ data class TaskState(
     val parentCompletedTaskList: List<Task> = emptyList(),
     val childrenCompletedTaskList: List<Task> = emptyList(),
     val selectedCompletedTaskList: List<Task> = emptyList(),
+
+    val editingTaskCreatedAt: Long? = null,
+
 )

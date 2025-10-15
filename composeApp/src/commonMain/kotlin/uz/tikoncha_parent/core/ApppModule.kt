@@ -48,11 +48,15 @@ import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordVie
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
+import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
+import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.repository.NewsRepository
+import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
@@ -65,9 +69,11 @@ import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
+import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
+import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 
 val sharedModule = module {
     single {
@@ -86,6 +92,7 @@ val sharedModule = module {
     single { ChatApiService(get()) }
     single { ChatSocketService(get()) }
     single { DeviceApiService(get()) }
+    single { NewApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -95,6 +102,7 @@ val sharedModule = module {
     single<AvatarRepository> { AvatarRepositoryImpl(get()) }
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
+    single<NewsRepository> { NewsRepositoryImpl(get()) }
 
 
 
@@ -105,6 +113,7 @@ val sharedModule = module {
     single { TodoUseCase(get()) }
     single { UserInfoUseCase(get()) }
     single { TodoListUseCase(get()) }
+    single { UpdateTodoUseCase(get()) }
     single { AddChildUseCase(get()) }
     single { ChildrenUseCase(get()) }
     single { AppUsagesUseCase(get()) }
@@ -129,6 +138,7 @@ val sharedModule = module {
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
     single { RegisterDeviceUseCase(get()) }
+    single { NewsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
 
@@ -144,8 +154,8 @@ val sharedModule = module {
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
-    viewModel { TaskViewModel(get (), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { TaskViewModel(get (), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
     viewModel { ChatDetailsViewModel(get()) }
     viewModel { ChatViewModel(
@@ -158,6 +168,7 @@ val sharedModule = module {
         get()
     ) }
     viewModel { MonitorViewModel(get(), get()) }
+    viewModel { NotificationViewModel(get(), get()) }
 
 
 

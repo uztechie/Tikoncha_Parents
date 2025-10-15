@@ -8,4 +8,5 @@ interface TodoRepository {
     suspend fun registerTodo(request: TodoRequest): TodoResponse
 
     suspend fun getTodoList(userId: String): TodoListResponse
+    suspend fun updateTodo(request: TodoRequest): TodoResponse
 }

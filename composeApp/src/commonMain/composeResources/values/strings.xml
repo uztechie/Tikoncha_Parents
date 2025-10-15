@@ -171,8 +171,7 @@
     <string name="muvaffaqiyatli">Muvaffaqiyatli</string>
     <string name="qisqartirish">Qisqartirish</string>
     <string name="vazifa_tahrirlandi">Vazifa tahrirlandi</string>
-    <string name="server_connection_error">Server bilan bog\'lanishda xatolik!</string>
-
+    <string name="server_connection_error">Server bilan bog'lanishda xatolik!</string>
     <string name="faol">Faol</string>
     <string name="faol_emas">Faol emas</string>
     <string name="ohirgi_faollik">Ohirgi faollik</string>
@@ -181,5 +180,8 @@
     <string name="azo">A'zo</string>
     <string name="ekranni_kuzatish">Ekranni kuzatish</string>
     <string name="internetdagi_tarix">Internetdagi tarix</string>
+    <string name="notification">Notification</string>
+    <string name="sizda_mavjud_tangachalar">Sizda mavjud tangachalar</string>
+    <string name="tangachalar_sovg_a_qiling">Vazifani bajargani uchun farzandingizga tangachalar sovg’a qiling.</string>
 
 </resources>

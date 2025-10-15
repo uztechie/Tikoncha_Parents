@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -54,6 +55,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -86,6 +88,7 @@ fun HomeUi(
     state: HomeState,
     event: (HomeEvent) -> Unit
 ) {
+    val rootNavigator = navigator?.parent
 
     LaunchedEffect(true){
         event(HomeEvent.GetChildren)
@@ -233,7 +236,7 @@ fun HomeUi(
                     FilledTonalIconButton(
                         modifier = Modifier
                             .size(NormalIconButtonSize),
-                        onClick = {},
+                        onClick = { },
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.extendedColor.buttonColor,
                             contentColor = MaterialTheme.extendedColor.onBackgroundColor
@@ -263,7 +266,7 @@ fun HomeUi(
                         modifier = Modifier
                             .size(LargeIconButtonSize),
                         onClick = {
-
+                            rootNavigator?.push(NotificationScreen())
                         },
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.extendedColor.buttonColor,
@@ -298,14 +301,14 @@ fun HomeUi(
                 CustomText(
                     text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
                     color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = NormalTextSize,
+                    fontSize = 13.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 SpaceUltraSmall()
 
                 CustomSelectionButton(
-                    label = stringResource(Res.string.farzandingizni_tanlang),
+                    label = stringResource(Res.string.farzandlaringiz),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(TextFieldHeight),

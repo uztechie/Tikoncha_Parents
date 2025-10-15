@@ -157,5 +157,11 @@
     <string name="vazifa_tahrirlandi">Задание отредактировано</string>
     <string name="ekranni_kuzatish">Наблюдение за экраном</string>
     <string name="internetdagi_tarix">История интернета</string>
+    <string name="notification">Уведомление</string>
+    <string name="sizda_mavjud_tangachalar">Имеющиеся у вас монеты</string>
+    <string name="bir_kunda_o_rtacha">В среднем за сутки</string>
+    <string name="eng_kop_foydalanilgan">Наиболее часто используемый</string>
+    <string name="tangachalar_sovg_a_qiling">Подарите своему ребенку монетки за выполнение задания.</string>
+    <string name="farzand_qoshish">Добавить ребёнка</string>
 
 </resources>
