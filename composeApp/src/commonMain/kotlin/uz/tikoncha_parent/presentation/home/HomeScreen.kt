@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
@@ -38,9 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -55,7 +58,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.push.DeepLinkEffect
+import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -81,7 +87,7 @@ class HomeScreen : Screen {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, InternalVoyagerApi::class)
 @Composable
 fun HomeUi(
     navigator: Navigator?,
@@ -89,6 +95,11 @@ fun HomeUi(
     event: (HomeEvent) -> Unit
 ) {
     val rootNavigator = navigator?.parent
+
+    LaunchedEffect(Unit){
+
+    }
+
 
     LaunchedEffect(true){
         event(HomeEvent.GetChildren)

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.flow.distinctUntilChanged
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -117,6 +122,19 @@ fun ChatMessageUi(
     val listState = rememberLazyListState()
 
 
+    val atBottom by remember {
+        derivedStateOf { isAtBottom(listState, state.allMessages.size) }
+    }
+
+    LaunchedEffect(listState, state.allMessages.size) {
+        snapshotFlow { atBottom }
+            .distinctUntilChanged()
+            .collect { isBottom ->
+                if (isBottom && state.allMessages.isNotEmpty()) {
+                    event(ChatEvent.OnScrollLastMessage)
+                }
+            }
+    }
 
 
     LaunchedEffect(true) {
@@ -384,6 +402,21 @@ fun ChatMessageUi(
                 )
         }
     }
+}
+
+fun isAtBottom(state: LazyListState, itemsCount: Int, thresholdPx: Int = 12): Boolean {
+    if (itemsCount == 0) return true
+    val layout = state.layoutInfo
+    val lastIndex = itemsCount - 1
+    val visible = layout.visibleItemsInfo
+    val lastVisible = visible.lastOrNull() ?: return false
+
+    if (lastVisible.index != lastIndex) return false
+
+    // Element to‘liq ko‘rinadimi?
+    val itemBottom = lastVisible.offset + lastVisible.size
+    val viewportBottom = layout.viewportEndOffset
+    return itemBottom <= viewportBottom + thresholdPx
 }
 
 @Preview

@@ -45,6 +45,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.happyemoji_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -181,7 +182,12 @@ fun <T>CustomListDialog(
                                                 fontSize = NormalTextSize,
                                                 modifier = Modifier
                                             )
+
                                         }
+                                        DividerHorizontal(
+                                            modifier = Modifier
+                                                .padding(start = TextFieldInnerPadding+TextFieldIconSize+TextFieldInnerPadding, end = TextFieldInnerPadding)
+                                        )
                                     }
                                 }
                             }

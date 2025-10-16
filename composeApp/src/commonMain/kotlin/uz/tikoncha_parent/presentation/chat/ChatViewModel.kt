@@ -92,6 +92,7 @@ class ChatViewModel(
                             )
                         }
                         groupMessageByDate()
+                        markMessageAsRead()
                     }
                     is ChatWsEvent.MessageUpdated -> {
 
@@ -303,10 +304,19 @@ class ChatViewModel(
     }
 
     private fun markMessageAsRead(){
+        Logger.d(TAG, "markMessageAsRead: ${state.value.lastMessage}")
         readMessageJob?.cancel()
         readMessageJob = viewModelScope.launch {
-            val lastMessage = state.value.lastMessage
+            var lastMessage = state.value.lastMessage
             if (lastMessage == null){
+
+                lastMessage = state.value.messages
+                    .filterIsInstance<ChatMessageItem.Message>()
+                    .maxByOrNull { it.chatMessageUi.createdAt }
+                    ?.chatMessageUi
+
+                if (lastMessage == null)
+
                 return@launch
             }
             if (lastMessage.isMine || lastMessage.isRead) return@launch

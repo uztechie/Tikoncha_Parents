@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>tikoncha-parent.uz</string>
+	<string>www.newedu.tikoncha-parent.uz</string>
 	<key>PROJECT_ID</key>
 	<string>tikoncha-d0995</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:935823573557:ios:fda5b7c801ad91ec47a77c</string>
+	<string>1:935823573557:ios:fb63cf031d0ac96347a77c</string>
 </dict>
 </plist>

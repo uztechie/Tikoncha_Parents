@@ -114,9 +114,9 @@ fun SpaceUltraSmall() {
 }
 
 @Composable
-fun DividerHorizontal() {
+fun DividerHorizontal(modifier: Modifier = Modifier) {
     HorizontalDivider(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(1.dp),
         color = MaterialTheme.extendedColor.hintColor.copy(alpha = 0.1f)

@@ -107,9 +107,9 @@ fun TikonchaParentTheme(
                 val cfg = LocalBarsConfig.current.value
                 SystemBarTheme.apply(
                     isDark = isDark,
-                    statusBarColor = colorScheme.background,
-                    navigationBarColor = colorScheme.background,
-                    navigationBarFallbackColor = colorScheme.background,
+                    statusBarColor = extendedColor.backgroundColor,
+                    navigationBarColor = extendedColor.backgroundColor,
+                    navigationBarFallbackColor = extendedColor.backgroundColor,
                     transparentStatusBar = cfg.transparentStatusBar
                 )
             }

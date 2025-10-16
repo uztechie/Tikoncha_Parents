@@ -8,5 +8,6 @@ data class DeviceRegisterRequest(
     val model_name: String,
     val os: String,
     val os_version: String,
-    val fcm_token: String
+    val fcm_token: String,
+    val app_code: Int
 )

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.mapToDailyUsagePeriods
 import uz.tikoncha_parent.data.mapper.mapToWeeklyUsagePeriods
@@ -134,7 +135,8 @@ class HomeViewModel(
                 manufacturer = info.manufacturer,
                 model_name = info.modelName,
                 os_version = info.osVersion,
-                os = info.os
+                os = info.os,
+                app_code = AppCode.currentAppCode
             )
             registerDeviceUseCase.invoke(request)
         }
