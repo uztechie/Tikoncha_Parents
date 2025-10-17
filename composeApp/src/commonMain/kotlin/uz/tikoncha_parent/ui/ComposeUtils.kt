@@ -87,6 +87,7 @@ val AppIconInnerPadding: Dp = 10.dp
 val AppItemHeight: Dp = 60.dp
 val SmallIconSize: Dp = 18.dp
 val NormalIconSize: Dp = 22.dp
+val LargeIconSize: Dp = 28.dp
 
 val ProfileImageSize: Dp = 90.dp
 

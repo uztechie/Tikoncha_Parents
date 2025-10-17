@@ -26,7 +26,7 @@ fun CustomButton(
     fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.extendedColor.primaryColor,
-    textColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
+    textColor: Color = OnPrimaryColor,
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),

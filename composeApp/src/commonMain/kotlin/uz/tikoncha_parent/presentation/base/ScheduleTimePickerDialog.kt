@@ -1,4 +1,3 @@
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -52,15 +51,20 @@ import kotlin.math.abs
 private val WHEEL_HEIGHT = 74.dp
 private val ITEM_HEIGHT = 24.dp
 private val EDGE_PADDING = 25.dp
+
 @Composable
-fun TimePickerDialog(
+fun ScheduleTimePickerDialog(
+    textToggle: (@Composable () -> Unit)? = null,
     show: Boolean,
     initialTime: LocalTime,
     onDismiss: () -> Unit,
+    onSave: (LocalTime) -> Unit,
     onTimeSelected: (LocalTime) -> Unit
 ) {
     var selectedHour by remember { mutableStateOf(initialTime.hour) }
     var selectedMinute by remember { mutableStateOf(initialTime.minute) }
+
+    if (!show) return
 
     if (show) {
         Dialog(
@@ -78,23 +82,21 @@ fun TimePickerDialog(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CustomText(
-                        text = stringResource(Res.string.tugash_vaqtini_belgilang),
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (textToggle != null) {
+                        textToggle()
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        TimeColumn(
+                        ScheduleTimeColumn(
                             range = 0..23,
                             selected = selectedHour,
                             onSelected = { selectedHour = it }
                         )
                         Spacer(Modifier.size(5.dp))
-                        TimeColumn(
+                        ScheduleTimeColumn(
                             range = 0..59,
                             selected = selectedMinute,
                             onSelected = { selectedMinute = it }
@@ -143,7 +145,7 @@ fun TimePickerDialog(
 }
 
 @Composable
-fun TimeColumn(
+fun ScheduleTimeColumn(
     range: IntRange,
     selected: Int,
     onSelected: (Int) -> Unit
@@ -165,7 +167,7 @@ fun TimeColumn(
             }?.index
             // Agar yuqoridagi topilmasa (masalan, layout o'zgarishi), "eng yaqin"iga qaytamiz:
                 ?: info.visibleItemsInfo.minByOrNull { item ->
-                    kotlin.math.abs((item.offset + item.size / 2) - centerY)
+                    abs((item.offset + item.size / 2) - centerY)
                 }?.index
         }
             .filterNotNull()

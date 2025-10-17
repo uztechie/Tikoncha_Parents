@@ -183,5 +183,10 @@
     <string name="notification">Notification</string>
     <string name="sizda_mavjud_tangachalar">Sizda mavjud tangachalar</string>
     <string name="tangachalar_sovg_a_qiling">Vazifani bajargani uchun farzandingizga tangachalar sovg’a qiling.</string>
+    <string name="jadvallar">Jadval</string>
+    <string name="ilovalar">Ilovalar</string>
+    <string name="veb_sayt">Veb-sayt</string>
+    <string name="boshlanishi">Boshlanishi</string>
+    <string name="tugashi">Tugashi</string>
 
 </resources>
