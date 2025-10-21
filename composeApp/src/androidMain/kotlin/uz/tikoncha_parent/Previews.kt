@@ -14,13 +14,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +31,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -43,6 +48,8 @@ import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.boshlanishi
 import tikoncha_parents.composeapp.generated.resources.ch
 import tikoncha_parents.composeapp.generated.resources.clock
+import tikoncha_parents.composeapp.generated.resources.close
+import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.du
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt_yaratish
 import tikoncha_parents.composeapp.generated.resources.ju
@@ -58,6 +65,7 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.presentation.home.schedule.timelist.AllDayRow
 import uz.tikoncha_parent.presentation.home.schedule.timelist.Timeline
 import uz.tikoncha_parent.presentation.home.schedule.timelist.WeekdayChips
@@ -65,6 +73,7 @@ import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeEvent
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeItem
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeState
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeUi
+import uz.tikoncha_parent.ui.BackgroundColor
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.CardCornerRadius
@@ -90,108 +99,23 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 
-@Composable
-fun ScheduleTimeItem(
-    modifier: Modifier = Modifier,
-    item: ScheduleTimeUi,
-    onRemove:() -> Unit
-){
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(ShapeCornerRadius))
-            .border(1.dp, BorderColor, RoundedCornerShape(ShapeCornerRadius))
-            .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    )
-    {
-
-        Box(
-            modifier = Modifier
-                .size(SmallIconButtonSize)
-                .clip(RoundedCornerShape(ShapeCornerRadius))
-                .background(MaterialTheme.extendedColor.tonalButtonColor),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(Res.drawable.clock),
-                contentDescription = "",
-                modifier = Modifier
-                    .fillMaxSize(0.6f)
-            )
-        }
-
-        SpaceSmall()
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            CustomText(
-                text = item.time,
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.SemiBold
-            )
-            val weekDays = item.weekDays.map {
-                when(it){
-                    WeekDay.MON -> stringResource(Res.string.du)
-                    WeekDay.TUE -> stringResource(Res.string.se)
-                    WeekDay.WED -> stringResource(Res.string.ch)
-                    WeekDay.THU -> stringResource(Res.string.pa)
-                    WeekDay.FRI -> stringResource(Res.string.ju)
-                    WeekDay.SAT -> stringResource(Res.string.sh)
-                    WeekDay.SUN -> stringResource(Res.string.ya)
-                }
-            }.joinToString(", ")
-            CustomText(
-                text = weekDays,
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.Normal,
-                lineHeight = NormalTextSize,
-                color = MaterialTheme.extendedColor.hintColor
-            )
-            SpaceMedium()
-            Timeline(
-                ranges = item.timeRange,
-                allDay = false
-            )
-        }
-
-
-
-        IconButton(
-            onClick = {
-                onRemove()
-            },
-            modifier = Modifier
-                .size(NormalIconButtonSize)
-        ){
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Delete",
-                modifier = Modifier
-                    .padding(NormalIconButtonPadding)
-                    .size(NormalIconSize)
-            )
-        }
-        SpaceUltraSmall()
-
-    }
-}
 
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
 private fun Pre() {
     TikonchaParentTheme(ThemeMode.LIGHT) {
 
-        ScheduleTimeItem(
-            item = ScheduleTimeUi(
-                time = "12:00 - 13:00",
-                weekDays = setOf(WeekDay.MON, WeekDay.TUE, WeekDay.WED),
-                timeRange = emptyList()
-            )
-        ) { }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor)
+                .padding(ContainerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+
+        }
+
 
     }
 

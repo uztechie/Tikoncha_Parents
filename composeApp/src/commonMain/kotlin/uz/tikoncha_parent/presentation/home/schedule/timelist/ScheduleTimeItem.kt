@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+
+
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
@@ -32,6 +33,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_left
 import tikoncha_parents.composeapp.generated.resources.ch
 import tikoncha_parents.composeapp.generated.resources.clock
+import tikoncha_parents.composeapp.generated.resources.close
+import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.du
 import tikoncha_parents.composeapp.generated.resources.ju
 import tikoncha_parents.composeapp.generated.resources.pa
@@ -43,6 +46,7 @@ import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.domain.model.hm
+import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.LargeTextSize
@@ -64,15 +68,21 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun ScheduleTimeItem(
     modifier: Modifier = Modifier,
     item: ScheduleTimeUi,
-    onRemove:() -> Unit
-){
+    onRemove: () -> Unit
+) {
+
+    val bgColor = MaterialTheme.extendedColor.backgroundColor
+  
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(ShapeCornerRadius))
-            .border(1.dp, BorderColor, RoundedCornerShape(ShapeCornerRadius))
-            .padding(10.dp),
+            .verticalShadow()
+            .background(
+                bgColor,
+                RoundedCornerShape(ShapeCornerRadius)
+            )
+            .padding(10.dp)
     )
     {
 
@@ -103,7 +113,7 @@ fun ScheduleTimeItem(
                 fontWeight = FontWeight.SemiBold
             )
             val weekDays = item.weekDays.map {
-                when(it){
+                when (it) {
                     WeekDay.MON -> stringResource(Res.string.du)
                     WeekDay.TUE -> stringResource(Res.string.se)
                     WeekDay.WED -> stringResource(Res.string.ch)
@@ -135,7 +145,7 @@ fun ScheduleTimeItem(
         FilledTonalIconButton(
             modifier = Modifier
                 .size(NormalIconButtonSize),
-            onClick =  onRemove,
+            onClick = onRemove,
             colors = IconButtonDefaults.filledTonalIconButtonColors(
                 containerColor = MaterialTheme.extendedColor.cardColor,
                 contentColor = MaterialTheme.extendedColor.onBackgroundColor
@@ -143,11 +153,10 @@ fun ScheduleTimeItem(
             shape = RoundedCornerShape(10.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Close,
+                painter = painterResource(Res.drawable.close),
                 contentDescription = "Delete",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(NormalIconButtonPadding)
+                    .fillMaxSize(0.5f)
             )
         }
     }
