@@ -5,11 +5,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import uz.tikoncha_parent.data.mapper.ExtendedColors
 import uz.tikoncha_parent.platform.SystemBarTheme
 import uz.tikoncha_parent.ui.Background
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.CardColors
+import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.DarkBackgroundColor
 import uz.tikoncha_parent.ui.DarkButtonBackgroundColors
 import uz.tikoncha_parent.ui.DarkCardColors
@@ -25,6 +27,7 @@ import uz.tikoncha_parent.ui.LightGrayColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.PrimaryGraColor
 import uz.tikoncha_parent.ui.PrimaryLightColor
+import uz.tikoncha_parent.ui.ShadowColor
 import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TonalButtonContainerColor
 
@@ -54,7 +57,8 @@ private val LightExtendedColorScheme = ExtendedColors(
     borderColor = BorderColor,
     buttonMenuColor = TextColor,
     disabledColor = CardColors,
-    shadowColor = GrayColor,
+    shadowColor = ShadowColor,
+    shadowLightColor = PrimaryColor.copy(alpha = 0.1f),
     buttonColor = CardColors,
     tonalButtonColor = TonalButtonContainerColor
 
@@ -71,6 +75,7 @@ private val DarkExtendedColorScheme = ExtendedColors(
     buttonMenuColor = HintTextColor,
     disabledColor = DarkCardColorsButton,
     shadowColor = PrimaryGraColor,
+    shadowLightColor = PrimaryColor.copy(alpha = 0.1f),
     buttonColor = DarkButtonBackgroundColors,
     tonalButtonColor = DarkCardColors
 )

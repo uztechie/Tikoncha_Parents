@@ -19,12 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 /**
  * Ixcham chip: minimal padding, 2-3 harfli label, tanlanganda yashil.
@@ -42,12 +44,10 @@ fun CustomChipFilter(
     horizontalPadding: Dp = 6.dp,    // ichki horizontal padding (label atrofida)
     cornerRadius: Dp = 8.dp,         // yumaloqlik
     // Ranglar
-    selectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primary,
-    unselectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.surface,
-    selectedLabelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onPrimary,
-    unselectedLabelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
-    unselectedBorderColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
-    unselectedBorderWidth: Dp = 1.dp,
+    selectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.primaryColor,
+    unselectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.cardColor,
+    selectedLabelColor: androidx.compose.ui.graphics.Color = Color.White,
+    unselectedLabelColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.textColor,
     // Matn stili
     fontSize: androidx.compose.ui.unit.TextUnit = 12.sp,
     fontWeight: FontWeight = FontWeight.W400,
@@ -71,10 +71,6 @@ fun CustomChipFilter(
             .sizeIn(minHeight = height) // balandlikni kafolatlaydi
             .clip(shape)
             .background(bg.value, shape)
-            .let {
-                if (!selected) it.border(unselectedBorderWidth, unselectedBorderColor, shape)
-                else it
-            }
             .clickable(
                 interactionSource = interaction,
                 indication = LocalIndication.current,

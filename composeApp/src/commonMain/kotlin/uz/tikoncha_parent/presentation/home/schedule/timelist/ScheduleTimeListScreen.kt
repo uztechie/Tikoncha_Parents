@@ -1,18 +1,24 @@
 package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +35,22 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt
+import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.qoshish
+import tikoncha_parents.composeapp.generated.resources.saqlash
+import tikoncha_parents.composeapp.generated.resources.vazifa_qo_shish
+import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.ui.ButtonCornerRadius
+import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DialogButtonHeight
+import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -89,15 +105,19 @@ fun ScheduleTimeListUi(
             onBackClick = {}
         )
 
-        Box(
+
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(ContainerPadding)
-        ) {
+                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
+        )
+        {
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 contentPadding = PaddingValues(
                     vertical = ContainerPadding
@@ -105,6 +125,17 @@ fun ScheduleTimeListUi(
             ) {
                 items(state.timeList) {
                     ScheduleTimeItem(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = null,
+                                indication = null,
+                                onClick = {
+                                    event(ScheduleTimeEvent.SetTimeData(
+                                        it
+                                    ))
+                                    showSetupDialog = true
+                                }
+                            ),
                         item = it,
                         onRemove = {
                             event(ScheduleTimeEvent.RemoveTime(it))
@@ -113,26 +144,41 @@ fun ScheduleTimeListUi(
                 }
             }
 
+
             CustomOutlinedButton(
-                text = stringResource(Res.string.qoshish),
+                enabled = !state.timeList.any { it.allDay && it.weekDays.size == 7 },
+                modifier = Modifier
+                    .fillMaxWidth(),
                 onClick = {
                     showSetupDialog = true
                 },
-                modifier = Modifier
-                    .height(DialogButtonHeight)
-                    .align(Alignment.BottomEnd),
-                leadingIcon = {
+                text = stringResource(Res.string.oraliq_qoshish),
+                endingIcon = {
                     Icon(
                         painter = painterResource(Res.drawable.add_square),
                         contentDescription = "",
-                        tint = PrimaryColor
                     )
                 }
+
+            )
+
+            SpaceSmall()
+
+
+            CustomButton(
+                text = stringResource(Res.string.saqlash),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
+                onClick = {}
             )
 
 
 
+
         }
+
+
     }
 }
 

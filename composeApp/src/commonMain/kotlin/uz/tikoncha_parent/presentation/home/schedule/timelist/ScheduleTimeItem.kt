@@ -36,7 +36,10 @@ import tikoncha_parents.composeapp.generated.resources.clock
 import tikoncha_parents.composeapp.generated.resources.close
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.du
+import tikoncha_parents.composeapp.generated.resources.har_kuni
 import tikoncha_parents.composeapp.generated.resources.ju
+import tikoncha_parents.composeapp.generated.resources.kun_davomida
+import tikoncha_parents.composeapp.generated.resources.kunlik
 import tikoncha_parents.composeapp.generated.resources.pa
 import tikoncha_parents.composeapp.generated.resources.se
 import tikoncha_parents.composeapp.generated.resources.sh
@@ -46,6 +49,7 @@ import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.domain.model.hm
+import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -68,11 +72,13 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun ScheduleTimeItem(
     modifier: Modifier = Modifier,
     item: ScheduleTimeUi,
-    onRemove: () -> Unit
-) {
+    onRemove: () -> Unit,
+)
+{
 
     val bgColor = MaterialTheme.extendedColor.backgroundColor
-  
+//    val bgColor = Color(0xFFe0e0e0)
+
 
     Row(
         modifier = modifier
@@ -107,24 +113,28 @@ fun ScheduleTimeItem(
             modifier = Modifier
                 .weight(1f)
         ) {
+
+            val title = if (item.allDay){
+                stringResource(Res.string.kun_davomida)
+            }
+            else{
+                item.time
+            }
+
             CustomText(
-                text = item.time,
+                text = title,
                 fontSize = LargeTextSize,
                 fontWeight = FontWeight.SemiBold
             )
-            val weekDays = item.weekDays.map {
-                when (it) {
-                    WeekDay.MON -> stringResource(Res.string.du)
-                    WeekDay.TUE -> stringResource(Res.string.se)
-                    WeekDay.WED -> stringResource(Res.string.ch)
-                    WeekDay.THU -> stringResource(Res.string.pa)
-                    WeekDay.FRI -> stringResource(Res.string.ju)
-                    WeekDay.SAT -> stringResource(Res.string.sh)
-                    WeekDay.SUN -> stringResource(Res.string.ya)
-                }
-            }.joinToString(", ")
+            val labels = if (item.weekDays.size == 7){
+                stringResource(Res.string.har_kuni)
+            }
+            else{
+                item.weekDays.map { weekdayLabel(it) }.joinToString(", ")
+            }
+
             CustomText(
-                text = weekDays,
+                text = labels,
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.Normal,
                 lineHeight = NormalTextSize,
@@ -135,29 +145,17 @@ fun ScheduleTimeItem(
 
             Timeline(
                 ranges = item.timeRange,
-                allDay = false
+                allDay = item.allDay
             )
         }
 
 
         SpaceSmall()
 
-        FilledTonalIconButton(
-            modifier = Modifier
-                .size(NormalIconButtonSize),
-            onClick = onRemove,
-            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                containerColor = MaterialTheme.extendedColor.cardColor,
-                contentColor = MaterialTheme.extendedColor.onBackgroundColor
-            ),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.close),
-                contentDescription = "Delete",
-                modifier = Modifier
-                    .fillMaxSize(0.5f)
-            )
-        }
+        CloseButton(
+            onClick = {
+                onRemove()
+            }
+        )
     }
 }

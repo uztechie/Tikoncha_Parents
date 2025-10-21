@@ -3,9 +3,11 @@ package uz.tikoncha_parent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material3.Card
@@ -23,7 +27,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,10 +47,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
 
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.boshlanishi
 import tikoncha_parents.composeapp.generated.resources.ch
@@ -51,8 +62,10 @@ import tikoncha_parents.composeapp.generated.resources.clock
 import tikoncha_parents.composeapp.generated.resources.close
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.du
+import tikoncha_parents.composeapp.generated.resources.faol_vaqt
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt_yaratish
 import tikoncha_parents.composeapp.generated.resources.ju
+import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.pa
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.se
@@ -62,20 +75,30 @@ import tikoncha_parents.composeapp.generated.resources.vaqt
 import tikoncha_parents.composeapp.generated.resources.ya
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.WeekDay
+import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.verticalShadow
+import uz.tikoncha_parent.presentation.home.schedule.RoundedCheckbox
 import uz.tikoncha_parent.presentation.home.schedule.timelist.AllDayRow
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleSetupTimeDialog
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeColumn
 import uz.tikoncha_parent.presentation.home.schedule.timelist.Timeline
 import uz.tikoncha_parent.presentation.home.schedule.timelist.WeekdayChips
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeEvent
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeItem
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeListUi
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeState
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeUi
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeViewModel
+import uz.tikoncha_parent.presentation.profile.subscription.CustomCheckBox
 import uz.tikoncha_parent.ui.BackgroundColor
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ButtonCornerRadius
+import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DialogButtonHeight
@@ -99,6 +122,115 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 
+@Composable
+fun ScheduleTimeListUi2(
+    state: ScheduleTimeState,
+    event: (ScheduleTimeEvent) -> Unit
+)
+{
+
+    var showSetupDialog by remember {
+        mutableStateOf(false)
+    }
+
+
+    ScheduleSetupTimeDialog(
+        show = showSetupDialog,
+        state = state,
+        event = event,
+        onDismiss = {showSetupDialog = false}
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.extendedColor.backgroundColor)
+    ) {
+
+        CustomHeader(
+            title = stringResource(Res.string.faol_vaqt),
+            showBackButton = true,
+            onBackClick = {}
+        )
+
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
+        )
+        {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                contentPadding = PaddingValues(
+                    vertical = ContainerPadding
+                )
+            ) {
+                items(state.timeList) {
+                    ScheduleTimeItem(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = null,
+                                indication = null,
+                                onClick = {
+                                    event(ScheduleTimeEvent.SetTimeData(
+                                        it
+                                    ))
+                                    showSetupDialog = true
+                                }
+                            ),
+                        item = it,
+                        onRemove = {
+                            event(ScheduleTimeEvent.RemoveTime(it))
+                        }
+                    )
+                }
+            }
+
+
+            CustomOutlinedButton(
+                enabled = !state.timeList.any { it.allDay && it.timeRange.size == 7 },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = {
+                    showSetupDialog = true
+                },
+                text = stringResource(Res.string.oraliq_qoshish),
+                endingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.add_square),
+                        contentDescription = "",
+                    )
+                }
+
+            )
+
+            SpaceSmall()
+
+
+            CustomButton(
+                text = stringResource(Res.string.saqlash),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
+                onClick = {}
+            )
+
+
+
+
+        }
+
+
+    }
+}
+
+
 
 
 @androidx.compose.ui.tooling.preview.Preview
@@ -106,18 +238,14 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 private fun Pre() {
     TikonchaParentTheme(ThemeMode.LIGHT) {
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundColor)
-                .padding(ContainerPadding),
-            contentAlignment = Alignment.Center
-        ) {
 
-        }
-
-
+        ScheduleTimeListUi2(
+            state = ScheduleTimeState(),
+            event = {}
+        )
     }
+
+
 
 }
 

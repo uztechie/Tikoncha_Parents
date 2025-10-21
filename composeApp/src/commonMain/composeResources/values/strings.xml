@@ -202,5 +202,7 @@
     <string name="faol_vaqt_yaratish">Faol vaqt yaratish</string>
     <string name="kunlar">Kunlar</string>
     <string name="har_kuni">Har kuni</string>
+    <string name="kun_davomida">Kun davomida</string>
+    <string name="oraliq_qoshish">Oraliq qo'shish</string>
 
 </resources>

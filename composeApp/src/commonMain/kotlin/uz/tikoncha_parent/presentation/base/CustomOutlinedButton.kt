@@ -33,8 +33,8 @@ fun CustomOutlinedButton(
     fontSize: TextUnit = NormalTextSize,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.extendedColor.backgroundColor,
-    textColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
-    borderColor: Color = MaterialTheme.extendedColor.borderColor,
+    textColor: Color = MaterialTheme.extendedColor.primaryColor,
+    borderColor: Color = MaterialTheme.extendedColor.primaryColor,
     enabled: Boolean = true,
     onClick: () -> Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
@@ -51,9 +51,9 @@ fun CustomOutlinedButton(
             .height(ButtonHeight),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = backgroundColor,
-            contentColor = textColor,
-            disabledContainerColor = DisableButtonColor,
-            disabledContentColor = DisableButtonContentColor
+            contentColor = contentColor,
+            disabledContainerColor = backgroundColor,
+            disabledContentColor = contentColor
         ),
         border = BorderStroke(1.dp, borderColor),
         shape = shape,

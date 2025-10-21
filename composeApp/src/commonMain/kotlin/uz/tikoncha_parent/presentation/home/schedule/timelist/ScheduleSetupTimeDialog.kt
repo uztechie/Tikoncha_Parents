@@ -40,6 +40,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.home.schedule.RoundedCheckbox
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.CardCornerRadius
@@ -49,6 +50,7 @@ import uz.tikoncha_parent.ui.OnPrimaryColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -65,29 +67,37 @@ fun ScheduleSetupTimeDialog(
     val startLabel = stringResource(Res.string.boshlanishi) to null
     val endLabel = stringResource(Res.string.tugashi) to null
 
-    var startSelectedHour by remember {
-        mutableStateOf(state.startTime.hour)
-    }
-    var startSelectedMinute by remember {
-        mutableStateOf(state.startTime.minute)
-    }
+    var startSelectedHour by remember { mutableStateOf(state.startTime.hour) }
 
-    var endSelectedHour by remember {
-        mutableStateOf(state.endTime.hour)
-    }
-    var endSelectedMinute by remember {
-        mutableStateOf(state.endTime.minute)
-    }
+    var startSelectedMinute by remember { mutableStateOf(state.startTime.minute) }
+
+
+    var endSelectedHour by remember { mutableStateOf(state.endTime.hour) }
+    var endSelectedMinute by remember { mutableStateOf(state.endTime.minute) }
+
 
     var timeTypeIndex by remember {
         mutableStateOf(0)
     }
 
-    LaunchedEffect(startSelectedHour, startSelectedMinute, endSelectedHour, endSelectedMinute){
-        event(ScheduleTimeEvent.SetTime(
-            startTime = LocalTime(startSelectedHour, startSelectedMinute),
-            endTime = LocalTime(endSelectedHour, endSelectedMinute)
-        ))
+    LaunchedEffect(show) {
+        if (show) {
+            startSelectedHour = state.startTime.hour
+            startSelectedMinute = state.startTime.minute
+            endSelectedHour = state.endTime.hour
+            endSelectedMinute = state.endTime.minute
+            timeTypeIndex = 0
+        }
+    }
+
+    LaunchedEffect(show, startSelectedHour, startSelectedMinute, endSelectedHour, endSelectedMinute){
+        if (show){
+            event(ScheduleTimeEvent.SetTime(
+                startTime = LocalTime(startSelectedHour, startSelectedMinute),
+                endTime = LocalTime(endSelectedHour, endSelectedMinute)
+            ))
+        }
+
     }
 
 
@@ -98,6 +108,7 @@ fun ScheduleSetupTimeDialog(
     if (!show){
         return
     }
+
 
 
 
@@ -113,7 +124,8 @@ fun ScheduleSetupTimeDialog(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(CardCornerRadius),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor)
-        ) {
+        )
+        {
 
             Column(
                 modifier = Modifier
@@ -222,6 +234,25 @@ fun ScheduleSetupTimeDialog(
 
                         }
                         SpaceMedium()
+
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            RoundedCheckbox(
+                                checked = state.selectOutside,
+                                onCheckedChange = {
+                                    event(ScheduleTimeEvent.SetOutsideInterval(it))
+                                },
+
+                                )
+                            SpaceSmall()
+                            CustomText(
+                                text = "Ushbu oraliqdan tashqari"
+                            )
+                        }
+
                         SpaceMedium()
 
                     }
@@ -233,7 +264,10 @@ fun ScheduleSetupTimeDialog(
 
                 CustomOutlinedButton(
                     text = stringResource(Res.string.bekor_qilish),
-                    onClick = onDismiss,
+                    onClick = {
+                        event(ScheduleTimeEvent.ClearTime)
+                        onDismiss()
+                    },
                     modifier = Modifier
                         .height(DialogButtonHeight)
                         .fillMaxWidth(),

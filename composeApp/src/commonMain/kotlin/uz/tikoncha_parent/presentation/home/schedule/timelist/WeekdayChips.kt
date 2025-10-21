@@ -87,7 +87,7 @@ fun WeekdayChips(
 
 
 @Composable
-private fun weekdayLabel(day: WeekDay): String {
+fun weekdayLabel(day: WeekDay): String {
     return when(day) {
         WeekDay.MON -> stringResource(Res.string.du)
         WeekDay.TUE -> stringResource(Res.string.se)

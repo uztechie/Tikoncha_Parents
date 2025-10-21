@@ -8,8 +8,10 @@ data class ScheduleTimeState(
     val timeList: List<ScheduleTimeUi> = emptyList(),
     val selectedDays: Set<WeekDay> = setOf(),
     val currentDay: WeekDay? = null,
+    val selectOutside: Boolean = false,
     val allDay: Boolean = false,
     val timeRanges: List<MinuteRange> = emptyList(),
     val startTime: LocalTime = LocalTime(8, 0),
     val endTime: LocalTime = LocalTime(12, 0),
+    val currentId: Int? = null,
 )

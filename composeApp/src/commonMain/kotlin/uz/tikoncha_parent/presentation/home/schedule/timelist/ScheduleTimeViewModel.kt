@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.domain.model.MinuteRange
+import uz.tikoncha_parent.platform.Logger
+import kotlin.random.Random
+import kotlin.time.Clock
 
 
 class ScheduleTimeViewModel: ViewModel() {
@@ -43,21 +46,35 @@ class ScheduleTimeViewModel: ViewModel() {
                     )
                 }
             }
+            is ScheduleTimeEvent.SetOutsideInterval -> {
+                _state.update {old->
+                    val newOutside = event.outside
+                    val ranges = buildRanges(
+                        startTime = old.startTime,
+                        endTime = old.endTime,
+                        outside = newOutside
+                    )
+                    old.copy(
+                        selectOutside = newOutside,
+                        timeRanges = ranges
+                    )
+                }
+            }
             is ScheduleTimeEvent.SetTime -> {
                 _state.update {
-
-                    val timeRange = MinuteRange(
-                        start = event.startTime.hour * 60 + event.startTime.minute,
-                        end = event.endTime.hour * 60 + event.endTime.minute
+                    val ranges = buildRanges(
+                        startTime = event.startTime,
+                        endTime = event.endTime,
+                        outside = it.selectOutside
                     )
-
 
                     it.copy(
                         startTime = event.startTime,
                         endTime = event.endTime,
-                        timeRanges = listOf(timeRange)
+                        timeRanges = ranges
                     )
                 }
+
             }
 
             ScheduleTimeEvent.SaveTime -> {
@@ -70,6 +87,20 @@ class ScheduleTimeViewModel: ViewModel() {
 
             }
 
+            is ScheduleTimeEvent.SetTimeData -> {
+                val data = event.timeData
+                _state.update {
+                    it.copy(
+                        currentId = data.id,
+                        startTime = data.startTime,
+                        endTime = data.endTime,
+                        selectedDays = data.weekDays,
+                        timeRanges = data.timeRange,
+                        allDay = data.allDay,
+                        selectOutside = data.outside,
+                    )
+                }
+            }
         }
     }
 
@@ -78,6 +109,7 @@ class ScheduleTimeViewModel: ViewModel() {
             it.copy(
                 selectedDays = emptySet(),
                 allDay = false,
+                selectOutside = false,
                 startTime = LocalTime(8,0),
                 endTime = LocalTime(12, 0),
                 timeRanges = emptyList(),
@@ -89,18 +121,80 @@ class ScheduleTimeViewModel: ViewModel() {
     private fun saveTime(){
         _state.update {innerState->
             val timeList = innerState.timeList.toMutableList()
-            timeList.add(
-                ScheduleTimeUi(
-                    time = "${innerState.startTime.toHourMinuteString()} - ${innerState.endTime.toHourMinuteString()}",
-                    weekDays = innerState.selectedDays,
-                    timeRange = innerState.timeRanges
-                )
+
+            val isUpdate = innerState.currentId != null
+            Logger.d("", "innerState.currentId = ${innerState.currentId}")
+            val id = innerState.currentId
+                ?: (innerState.timeList.maxOfOrNull { it.id }?.plus(1) ?: 1) // Random o'rniga deterministik id
+
+            val item = ScheduleTimeUi(
+                id = id,
+                time = "${innerState.startTime.toHourMinuteString()} - ${innerState.endTime.toHourMinuteString()}",
+                weekDays = innerState.selectedDays,
+                timeRange = innerState.timeRanges,
+                allDay = innerState.allDay,
+                outside = innerState.selectOutside,
+                startTime = innerState.startTime,
+                endTime = innerState.endTime
             )
+
+            if (isUpdate){
+                val idx = timeList.indexOfFirst { it.id == innerState.currentId }
+                if (idx >= 0){
+                    timeList[idx] = item
+                }
+                else{
+                    timeList.add(item)
+                }
+            }
+            else{
+                timeList.add(item)
+            }
             innerState.copy(
+                currentId = null,
                 timeList = timeList
             )
         }
     }
+
+    private fun buildRanges(
+        startTime: LocalTime,
+        endTime: LocalTime,
+        outside: Boolean
+    ): List<MinuteRange> {
+        val s = startTime.toMinutes().coerceIn(0, 1440)
+        val e = endTime.toMinutes().coerceIn(0, 1440)
+
+        return if (!outside) {
+            when {
+                s == e -> emptyList()
+                s < e -> listOf(MinuteRange(s, e))
+                else   -> {
+                    // Agar foydalanuvchi "ichki" oraliqni kesishib kechaga o'tadigan qilsa (mas: 22:00-03:00),
+                    // uni ikkiga bo'lib qaytarish ham mumkin; lekin odatda ichki oraliqni s<e qilib cheklab qo'yish tavsiya.
+                    listOf(MinuteRange(s, 1440), MinuteRange(0, e))
+                }
+
+            }
+        }
+        else{
+            when {
+                s == e -> listOf(MinuteRange(0, 1440))
+                s < e -> {
+                    val left = if (s>0) MinuteRange(0, s) else null
+                    val right = if (e<1440) MinuteRange(e, 1440) else null
+                    listOfNotNull(left, right)
+                }
+                else -> {
+                    // s > e bo'lsa (mas: 22:00-03:00) ichki oraliq kechani kesib o'tgan bo'ladi,
+                    // demak tashqarisi faqat (e, s) oralig'i. Uni bitta bo'lak qilib qaytaramiz.
+                    listOf(MinuteRange(e, s))
+                }
+            }
+        }
+
+    }
+
 }
 
 fun LocalTime.toHourMinuteString(): String {
@@ -110,3 +204,5 @@ fun LocalTime.toHourMinuteString(): String {
     val mm = if (m < 10) "0$m" else "$m"
     return "$hh:$mm"
 }
+
+private fun LocalTime.toMinutes(): Int = hour * 60 + minute

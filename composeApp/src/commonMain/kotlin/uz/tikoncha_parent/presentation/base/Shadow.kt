@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.shadow.Shadow
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 /**
  * Universal dropShadow modifier
@@ -30,8 +31,8 @@ fun Modifier.verticalShadow(
     spread: Dp = 0.dp,
     upperOffset: Dp = (-4).dp,
     lowerOffset: Dp = 4.dp,
-    lightColor: Color = Color(0xFFFFFFFF),
-    darkColor: Color = Color(0xFFB1B1B1),
+    lightColor: Color = MaterialTheme.extendedColor.shadowLightColor,
+    darkColor: Color = MaterialTheme.extendedColor.shadowColor,
 ) = composed {
     this
         .dropShadow(

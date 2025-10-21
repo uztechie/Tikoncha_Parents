@@ -120,7 +120,7 @@ fun App() {
                             }
                         }
                     } else {
-                        Navigator(SplashScreen()) { nav ->
+                        Navigator(ScheduleTimeListScreen()) { nav ->
                             CurrentScreen()
                             DeepLinkEffect(nav)
                         }
