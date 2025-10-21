@@ -48,8 +48,7 @@ import uz.tikoncha_parent.data.mapper.AppsUi
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
-import uz.tikoncha_parent.presentation.home.schedule.time.ActiveTimeEditorScreen
-import uz.tikoncha_parent.presentation.home.schedule.time.ActiveTimeState
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeListScreen
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.NormalTextSize
@@ -294,7 +293,7 @@ fun ScheduleUi(
                 }
 
                 1->{
-                    navigator?.push(ActiveTimeEditorScreen() )
+                    navigator.push(ScheduleTimeListScreen() )
                 }
             }
 

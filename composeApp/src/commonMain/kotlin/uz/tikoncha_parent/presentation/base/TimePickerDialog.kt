@@ -49,9 +49,9 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.abs
 
 
-private val WHEEL_HEIGHT = 74.dp
-private val ITEM_HEIGHT = 24.dp
-private val EDGE_PADDING = 25.dp
+val WHEEL_HEIGHT = 74.dp
+val ITEM_HEIGHT = 24.dp
+val EDGE_PADDING = 25.dp
 @Composable
 fun TimePickerDialog(
     show: Boolean,

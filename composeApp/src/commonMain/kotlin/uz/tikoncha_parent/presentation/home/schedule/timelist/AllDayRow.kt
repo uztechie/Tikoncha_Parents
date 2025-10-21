@@ -1,21 +1,20 @@
-package uz.tikoncha_parent.presentation.home.schedule.time
+package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,16 +28,15 @@ import tikoncha_parents.composeapp.generated.resources.clock
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomSwitch
 import uz.tikoncha_parent.ui.BorderColor
-import uz.tikoncha_parent.ui.CardCornerPadding
-import uz.tikoncha_parent.ui.DisableTextColor
+import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HintTextColor
-import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OnPrimaryColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.ShapeCornerRadius
-import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SmallIconButtonSize
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -50,9 +48,11 @@ fun AllDayRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor)
-            .border(1.dp, BorderColor, RoundedCornerShape(ShapeCornerRadius))
-            .padding(12.dp)
+            .height(TextFieldHeight)
+            .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(ShapeCornerRadius))
+            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(ShapeCornerRadius))
+            .padding(horizontal = ContainerPadding),
+        verticalArrangement = Arrangement.Center
     ) {
 
         Row(
@@ -63,7 +63,7 @@ fun AllDayRow(
 
             Box(
                 modifier = Modifier
-                    .size(NormalIconButtonSize)
+                    .size(SmallIconButtonSize)
                     .clip(RoundedCornerShape(ShapeCornerRadius))
                     .background(MaterialTheme.extendedColor.tonalButtonColor),
                 contentAlignment = Alignment.Center
@@ -73,7 +73,7 @@ fun AllDayRow(
                     contentDescription = "",
                     colorFilter = ColorFilter.tint(HintTextColor),
                     modifier = Modifier
-                        .fillMaxSize(0.7f)
+                        .fillMaxSize(0.6f)
                 )
             }
 

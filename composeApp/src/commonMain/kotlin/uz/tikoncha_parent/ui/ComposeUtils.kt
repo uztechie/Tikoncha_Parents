@@ -38,7 +38,7 @@ val LargeIconButtonPadding = 12.dp
 val NormalIconButtonPadding = 8.dp
 val SmallIconButtonPadding = 5.dp
 
-val ButtonCornerRadius = 15.dp
+val ButtonCornerRadius = 16.dp
 val ButtonDialogCornerRadius = 12.dp
 
 val ChatMessageCornerRadius = 20.dp
@@ -53,7 +53,7 @@ val ItemElevation = 2.dp
 
 val SliderCornerRadius = 20.dp
 
-val TextFieldCornerRadius = 8.dp
+val TextFieldCornerRadius = 16.dp
 val TextFieldHeight = 45.dp
 val TextFieldHeightDialogOrButtonSheet = 40.dp
 

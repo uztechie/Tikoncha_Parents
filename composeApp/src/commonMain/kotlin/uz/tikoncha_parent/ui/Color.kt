@@ -36,8 +36,8 @@ val MainBorderColor = Color(0xFFF3F4F7)
 val LanguageTonalIconColor = Color(0xFFF1F1F1)
 
 val DisableTextColor = Color(0xFFFFFFFF)
-val DisableButtonColor = Color(0xFFDCDCDC)
-val DisableButtonContentColor = Color(0xFFA5A5A5)
+val DisableButtonColor = Color(0xFFAAAAAA)
+val DisableButtonContentColor = Color(0xFFE0E0E0)
 val DisableButtonTextColor = Color(0xFFFFFFFF)
 
 val CheckBoxUncheckBorderColor = Color(0xFFE7E8E9)

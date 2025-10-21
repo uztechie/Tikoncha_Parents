@@ -1,36 +1,26 @@
-package uz.tikoncha_parent.presentation.home.schedule.time
+package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.draw
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.ui.BorderColor
+import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.ui.HintTextColor
 import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -38,8 +28,8 @@ import kotlin.math.floor
 @Composable
 fun Timeline(
     ranges: List<MinuteRange>,
-    disabled: Boolean,
-    height: Dp
+    allDay: Boolean = false,
+    height: Dp = 15.dp
 ){
     val barColor = MaterialTheme.extendedColor.primaryColor
     val dashColor = MaterialTheme.extendedColor.hintColor
@@ -49,12 +39,10 @@ fun Timeline(
     val corner = 2.dp
 
     Column {
-        CustomText(text = "Времена")
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(horizontal = 8.dp)
         ) {
             val w = size.width
             val h = size.height
@@ -91,25 +79,20 @@ fun Timeline(
                     color = HintTextColor.copy(alpha = 0.35f),
                     topLeft = Offset(left, grayTop),
                     size = Size(right - left, grayHeight),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(rPx, rPx),
+                    cornerRadius = CornerRadius(rPx, rPx),
                     style = Fill
                 )
             }
 
-            // --- Yashil segmentlar (ustidan) ---
-            ranges.forEach { r ->
-                val startSeg = floor(r.start / 30f).toInt()
-                val endSegEx = ceil(r.end / 30f).toInt()
+            if (allDay){
 
-                for (seg in startSeg until endSegEx) {
+                val totalSeg = (24 * 60) / 30
+                for (seg in 0 until totalSeg) {
                     val segStartMin = seg * 30
                     val segEndMin = (seg + 1) * 30
-                    val sMin = maxOf(segStartMin, r.start)
-                    val eMin = minOf(segEndMin, r.end)
-                    if (eMin <= sMin) continue
+                    val sx = segStartMin * pxPerMin
+                    val ex = segEndMin * pxPerMin
 
-                    val sx = sMin * pxPerMin
-                    val ex = eMin * pxPerMin
                     val left = sx + gapPx / 2f
                     val right = ex - gapPx / 2f
                     if (right <= left) continue
@@ -118,30 +101,60 @@ fun Timeline(
                         color = PrimaryColor,
                         topLeft = Offset(left, greenTop),
                         size = Size(right - left, greenHeight),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(rPx, rPx),
+                        cornerRadius = CornerRadius(rPx, rPx),
                         style = Fill
                     )
                 }
+
+            }
+            else{
+                // --- Yashil segmentlar (ustidan) ---
+                ranges.forEach { r ->
+                    val startSeg = floor(r.start / 30f).toInt()
+                    val endSegEx = ceil(r.end / 30f).toInt()
+
+                    for (seg in startSeg until endSegEx) {
+                        val segStartMin = seg * 30
+                        val segEndMin = (seg + 1) * 30
+                        val sMin = maxOf(segStartMin, r.start)
+                        val eMin = minOf(segEndMin, r.end)
+                        if (eMin <= sMin) continue
+
+                        val sx = sMin * pxPerMin
+                        val ex = eMin * pxPerMin
+                        val left = sx + gapPx / 2f
+                        val right = ex - gapPx / 2f
+                        if (right <= left) continue
+
+                        drawRoundRect(
+                            color = PrimaryColor,
+                            topLeft = Offset(left, greenTop),
+                            size = Size(right - left, greenHeight),
+                            cornerRadius = CornerRadius(rPx, rPx),
+                            style = Fill
+                        )
+                    }
+                }
             }
 
-            // (ixtiyoriy) disabled overlay
-            if (disabled) {
-                drawRect(
-                    color = HintTextColor.copy(alpha = 0.25f),
-                    size = size,
-                    style = Fill
-                )
-            }
+
+
+
         }
 
         // Pastdagi soatlar (0–6–12–18–24)
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 2.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            listOf(0, 6, 12, 18, 24).forEach { t -> CustomText("$t") }
+            listOf(0, 6, 12, 18, 24).forEach { t ->
+                CustomText(
+                    text = "$t",
+                    color = MaterialTheme.extendedColor.hintColor,
+                    fontSize = SmallTextSize
+                )
+            }
         }
     }
 }
