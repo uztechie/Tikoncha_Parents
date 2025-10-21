@@ -57,7 +57,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.home.schedule.ScheduleScreen
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
@@ -308,6 +310,16 @@ fun HomeUi(
                     )
                     .verticalScroll(rememberScrollState())
             ) {
+
+                CustomButton(
+                    text = "Statistika",
+                    onClick = {
+                        rootNavigator?.push(ScheduleScreen())
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                )
 
                 CustomText(
                     text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),

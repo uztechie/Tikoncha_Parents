@@ -1,6 +1,7 @@
 package uz.saidburxon.newedu.presentation.feature.assignment
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,21 +64,21 @@ fun CalendarDialog(
                     IconButton(onClick = { currentMonth = currentMonth.minus(DatePeriod(months = 1)) }) {
 
                         Icon(
-                            painter = painterResource(Res.drawable.arrow_down),
+                            painter = painterResource(Res.drawable.arrow_previous),
                             contentDescription = "Back"
                         )
                     }
 
                     CustomText(
                         text = getMonthName(currentMonth) + " ${currentMonth.year}",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = LargeTextSize,
+                        fontWeight = FontWeight.SemiBold
                     )
 
                     IconButton(onClick = { currentMonth = currentMonth.plus(DatePeriod(months = 1)) }) {
 
                        Icon(
-                            painter = painterResource(Res.drawable.arrow_next),
+                            painter = painterResource(Res.drawable.arrow_right),
                             null
                         )
                     }
@@ -134,7 +135,10 @@ fun CalendarDialog(
                                         modifier = Modifier
                                             .weight(1f)
                                             .height(40.dp)
-                                            .clickable { tempSelectedDate = date },
+                                            .clickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = null
+                                            ) { tempSelectedDate = date },
                                         contentAlignment = Alignment.Center
                                     ) {
                                         if (isSelected) {

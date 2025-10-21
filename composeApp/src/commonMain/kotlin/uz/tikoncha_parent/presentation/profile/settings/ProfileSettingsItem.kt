@@ -26,9 +26,7 @@ import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
-import uz.tikoncha_parent.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource

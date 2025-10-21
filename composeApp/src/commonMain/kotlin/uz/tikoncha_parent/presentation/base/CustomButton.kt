@@ -26,7 +26,7 @@ fun CustomButton(
     fontWeight: FontWeight = FontWeight.Normal,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.extendedColor.primaryColor,
-    textColor: Color = Color.White,
+    textColor: Color = OnPrimaryColor,
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
@@ -50,6 +50,7 @@ fun CustomButton(
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
         CustomText(
+            color = contentColor,
             text = text,
             fontWeight =fontWeight,
             fontSize = fontSize

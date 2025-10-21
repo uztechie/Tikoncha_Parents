@@ -72,6 +72,8 @@ import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
+import uz.tikoncha_parent.presentation.home.schedule.ScheduleViewModel
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 
@@ -169,9 +171,8 @@ val sharedModule = module {
     ) }
     viewModel { MonitorViewModel(get(), get()) }
     viewModel { NotificationViewModel(get(), get()) }
-
-
-
+    viewModel { ScheduleViewModel() }
+    viewModel { ScheduleTimeViewModel() }
 
 
 }

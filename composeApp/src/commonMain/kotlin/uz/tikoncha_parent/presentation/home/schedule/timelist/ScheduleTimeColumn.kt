@@ -1,23 +1,20 @@
-import androidx.compose.foundation.background
+package uz.tikoncha_parent.presentation.home.schedule.timelist
+
+import EDGE_PADDING
+import ITEM_HEIGHT
+import WHEEL_HEIGHT
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,119 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalTime
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
-import uz.tikoncha_parent.ui.*
-import org.jetbrains.compose.resources.stringResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.abs
 
-
-val WHEEL_HEIGHT = 74.dp
-val ITEM_HEIGHT = 24.dp
-val EDGE_PADDING = 25.dp
 @Composable
-fun TimePickerDialog(
-    show: Boolean,
-    initialTime: LocalTime,
-    onDismiss: () -> Unit,
-    onTimeSelected: (LocalTime) -> Unit
-) {
-    var selectedHour by remember { mutableStateOf(initialTime.hour) }
-    var selectedMinute by remember { mutableStateOf(initialTime.minute) }
-
-    if (show) {
-        Dialog(
-            onDismissRequest = onDismiss,
-            properties = DialogProperties(
-                dismissOnClickOutside = false
-            )
-        ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CustomText(
-                        text = stringResource(Res.string.tugash_vaqtini_belgilang),
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        TimeColumn(
-                            range = 0..23,
-                            selected = selectedHour,
-                            onSelected = { selectedHour = it }
-                        )
-                        Spacer(Modifier.size(5.dp))
-                        TimeColumn(
-                            range = 0..59,
-                            selected = selectedMinute,
-                            onSelected = { selectedMinute = it }
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-
-                        CustomOutlinedButton(
-                            text = stringResource(Res.string.bekor_qilish),
-                            onClick = onDismiss,
-                            modifier = Modifier
-                                .height(DialogButtonHeight)
-                                .fillMaxWidth(),
-                            textColor = PrimaryColor,
-                            borderColor = BorderColor,
-                            shape = RoundedCornerShape(TextFieldCornerRadius)
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        CustomButton(
-                            onClick = {
-                                onTimeSelected(LocalTime(selectedHour, selectedMinute))
-                                onDismiss()
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(
-                                    1.dp,
-                                    PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)
-                                )
-                                .height(DialogButtonHeight),
-                            text = stringResource(Res.string.saqlash),
-                            shape = RoundedCornerShape(TextFieldCornerRadius),
-                            textColor = OnPrimaryColor,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun TimeColumn(
+fun ScheduleTimeColumn(
     range: IntRange,
     selected: Int,
     onSelected: (Int) -> Unit
@@ -165,7 +60,7 @@ fun TimeColumn(
             }?.index
             // Agar yuqoridagi topilmasa (masalan, layout o'zgarishi), "eng yaqin"iga qaytamiz:
                 ?: info.visibleItemsInfo.minByOrNull { item ->
-                    kotlin.math.abs((item.offset + item.size / 2) - centerY)
+                    abs((item.offset + item.size / 2) - centerY)
                 }?.index
         }
             .filterNotNull()
@@ -233,8 +128,3 @@ fun TimeColumn(
         )
     }
 }
-
-
-
-
-
