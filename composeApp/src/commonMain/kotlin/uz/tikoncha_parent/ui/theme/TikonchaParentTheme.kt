@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import uz.tikoncha_parent.data.mapper.ExtendedColors
 import uz.tikoncha_parent.platform.SystemBarTheme
 import uz.tikoncha_parent.ui.Background
+import uz.tikoncha_parent.ui.BackgroundColor
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.CardColors
 import uz.tikoncha_parent.ui.ColorWhite
@@ -49,7 +50,7 @@ private val LightColorScheme = lightColorScheme(
 private val LightExtendedColorScheme = ExtendedColors(
     primaryColor = PrimaryColor,
     primaryLightColor = HintTextColor,
-    backgroundColor = Background,
+    backgroundColor = BackgroundColor,
     cardColor = CardColors,
     onBackgroundColor = TextColor,
     hintColor = HintTextColor,
@@ -58,7 +59,7 @@ private val LightExtendedColorScheme = ExtendedColors(
     buttonMenuColor = TextColor,
     disabledColor = CardColors,
     shadowColor = ShadowColor,
-    shadowLightColor = PrimaryColor.copy(alpha = 0.1f),
+    shadowLightColor = Color.White,
     buttonColor = CardColors,
     tonalButtonColor = TonalButtonContainerColor
 

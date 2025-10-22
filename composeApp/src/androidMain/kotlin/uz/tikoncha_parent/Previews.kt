@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
@@ -81,6 +82,8 @@ import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.base.topShadow
 import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.presentation.home.schedule.RoundedCheckbox
 import uz.tikoncha_parent.presentation.home.schedule.timelist.AllDayRow
@@ -153,78 +156,27 @@ fun ScheduleTimeListUi2(
             onBackClick = {}
         )
 
-
-
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
-        )
-        {
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(15.dp),
-                contentPadding = PaddingValues(
-                    vertical = ContainerPadding
+                .zIndex(1f)
+                .fillMaxWidth()
+                .height(300.dp)
+                .topShadow(
+                    color = Color.Green
                 )
-            ) {
-                items(state.timeList) {
-                    ScheduleTimeItem(
-                        modifier = Modifier
-                            .clickable(
-                                interactionSource = null,
-                                indication = null,
-                                onClick = {
-                                    event(ScheduleTimeEvent.SetTimeData(
-                                        it
-                                    ))
-                                    showSetupDialog = true
-                                }
-                            ),
-                        item = it,
-                        onRemove = {
-                            event(ScheduleTimeEvent.RemoveTime(it))
-                        }
-                    )
-                }
-            }
+                .background(Color.Red)
+        )
 
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .bottomShadow(
+                    color = Color.Blue
+                )
+                .background(Color.DarkGray)
+        )
 
-            CustomOutlinedButton(
-                enabled = !state.timeList.any { it.allDay && it.timeRange.size == 7 },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    showSetupDialog = true
-                },
-                text = stringResource(Res.string.oraliq_qoshish),
-                endingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                    )
-                }
-
-            )
-
-            SpaceSmall()
-
-
-            CustomButton(
-                text = stringResource(Res.string.saqlash),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                onClick = {}
-            )
-
-
-
-
-        }
 
 
     }
@@ -240,7 +192,11 @@ private fun Pre() {
 
 
         ScheduleTimeListUi2(
-            state = ScheduleTimeState(),
+            state = ScheduleTimeState(
+                timeList = listOf(
+                    ScheduleTimeUi()
+                )
+            ),
             event = {}
         )
     }

@@ -64,6 +64,7 @@ import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -76,8 +77,8 @@ fun ScheduleTimeItem(
 )
 {
 
-    val bgColor = MaterialTheme.extendedColor.backgroundColor
-//    val bgColor = Color(0xFFe0e0e0)
+//    val bgColor = MaterialTheme.extendedColor.backgroundColor
+    val bgColor = Color(0xFFFFFFFF)
 
 
     Row(
@@ -86,7 +87,7 @@ fun ScheduleTimeItem(
             .verticalShadow()
             .background(
                 bgColor,
-                RoundedCornerShape(ShapeCornerRadius)
+                RoundedCornerShape(TextFieldCornerRadius)
             )
             .padding(10.dp)
     )

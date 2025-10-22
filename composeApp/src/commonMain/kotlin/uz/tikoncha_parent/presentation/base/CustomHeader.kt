@@ -42,127 +42,59 @@ fun CustomHeader(
         bottomEnd = ShapeCornerRadius
     )
 
-    Card(
-        modifier = Modifier
+    Row(
+        modifier = modifier
             .fillMaxWidth()
             .height(HeaderHeight)
-            .shadow(
-                elevation = 4.dp,
-                shape = bottomRoundedShape,
-                ambientColor = MaterialTheme.extendedColor.shadowColor, // 🌈 Soya rangi shu yerda
-                spotColor = MaterialTheme.extendedColor.shadowColor     // Android 12+ uchun
+            .topShadow(
+                shape = RoundedCornerShape(ShapeCornerRadius),
+                color = MaterialTheme.extendedColor.backgroundColor
             )
-            .padding(bottom = 4.dp),
-        shape = bottomRoundedShape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.extendedColor.backgroundColor
-        ),
-    ) {
-        Row(
-            modifier = modifier
-                .background(MaterialTheme.extendedColor.backgroundColor)
-                .fillMaxWidth()
-                .height(HeaderHeight)
-                .padding(horizontal = ContainerPadding),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            .background(
+                color = MaterialTheme.extendedColor.backgroundColor,
+                shape = bottomRoundedShape
+            )
+            .padding(horizontal = ContainerPadding),
+        verticalAlignment = Alignment.CenterVertically
+    )
+    {
 
-            if (showBackButton) {
-                FilledTonalIconButton(
+        if (showBackButton) {
+            FilledTonalIconButton(
+                modifier = Modifier
+                    .size(NormalIconButtonSize),
+                onClick = onBackClick,
+                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                    containerColor = MaterialTheme.extendedColor.cardColor,
+                    contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.arrow_left),
+                    contentDescription = "",
                     modifier = Modifier
-                        .size(NormalIconButtonSize),
-                    onClick = onBackClick,
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor,
-                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow_left),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(NormalIconButtonPadding)
-                    )
-                }
-                SpaceMedium()
+                        .fillMaxSize()
+                        .padding(NormalIconButtonPadding)
+                )
             }
+            SpaceMedium()
+        }
 
-            CustomText(
-                text = title,
-                fontSize = LargeTextSize,
-                fontWeight = fonWeight,
-                maxLines = 1
-            )
+        CustomText(
+            text = title,
+            fontSize = LargeTextSize,
+            fontWeight = fonWeight,
+            maxLines = 1
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            if (trailingIcon != null) {
-                trailingIcon()
-            }
+        if (trailingIcon != null) {
+            trailingIcon()
         }
     }
-    SpaceSmall()
 
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(bottom = 2.dp),
-//        shape = RoundedCornerShape(bottomStart = ShapeCornerRadius, bottomEnd = ShapeCornerRadius),
-//        elevation = CardDefaults.cardElevation(
-//            defaultElevation = 1.dp,
-//        )
-//    )
-//    {
-//        Row(
-//            modifier = modifier
-//                .background(BackgroundColor)
-//                .fillMaxWidth()
-//                .height(HeaderHeight)
-//                .padding(horizontal = ContainerPadding),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//
-//            if (showBackButton){
-//                FilledTonalIconButton(
-//                    modifier = Modifier.size(NormalIconButtonSize),
-//                    onClick = onBackClick,
-//                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                        contentColor = MaterialTheme.colorScheme.onBackground
-//                    ),
-//                    shape = RoundedCornerShape(10.dp)
-//                ) {
-//                    Icon(
-//                        painter = painterResource(Res.drawable.arrow_left),
-//                        contentDescription = "",
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(NormalIconButtonPadding)
-//                    )
-//                }
-//
-//                SpaceMedium()
-//
-//            }
-//
-//            CustomText(
-//                text = title,
-//                color = TextColor,
-//                fontSize = LargeTextSize,
-//                fontWeight = fonWeight,
-//                maxLines = 1
-//            )
-//
-//            Spacer(modifier = Modifier.weight(1f))
-//
-//           if (trailingIcon != null) {
-//               trailingIcon()
-//           }
-//        }
-//
-//    }
 }
 
 @Preview

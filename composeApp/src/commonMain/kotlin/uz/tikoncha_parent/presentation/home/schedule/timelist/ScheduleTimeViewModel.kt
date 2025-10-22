@@ -16,6 +16,14 @@ class ScheduleTimeViewModel: ViewModel() {
     private val _state = MutableStateFlow(ScheduleTimeState())
     val state = _state.asStateFlow()
 
+    init {
+        _state.update {
+            it.copy(
+                timeList = createTempList()
+            )
+        }
+    }
+
     fun event(event: ScheduleTimeEvent){
         when(event){
             is ScheduleTimeEvent.RemoveTime -> {
@@ -195,6 +203,18 @@ class ScheduleTimeViewModel: ViewModel() {
 
     }
 
+}
+
+private fun createTempList(): List<ScheduleTimeUi>{
+    val list = mutableListOf<ScheduleTimeUi>()
+    for (i in 0..20){
+        list.add(
+            ScheduleTimeUi(
+                id = i
+            )
+        )
+    }
+    return list
 }
 
 fun LocalTime.toHourMinuteString(): String {

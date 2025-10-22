@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import org.jetbrains.compose.resources.painterResource
@@ -43,6 +46,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -100,6 +104,8 @@ fun ScheduleTimeListUi(
     ) {
 
         CustomHeader(
+            modifier = Modifier
+                .zIndex(1f),
             title = stringResource(Res.string.faol_vaqt),
             showBackButton = true,
             onBackClick = {}
@@ -107,42 +113,63 @@ fun ScheduleTimeListUi(
 
 
 
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            contentPadding = PaddingValues(
+                ContainerPadding
+            )
+        ) {
+            items(state.timeList) {
+                ScheduleTimeItem(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = null,
+                            indication = null,
+                            onClick = {
+                                event(ScheduleTimeEvent.SetTimeData(
+                                    it
+                                ))
+                                showSetupDialog = true
+                            }
+                        ),
+                    item = it,
+                    onRemove = {
+                        event(ScheduleTimeEvent.RemoveTime(it))
+                    }
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .bottomShadow(
+                    shape = RoundedCornerShape(
+                        topStart = ButtonCornerRadius,
+                        topEnd = ButtonCornerRadius
+                    ),
+                    color = MaterialTheme.extendedColor.backgroundColor
+//                    color = Color.Red
+                )
+                .bottomShadow(
+                    shape = RoundedCornerShape(
+                        topStart = ButtonCornerRadius,
+                        topEnd = ButtonCornerRadius
+                    ),
+                    color = MaterialTheme.extendedColor.backgroundColor,
+                    lowerOffset = - 5.dp,
+                    radius = 10.dp
+
+                )
+                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
+
+
         )
         {
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(15.dp),
-                contentPadding = PaddingValues(
-                    vertical = ContainerPadding
-                )
-            ) {
-                items(state.timeList) {
-                    ScheduleTimeItem(
-                        modifier = Modifier
-                            .clickable(
-                                interactionSource = null,
-                                indication = null,
-                                onClick = {
-                                    event(ScheduleTimeEvent.SetTimeData(
-                                        it
-                                    ))
-                                    showSetupDialog = true
-                                }
-                            ),
-                        item = it,
-                        onRemove = {
-                            event(ScheduleTimeEvent.RemoveTime(it))
-                        }
-                    )
-                }
-            }
 
 
             CustomOutlinedButton(
@@ -173,10 +200,8 @@ fun ScheduleTimeListUi(
                 onClick = {}
             )
 
-
-
-
         }
+
 
 
     }

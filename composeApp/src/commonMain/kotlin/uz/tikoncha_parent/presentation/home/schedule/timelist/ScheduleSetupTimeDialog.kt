@@ -33,13 +33,17 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.boshlanishi
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt_yaratish
+import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tugashi
 import tikoncha_parents.composeapp.generated.resources.vaqt
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.base.coverShadow
+import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.presentation.home.schedule.RoundedCheckbox
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.ButtonCornerRadius
@@ -121,7 +125,11 @@ fun ScheduleSetupTimeDialog(
     {
 
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .coverShadow(
+                    radius = CardCornerRadius
+                ),
             shape = RoundedCornerShape(CardCornerRadius),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor)
         )
@@ -133,12 +141,26 @@ fun ScheduleSetupTimeDialog(
                     .padding(ContainerPadding)
             )
             {
-                CustomText(
-                    text = stringResource(Res.string.faol_vaqt_yaratish),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = PrimaryColor
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CustomText(
+                        text = stringResource(Res.string.oraliq_qoshish),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = PrimaryColor,
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+
+                    CloseButton {
+                        onDismiss()
+                    }
+
+                }
+
 
                 SpaceMedium()
 
@@ -262,29 +284,24 @@ fun ScheduleSetupTimeDialog(
                 SpaceMedium()
 
 
-                CustomOutlinedButton(
-                    text = stringResource(Res.string.bekor_qilish),
-                    onClick = {
-                        event(ScheduleTimeEvent.ClearTime)
-                        onDismiss()
-                    },
-                    modifier = Modifier
-                        .height(DialogButtonHeight)
-                        .fillMaxWidth(),
-                    textColor = PrimaryColor,
-                    borderColor = BorderColor,
-                    shape = RoundedCornerShape(ButtonCornerRadius)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
+//                CustomOutlinedButton(
+//                    text = stringResource(Res.string.bekor_qilish),
+//                    onClick = {
+//                        event(ScheduleTimeEvent.ClearTime)
+//                        onDismiss()
+//                    },
+//                    modifier = Modifier
+//                        .height(DialogButtonHeight)
+//                        .fillMaxWidth(),
+//                    textColor = PrimaryColor,
+//                    borderColor = BorderColor,
+//                    shape = RoundedCornerShape(ButtonCornerRadius)
+//                )
+//
+//                Spacer(modifier = Modifier.height(8.dp))
 
                 CustomButton(
                     onClick = {
-//                        event(ScheduleTimeEvent.SetTime(
-//                            startTime = LocalTime(startSelectedHour, startSelectedMinute),
-//                            endTime = LocalTime(endSelectedHour, endSelectedMinute)
-//                        ))
-
                         event(ScheduleTimeEvent.SaveTime)
                         onDismiss()
                     },
