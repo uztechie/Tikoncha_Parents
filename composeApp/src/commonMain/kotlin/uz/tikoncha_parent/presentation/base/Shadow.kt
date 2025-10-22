@@ -22,26 +22,15 @@ fun Modifier.verticalShadow(
     shape: Shape = RoundedCornerShape(10.dp),
     radius: Dp = 5.dp,
     spread: Dp = 0.dp,
-    upperOffset: Dp = (-1).dp,
-    lowerOffset: Dp = 2.dp,
-    lightColor: Color = MaterialTheme.extendedColor.shadowLightColor,
+    offset: Dp = 2.dp,
     darkColor: Color = MaterialTheme.extendedColor.shadowColor,
 ) = composed {
     this
-//        .dropShadow(
-//            shape = shape,
-//            shadow = Shadow(
-//                color = lightColor,
-//                offset = DpOffset(0.dp, upperOffset),
-//                radius = radius,
-//                spread = spread
-//            )
-//        )
         .dropShadow(
             shape = shape,
             shadow = Shadow(
                 color = darkColor,
-                offset = DpOffset(0.dp, lowerOffset),
+                offset = DpOffset(0.dp, offset),
                 radius = radius,
                 spread = spread
             )
