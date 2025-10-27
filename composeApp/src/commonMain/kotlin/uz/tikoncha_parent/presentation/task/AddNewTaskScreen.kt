@@ -99,9 +99,15 @@ fun AddNewTask(
     state: TaskState,
     event: (TaskEvent) -> Unit,
 ) {
+
+    val available = state.availableCoins
+    val toGift = state.coin
+    val remaining = (available - toGift).coerceAtLeast(0)
+
+
     var coinsAmount by remember { mutableStateOf("0") }
     val maxAvailable = 50
-    val remaining = (maxAvailable - (coinsAmount.toIntOrNull() ?: 0)).coerceAtLeast(0)
+//    val remaining = (maxAvailable - (coinsAmount.toIntOrNull() ?: 0)).coerceAtLeast(0)
 
     val hidKeyboard = rememberHideKeyboard()
 
@@ -434,15 +440,18 @@ fun AddNewTask(
                 )
 
                 CoinAmountTextField(
-                    coinsAmount = coinsAmount,
-                    onValueChange = {
-                        coinsAmount = it
+                    coinsAmount = toGift.toString(),
+                    onValueChange = { new ->
+                        val value = new.toIntOrNull() ?: 0
+                        event(TaskEvent.OnCoinChange(value.coerceAtMost(available)))
                     },
-                    onAddCoinClicked = {
-                        coinsAmount = it.toString()
+                    onAddCoinClicked = { plus ->
+                        val value = (toGift + plus).coerceAtMost(available)
+                        event(TaskEvent.OnCoinChange(value))
                     },
-                    onSubtractButtonClicked = {
-                        coinsAmount = it.toString()
+                    onSubtractButtonClicked = {minus ->
+                        val value = (toGift - minus).coerceAtMost(0)
+                        event(TaskEvent.OnCoinChange(value))
                     }
                 )
             }

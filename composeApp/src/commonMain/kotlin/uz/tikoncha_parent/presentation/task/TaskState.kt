@@ -17,6 +17,8 @@ data class TaskState(
     var completed: Boolean? = null,
     var showMineAll: Boolean = false,
     var showChildrenAll: Boolean = false,
+    var coin: Int = 0,
+    val availableCoins: Int = 0,
 
     val childrenList: List<UserInfo> = emptyList(),
     val selectedChildren: UserInfo? = null,

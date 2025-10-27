@@ -30,7 +30,8 @@ fun TodoDto.toTask(): Task {
         id = this.id ?:"",
         targetUserId = this.target_user_id?:"",
         authorId = this.author_id?:"",
-        isMine = author_id == AppSettings.userId
+        isMine = author_id == AppSettings.userId,
+        coin = coin
     )
 }
 
@@ -45,7 +46,8 @@ fun Task.toTodoDto(): TodoDto{
         importance = importance.toServerType(),
         is_completed = isCompleted,
         created_at = DateTimeUtil.formatToIsoString(createdAt, timeZone = TimeZone.currentSystemDefault()),
-        modified_at = null
+        modified_at = null,
+        coin = coin
     )
 }
 

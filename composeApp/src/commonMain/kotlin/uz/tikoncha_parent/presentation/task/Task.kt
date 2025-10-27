@@ -16,5 +16,6 @@ data class Task(
     val authorId: String,
     val targetUserId: String,
     val progress: Int = 0,
-    val createdAt: Long
+    val createdAt: Long,
+    val coin: Int = 0
 )

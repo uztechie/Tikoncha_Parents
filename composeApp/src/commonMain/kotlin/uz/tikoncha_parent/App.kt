@@ -19,6 +19,7 @@ import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
+import uz.tikoncha_parent.presentation.home.schedule.type.WiFiScreen
 import uz.tikoncha_parent.ui.theme.ThemeMode
 
 

@@ -168,5 +168,17 @@
     <string name="veb_sayt">Веб-сайт</string>
     <string name="boshlanishi">Начало</string>
     <string name="tugashi">Конец</string>
+    <string name="bloklash_shartlari">Условия блокировки</string>
+    <string name="qachon_va_qayerda">Выберите, когда и где вы не хотите, чтобы вас беспокоили</string>
+    <string name="vaqt">Vaqt</string>
+    <string name="ish_vaqti_dam_olish_kuni">рабочее время, выходные</string>
+    <string name="wi_fi_tarmoqlarni_tanlang">Выберите сети Wi-Fi</string>
+    <string name="ulandi">Подключен</string>
+    <string name="qora_ro_yxat">Черный список</string>
+    <string name="shartlar">Условия</string>
+    <string name="bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang">Выберите приложения или сайты, которые вы хотите заблокировать.</string>
+    <string name="budilnik">Будни</string>
+    <string name="har_kuni_bloklashni_rejalashtiring">Планируйте ежедневыне блакировки по времени, месту и другим параметрам</string>
+    <string name="tangachalaringiz">Ваши монеты</string>
 
 </resources>

@@ -10,7 +10,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
@@ -30,9 +32,14 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.mp.KoinPlatform.getKoin
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ProfileScreen : Screen {
@@ -57,6 +64,19 @@ fun ProfileUi(
     state: ProfileState,
     event: (ProfileEvent) -> Unit
 ) {
+
+    val useCase: MyCoinsUseCase = koinInject()
+    val coinsViewModel = remember {
+        MyCoinsViewModel(useCase = useCase)
+    }
+    LaunchedEffect(Unit){
+        coinsViewModel.load()
+    }
+    val ui by coinsViewModel.state.collectAsStateWithLifecycle()
+    val aiTokens = ui.coins
+
+
+
     val navigator = LocalNavigator.current
     val rootNavigator = navigator?.parent
 
@@ -131,8 +151,8 @@ fun ProfileUi(
             ) {
 
                 UserStatsItem(
-                    title = stringResource(Res.string.farzandlaringiz_tangalari),
-                    value = "0 ${stringResource(Res.string.ta)}",
+                    title = stringResource(Res.string.tangachalaringiz),
+                    value = "$aiTokens ${stringResource(Res.string.ta)}",
                     icon = painterResource(Res.drawable.coin),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)

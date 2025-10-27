@@ -61,10 +61,15 @@ fun MainUi() {
             painterResource(Res.drawable.file_text),
             stringResource(Res.string.vazifa)
         ),
+//        BottomNavItem(
+//            MonitorScreen(),
+//            painterResource(Res.drawable.eye_check),
+//            stringResource(Res.string.kuzatuv)
+//        ),
         BottomNavItem(
             MonitorScreen(),
-            painterResource(Res.drawable.eye_check),
-            stringResource(Res.string.kuzatuv)
+            painterResource(Res.drawable.dialogg),
+            stringResource(Res.string.suhbat)
         ),
         BottomNavItem(
             MapScreen(),
