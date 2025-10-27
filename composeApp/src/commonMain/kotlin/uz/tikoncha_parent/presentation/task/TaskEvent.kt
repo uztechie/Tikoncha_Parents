@@ -23,4 +23,6 @@ sealed interface TaskEvent {
     data class OnChildSelected(val child: UserInfo): TaskEvent
     data class OnGenderSelected(val genderIndex: Int): TaskEvent
     data class OnEditTask(val task: Task) : TaskEvent
+    data class OnCoinChange(val coin: Int) : TaskEvent
+    data object LoadParentCoins : TaskEvent
 }

@@ -204,5 +204,19 @@
     <string name="har_kuni">Har kuni</string>
     <string name="kun_davomida">Kun davomida</string>
     <string name="oraliq_qoshish">Oraliq qo'shish</string>
+    <string name="bloklash_shartlari">Bloklash shartlari</string>
+    <string name="qachon_va_qayerda">Qachon va qayerda bezovta qilinmaslikni tanlang</string>
+    <string name="vaqt">Vaqt</string>
+    <string name="ish_vaqti_dam_olish_kuni">ish vaqti, dam olish kuni</string>
+    <string name="wi_fi">Wi-fi</string>
+    <string name="ishga_tushirishlar_soni">Ishga tushirishlar soni</string>
+    <string name="wi_fi_tarmoqlarni_tanlang">Wi-Fi tarmoqlarni tanlang</string>
+    <string name="ulandi">Ulandi</string>
+    <string name="qora_ro_yxat">Qora ro‘yxat</string>
+    <string name="shartlar">Shartlar</string>
+    <string name="bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang">Bloklamoqchi bo‘lgan ilova yoki saytlarni tanlang</string>
+    <string name="budilnik">Budilnik</string>
+    <string name="har_kuni_bloklashni_rejalashtiring">Har kuni bloklashni rejalashtiring vaqt, joy va boshqa parametrlar bo‘yicha</string>
+    <string name="tangachalaringiz">Tangachalaringiz</string>
 
 </resources>

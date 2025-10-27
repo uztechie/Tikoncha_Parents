@@ -48,13 +48,16 @@ import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordVie
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
+import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
+import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
@@ -66,6 +69,7 @@ import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetChatMessagesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
+import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
@@ -76,6 +80,7 @@ import uz.tikoncha_parent.presentation.home.schedule.ScheduleViewModel
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
+import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 
 val sharedModule = module {
     single {
@@ -95,6 +100,7 @@ val sharedModule = module {
     single { ChatSocketService(get()) }
     single { DeviceApiService(get()) }
     single { NewApiService(get()) }
+    single { MyCoinsApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -105,6 +111,7 @@ val sharedModule = module {
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
+    single< MyCoinsRepository> { MyCoinsRepositoryImpl(get()) }
 
 
 
@@ -141,6 +148,7 @@ val sharedModule = module {
     single { SendMessageApiUseCase(get()) }
     single { RegisterDeviceUseCase(get()) }
     single { NewsUseCase(get()) }
+    single { MyCoinsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
 
@@ -156,9 +164,9 @@ val sharedModule = module {
     viewModel { CreatePasswordViewmodel() }
     viewModel { ChildViewmodel(get()) }
     viewModel { LoginPasswordViewmodel() }
-    viewModel { TaskViewModel(get (), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
     viewModel { ChildConfirmViewModel() }
+    viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChatDetailsViewModel(get()) }
     viewModel { ChatViewModel(
         get(),
@@ -173,6 +181,7 @@ val sharedModule = module {
     viewModel { NotificationViewModel(get(), get()) }
     viewModel { ScheduleViewModel() }
     viewModel { ScheduleTimeViewModel() }
+    viewModel { MyCoinsViewModel(get()) }
 
 
 }

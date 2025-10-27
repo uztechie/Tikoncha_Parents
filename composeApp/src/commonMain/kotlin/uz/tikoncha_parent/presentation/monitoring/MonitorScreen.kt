@@ -178,8 +178,9 @@ private fun MonitorUi(
                 DividedButton(
                     title = stringResource(Res.string.ekranni_kuzatish),
                     icon = painterResource(Res.drawable.monitor_screen),
-                    onItemClick = {},
-                    isPermission = false
+                    onItemClick = { },
+                    isPermission = false,
+                    success = false
                 )
 
                 SpaceSmall()
@@ -188,7 +189,8 @@ private fun MonitorUi(
                     title = stringResource(Res.string.yon_atrofni_kuzatish),
                     icon = painterResource(Res.drawable.permission_camera),
                     onItemClick = {},
-                    isPermission = false
+                    isPermission = false,
+                    success = false
                 )
 
                 SpaceSmall()
@@ -197,7 +199,8 @@ private fun MonitorUi(
                     title = stringResource(Res.string.yon_atrofni_eshitish),
                     icon = painterResource(Res.drawable.microphonee),
                     onItemClick = {},
-                    isPermission = false
+                    isPermission = false,
+                    success = false
                 )
 
                 SpaceSmall()
@@ -206,9 +209,10 @@ private fun MonitorUi(
                     title = stringResource(Res.string.bolaning_ilovasini_sozligini_korish),
                     icon = painterResource(Res.drawable.permission_adminstration),
                     onItemClick = {
-                        rootNavigator?.push(ClientPermissionStateScreen())
+//                        rootNavigator?.push(ClientPermissionStateScreen())
                     },
-                    isPermission = false
+                    isPermission = false,
+                    success = false
                 )
 
                 SpaceSmall()
@@ -226,10 +230,9 @@ private fun MonitorUi(
                 DividedButton(
                     title = stringResource(Res.string.internetdagi_tarix),
                     icon = painterResource(Res.drawable.clock),
-                    onItemClick = {
-
-                    },
-                    isPermission = false
+                    onItemClick = { },
+                    isPermission = false,
+                    success = false
                 )
 
                 SpaceLarge()

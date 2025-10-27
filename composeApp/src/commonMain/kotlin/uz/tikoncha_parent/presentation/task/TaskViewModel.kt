@@ -18,13 +18,13 @@ import uz.tikoncha_parent.common.Util.toMillis
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toServerType
 import uz.tikoncha_parent.data.mapper.toTask
-import uz.tikoncha_parent.data.mapper.toTodoDto
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.TodoRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
@@ -37,7 +37,8 @@ class TaskViewModel (
     private val todoUseCase: TodoUseCase,
     private val childrenUseCase: ChildrenUseCase,
     private val todoListUseCase: TodoListUseCase,
-    private val updateTodoUseCase: UpdateTodoUseCase
+    private val updateTodoUseCase: UpdateTodoUseCase,
+    private val coinsUseCase: MyCoinsUseCase,
 ) : ViewModel() {
 
     private var requestTodoJob: Job? = null
@@ -51,6 +52,9 @@ class TaskViewModel (
     private val _state = MutableStateFlow(TaskState())
     val state = _state.asStateFlow()
 
+    init {
+        onEvent(TaskEvent.LoadParentCoins)
+    }
 
     fun onEvent(event: TaskEvent) {
         when (event) {
@@ -94,6 +98,37 @@ class TaskViewModel (
                 }
             }
 
+            is TaskEvent.OnCoinChange -> {
+                _state.update {
+                    it.copy(
+                        coin = event.coin
+                    )
+                }
+            }
+
+            TaskEvent.LoadParentCoins -> {
+                viewModelScope.launch {
+                    val request = coinsUseCase()
+                    when(request){
+                        is Resource.Success -> {
+                            _state.update {
+                                it.copy(
+                                    availableCoins = request.data.coins
+                                )
+                            }
+                        }
+                        is Resource.Error -> {
+                            _state.update {
+                                it.copy(
+                                    availableCoins = 0
+                                )
+                            }
+                        }
+                        is Resource.Loading -> { }
+                    }
+                }
+            }
+
             is TaskEvent.OnChildSelected -> {
                 _state.update {
                     it.copy(selectedChildren = event.child)
@@ -118,7 +153,6 @@ class TaskViewModel (
                     updateTodo(editedTask)
                 }
                 else {
-                    println("AAAAAA = ${requestTodo()}")
                     requestTodo()
                 }
             }
@@ -198,7 +232,8 @@ class TaskViewModel (
                 created_at = DateTimeUtil.getCurrentIsoDateTime(timeZone = TimeZone.UTC),
                 target_user_id = selectedChildUserId,
                 id = Uuid.random().toString(),
-                is_completed = _state.value.completed
+                is_completed = _state.value.completed,
+                coins = _state.value.coin
             )
 
             val result = todoUseCase(request)
@@ -220,6 +255,25 @@ class TaskViewModel (
                 }
 
                 is Resource.Success -> {
+
+                    val gift = state.value.coin
+                    val childId = selectedChildUserId.orEmpty()
+                    val availableCoins = state.value.availableCoins
+
+                    if (gift > 0 && gift <= availableCoins && childId.isNotEmpty()){
+                        val giftCoins = coinsUseCase()
+                        when(giftCoins){
+                            is Resource.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        availableCoins = (it.availableCoins - gift)
+                                    )
+                                }
+                            }
+                            is Resource.Error -> {}
+                            is Resource.Loading -> {}
+                        }
+                    }
 
                     val toDo = result.data
                     val allList = state.value.allTaskList.toMutableList()

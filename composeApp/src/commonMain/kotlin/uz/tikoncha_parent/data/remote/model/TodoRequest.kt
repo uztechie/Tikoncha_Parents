@@ -11,5 +11,6 @@ data class TodoRequest(
     val due_date: String?,
     val importance: String,
     val target_user_id: String?,
-    val is_completed: Boolean?
+    val is_completed: Boolean?,
+    val coins: Int = 0
 )

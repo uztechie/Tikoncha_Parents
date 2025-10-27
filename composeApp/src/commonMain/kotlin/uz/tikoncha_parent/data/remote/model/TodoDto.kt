@@ -15,4 +15,5 @@ data class TodoDto(
     val is_completed: Boolean,
     val created_at: String?,
     val modified_at: String?,
+    val coin: Int = 0
 )

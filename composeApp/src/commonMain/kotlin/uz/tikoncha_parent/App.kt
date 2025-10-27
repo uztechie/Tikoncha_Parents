@@ -33,6 +33,7 @@ import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.presentation.push.navigateByDeepLink
 import uz.tikoncha_parent.presentation.task.TaskScreen
+import uz.tikoncha_parent.presentation.home.schedule.type.WiFiScreen
 import uz.tikoncha_parent.ui.theme.ThemeMode
 
 
