@@ -166,7 +166,7 @@ val sharedModule = module {
     viewModel { LoginPasswordViewmodel() }
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
     viewModel { ChatDetailsViewModel(get()) }
     viewModel { ChatViewModel(
         get(),
