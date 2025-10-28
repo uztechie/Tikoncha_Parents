@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,6 +49,8 @@ import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleType
+import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleTypeScreen
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -64,12 +68,15 @@ class ScheduleTimeListScreen(): Screen {
     @Composable
     override fun Content() {
 
+        val navigator = LocalNavigator.current
+
         val vieModel = koinViewModel<ScheduleTimeViewModel>()
         val state by vieModel.state.collectAsStateWithLifecycle()
         val event = vieModel::event
         ScheduleTimeListUi(
             state = state,
-            event = event
+            event = event,
+            navigator = navigator
         )
 
 
@@ -80,10 +87,13 @@ class ScheduleTimeListScreen(): Screen {
 
 @Composable
 fun ScheduleTimeListUi(
+    navigator: Navigator?,
     state: ScheduleTimeState,
     event: (ScheduleTimeEvent) -> Unit
 )
 {
+
+    val isTimeEnabled = state.enabledByType[ScheduleType.TIME] == true
 
     var showSetupDialog by remember {
         mutableStateOf(false)
@@ -108,7 +118,7 @@ fun ScheduleTimeListUi(
                 .zIndex(1f),
             title = stringResource(Res.string.faol_vaqt),
             showBackButton = true,
-            onBackClick = {}
+            onBackClick = { navigator?.pop() }
         )
 
 
@@ -126,6 +136,7 @@ fun ScheduleTimeListUi(
                 ScheduleTimeItem(
                     modifier = Modifier
                         .clickable(
+                            enabled = !isTimeEnabled,
                             interactionSource = null,
                             indication = null,
                             onClick = {
@@ -197,13 +208,9 @@ fun ScheduleTimeListUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                onClick = {}
+                onClick = { }
             )
-
         }
-
-
-
     }
 }
 

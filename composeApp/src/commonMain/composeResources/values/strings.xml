@@ -217,5 +217,7 @@
     <string name="budilnik">Budilnik</string>
     <string name="har_kuni_bloklashni_rejalashtiring">Har kuni bloklashni rejalashtiring vaqt, joy va boshqa parametrlar bo‘yicha</string>
     <string name="tangachalaringiz">Tangachalaringiz</string>
+    <string name="soatbay">Soatbay</string>
+    <string name="foydalanish_chegarasi">Foydalanish chegarasi</string>
 
 </resources>

@@ -14,4 +14,7 @@ sealed interface ScheduleTimeEvent {
     data object ClearTime: ScheduleTimeEvent
 
 
+    data class SetUsageLimitTime(val dayHour: LocalTime, val hourly: LocalTime): ScheduleTimeEvent
+    data class SelectUsageDay(val usageDay: WeekDay): ScheduleTimeEvent
+    data object SaveUsageTime: ScheduleTimeEvent
 }

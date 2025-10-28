@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.platform.Logger
-import kotlin.random.Random
-import kotlin.time.Clock
+import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleType
 
 
 class ScheduleTimeViewModel: ViewModel() {
@@ -88,6 +87,7 @@ class ScheduleTimeViewModel: ViewModel() {
             ScheduleTimeEvent.SaveTime -> {
                 saveTime()
                 clearTime()
+                setItemEnabled(ScheduleType.TIME, true)
             }
 
             ScheduleTimeEvent.ClearTime -> {
@@ -108,6 +108,41 @@ class ScheduleTimeViewModel: ViewModel() {
                         selectOutside = data.outside,
                     )
                 }
+            }
+
+            is ScheduleTimeEvent.SetUsageLimitTime -> {
+                _state.update {
+                    val ranges = dailyViewingRanges(
+                        dayHour = event.dayHour,
+                        hourly = event.hourly,
+                        outside = it.selectOutside
+                    )
+
+                    it.copy(
+                        startTime = event.dayHour,
+                        timeRanges = ranges
+                    )
+                }
+            }
+
+            is ScheduleTimeEvent.SelectUsageDay -> {
+                _state.update { innerState ->
+
+                    val set = innerState.usageLimitDays.toMutableSet()
+
+                    val added = set.add(event.usageDay)
+                    if (!added) set.remove(event.usageDay)
+
+                    innerState.copy(
+                        usageLimitDays = set.sortedBy { it.num }.toSet()
+                    )
+                }
+            }
+
+            ScheduleTimeEvent.SaveUsageTime -> {
+                saveUsageTime()
+                clearUsageTime()
+                setItemEnabled(ScheduleType.USAGE_LIMIT, true)
             }
         }
     }
@@ -203,7 +238,101 @@ class ScheduleTimeViewModel: ViewModel() {
 
     }
 
+
+    private fun dailyViewingRanges(
+        dayHour: LocalTime,
+        hourly: LocalTime,
+        outside: Boolean
+    ): List<MinuteRange> {
+        val s = dayHour.toMinutes().coerceIn(0, 1440)
+        val e = hourly.toMinutes().coerceIn(0, 1440)
+
+        return if (!outside) {
+            when {
+                s == e -> emptyList()
+                s < e -> listOf(MinuteRange(s, e))
+                else   -> {
+                    // Agar foydalanuvchi "ichki" oraliqni kesishib kechaga o'tadigan qilsa (mas: 22:00-03:00),
+                    // uni ikkiga bo'lib qaytarish ham mumkin; lekin odatda ichki oraliqni s<e qilib cheklab qo'yish tavsiya.
+                    listOf(MinuteRange(s, 1440), MinuteRange(0, e))
+                }
+
+            }
+        }
+        else{
+            when {
+                s == e -> listOf(MinuteRange(0, 1440))
+                s < e -> {
+                    val left = if (s>0) MinuteRange(0, s) else null
+                    val right = if (e<1440) MinuteRange(e, 1440) else null
+                    listOfNotNull(left, right)
+                }
+                else -> {
+                    // s > e bo'lsa (mas: 22:00-03:00) ichki oraliq kechani kesib o'tgan bo'ladi,
+                    // demak tashqarisi faqat (e, s) oralig'i. Uni bitta bo'lak qilib qaytaramiz.
+                    listOf(MinuteRange(e, s))
+                }
+            }
+        }
+
+    }
+
+
+    private fun setItemEnabled(type: ScheduleType, enabled: Boolean){
+        _state.update {
+            it.copy(
+                enabledByType = it.enabledByType.toMutableMap().apply {
+                    this[type] = enabled
+                }
+            )
+        }
+    }
+    private fun clearUsageTime(){
+        _state.update {
+            it.copy(
+                usageLimitDays = emptySet(),
+                dayHour = LocalTime(8,0),
+            )
+        }
+    }
+    private fun saveUsageTime(){
+        _state.update {innerState->
+            val timeList = innerState.usageTimeList.toMutableList()
+
+            val isUpdate = innerState.currentId != null
+            Logger.d("", "innerState.currentId = ${innerState.currentId}")
+            val id = innerState.currentId
+                ?: (innerState.usageTimeList.maxOfOrNull { it.id }?.plus(1) ?: 1) // Random o'rniga deterministik id
+
+            val item = ScheduleTimeUi(
+                id = id,
+                time = innerState.dayHour.toHourMinuteString(),
+                weekDays = innerState.usageLimitDays,
+                startTime = innerState.dayHour,
+            )
+
+            if (isUpdate){
+                val idx = timeList.indexOfFirst { it.id == innerState.currentId }
+                if (idx >= 0){
+                    timeList[idx] = item
+                }
+                else{
+                    timeList.add(item)
+                }
+            }
+            else{
+                timeList.add(item)
+            }
+            innerState.copy(
+                currentId = null,
+                timeList = timeList
+            )
+        }
+    }
+
 }
+
+
 
 private fun createTempList(): List<ScheduleTimeUi>{
     val list = mutableListOf<ScheduleTimeUi>()

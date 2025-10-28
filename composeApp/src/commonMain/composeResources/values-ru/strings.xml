@@ -180,5 +180,7 @@
     <string name="budilnik">Будни</string>
     <string name="har_kuni_bloklashni_rejalashtiring">Планируйте ежедневыне блакировки по времени, месту и другим параметрам</string>
     <string name="tangachalaringiz">Ваши монеты</string>
+    <string name="soatbay">Почасовой</string>
+    <string name="foydalanish_chegarasi">Лимит использования</string>
 
 </resources>

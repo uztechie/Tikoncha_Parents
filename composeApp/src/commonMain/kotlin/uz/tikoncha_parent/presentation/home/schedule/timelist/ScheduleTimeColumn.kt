@@ -39,6 +39,7 @@ import kotlin.math.abs
 
 @Composable
 fun ScheduleTimeColumn(
+    modifier: Modifier = Modifier,
     range: IntRange,
     selected: Int,
     onSelected: (Int) -> Unit
@@ -83,7 +84,7 @@ fun ScheduleTimeColumn(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(140.dp)
             .height(WHEEL_HEIGHT)
             .border(
