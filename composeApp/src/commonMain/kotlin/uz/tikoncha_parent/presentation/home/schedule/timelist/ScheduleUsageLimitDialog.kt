@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.datetime.LocalTime
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.LocalResourceReader
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.foydalanish_chegarasi
@@ -35,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.soatbay
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.coverShadow
@@ -62,28 +67,23 @@ fun ScheduleUsageLimitDialog(
     var dailySelectedHour by remember { mutableStateOf(state.dayHour.hour) }
     var dailySelectedMinute by remember { mutableStateOf(state.dayMinute.minute) }
 
-    
-    var selectedMinute by remember { mutableStateOf(state.hourly.minute) }
 
 
-    var usageTypeIndex by remember {
-        mutableStateOf(0)
-    }
+
+
+    val res = LocalResourceReader.current
 
     LaunchedEffect(show) {
         if (show) {
             dailySelectedHour = state.dayHour.hour
             dailySelectedMinute = state.dayMinute.minute
-            selectedMinute = state.hourly.minute
-            usageTypeIndex = 0
         }
     }
 
-    LaunchedEffect(show, dailySelectedHour, dailySelectedMinute, selectedMinute){
+    LaunchedEffect(show, dailySelectedHour, dailySelectedMinute){
         if (show){
             event(ScheduleTimeEvent.SetUsageLimitTime(
-                dayHour = LocalTime(dailySelectedHour, dailySelectedMinute),
-                hourly = LocalTime(0, selectedMinute)
+                time = LocalTime(dailySelectedHour, dailySelectedMinute),
             ))
         }
     }
@@ -160,9 +160,12 @@ fun ScheduleUsageLimitDialog(
                                 daily,
                                 hourly
                             ),
-                            selectedIndex = usageTypeIndex,
+                            selectedIndex = if(state.selectedLimitType == DayHour.DAY) 0 else 1,
                             onOptionSelected = { i ->
-                                usageTypeIndex = i
+                                dailySelectedMinute = 0
+                                event(ScheduleTimeEvent.SelectLimitType(
+                                    if (i == 0) DayHour.DAY else DayHour.HOUR
+                                ))
                             },
                             modifier = Modifier.fillMaxWidth(),
                             fontWeight = FontWeight.Normal,
@@ -175,7 +178,7 @@ fun ScheduleUsageLimitDialog(
                             horizontalArrangement = Arrangement.SpaceBetween
                         )
                         {
-                            if (usageTypeIndex == 0) {
+                            if (state.selectedLimitType == DayHour.DAY) {
                                 ScheduleTimeColumn(
                                     range = 0..23,
                                     selected = dailySelectedHour,
@@ -192,8 +195,8 @@ fun ScheduleUsageLimitDialog(
                             } else {
                                 ScheduleTimeColumn(
                                     range = 0..59,
-                                    selected = selectedMinute,
-                                    onSelected = { selectedMinute = it },
+                                    selected = dailySelectedMinute,
+                                    onSelected = { dailySelectedMinute = it },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
@@ -206,7 +209,7 @@ fun ScheduleUsageLimitDialog(
                 SpaceMedium()
                 CustomButton(
                     onClick = {
-                        event(ScheduleTimeEvent.SaveUsageTime)
+                        event(ScheduleTimeEvent.SaveLimit)
                         onDismiss()
                     },
                     enabled = state.usageLimitDays.isNotEmpty(),

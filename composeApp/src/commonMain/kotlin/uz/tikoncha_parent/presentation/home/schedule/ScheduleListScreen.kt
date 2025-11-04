@@ -1,8 +1,9 @@
-package uz.tikoncha_parent.presentation.home.schedule.table
+package uz.tikoncha_parent.presentation.home.schedule
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,38 +23,68 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.discord_icon
 import tikoncha_parents.composeapp.generated.resources.google_icon
 import tikoncha_parents.composeapp.generated.resources.har_kuni_bloklashni_rejalashtiring
+import tikoncha_parents.composeapp.generated.resources.ilovalar
 import tikoncha_parents.composeapp.generated.resources.instagram_icon
 import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.linkedin_icon
+import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
 import tikoncha_parents.composeapp.generated.resources.social_x_icon
-import tikoncha_parents.composeapp.generated.resources.vazifa_qo_shish
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.verticalShadow
+import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
+import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HintTextColor
+import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
-import uz.tikoncha_parent.ui.TextFieldCornerRadius
-import uz.tikoncha_parent.ui.UltraLargeTextSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 
+
+class ScheduleListScreen : Screen {
+    @Composable
+    override fun Content() {
+
+        val navigator = LocalNavigator.current
+
+        val viewModel = koinViewModel<ScheduleViewModel>()
+        val state = viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
+        ScheduleListUi(
+            navigator = navigator
+        )
+    }
+}
+
 @Composable
-fun TableScreen() {
+fun ScheduleListUi(
+    navigator: Navigator?
+){
+
+    val bgColor = MaterialTheme.extendedColor.cardColor
 
     Column(
         modifier = Modifier
@@ -63,8 +94,10 @@ fun TableScreen() {
         CustomHeader(
             title = stringResource(Res.string.jadval),
             showBackButton = true,
-            onBackClick = { },
-            modifier = Modifier.fillMaxWidth()
+            onBackClick = {
+                navigator?.pop()
+            },
+            modifier = Modifier.fillMaxWidth(),
         )
 
         SpaceMedium()
@@ -74,29 +107,42 @@ fun TableScreen() {
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
+                    .clickable {
+                        navigator?.push(ScheduleAppsSelectScreen())
+                    }
+                    .verticalShadow(
+                        shape = RoundedCornerShape(CardCornerRadius),
+                        offset = 0.dp
+                    )
+                    .background(
+                        bgColor, RoundedCornerShape(CardCornerRadius)
                     )
                     .padding(ContainerPadding)
             ) {
-                CustomText(
-                    text = stringResource(Res.string.jadval),
-                    fontSize = UltraLargeTextSize,
-                    fontWeight = FontWeight.SemiBold
+                val icons = listOf(
+                    Res.drawable.instagram_icon,
+                    Res.drawable.whatsapp_icon,
+                    Res.drawable.discord_icon,
+                    Res.drawable.linkedin_icon,
+                    Res.drawable.social_x_icon,
+                    Res.drawable.google_icon
                 )
 
-                SpaceSmall()
+                CustomText(
+                    text = stringResource(Res.string.ilovalar),
+                    fontSize = LargeTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
 
                 CustomText(
                     text = stringResource(Res.string.har_kuni_bloklashni_rejalashtiring),
                     fontSize = NormalTextSize,
                     color = HintTextColor,
-                    fontWeight = FontWeight.SemiBold
+                    style = TextStyle(lineHeight = 14.sp)
                 )
 
                 SpaceSmall()
@@ -108,15 +154,6 @@ fun TableScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
-                    val icons = listOf(
-                        Res.drawable.instagram_icon,
-                        Res.drawable.whatsapp_icon,
-                        Res.drawable.discord_icon,
-                        Res.drawable.linkedin_icon,
-                        Res.drawable.social_x_icon,
-                        Res.drawable.google_icon
-                    )
 
                     icons.forEach { icon ->
                         Image(
@@ -130,16 +167,17 @@ fun TableScreen() {
 
             Spacer(Modifier.weight(1f))
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(ScheduleSetupScreen())
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
                     .height(ButtonHeight),
-            ) {
-
+            )
+            {
                 Text(
-                    text = stringResource(Res.string.vazifa_qo_shish),
-                    fontSize = 16.sp,
+                    text = stringResource(Res.string.shartlar_kiritish),
                     color = PrimaryColor
                 )
 
@@ -150,8 +188,9 @@ fun TableScreen() {
                     contentDescription = "",
                     tint = PrimaryColor
                 )
+
             }
-            SpaceMedium()
+            SpaceSmall()
         }
     }
 }

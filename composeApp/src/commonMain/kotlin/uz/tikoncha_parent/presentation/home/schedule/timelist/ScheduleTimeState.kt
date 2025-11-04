@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import kotlinx.datetime.LocalTime
+import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleType
@@ -17,9 +18,10 @@ data class ScheduleTimeState(
     val currentId: Int? = null,
 
     val usageLimitDays: Set<WeekDay> = setOf(),
-    val usageTimeList: List<ScheduleTimeUi> = emptyList(),
+    val usageTimeList: List<ScheduleUsageLimitUi> = emptyList(),
     val dayHour: LocalTime = LocalTime(0, 0),
     val dayMinute: LocalTime = LocalTime(0, 0),
-    val hourly: LocalTime = LocalTime(0, 0),
     val enabledByType: Map<ScheduleType, Boolean> = emptyMap(),
+    val isDailyUsage: Boolean = true,
+    val selectedLimitType: DayHour = DayHour.DAY,
 )

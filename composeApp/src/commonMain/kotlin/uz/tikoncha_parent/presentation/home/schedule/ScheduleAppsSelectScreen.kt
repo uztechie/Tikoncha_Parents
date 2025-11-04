@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +36,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ilovalar
-import tikoncha_parents.composeapp.generated.resources.jadvallar
+import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.search_normal
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
@@ -57,7 +56,7 @@ import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class ScheduleScreen : Screen {
+class ScheduleAppsSelectScreen : Screen {
     @Composable
     override fun Content() {
 
@@ -67,7 +66,7 @@ class ScheduleScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        ScheduleUi(
+        ScheduleAppsSelectUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -76,7 +75,7 @@ class ScheduleScreen : Screen {
 }
 
 @Composable
-fun ScheduleUi(
+fun ScheduleAppsSelectUi(
     navigator: Navigator?,
     state: ScheduleState,
     event: (ScheduleEvent) -> Unit
@@ -153,7 +152,7 @@ fun ScheduleUi(
         CustomHeader(
             showBackButton = true,
             onBackClick = { navigator?.pop() },
-            title = stringResource(Res.string.jadvallar),
+            title = stringResource(Res.string.jadval),
             trailingIcon = {
                 Image(
                     painter = painterResource(Res.drawable.search_normal),
@@ -293,7 +292,7 @@ fun ScheduleUi(
                 }
 
                 1->{
-                    navigator.push(ScheduleTimeListScreen() )
+//                    navigator.push(ScheduleTimeListScreen() )
                 }
             }
 
@@ -311,7 +310,7 @@ fun ScheduleUi(
 @Preview
 @Composable
 private fun Preview() {
-    ScheduleUi(
+    ScheduleAppsSelectUi(
         navigator = null,
         state = ScheduleState(),
         event = {}

@@ -35,6 +35,7 @@ import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeListSc
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeState
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeViewModel
 import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleUsageLimitDialog
+import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleUsageLimitListScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -116,9 +117,11 @@ fun ScheduleTypeUi(
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
         CustomHeader(
-            title = stringResource(Res.string.jadvallar),
+            title = stringResource(Res.string.jadval),
             showBackButton = true,
-            onBackClick = { },
+            onBackClick = {
+                navigator?.pop()
+            },
         )
 
         Column(
@@ -182,7 +185,7 @@ fun ScheduleTypeUi(
                                         ScheduleType.WIFI -> {}
                                         ScheduleType.LAUNCH_COUNT -> {}
                                         ScheduleType.USAGE_LIMIT -> {
-                                            showSetupDialog = true
+                                            navigator?.push(ScheduleUsageLimitListScreen())
                                         }
                                     }
                                 }
