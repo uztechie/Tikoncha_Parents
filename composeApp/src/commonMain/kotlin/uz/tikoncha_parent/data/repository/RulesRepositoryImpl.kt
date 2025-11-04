@@ -1,8 +1,8 @@
 package uz.tikoncha_parent.data.repository
 
 import uz.tikoncha_parent.data.remote.RulesApiService
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
-import uz.tikoncha_parent.data.remote.model.CreatePolicyResponse
+import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
+import uz.tikoncha_parent.data.remote.model.CreatePolicyResponseTemp
 import uz.tikoncha_parent.data.remote.model.CreateRuleRequest
 import uz.tikoncha_parent.data.remote.model.CreateRuleResponse
 import uz.tikoncha_parent.data.remote.model.GetRulesResponse
@@ -15,10 +15,10 @@ class RulesRepositoryImpl(private val api: RulesApiService): RulesRepository {
         return api.getRules(userId)
     }
 
-    override suspend fun createPolicy(createPolicyRequest: CreatePolicyRequest): CreatePolicyResponse {
-        println("RulesRepositoryImpl createPolicy=$createPolicyRequest")
+    override suspend fun createPolicy(createPolicyRequestTemp: CreatePolicyRequestTemp): CreatePolicyResponseTemp {
+        println("RulesRepositoryImpl createPolicy=$createPolicyRequestTemp")
 
-        return api.createPolicy(createPolicyRequest)
+        return api.createPolicy(createPolicyRequestTemp)
     }
 
     override suspend fun createRule(createRuleRequest: CreateRuleRequest): CreateRuleResponse {

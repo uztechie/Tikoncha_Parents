@@ -4,8 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
-import uz.tikoncha_parent.data.remote.model.CreatePolicyResponse
+import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
+import uz.tikoncha_parent.data.remote.model.CreatePolicyResponseTemp
 import uz.tikoncha_parent.data.remote.model.CreateRuleRequest
 import uz.tikoncha_parent.data.remote.model.CreateRuleResponse
 import uz.tikoncha_parent.data.remote.model.GetRulesResponse
@@ -16,13 +16,13 @@ class RulesApiService(private val client: HttpClient) {
 
 
 
-    suspend fun createPolicy(createPolicyRequest: CreatePolicyRequest): CreatePolicyResponse =
+    suspend fun createPolicy(createPolicyRequestTemp: CreatePolicyRequestTemp): CreatePolicyResponseTemp =
         client.safeRequest(
             method = HttpMethod.Post,
             url = "/policies/",
             block = {
-                println("createPolicy=$createPolicyRequest")
-                setBody(createPolicyRequest)
+                println("createPolicy=$createPolicyRequestTemp")
+                setBody(createPolicyRequestTemp)
             }
         )
 

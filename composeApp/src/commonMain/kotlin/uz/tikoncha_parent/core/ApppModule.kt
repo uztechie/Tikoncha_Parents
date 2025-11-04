@@ -20,7 +20,7 @@ import uz.tikoncha_parent.domain.use_case.AddChildUseCase
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.CreatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.CreatePolicyTempUseCase
 import uz.tikoncha_parent.domain.use_case.CreateRuleUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
@@ -129,7 +129,7 @@ val sharedModule = module {
     single { UploadAvatarToServerUseCase(get()) }
     single { LoadAvatarFromServerUseCase(get()) }
     single { RefreshRulesUseCase(get()) }
-    single { CreatePolicyUseCase(get()) }
+    single { CreatePolicyTempUseCase(get()) }
     single { CreateRuleUseCase(get()) }
     single { UpsertRuleUseCase(get()) }
     single { ChildrenLocationUseCase(get()) }

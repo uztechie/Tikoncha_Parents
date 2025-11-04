@@ -3,7 +3,7 @@ package uz.tikoncha_parent.domain.use_case
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
+import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
 import uz.tikoncha_parent.data.remote.model.CreateRuleRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.RulesRepository
@@ -38,14 +38,14 @@ class CreateRuleUseCase(
 
     suspend  fun createPolicy(userId: String): Resource<String>{
         return try {
-            val createPolicyRequest: CreatePolicyRequest = CreatePolicyRequest(
+            val createPolicyRequestTemp: CreatePolicyRequestTemp = CreatePolicyRequestTemp(
                 scope_id = userId,
                 scope_type = "PARENT_CHILD",
                 is_active = true,
                 name = "Parent"
             )
 
-            val response = rulesRepository.createPolicy(createPolicyRequest)
+            val response = rulesRepository.createPolicy(createPolicyRequestTemp)
             if (response.success && response.data != null){
                 Resource.Success(response.data.id)
             }
