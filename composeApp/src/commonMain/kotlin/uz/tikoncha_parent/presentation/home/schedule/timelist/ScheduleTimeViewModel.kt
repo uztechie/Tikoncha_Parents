@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package uz.tikoncha_parent.presentation.home.schedule.timelist
 
 import androidx.lifecycle.ViewModel
@@ -5,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalTime
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.ResourceReader
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleType
@@ -112,15 +116,8 @@ class ScheduleTimeViewModel: ViewModel() {
 
             is ScheduleTimeEvent.SetUsageLimitTime -> {
                 _state.update {
-                    val ranges = dailyViewingRanges(
-                        dayHour = event.dayHour,
-                        hourly = event.hourly,
-                        outside = it.selectOutside
-                    )
-
                     it.copy(
-                        startTime = event.dayHour,
-                        timeRanges = ranges
+                        startTime = event.time,
                     )
                 }
             }
@@ -139,10 +136,44 @@ class ScheduleTimeViewModel: ViewModel() {
                 }
             }
 
-            ScheduleTimeEvent.SaveUsageTime -> {
+            is ScheduleTimeEvent.SaveLimit -> {
                 saveUsageTime()
                 clearUsageTime()
                 setItemEnabled(ScheduleType.USAGE_LIMIT, true)
+            }
+
+            is ScheduleTimeEvent.RemoveUsageLimit -> {
+                _state.update {
+                    it.copy(
+                        usageTimeList = it.usageTimeList.filter { it != event.usageLimit }
+                    )
+                }
+            }
+            is ScheduleTimeEvent.SetUsageLimitData -> {
+                val data = event.usageLimitData
+                _state.update {
+                    it.copy(
+                        currentId = data.id,
+                        dayHour = data.time,
+                        usageLimitDays = data.weekDays,
+                        isDailyUsage = data.isDailyUsage
+                    )
+                }
+            }
+            is ScheduleTimeEvent.SetUsageType ->  {
+                _state.update {
+                    it.copy(
+                        isDailyUsage = event.isDaily
+                    )
+                }
+            }
+
+            is ScheduleTimeEvent.SelectLimitType -> {
+                _state.update {
+                    it.copy(
+                        selectedLimitType = event.dayHour
+                    )
+                }
             }
         }
     }
@@ -295,20 +326,20 @@ class ScheduleTimeViewModel: ViewModel() {
             )
         }
     }
-    private fun saveUsageTime(){
+    private fun saveUsageTime( res: ResourceReader){
         _state.update {innerState->
+
+
             val timeList = innerState.usageTimeList.toMutableList()
-
             val isUpdate = innerState.currentId != null
-            Logger.d("", "innerState.currentId = ${innerState.currentId}")
             val id = innerState.currentId
-                ?: (innerState.usageTimeList.maxOfOrNull { it.id }?.plus(1) ?: 1) // Random o'rniga deterministik id
+                ?: (innerState.usageTimeList.maxOfOrNull { it.id }?.plus(1) ?: 1)
 
-            val item = ScheduleTimeUi(
+            val item = ScheduleUsageLimitUi(
                 id = id,
-                time = innerState.dayHour.toHourMinuteString(),
                 weekDays = innerState.usageLimitDays,
-                startTime = innerState.dayHour,
+                time = innerState.dayHour,
+                isDailyUsage = innerState.isDailyUsage,
             )
 
             if (isUpdate){
@@ -325,11 +356,10 @@ class ScheduleTimeViewModel: ViewModel() {
             }
             innerState.copy(
                 currentId = null,
-                timeList = timeList
+                usageTimeList = timeList
             )
         }
     }
-
 }
 
 

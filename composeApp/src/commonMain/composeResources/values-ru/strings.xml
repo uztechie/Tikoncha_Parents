@@ -163,7 +163,7 @@
     <string name="eng_kop_foydalanilgan">Наиболее часто используемый</string>
     <string name="tangachalar_sovg_a_qiling">Подарите своему ребенку монетки за выполнение задания.</string>
     <string name="farzand_qoshish">Добавить ребёнка</string>
-    <string name="jadvallar">Расписания</string>
+    <string name="jadval">Расписания</string>
     <string name="ilovalar">Приложения</string>
     <string name="veb_sayt">Веб-сайт</string>
     <string name="boshlanishi">Начало</string>
@@ -182,5 +182,7 @@
     <string name="tangachalaringiz">Ваши монеты</string>
     <string name="soatbay">Почасовой</string>
     <string name="foydalanish_chegarasi">Лимит использования</string>
+    <string name="shartlar_kiritish">Добавить условия</string>
+    <string name="soatlik">Почасовой</string>
 
 </resources>

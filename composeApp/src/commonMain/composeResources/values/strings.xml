@@ -183,7 +183,7 @@
     <string name="notification">Notification</string>
     <string name="sizda_mavjud_tangachalar">Sizda mavjud tangachalar</string>
     <string name="tangachalar_sovg_a_qiling">Vazifani bajargani uchun farzandingizga tangachalar sovg’a qiling.</string>
-    <string name="jadvallar">Jadval</string>
+    <string name="jadval">Jadval</string>
     <string name="ilovalar">Ilovalar</string>
     <string name="veb_sayt">Veb-sayt</string>
     <string name="boshlanishi">Boshlanishi</string>
@@ -219,5 +219,7 @@
     <string name="tangachalaringiz">Tangachalaringiz</string>
     <string name="soatbay">Soatbay</string>
     <string name="foydalanish_chegarasi">Foydalanish chegarasi</string>
+    <string name="shartlar_kiritish">Shartlar kiritish</string>
+    <string name="soatlik">Soatlik</string>
 
 </resources>

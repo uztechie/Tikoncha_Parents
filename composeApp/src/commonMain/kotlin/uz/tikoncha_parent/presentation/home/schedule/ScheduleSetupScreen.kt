@@ -1,26 +1,14 @@
-package uz.tikoncha_parent.presentation.home.schedule.table
+package uz.tikoncha_parent.presentation.home.schedule
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,22 +16,45 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.verticalShadow
+import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleTypeScreen
 import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceMedium
-import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.*
+
+class ScheduleSetupScreen : Screen {
+    @Composable
+    override fun Content() {
+
+        val navigator = LocalNavigator.current
+
+        val viewModel = koinViewModel<ScheduleViewModel>()
+        val state = viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
+        ScheduleSetupUi(
+            navigator = navigator
+        )
+    }
+}
 
 @Composable
-fun TableItemScreen() {
+fun ScheduleSetupUi(
+    navigator: Navigator?
+) {
+
+    val bgColor = MaterialTheme.extendedColor.cardColor
 
     Column(
         modifier = Modifier
@@ -53,13 +64,14 @@ fun TableItemScreen() {
         CustomHeader(
             title = stringResource(Res.string.jadval),
             showBackButton = true,
-            onBackClick = { },
+            onBackClick = {
+                navigator?.pop()
+            },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
 
                 Box(
-                    modifier = Modifier
-                        .size(NormalIconButtonSize)
+                    modifier = Modifier.size(NormalIconButtonSize)
                         .clip(RoundedCornerShape(ShapeCornerRadius))
                         .background(MaterialTheme.extendedColor.cardColor),
                     contentAlignment = Alignment.Center
@@ -82,7 +94,7 @@ fun TableItemScreen() {
         ) {
             CustomText(
                 text = stringResource(Res.string.shartlar),
-                fontSize = UltraLargeTextSize,
+                fontSize = LargeTextSize,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -91,17 +103,20 @@ fun TableItemScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(
-                            TextFieldCornerRadius
-                        )
+                    .verticalShadow(
+                        shape = RoundedCornerShape(CardCornerRadius),
+                        offset = 0.dp
                     )
+                    .background(bgColor, RoundedCornerShape(CardCornerRadius))
                     .padding(horizontal = ContainerPadding, vertical = 12.dp),
             ) {
-                Column() {
+                Column(
+                    modifier = Modifier
+                        .clickable{ }
+                ) {
                     CustomText(
                         text = stringResource(Res.string.vaqt),
-                        fontSize = UltraLargeTextSize,
+                        fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
                     SpaceSmall()
@@ -109,8 +124,8 @@ fun TableItemScreen() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CustomText(
-                            text = stringResource(Res.string.budilnik),
-                            fontSize = LargeTextSize,
+                            text = stringResource(Res.string.ishlash_vaqti),
+                            fontSize = NormalTextSize,
                             color = HintTextColor
                         )
                         SpaceUltraSmall()
@@ -142,29 +157,32 @@ fun TableItemScreen() {
                 )
             }
 
-            SpaceMedium()
+            SpaceLarge()
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navigator?.push(ScheduleTypeScreen())
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
                     .height(ButtonHeight),
             ) {
+                Row {
 
-                Text(
-                    text = stringResource(Res.string.vazifa_qo_shish),
-                    fontSize = 16.sp,
-                    color = PrimaryColor
-                )
+                    Text(
+                        text = stringResource(Res.string.shartlar_kiritish),
+                        color = PrimaryColor
+                    )
 
-                SpaceMedium()
+                    SpaceMedium()
 
-                Icon(
-                    painter = painterResource(Res.drawable.add_square),
-                    contentDescription = "",
-                    tint = PrimaryColor
-                )
+                    Icon(
+                        painter = painterResource(Res.drawable.add_square),
+                        contentDescription = "",
+                        tint = PrimaryColor
+                    )
+                }
             }
 
             SpaceMedium()
@@ -175,7 +193,7 @@ fun TableItemScreen() {
             ) {
                 CustomText(
                     text = stringResource(Res.string.qora_ro_yxat),
-                    fontSize = UltraLargeTextSize,
+                    fontSize = LargeTextSize,
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -184,7 +202,8 @@ fun TableItemScreen() {
                 ) {
                     Image(
                         painter = painterResource(Res.drawable.arrow_down),
-                        contentDescription = null
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.textColor)
                     )
                 }
             }
@@ -200,20 +219,36 @@ fun TableItemScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
+                    .clickable{
+                        navigator?.push(ScheduleAppsSelectScreen())
+                    }
+                    .verticalShadow(
+                        shape = RoundedCornerShape(CardCornerRadius),
+                        offset = 0.dp
+                    )
+                    .background(bgColor, RoundedCornerShape(CardCornerRadius)
                     )
                     .padding(ContainerPadding)
             ) {
+                val icons = listOf(
+                    Res.drawable.instagram_icon,
+                    Res.drawable.whatsapp_icon,
+                    Res.drawable.discord_icon,
+                    Res.drawable.linkedin_icon,
+                    Res.drawable.social_x_icon,
+                    Res.drawable.google_icon
+                )
+
+                val statusColor = if (icons.isEmpty()) HintTextColor else PrimaryColor
+                val countText = icons.size.toString()
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CustomText(
                         text = stringResource(Res.string.ilovalar),
-                        fontSize = UltraLargeTextSize,
+                        fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
 
@@ -222,21 +257,22 @@ fun TableItemScreen() {
                     Icon(
                         painter = painterResource(Res.drawable.apps_icon),
                         contentDescription = null,
-                        tint = PrimaryColor,
+                        tint = statusColor,
                         modifier = Modifier.size(SmallIconSize)
                     )
                     Spacer(Modifier.size(4.dp))
                     CustomText(
-                        text = "6",
-                        fontSize = LargeTextSize,
-                        color = PrimaryColor
+                        text = countText,
+                        fontSize = NormalTextSize,
+                        color = statusColor
                     )
 
                     SpaceUltraSmall()
                     Icon(
                         painter = painterResource(Res.drawable.arrow_right),
                         contentDescription = null,
-                        modifier = Modifier.size(NormalIconSize)
+                        modifier = Modifier.size(NormalIconSize),
+                        tint = MaterialTheme.extendedColor.textColor
                     )
                 }
 
@@ -250,15 +286,6 @@ fun TableItemScreen() {
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    val icons = listOf(
-                        Res.drawable.instagram_icon,
-                        Res.drawable.whatsapp_icon,
-                        Res.drawable.discord_icon,
-                        Res.drawable.linkedin_icon,
-                        Res.drawable.social_x_icon,
-                        Res.drawable.google_icon
-                    )
-
                     icons.forEach { icon ->
                         Image(
                             painter = painterResource(icon),
@@ -268,17 +295,30 @@ fun TableItemScreen() {
                     }
                 }
             }
-
             SpaceLarge()
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
+                    .verticalShadow(
+                        shape = RoundedCornerShape(CardCornerRadius),
+                        offset = 0.dp
+                    )
+                    .background(bgColor, RoundedCornerShape(CardCornerRadius)
                     )
             ) {
+                val sayt = listOf(
+                    "Instagram_com",
+                    "Whatsapp_com",
+                    "Discord_com",
+                    "Linkedin_com",
+                    "Social_x_com",
+                    "Google_com"
+                )
+
+                val statusColor = if (sayt.isEmpty()) HintTextColor else PrimaryColor
+                val countText = sayt.size.toString()
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -292,7 +332,7 @@ fun TableItemScreen() {
 
                     CustomText(
                         text = stringResource(Res.string.veb_sayt),
-                        fontSize = UltraLargeTextSize,
+                        fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
 
@@ -301,21 +341,22 @@ fun TableItemScreen() {
                     Icon(
                         painter = painterResource(Res.drawable.globuse),
                         contentDescription = null,
-                        tint = PrimaryColor,
+                        tint = statusColor,
                         modifier = Modifier.size(SmallIconSize)
                     )
                     Spacer(Modifier.size(4.dp))
                     CustomText(
-                        text = "6",
-                        fontSize = LargeTextSize,
-                        color = PrimaryColor
+                        text = countText,
+                        fontSize = NormalTextSize,
+                        color = statusColor
                     )
 
                     SpaceUltraSmall()
                     Icon(
                         painter = painterResource(Res.drawable.arrow_right),
                         contentDescription = null,
-                        modifier = Modifier.size(NormalIconSize)
+                        modifier = Modifier.size(NormalIconSize),
+                        tint = MaterialTheme.extendedColor.textColor
                     )
                 }
 
@@ -328,29 +369,20 @@ fun TableItemScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-
-                    val sayt = listOf(
-                        "Instagram_com",
-                        "Whatsapp_com",
-                        "Discord_com",
-                        "Linkedin_com",
-                        "Social_x_com",
-                        "Google_com"
-                    )
-
                     sayt.forEach { sayt ->
-
-                        Box(
+                        Column(
                             modifier = Modifier
-                                .background(
-                                    LightGrayColor,
-                                    RoundedCornerShape(ContainerCornerRadius)
+                                .verticalShadow(
+                                    shape = RoundedCornerShape(CardCornerRadius),
+                                    offset = 0.dp
                                 )
+                                .background( MaterialTheme.extendedColor.backgroundColor,
+                                    RoundedCornerShape(CardCornerRadius))
                                 .padding(horizontal = 8.dp)
                         ) {
                             CustomText(
                                 text = sayt,
-                                fontSize = NormalTextSize,
+                                fontSize = SmallTextSize,
                             )
                         }
                     }
@@ -360,7 +392,6 @@ fun TableItemScreen() {
             Spacer(Modifier.weight(1f))
             CustomButton(
                 text = stringResource(Res.string.saqlash),
-                fontSize = NormalLargeTextSize,
                 onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -375,5 +406,7 @@ fun TableItemScreen() {
 @Preview
 @Composable
 private fun PreviewTableScreen() {
-    TableItemScreen()
+    ScheduleSetupUi(
+        navigator = null
+    )
 }

@@ -43,7 +43,6 @@ import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -59,11 +58,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.home.schedule.ScheduleScreen
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.home.schedule.ScheduleListScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
-import uz.tikoncha_parent.presentation.push.DeepLinkEffect
-import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -296,6 +292,29 @@ fun HomeUi(
                                 .padding(LargeIconButtonPadding)
                         )
                     }
+                    SpaceSmall()
+
+                    FilledTonalIconButton(
+                        modifier = Modifier
+                            .size(LargeIconButtonSize),
+                        onClick = {
+                            rootNavigator?.push(ScheduleListScreen())
+                        },
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.extendedColor.buttonColor,
+                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                        ),
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.schedule_icon),
+                            contentDescription = "",
+                            tint = PrimaryColor,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(LargeIconButtonPadding)
+                        )
+                    }
                 }
             }
 
@@ -310,23 +329,6 @@ fun HomeUi(
                     )
                     .verticalScroll(rememberScrollState())
             ) {
-
-                CustomButton(
-                    text = "Statistika",
-                    onClick = {
-                        rootNavigator?.push(ScheduleScreen())
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(ButtonHeight),
-                )
-
-                CustomText(
-                    text = stringResource(Res.string.farzandlaringiz_telefon_ishlatish_statistikasi),
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = 13.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
 
                 SpaceUltraSmall()
 
