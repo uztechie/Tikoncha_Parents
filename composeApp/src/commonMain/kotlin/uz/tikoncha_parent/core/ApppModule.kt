@@ -76,11 +76,14 @@ import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
-import uz.tikoncha_parent.presentation.home.schedule.ScheduleViewModel
-import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
+import uz.tikoncha_parent.presentation.policy.PolicyViewModel
+import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
+import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
 
 val sharedModule = module {
     single {
@@ -179,9 +182,13 @@ val sharedModule = module {
     ) }
     viewModel { MonitorViewModel(get(), get()) }
     viewModel { NotificationViewModel(get(), get()) }
-    viewModel { ScheduleViewModel() }
-    viewModel { ScheduleTimeViewModel() }
+    viewModel { PolicyViewModel() }
+    viewModel { AppWebViewModel() }
+    viewModel { TimeRuleViewModel() }
+    viewModel { LimitRuleViewModel() }
     viewModel { MyCoinsViewModel(get()) }
+
+    single { PolicySetupViewModel() }
 
 
 }

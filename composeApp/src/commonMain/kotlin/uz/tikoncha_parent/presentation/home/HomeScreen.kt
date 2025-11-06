@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
@@ -56,10 +55,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.home.schedule.ScheduleListScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -298,7 +296,7 @@ fun HomeUi(
                         modifier = Modifier
                             .size(LargeIconButtonSize),
                         onClick = {
-                            rootNavigator?.push(ScheduleListScreen())
+                            rootNavigator?.push(PolicyListScreen())
                         },
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.extendedColor.buttonColor,

@@ -21,12 +21,10 @@ import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
-import uz.tikoncha_parent.presentation.home.schedule.timelist.ScheduleTimeListScreen
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.home.HomeScreen
-import uz.tikoncha_parent.presentation.home.schedule.type.ScheduleTypeScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
@@ -34,7 +32,6 @@ import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.presentation.push.navigateByDeepLink
 import uz.tikoncha_parent.presentation.task.TaskScreen
-import uz.tikoncha_parent.presentation.home.schedule.type.WiFiScreen
 import uz.tikoncha_parent.ui.theme.ThemeMode
 
 
