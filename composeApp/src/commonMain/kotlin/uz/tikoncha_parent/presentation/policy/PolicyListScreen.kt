@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -37,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
+import tikoncha_parents.composeapp.generated.resources.barcha_farzandlar
 import tikoncha_parents.composeapp.generated.resources.discord_icon
 import tikoncha_parents.composeapp.generated.resources.google_icon
 import tikoncha_parents.composeapp.generated.resources.har_kuni_bloklashni_rejalashtiring
@@ -48,12 +52,14 @@ import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
 import tikoncha_parents.composeapp.generated.resources.social_x_icon
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebSelectionScreen
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.CardCornerRadius
@@ -68,20 +74,33 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
-class PolicyListScreen : Screen {
+class PolicyListScreen(
+    val child: UserInfo?
+) : Screen {
     @Composable
     override fun Content() {
 
         val navigator = LocalNavigator.current
 
-        val setupViewModel = koinViewModel<PolicySetupViewModel>()
-        val setupState by setupViewModel.state.collectAsStateWithLifecycle()
-        val setupEvent = setupViewModel::onEvent
+
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
+        val sharedEvent = sharedViewModel::onEvent
+
+        val viewModel = koinViewModel<PolicyViewModel>()
+        val event = viewModel::onEvent
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit){
+            event(PolicyEvent.SetSelectedChild(child))
+        }
 
 
         PolicyListUi(
             navigator = navigator,
-            setupEvent = setupEvent
+            sharedEvent = sharedEvent,
+            event = event,
+            state = state
         )
     }
 }
@@ -89,7 +108,9 @@ class PolicyListScreen : Screen {
 @Composable
 fun PolicyListUi(
     navigator: Navigator?,
-    setupEvent: (PolicySetupEvent) -> Unit = {}
+    state: PolicyState,
+    event: (PolicyEvent) -> Unit = {},
+    sharedEvent: (PolicySharedEvent) -> Unit = {},
 ){
 
     val bgColor = MaterialTheme.extendedColor.cardColor
@@ -99,8 +120,21 @@ fun PolicyListUi(
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
+
+        val name = state.selectedChild?.name ?: ""
+        val title = StringBuilder()
+        title.append(stringResource(Res.string.jadval))
+        if (name.isEmpty()){
+            title.append(" - ")
+            title.append(stringResource(Res.string.barcha_farzandlar))
+        }
+        else{
+            title.append(" - ")
+            title.append(name)
+        }
+
         CustomHeader(
-            title = stringResource(Res.string.jadval),
+            title = title.toString(),
             showBackButton = true,
             onBackClick = {
                 navigator?.pop()
@@ -176,8 +210,8 @@ fun PolicyListUi(
             Spacer(Modifier.weight(1f))
             TextButton(
                 onClick = {
-                    setupEvent(PolicySetupEvent.ClearData)
-                    navigator?.push(PolicySetupScreen())
+                    sharedEvent(PolicySharedEvent.ClearData)
+                    navigator?.push(PolicySetupScreen(child = state.selectedChild))
                 },
                 modifier = Modifier
                     .fillMaxWidth()

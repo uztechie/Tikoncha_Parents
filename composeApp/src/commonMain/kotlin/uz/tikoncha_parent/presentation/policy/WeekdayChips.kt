@@ -23,6 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.sh
 import tikoncha_parents.composeapp.generated.resources.ya
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.WeekDay
+import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CustomChipFilter
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -37,7 +38,7 @@ fun WeekdayChips(
         stringResource(Res.string.har_kuni)
     }
     else{
-        selected.map { weekdayLabel(it) }.joinToString(", ")
+        selected.map { it.weekdayLabel() }.joinToString(", ")
     }
 
     Column(
@@ -69,7 +70,7 @@ fun WeekdayChips(
         {
             WeekDay.entries.forEach { day ->
                 val on = day in selected
-                val label = weekdayLabel(day)
+                val label = day.weekdayLabel()
 
                 CustomChipFilter(
                     selected = on,
@@ -86,15 +87,3 @@ fun WeekdayChips(
 }
 
 
-@Composable
-fun weekdayLabel(day: WeekDay): String {
-    return when(day) {
-        WeekDay.MON -> stringResource(Res.string.du)
-        WeekDay.TUE -> stringResource(Res.string.se)
-        WeekDay.WED -> stringResource(Res.string.ch)
-        WeekDay.THU -> stringResource(Res.string.pa)
-        WeekDay.FRI -> stringResource(Res.string.ju)
-        WeekDay.SAT -> stringResource(Res.string.sh)
-        WeekDay.SUN -> stringResource(Res.string.ya)
-    }
-}

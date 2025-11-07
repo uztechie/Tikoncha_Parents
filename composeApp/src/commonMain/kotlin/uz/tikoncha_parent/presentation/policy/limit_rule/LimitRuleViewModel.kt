@@ -183,4 +183,6 @@ fun LocalTime.toHourMinuteString(): String {
     return "$hh:$mm"
 }
 
-private fun LocalTime.toMinutes(): Int = hour * 60 + minute
+
+fun LocalTime.toMinutes(): Int = hour * 60 + minute
+fun HourMinute.toMinutes(): Int = hour * 60 + minute

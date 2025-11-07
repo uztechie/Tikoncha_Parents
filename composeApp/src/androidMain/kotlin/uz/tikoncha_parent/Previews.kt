@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
@@ -63,11 +64,14 @@ import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.base.SoonBox
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.base.coverShadow
 import uz.tikoncha_parent.presentation.base.verticalShadow
 
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleType
+import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleTypeUi
 import uz.tikoncha_parent.presentation.task.TaskEvent
 import uz.tikoncha_parent.presentation.task.TaskState
 import uz.tikoncha_parent.ui.*
@@ -95,11 +99,80 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
+@Composable
+fun PolicySetupRuleItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    subTitle: String,
+    onRemoveClick: () -> Unit,
+    onItemClick: () -> Unit
+) {
+
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalShadow(
+                shape = RoundedCornerShape(CardCornerRadius),
+                offset = 0.dp
+            )
+            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+            .padding(horizontal = ContainerPadding, vertical = 12.dp)
+            .clickable(
+                indication = null,
+                interactionSource = null,
+                onClick = onItemClick
+            ),
+    ) {
+        Column(
+            modifier = Modifier
+        ) {
+            CustomText(
+                text = title,
+                fontSize = LargeTextSize,
+                fontWeight = FontWeight.SemiBold
+            )
+            SpaceSmall()
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomText(
+                    text = subTitle,
+                    fontSize = NormalTextSize,
+                    color = MaterialTheme.extendedColor.hintColor,
+                    lineHeight = NormalTextLineHeight
+                )
+            }
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        IconButton(
+            onClick = onRemoveClick,
+            modifier = Modifier
+                .size(SmallIconButtonSize)
+        ) {
+            Image(
+                painter = painterResource(Res.drawable.close_circle),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.textColor),
+            )
+        }
+
+
+    }
+}
 
 @Preview
 @Composable
 private fun Preview() {
-    TikonchaParentTheme(ThemeMode.LIGHT) {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        PolicySetupRuleItem(
+            title = "Vaqt",
+            subTitle = "Du, Se 19:20 - 21:00 \nCh, Pa 19:20 - 21:00 tashqari",
+            onItemClick = {},
+            onRemoveClick = {}
+        )
 
     }
 }

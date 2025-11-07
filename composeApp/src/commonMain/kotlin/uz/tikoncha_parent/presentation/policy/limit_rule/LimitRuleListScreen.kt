@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -37,7 +39,9 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -52,15 +56,15 @@ class LimitRuleListScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::event
 
-        val setupViewModel = koinViewModel<PolicySetupViewModel>()
-        val setupEvent = setupViewModel::onEvent
-        val setupState by setupViewModel.state.collectAsStateWithLifecycle()
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val sharedEvent = sharedViewModel::onEvent
+        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
 
         DisposableEffect(Unit) {
-            event(LimitRuleEvent.SetList(setupState.limitList))
+            event(LimitRuleEvent.SetList(sharedState.limitList))
 
             onDispose {
-                setupEvent(PolicySetupEvent.SetLimitRule(state.value.limitRuleList))
+                sharedEvent(PolicySharedEvent.SetLimitRule(state.value.limitRuleList))
             }
         }
 
@@ -189,7 +193,9 @@ fun LimitRuleListUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
-                    navigator?.pop()
+                    navigator?.popUntil {
+                        it is PolicySetupScreen
+                    }
                 }
             )
         }

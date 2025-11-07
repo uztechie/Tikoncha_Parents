@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -40,7 +42,9 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -62,14 +66,14 @@ class TimeRuleListScreen(): Screen {
 
 
 
-        val setupViewModel = koinViewModel<PolicySetupViewModel>()
-        val setupEvent = setupViewModel::onEvent
-        val setupState by setupViewModel.state.collectAsStateWithLifecycle()
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val sharedEvent = sharedViewModel::onEvent
+        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
 
         DisposableEffect(Unit) {
-            event(TimeRuleEvent.SetList(setupState.timeList))
+            event(TimeRuleEvent.SetList(sharedState.timeList))
             onDispose {
-                setupEvent(PolicySetupEvent.SetTimeRule(state.timeList))
+                sharedEvent(PolicySharedEvent.SetTimeRule(state.timeList))
             }
         }
 
@@ -205,7 +209,11 @@ fun TimeRuleListUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                onClick = { }
+                onClick = {
+                    navigator?.popUntil {
+                        it is PolicySetupScreen
+                    }
+                }
             )
         }
     }

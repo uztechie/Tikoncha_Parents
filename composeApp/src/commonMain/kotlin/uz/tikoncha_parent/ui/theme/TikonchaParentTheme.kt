@@ -21,6 +21,10 @@ import uz.tikoncha_parent.ui.DarkColor
 import uz.tikoncha_parent.ui.DarkGrayColor
 import uz.tikoncha_parent.ui.DarkTextColor
 import uz.tikoncha_parent.ui.DisableButtonColor
+import uz.tikoncha_parent.ui.DisabledBgDark
+import uz.tikoncha_parent.ui.DisabledBgLight
+import uz.tikoncha_parent.ui.DisabledContentDark
+import uz.tikoncha_parent.ui.DisabledContentLight
 import uz.tikoncha_parent.ui.GrayColor
 import uz.tikoncha_parent.ui.HintTextColor
 import uz.tikoncha_parent.ui.LightColor
@@ -57,11 +61,12 @@ private val LightExtendedColorScheme = ExtendedColors(
     textColor = TextColor,
     borderColor = BorderColor,
     buttonMenuColor = TextColor,
-    disabledColor = CardColors,
     shadowColor = ShadowColor,
     shadowLightColor = Color.White,
     buttonColor = CardColors,
-    tonalButtonColor = TonalButtonContainerColor
+    tonalButtonColor = TonalButtonContainerColor,
+    disabledBgColor = DisabledBgLight,
+    disabledContentColor = DisabledContentLight
 
 )
 private val DarkExtendedColorScheme = ExtendedColors(
@@ -74,11 +79,12 @@ private val DarkExtendedColorScheme = ExtendedColors(
     textColor = DarkTextColor,
     borderColor = DarkGrayColor,
     buttonMenuColor = HintTextColor,
-    disabledColor = DarkCardColorsButton,
     shadowColor = PrimaryGraColor,
     shadowLightColor = PrimaryColor.copy(alpha = 0.1f),
     buttonColor = DarkButtonBackgroundColors,
-    tonalButtonColor = DarkCardColors
+    tonalButtonColor = DarkCardColors,
+    disabledBgColor = DisabledBgDark,
+    disabledContentColor = DisabledContentDark
 )
 
 val MaterialTheme.extendedColor: ExtendedColors

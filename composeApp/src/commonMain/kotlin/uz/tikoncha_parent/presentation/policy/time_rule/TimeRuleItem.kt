@@ -18,9 +18,9 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.har_kuni
 import tikoncha_parents.composeapp.generated.resources.kun_davomida
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.verticalShadow
-import uz.tikoncha_parent.presentation.policy.weekdayLabel
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SmallTextSize
@@ -94,7 +94,7 @@ fun TimeRuleItem(
                 stringResource(Res.string.har_kuni)
             }
             else{
-                item.weekDays.map { weekdayLabel(it) }.joinToString(", ")
+                item.weekDays.map { it.weekdayLabel() }.joinToString(", ")
             }
 
             CustomText(

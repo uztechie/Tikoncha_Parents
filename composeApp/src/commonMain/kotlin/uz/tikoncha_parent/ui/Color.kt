@@ -87,3 +87,9 @@ val DarkButtonBackgroundColors = Color(0xFF434343)
 
 val DarkCardColorsButton = Color(0xFF282525)
 
+val DisabledBgLight = Color(0xFFE2E2E2)
+val DisabledBgDark = Color(0xFF2A2A2A)
+
+val DisabledContentLight = Color(0xFF9B9B9B)
+val DisabledContentDark = Color(0xFF7C7C7C)
+

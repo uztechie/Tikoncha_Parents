@@ -221,5 +221,10 @@
     <string name="foydalanish_chegarasi">Foydalanish chegarasi</string>
     <string name="shartlar_kiritish">Shartlar kiritish</string>
     <string name="soatlik">Soatlik</string>
+    <string name="tashqarida">Tashqarida</string>
+    <string name="ta_jadval">ta jadval</string>
+    <string name="jadval_muvaffaqiyatli_yaratildi">Jadval muvaffaqiyatli yaratildi!</string>
+    <string name="barcha_farzandlar">Barcha farzandlar</string>
+
 
 </resources>

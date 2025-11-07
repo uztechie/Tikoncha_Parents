@@ -9,4 +9,5 @@ data class RuleTypeUi(
     val subtitle: String,
     val enabled: Boolean,
     val hasItems: Boolean,
+    val soon: Boolean,
 )

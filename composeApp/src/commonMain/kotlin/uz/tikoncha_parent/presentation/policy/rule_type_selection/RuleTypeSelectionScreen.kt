@@ -20,7 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -33,7 +36,9 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupState
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -45,9 +50,9 @@ class RuleTypeSelectionScreen() : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<PolicySetupViewModel>()
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val state by sharedViewModel.state.collectAsStateWithLifecycle()
+        val event = sharedViewModel::onEvent
 
         RuleTypeSelectionUi(
             navigator = navigator,
@@ -61,9 +66,11 @@ class RuleTypeSelectionScreen() : Screen {
 @Composable
 fun RuleTypeSelectionUi(
     navigator: Navigator?,
-    state: PolicySetupState = PolicySetupState(),
-    event: (PolicySetupEvent) -> Unit = {}
+    state: PolicySharedState = PolicySharedState(),
+    event: (PolicySharedEvent) -> Unit = {}
 ) {
+
+
 
 
     val scheduleList = listOf(
@@ -72,8 +79,18 @@ fun RuleTypeSelectionUi(
             icon = painterResource(Res.drawable.clock),
             title = stringResource(Res.string.vaqt),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
-            enabled = state.limitList.isEmpty(),
-            hasItems = state.timeList.isNotEmpty()
+            enabled = state.limitList.isEmpty() && state.timeList.isEmpty(),
+            hasItems = state.timeList.isNotEmpty(),
+            soon = false
+        ),
+        RuleTypeUi(
+            type = RuleType.USAGE_LIMIT,
+            icon = painterResource(Res.drawable.clock),
+            title = stringResource(Res.string.foydalanish_chegarasi),
+            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
+            enabled = state.timeList.isEmpty() && state.limitList.isEmpty(),
+            hasItems = state.limitList.isNotEmpty(),
+            soon = false
         ),
         RuleTypeUi(
             type = RuleType.LOCATION,
@@ -81,7 +98,8 @@ fun RuleTypeSelectionUi(
             title = stringResource(Res.string.joylashuv),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
             enabled = false,
-            hasItems = false
+            hasItems = false,
+            soon = true
         ),
         RuleTypeUi(
             type = RuleType.WIFI,
@@ -89,7 +107,8 @@ fun RuleTypeSelectionUi(
             title = stringResource(Res.string.wi_fi),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
             enabled = false,
-            hasItems = false
+            hasItems = false,
+            soon = true
         ),
         RuleTypeUi(
             type = RuleType.LAUNCH_COUNT,
@@ -97,16 +116,10 @@ fun RuleTypeSelectionUi(
             title = stringResource(Res.string.ishga_tushirishlar_soni),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
             enabled = false,
-            hasItems = false
+            hasItems = false,
+            soon = true
         ),
-        RuleTypeUi(
-            type = RuleType.USAGE_LIMIT,
-            icon = painterResource(Res.drawable.clock),
-            title = stringResource(Res.string.foydalanish_chegarasi),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
-            enabled = state.timeList.isEmpty(),
-            hasItems = state.limitList.isNotEmpty()
-        ),
+
     )
 
     var showSetupDialog by remember {
@@ -163,27 +176,20 @@ fun RuleTypeSelectionUi(
 
 
                         RuleTypeItem(
-                            painter = item.icon,
-                            title = item.title,
-                            subTitle = item.subtitle,
-                            modifier = Modifier.clickable(
-                                enabled = item.enabled,
-                                interactionSource = null,
-                                indication = null,
-                                onClick = {
-                                    when(item.type){
-                                        RuleType.TIME -> {
-                                            navigator?.push(TimeRuleListScreen())
-                                        }
-                                        RuleType.LOCATION -> {}
-                                        RuleType.WIFI -> {}
-                                        RuleType.LAUNCH_COUNT -> {}
-                                        RuleType.USAGE_LIMIT -> {
-                                            navigator?.push(LimitRuleListScreen())
-                                        }
+                            ruleTypeUi = item,
+                            onClick = {
+                                when(item.type){
+                                    RuleType.TIME -> {
+                                        navigator?.push(TimeRuleListScreen())
+                                    }
+                                    RuleType.LOCATION -> {}
+                                    RuleType.WIFI -> {}
+                                    RuleType.LAUNCH_COUNT -> {}
+                                    RuleType.USAGE_LIMIT -> {
+                                        navigator?.push(LimitRuleListScreen())
                                     }
                                 }
-                            ),
+                            }
                         )
                     }
                 }

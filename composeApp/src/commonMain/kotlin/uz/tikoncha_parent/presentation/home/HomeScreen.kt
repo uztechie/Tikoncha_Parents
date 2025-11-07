@@ -296,7 +296,9 @@ fun HomeUi(
                         modifier = Modifier
                             .size(LargeIconButtonSize),
                         onClick = {
-                            rootNavigator?.push(PolicyListScreen())
+                            rootNavigator?.push(PolicyListScreen(
+                                state.selectedChildren
+                            ))
                         },
                         colors = IconButtonDefaults.filledTonalIconButtonColors(
                             containerColor = MaterialTheme.extendedColor.buttonColor,

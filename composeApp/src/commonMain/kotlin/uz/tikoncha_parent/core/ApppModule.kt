@@ -50,15 +50,19 @@ import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
 import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
+import uz.tikoncha_parent.data.remote.PolicyApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
 import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
+import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
+import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.use_case.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
@@ -83,6 +87,7 @@ import uz.tikoncha_parent.presentation.policy.PolicyViewModel
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
 
 val sharedModule = module {
@@ -104,6 +109,7 @@ val sharedModule = module {
     single { DeviceApiService(get()) }
     single { NewApiService(get()) }
     single { MyCoinsApiService(get()) }
+    single { PolicyApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -115,6 +121,7 @@ val sharedModule = module {
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single< MyCoinsRepository> { MyCoinsRepositoryImpl(get()) }
+    single< PolicyRepository> { PolicyRepositoryImpl(get()) }
 
 
 
@@ -152,6 +159,7 @@ val sharedModule = module {
     single { RegisterDeviceUseCase(get()) }
     single { NewsUseCase(get()) }
     single { MyCoinsUseCase(get()) }
+    single { CreatePolicyUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
 
@@ -188,7 +196,8 @@ val sharedModule = module {
     viewModel { LimitRuleViewModel() }
     viewModel { MyCoinsViewModel(get()) }
 
-    single { PolicySetupViewModel() }
+    viewModel { PolicySetupViewModel(get()) }
+    single { PolicySharedModel() }
 
 
 }
