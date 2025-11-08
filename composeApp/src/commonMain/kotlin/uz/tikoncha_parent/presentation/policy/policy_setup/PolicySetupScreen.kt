@@ -213,7 +213,12 @@ fun PolicySetupUi(
                     else{
                         timeRule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
                     }
-                    val time = timeRule.time
+                    val time = if (timeRule.allDay){
+                        stringResource(Res.string.kun_davomida)
+                    }
+                    else{
+                        timeRule.time
+                    }
 
                     if (timeRule.outside){
                         "$weekdays  $time (${stringResource(Res.string.tashqarida)})"
@@ -275,7 +280,7 @@ fun PolicySetupUi(
                 }
 
                 PolicySetupRuleItem(
-                    title = stringResource(Res.string.vaqt),
+                    title = stringResource(Res.string.foydalanish_chegarasi),
                     subTitle = subTitle,
                     onRemoveClick = {
                         event(PolicySetupEvent.SetLimitRule(emptyList()))

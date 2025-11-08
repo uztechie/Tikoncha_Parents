@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.policy.shared
 
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
+import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleType
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
 sealed interface PolicySharedEvent {

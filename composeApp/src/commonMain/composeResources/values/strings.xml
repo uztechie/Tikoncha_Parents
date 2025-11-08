@@ -225,6 +225,8 @@
     <string name="ta_jadval">ta jadval</string>
     <string name="jadval_muvaffaqiyatli_yaratildi">Jadval muvaffaqiyatli yaratildi!</string>
     <string name="barcha_farzandlar">Barcha farzandlar</string>
+    <string name="diqqat" >Diqqat!</string>
+    <string name="siz_tanlagan_vaqt_oraligida">Siz tanlagan Vaqt oralig'ida Ishlatish Limiti ish bermaydi! Ya'ni vaqt jadvalining ustuvorligi yuqori.</string>
 
 
 </resources>

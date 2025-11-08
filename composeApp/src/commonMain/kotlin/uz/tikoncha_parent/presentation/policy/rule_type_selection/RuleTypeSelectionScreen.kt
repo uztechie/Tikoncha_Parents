@@ -32,6 +32,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
@@ -71,6 +72,37 @@ fun RuleTypeSelectionUi(
 ) {
 
 
+    var showWarningDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedRuleType by remember {
+        mutableStateOf(RuleType.NONE)
+    }
+
+    CustomDialog(
+        show = showWarningDialog,
+        title = stringResource(Res.string.diqqat),
+        message = stringResource(Res.string.siz_tanlagan_vaqt_oraligida),
+        onDismiss = {
+            showWarningDialog = false
+        },
+        onButtonClick = {
+            showWarningDialog = false
+            when(selectedRuleType){
+                RuleType.TIME -> {
+                    navigator?.push(TimeRuleListScreen())
+                }
+                RuleType.USAGE_LIMIT -> {
+                    navigator?.push(LimitRuleListScreen())
+                }
+                RuleType.LOCATION -> {
+
+                }
+               else -> {}
+            }
+        }
+    )
 
 
     val scheduleList = listOf(
@@ -79,7 +111,7 @@ fun RuleTypeSelectionUi(
             icon = painterResource(Res.drawable.clock),
             title = stringResource(Res.string.vaqt),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
-            enabled = state.limitList.isEmpty() && state.timeList.isEmpty(),
+            enabled = state.timeList.isEmpty(),
             hasItems = state.timeList.isNotEmpty(),
             soon = false
         ),
@@ -88,7 +120,7 @@ fun RuleTypeSelectionUi(
             icon = painterResource(Res.drawable.clock),
             title = stringResource(Res.string.foydalanish_chegarasi),
             subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
-            enabled = state.timeList.isEmpty() && state.limitList.isEmpty(),
+            enabled = state.limitList.isEmpty(),
             hasItems = state.limitList.isNotEmpty(),
             soon = false
         ),
@@ -178,15 +210,32 @@ fun RuleTypeSelectionUi(
                         RuleTypeItem(
                             ruleTypeUi = item,
                             onClick = {
+
+                                selectedRuleType = item.type
+
                                 when(item.type){
                                     RuleType.TIME -> {
+                                        if (state.limitList.isNotEmpty()){
+                                            showWarningDialog = true
+                                            return@RuleTypeItem
+                                        }
                                         navigator?.push(TimeRuleListScreen())
                                     }
+                                    RuleType.USAGE_LIMIT -> {
+                                        if (state.timeList.isNotEmpty()){
+                                            showWarningDialog = true
+                                            return@RuleTypeItem
+                                        }
+                                        navigator?.push(LimitRuleListScreen())
+                                    }
+
                                     RuleType.LOCATION -> {}
                                     RuleType.WIFI -> {}
                                     RuleType.LAUNCH_COUNT -> {}
-                                    RuleType.USAGE_LIMIT -> {
-                                        navigator?.push(LimitRuleListScreen())
+
+
+                                    else -> {
+
                                     }
                                 }
                             }

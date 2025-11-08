@@ -5,5 +5,6 @@ enum class RuleType(val id: String) {
     LOCATION("location"),
     WIFI("wifi"),
     LAUNCH_COUNT("launch_count"),
-    USAGE_LIMIT("usage_limit")
+    USAGE_LIMIT("usage_limit"),
+    NONE("")
 }

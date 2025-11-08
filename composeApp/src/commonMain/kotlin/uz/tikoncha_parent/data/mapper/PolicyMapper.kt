@@ -10,10 +10,14 @@ import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 fun List<TimeRuleUi>.toTimeRuleDtoList(): List<TimeRuleDto> {
     val list = mutableListOf<TimeRuleDto>()
     this.forEach {
+
+        val startTime = if (it.allDay) 0 else it.startTime.toMinutes()
+        val endTime = if (it.allDay) 24*60 else it.endTime.toMinutes()
+
         list.add(
             TimeRuleDto(
-                start_time = it.startTime.toMinutes(),
-                end_time = it.endTime.toMinutes(),
+                start_time = startTime,
+                end_time = endTime,
                 days = it.weekDays.map { it.num },
                 time_include = !it.outside
             )
