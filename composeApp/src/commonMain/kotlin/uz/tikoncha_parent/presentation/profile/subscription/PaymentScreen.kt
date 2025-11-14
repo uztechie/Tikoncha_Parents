@@ -12,6 +12,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -31,13 +35,17 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.click_pay
 import tikoncha_parents.composeapp.generated.resources.hammasi
+import tikoncha_parents.composeapp.generated.resources.jadval_muvaffaqiyatli_yaratildi
 import tikoncha_parents.composeapp.generated.resources.million
 import tikoncha_parents.composeapp.generated.resources.ming_sum
 import tikoncha_parents.composeapp.generated.resources.money_light
+import tikoncha_parents.composeapp.generated.resources.muvaffaqiyatli
 import tikoncha_parents.composeapp.generated.resources.obuna_pro
+import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.pay_me
 import tikoncha_parents.composeapp.generated.resources.paynet
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
@@ -45,8 +53,16 @@ import tikoncha_parents.composeapp.generated.resources.ta_tanga
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import tikoncha_parents.composeapp.generated.resources.tolov
 import tikoncha_parents.composeapp.generated.resources.uzum
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 class PaymentScreen(
     private val subscriptionPrice: Int? = null,
@@ -56,11 +72,17 @@ class PaymentScreen(
     override fun Content() {
 
         val navigator = LocalNavigator.current
+        
+        val viewModel = koinViewModel<PaymentViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
 
         PaymentScreenUi(
             navigator = navigator,
             subscriptionPrice = subscriptionPrice,
-            coinsAmount = coinsAmount
+            coinsAmount = coinsAmount,
+            state = state,
+            event = event
         )
     }
 }
@@ -69,7 +91,9 @@ class PaymentScreen(
 fun PaymentScreenUi(
     navigator: Navigator?,
     subscriptionPrice: Int? = null,
-    coinsAmount: Int? = null
+    coinsAmount: Int? = null,
+    state: PaymentState = PaymentState(),
+    event: (PaymentEvent) -> Unit = {}
 ) {
 
     var selectedPayment by remember { mutableStateOf("") }
@@ -80,10 +104,66 @@ fun PaymentScreenUi(
         isSelected = true
     }
 
+
+    val loading = state.responseState is ResponseState.Loading
+    val errorText = state.responseState.errorText()
+    val success = state.responseState is ResponseState.Success
+
+
+    LoadingDialog(loading)
+
+    var showErrorDialog by remember() {
+        mutableStateOf(false)
+    }
+    var showSuccessDialog by remember() {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(errorText){
+        if (errorText.isNotEmpty()){
+            showErrorDialog = true
+        }
+    }
+    LaunchedEffect(success){
+        if (success){
+
+        }
+    }
+
+    CustomDialog(
+        show = showErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = errorText,
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showErrorDialog = false
+        },
+        onButtonClick = {
+            showErrorDialog = false
+        }
+    )
+
+    CustomDialog(
+        show = showSuccessDialog,
+        title = stringResource(Res.string.muvaffaqiyatli),
+        message = stringResource(Res.string.jadval_muvaffaqiyatli_yaratildi),
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showSuccessDialog = false
+        },
+        onButtonClick = {
+            showSuccessDialog = false
+            navigator?.pop()
+        }
+    )
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
         CustomHeader(
@@ -159,16 +239,17 @@ fun PaymentScreenUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(TextFieldCornerRadius))
+                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(4.dp)
-            ) {
+            )
+            {
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
                     shape = RoundedCornerShape(TextFieldCornerRadius),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor),
                 )
                 {
                     Column(
@@ -185,7 +266,7 @@ fun PaymentScreenUi(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(MaterialTheme.extendedColor.tonalButtonColor)
                                     .padding(10.dp)
                             ) {
                                 Image(
@@ -249,7 +330,9 @@ fun PaymentScreenUi(
                 text = stringResource(Res.string.sotib_olish),
                 enabled = isSelected,
                 fontSize = NormalLargeTextSize,
-                onClick = { }
+                onClick = {
+                    event(PaymentEvent.Purchase)
+                }
             )
 
             SpaceLarge()
@@ -261,8 +344,11 @@ fun PaymentScreenUi(
 @Composable
 @Preview
 private fun Preview() {
-    PaymentScreenUi(
-        navigator = null,
-        coinsAmount = 1000
-    )
+    TikonchaParentTheme(ThemeMode.LIGHT){
+        PaymentScreenUi(
+            navigator = null,
+            coinsAmount = 1000
+        )
+    }
+
 }
