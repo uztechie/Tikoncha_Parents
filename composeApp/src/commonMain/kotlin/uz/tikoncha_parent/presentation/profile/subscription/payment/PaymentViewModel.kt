@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.profile.subscription
+package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -38,7 +38,7 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.common.CustomListDialog
-import uz.tikoncha_parent.presentation.profile.subscription.PaymentScreen
+import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -66,8 +66,14 @@ import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
+import tikoncha_parents.composeapp.generated.resources.tolov_summasi
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.common.Util.toCurrency
+import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.NormalIconSize
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class CoinsScreen : Screen {
@@ -244,80 +250,142 @@ fun CoinsUi(
                     .weight(1f)
             )
 
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(
+//                        TextFieldCornerRadius
+//                    ))
+//                    .padding(4.dp)
+//            ) {
+//
+//                Card(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(64.dp),
+//                    shape = RoundedCornerShape(TextFieldCornerRadius),
+//                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor),
+//                )
+//                {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize(),
+//                        verticalArrangement = Arrangement.Center,
+//                    ) {
+//
+//                        Row(
+//                            modifier = Modifier.padding(6.dp),
+//                            horizontalArrangement = Arrangement.SpaceBetween,
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .clip(CircleShape)
+//                                    .background(MaterialTheme.colorScheme.background)
+//                                    .padding(10.dp)
+//                            ){
+//                                Image(
+//                                    painter = painterResource(Res.drawable.money_light),
+//                                    contentDescription = null,
+//                                    modifier = Modifier.size(NormalIconButtonSize)
+//                                )
+//                            }
+//
+//                            SpaceMedium()
+//
+//                            CustomText(
+//                                text = stringResource(Res.string.bitta_tanga),
+//                                fontSize = NormalTextSize,
+//                                fontWeight = FontWeight.Medium,
+//                            )
+//                        }
+//                    }
+//                    SpaceUltraSmall()
+//                }
+//
+//                SpaceLarge()
+//
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = ContainerPadding),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                )
+//                {
+//                    CustomText(
+//                        text = stringResource(Res.string.hammasi),
+//                        fontSize = NormalTextSize,
+//                        fontWeight = FontWeight.W600
+//                    )
+//
+//                    CustomText(
+//                        text = "${coinsAmount.toInt() * 100} UZS",
+//                        fontSize = NormalTextSize,
+//                        color = PrimaryColor,
+//                        fontWeight = FontWeight.W600
+//                    )
+//                }
+//            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(
-                        TextFieldCornerRadius
-                    ))
-                    .padding(4.dp)
+                    .tripleShadow(CircleShape)
+                    .background(MaterialTheme.extendedColor.cardColor, CircleShape)
+                    .padding(6.dp)
             ) {
 
                 Card(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                        .fillMaxWidth(),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor),
                 )
                 {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                     ) {
 
                         Row(
-                            modifier = Modifier.padding(6.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(
+                                        MaterialTheme.extendedColor.cardColor,
+                                        CircleShape
+                                    )
                                     .padding(10.dp)
-                            ){
+                            ) {
                                 Image(
                                     painter = painterResource(Res.drawable.money_light),
                                     contentDescription = null,
-                                    modifier = Modifier.size(NormalIconButtonSize)
+                                    modifier = Modifier
+                                        .size(NormalIconSize)
                                 )
                             }
 
                             SpaceMedium()
 
                             CustomText(
-                                text = stringResource(Res.string.bitta_tanga),
+                                text = stringResource(Res.string.tolov_summasi),
                                 fontSize = NormalTextSize,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Spacer(Modifier.weight(1f))
+                            CustomText(
+                                text =  "${coinsAmount.toInt() * 100} UZS",
+                                fontSize = NormalTextSize,
+                                color = PrimaryColor,
+                                fontWeight = FontWeight.W600
                             )
                         }
                     }
-                    SpaceUltraSmall()
-                }
 
-                SpaceLarge()
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = ContainerPadding),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                )
-                {
-                    CustomText(
-                        text = stringResource(Res.string.hammasi),
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.W600
-                    )
-
-                    CustomText(
-                        text = "${coinsAmount.toInt() * 100}.00 UZS",
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W600
-                    )
                 }
             }
 
@@ -328,7 +396,7 @@ fun CoinsUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
-                    navigator!!.push(PaymentScreen(coinsAmount = coinsAmount.toInt()))
+                    navigator!!.push(PaymentTypeScreen(coinsAmount = coinsAmount.toInt()))
                 },
                 text = stringResource(Res.string.sotib_olish),
                 enabled = true,
@@ -342,7 +410,11 @@ fun CoinsUi(
 @Preview
 @Composable
 fun PreviewCoinsScreen() {
-    CoinsUi(
-        navigator = null
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CoinsUi(
+            navigator = null
+        )
+    }
 }

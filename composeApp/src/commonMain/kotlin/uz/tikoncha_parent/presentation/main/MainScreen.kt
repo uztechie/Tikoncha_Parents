@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +34,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.base.topShadow
+import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -50,10 +55,17 @@ fun MainUi() {
     val imeBottomPx = WindowInsets.ime.getBottom(density)
     val imeVisible = imeBottomPx > 0
 
+    val bottomRoundedShape = RoundedCornerShape(
+        topStart = 0.dp,
+        topEnd = 0.dp,
+        bottomStart = ShapeCornerRadius,
+        bottomEnd = ShapeCornerRadius
+    )
+
     val bottomNavItems = listOf(
         BottomNavItem(
             HomeScreen(),
-            painterResource(Res.drawable.home),
+            painterResource(Res.drawable.home_only_borders),
             stringResource(Res.string.asosiy)
         ),
         BottomNavItem(
@@ -67,8 +79,8 @@ fun MainUi() {
 //            stringResource(Res.string.kuzatuv)
 //        ),
         BottomNavItem(
-            MonitorScreen(),
-            painterResource(Res.drawable.dialogg),
+            ChatScreen(),
+            painterResource(Res.drawable.dialog_main),
             stringResource(Res.string.suhbat)
         ),
         BottomNavItem(
@@ -86,12 +98,44 @@ fun MainUi() {
     Navigator(HomeScreen()) {
         val mainNavigator = LocalNavigator.current
         Scaffold(
+            modifier = Modifier
+                .topShadow(
+                    shape = RoundedCornerShape(ShapeCornerRadius),
+                    color = MaterialTheme.extendedColor.backgroundColor
+                )
+                .background(
+                    color = MaterialTheme.extendedColor.backgroundColor,
+                    shape = bottomRoundedShape
+                ),
             containerColor = MaterialTheme.extendedColor.backgroundColor,
             contentWindowInsets = WindowInsets(0),
             bottomBar = {
                 if (imeVisible){
                     return@Scaffold
                 }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bottomShadow(
+                            shape = RoundedCornerShape(
+                                topStart = ButtonCornerRadius,
+                                topEnd = ButtonCornerRadius
+                            ),
+                            color = MaterialTheme.extendedColor.backgroundColor
+                        )
+                        .bottomShadow(
+                            shape = RoundedCornerShape(
+                                topStart = ButtonCornerRadius,
+                                topEnd = ButtonCornerRadius
+                            ),
+                            color = MaterialTheme.extendedColor.backgroundColor,
+                            lowerOffset = -5.dp,
+                            radius = 10.dp
+
+                        )
+                        .background(MaterialTheme.extendedColor.backgroundColor)
+                )
+                {
                 NavigationBar(
                     containerColor = MaterialTheme.extendedColor.backgroundColor,
                     modifier = Modifier
@@ -118,6 +162,7 @@ fun MainUi() {
                     bottomNavItems.forEach { item ->
                         NavigationItem(item, mainNavigator)
                     }
+                }
                 }
             }
         ) { innerPadding ->

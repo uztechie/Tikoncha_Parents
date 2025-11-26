@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -38,6 +39,9 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -92,8 +96,13 @@ fun TaskItemUi(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor)
-            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .tripleShadow(
+                shape = RoundedCornerShape(TextFieldCornerRadius)
+            )
+            .background(
+                MaterialTheme.extendedColor.cardColor,
+                RoundedCornerShape(TextFieldCornerRadius)
+            )
             .padding(horizontal = 20.dp, vertical = 15.dp)
     )
     {
@@ -282,23 +291,27 @@ fun TaskItemUi(
 @Preview()
 @Composable
 private fun Pre() {
-    TaskItemUi(
-        task = Task(
-            title = "40 varoq kitob o'qish",
-            description = "Bir hafta davomida har kuni 40 varoqdan",
-            date = "04.11.2025",
-            time = "08:00",
-            importance = ImportanceType.IMPORTANT,
-            isCompleted = true,
-            dateTime = currentMillis,
-            progress = 50,
-            createdAt = currentMillis,
-            targetUserId = "",
-            authorId = "",
-            isMine = true
-        ),
-        onEditIconClick = {},
-        onDoneButtonClick = {},
-        onDetailsIconClick = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        TaskItemUi(
+            task = Task(
+                title = "40 varoq kitob o'qish",
+                description = "Bir hafta davomida har kuni 40 varoqdan",
+                date = "04.11.2025",
+                time = "08:00",
+                importance = ImportanceType.IMPORTANT,
+                isCompleted = true,
+                dateTime = currentMillis,
+                progress = 50,
+                createdAt = currentMillis,
+                targetUserId = "",
+                authorId = "",
+                isMine = true
+            ),
+            onEditIconClick = {},
+            onDoneButtonClick = {},
+            onDetailsIconClick = {}
+        )
+    }
 }

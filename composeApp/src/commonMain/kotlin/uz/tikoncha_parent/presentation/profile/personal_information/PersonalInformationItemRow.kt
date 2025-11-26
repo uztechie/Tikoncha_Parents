@@ -30,6 +30,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -87,9 +89,13 @@ fun PersonalInformationItemRow(
 @Preview
 @Composable
 private fun Pre(){
-    PersonalInformationItemRow(
-        icon = Res.drawable.profile,
-        title = "Ism",
-        value = "Shuxratov Saidburxon Dilmurod o'g'li"
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        PersonalInformationItemRow(
+            icon = Res.drawable.profile,
+            title = "Ism",
+            value = "Shuxratov Saidburxon Dilmurod o'g'li"
+        )
+    }
 }

@@ -210,6 +210,10 @@ class TaskViewModel (
                     )
                 }
             }
+
+            TaskEvent.LoadAllChildrenActiveTasks -> {
+                loadAllChildrenActiveTasks()
+            }
         }
     }
 
@@ -458,7 +462,7 @@ class TaskViewModel (
     }
 
 
-    private fun manageTaskList(){
+    fun manageTaskList(){
         val allList = state.value.allTaskList
 
         _state.update {
@@ -492,6 +496,43 @@ class TaskViewModel (
             it.copy(
                 selectedCompletedTaskList = selected
             )
+        }
+    }
+
+    private fun loadAllChildrenActiveTasks(){
+        viewModelScope.launch {
+            val childrenRes = childrenUseCase.invoke()
+            when(childrenRes) {
+                is Resource.Success -> {
+                    val children = childrenRes.data.map { it.toUserInfo() }
+                    var total = 0
+
+                    for (child in children) {
+                        val todosRes = todoListUseCase.invoke(child.userId)
+                        when (todosRes) {
+                            is Resource.Success -> {
+                                total += todosRes.data.count { !it.is_completed }
+                            }
+
+                            is Resource.Error -> {}
+                            is Resource.Loading -> {}
+                        }
+                    }
+                    _state.update {
+                        it.copy(
+                            allChildrenActiveTaskCount = total
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            allChildrenActiveTaskCount = 0
+                        )
+                    }
+                }
+                is Resource.Loading -> {}
+            }
         }
     }
 }

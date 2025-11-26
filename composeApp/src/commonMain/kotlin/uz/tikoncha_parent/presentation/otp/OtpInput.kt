@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -149,5 +151,9 @@ fun OtpInput(
 @Preview
 @Composable
 private fun Preview() {
-    OtpInput {}
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        OtpInput {}
+    }
 }

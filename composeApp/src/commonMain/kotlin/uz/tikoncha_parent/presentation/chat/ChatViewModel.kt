@@ -27,8 +27,9 @@ import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import kotlin.invoke
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -380,26 +381,30 @@ class ChatViewModel(
         // 3) Flatten: reverse bo‘lsa -> Messages (DESC) → Header
         val items = buildList<ChatMessageItem> {
             for (date in dateKeys) {
+                val lanCode = LanguagePrefs.loadOrDefault().languageCode
+                val lang = LanguageType.getLangType(lanCode)
                 val msgs = grouped[date].orEmpty()
                 if (reverse) {
                     val sortedMsgs = msgs.sortedByDescending { it.createdAt }
                     addAll(sortedMsgs.map { ChatMessageItem.Message(it) })
                     add(
                         ChatMessageItem.DateHeader(
-                            DateTimeUtil.formatDateForChatUserStatus(
+                            DateTimeUtil.formatDayMonthLocalized(
                                 localDate = date,
                                 bugun = state.value.bugun,
                                 kecha = state.value.kecha,
+                                lang = lang
                             )
                         )
                     )
                 } else {
                     add(
                         ChatMessageItem.DateHeader(
-                            DateTimeUtil.formatDateForChatUserStatus(
+                            DateTimeUtil.formatDayMonthLocalized(
                                 localDate = date,
                                 bugun = state.value.bugun,
                                 kecha = state.value.kecha,
+                                lang = lang
                             )
                         )
                     )

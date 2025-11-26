@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
@@ -56,11 +58,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.topShadow
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeController.mode
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 
 class HomeScreen : Screen {
@@ -216,105 +222,108 @@ fun HomeUi(
                 .background(MaterialTheme.extendedColor.backgroundColor)
         )
         {
-            Card(
+            Row(
                 modifier = Modifier
+                    .zIndex(1f)
                     .fillMaxWidth()
-                    .height(HeaderHeight)
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = bottomRoundedShape,
-                        ambientColor = MaterialTheme.extendedColor.shadowColor, // 🌈 Soya rangi shu yerda
-                        spotColor = MaterialTheme.extendedColor.shadowColor     // Android 12+ uchun
+                    .height(64.dp)
+                    .topShadow(
+                        shape = RoundedCornerShape(ShapeCornerRadius),
+                        color = MaterialTheme.extendedColor.backgroundColor
                     )
-                    .padding(bottom = 4.dp),
-                shape = bottomRoundedShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.extendedColor.backgroundColor
-                ),
+                    .background(
+                        color = MaterialTheme.extendedColor.backgroundColor,
+                        shape = bottomRoundedShape
+                    )
+                    .padding(horizontal = ContainerPadding),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                val current by mode.collectAsState()
+
+                var selectedTheme by remember(current) {
+                    mutableStateOf(current)
+                }
+
+                val painter = if (selectedTheme == ThemeMode.DARK){
+                    painterResource(Res.drawable.statistic_icon)
+                } else {
+                    painterResource(Res.drawable.chart)
+                }
+
+                FilledTonalIconButton(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .padding(horizontal = ContainerPadding),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(NormalIconButtonSize),
+                    onClick = { },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                    ),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-
-                    FilledTonalIconButton(
+                    Image(
+                        painter = painter,
+                        contentDescription = "",
                         modifier = Modifier
-                            .size(NormalIconButtonSize),
-                        onClick = { },
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.extendedColor.buttonColor,
-                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
-                        ),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(Res.drawable.chart),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(NormalIconButtonPadding)
-                        )
-                    }
-
-                    SpaceMedium()
-                    CustomText(
-                        text = stringResource(Res.string.bosh_sahifa),
-                        fontSize = LargeTextSize,
-                        maxLines = 1
+                            .fillMaxSize()
+                            .padding(NormalIconButtonPadding)
                     )
+                }
+
+                SpaceMedium()
+                CustomText(
+                    text = stringResource(Res.string.bosh_sahifa),
+                    fontSize = LargeTextSize,
+                    maxLines = 1
+                )
 
 
-                    Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
-                    FilledTonalIconButton(
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .size(LargeIconButtonSize),
+                    onClick = {
+                        rootNavigator?.push(NotificationScreen())
+                    },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                    ),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.notification),
+                        contentDescription = "",
+                        tint = PrimaryColor,
                         modifier = Modifier
-                            .size(LargeIconButtonSize),
-                        onClick = {
-                            rootNavigator?.push(NotificationScreen())
-                        },
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.extendedColor.buttonColor,
-                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
-                        ),
-                        shape = CircleShape
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.notification),
-                            contentDescription = "",
-                            tint = PrimaryColor,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(LargeIconButtonPadding)
-                        )
-                    }
-                    SpaceSmall()
+                            .fillMaxSize()
+                            .padding(LargeIconButtonPadding)
+                    )
+                }
+                SpaceSmall()
 
-                    FilledTonalIconButton(
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .size(LargeIconButtonSize),
+                    onClick = {
+                        rootNavigator?.push(PolicyListScreen(
+                            state.selectedChildren
+                        ))
+                    },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                    ),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.schedule_icon),
+                        contentDescription = "",
+                        tint = PrimaryColor,
                         modifier = Modifier
-                            .size(LargeIconButtonSize),
-                        onClick = {
-                            rootNavigator?.push(PolicyListScreen(
-                                state.selectedChildren
-                            ))
-                        },
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.extendedColor.buttonColor,
-                            contentColor = MaterialTheme.extendedColor.onBackgroundColor
-                        ),
-                        shape = CircleShape
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.schedule_icon),
-                            contentDescription = "",
-                            tint = PrimaryColor,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(LargeIconButtonPadding)
-                        )
-                    }
+                            .fillMaxSize()
+                            .padding(LargeIconButtonPadding)
+                    )
                 }
             }
 
@@ -322,15 +331,12 @@ fun HomeUi(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        start = ContainerPadding,
-                        end = ContainerPadding,
-                        bottom = ContainerPadding,
-                        top = NormalIconButtonPadding
+                        horizontal = ContainerPadding,
                     )
                     .verticalScroll(rememberScrollState())
             ) {
 
-                SpaceUltraSmall()
+                SpaceSmall()
 
                 CustomSelectionButton(
                     label = stringResource(Res.string.farzandlaringiz),
@@ -453,12 +459,15 @@ fun HomeUi(
 
 @Preview
 @Composable
-fun Pre() {
-
-    HomeUi(
-        navigator = null,
-        state = HomeState(),
-        event = {}
-    )
+private fun Pre() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        HomeUi(
+            navigator = null,
+            state = HomeState(),
+            event = {}
+        )
+    }
 }
 

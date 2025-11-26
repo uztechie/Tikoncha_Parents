@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -90,11 +92,13 @@ fun CustomTextField(
             .background(Color.Transparent, RoundedCornerShape(TextFieldCornerRadius))
     }
 
+
     Column(
         modifier = columnModifier
+
     ) {
         BasicTextField(
-            cursorBrush = Brush.sweepGradient(listOf(contentColor,contentColor)),
+            cursorBrush = Brush.sweepGradient(listOf(contentColor, contentColor)),
             value = value,
             onValueChange = {
                 onValueChange(it)
@@ -107,7 +111,7 @@ fun CustomTextField(
                 .fillMaxWidth()
                 .background(backgroundColor),
             singleLine = singleLine,
-            maxLines = if(singleLine) 1 else 5,
+            maxLines = if (singleLine) 1 else 5,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 color = contentColor,
                 fontSize = fonSize,
@@ -122,7 +126,7 @@ fun CustomTextField(
                         .padding(horizontal = TextFieldInnerPadding),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if(leadingIcon != null){
+                    if (leadingIcon != null) {
                         leadingIcon()
                         Spacer(Modifier.size(TextFieldInnerPadding))
 
@@ -130,8 +134,8 @@ fun CustomTextField(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                    ){
-                        if (value.isEmpty()){
+                    ) {
+                        if (value.isEmpty()) {
                             CustomText(
                                 text = label,
                                 fontSize = fonSize,
@@ -141,7 +145,7 @@ fun CustomTextField(
                         }
                         innerTextField()
                     }
-                    if(trailingIcon != null){
+                    if (trailingIcon != null) {
                         Spacer(Modifier.size(TextFieldInnerPadding))
                         trailingIcon()
                     }
@@ -149,17 +153,21 @@ fun CustomTextField(
             }
         )
     }
-
-
-
 }
+
+
+
 
 @Preview
 @Composable
 private fun Preview() {
-    CustomTextField(
-        onValueChange = {},
-        label = "Shopping",
-        value = ""
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CustomTextField(
+            onValueChange = {},
+            label = "Shopping",
+            value = ""
+        )
+    }
 }

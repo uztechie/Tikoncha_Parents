@@ -4,7 +4,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
-import uz.tikoncha_parent.presentation.profile.subscription.PaymentViewModel
+import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 
 actual val targetModule = module {
     single<AppIconLoader> { AndroidAppIconLoader(androidContext()) }

@@ -117,24 +117,18 @@ fun ChatUi(
 
         CustomHeader(
             title = stringResource(Res.string.suhbat),
-            showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            }
         )
 
         Column(
-            modifier = Modifier.padding(ContainerPadding)
+            modifier = Modifier.padding(horizontal = ContainerPadding)
         )
         {
             LazyColumn {
-
 
                 items(state.chatList){ item->
                     ChatListItem(
                         chatUi = item,
                         onClick = {
-
                             navigator?.push(
                                 ChatMessageScreen(
                                     chatId = item.chatId,
@@ -147,11 +141,7 @@ fun ChatUi(
                     )
                     DividerHorizontal()
                 }
-
             }
-
-
-
         }
     }
 }
@@ -165,7 +155,4 @@ private fun Preview() {
             event = {}
         )
     }
-
-
-
 }

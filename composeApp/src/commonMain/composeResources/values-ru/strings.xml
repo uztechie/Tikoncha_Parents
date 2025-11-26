@@ -116,6 +116,7 @@
     <string name="ai_yangi_imkoniyatlar">Новые возможности с помощью AI</string>
     <string name="ism">Имя</string>
     <string name="yosh">Возраст</string>
+    <string name="yosh_1">лет</string>
     <string name="jins">Пол</string>
     <string name="telefon_nomer">Телефон номер</string>
     <string name="sinf">Класс</string>
@@ -184,5 +185,24 @@
     <string name="foydalanish_chegarasi">Лимит использования</string>
     <string name="shartlar_kiritish">Добавить условия</string>
     <string name="soatlik">Почасовой</string>
+    <string name="obuna_holati">Статус подписки</string>
+    <string name="tolandi">Оплачено</string>
+    <string name="tolov_kutilmoqda">Ожидается оплата</string>
+    <string name="tolanmagan">Не оплачено</string>
+    <string name="tolov_click_platformasi_orqali_amalga_oshiriladi">Оплата производится через платформу Click</string>
+    <string name="tolov_summasi">Сумма оплаты</string>
+    <string name="tanga">%1$d Монета</string>
+    <string name="xozr_sizning_obunangiz">Ваша текущая подписка</string>
+    <string name="ilovaning_barcha_funksiyalaridan_foydalanish_uchun_pro_versiyasini_sotib_oling">Для использования всех функций приложения приобретите Pro-версию</string>
+    <string name="baxtli_foydalanuvchimisiz">Присоединяйтесь к числу наших счастливых пользователей и пользуйтесь всеми функциями Tikoncha в полном объёме.</string>
+    <string name="som">cум</string>
+    <string name="foyda">Прибыль</string>
+    <string name="imkoniyatlar">Возможности</string>
+    <string name="obuna_faollashtirilgan">Подписка активирована</string>
+    <string name="obunaga_sovga_sifatida">В подарок к подписке</string>
+    <string name="premium">Премиум</string>
+    <string name="sovga_qilish">Подарить</string>
+    <string name="dostlarni_taklif_qilish">Пригласить друзей</string>
+    <string name="faol_vazifalar">Активные задания</string>
 
 </resources>

@@ -154,4 +154,23 @@ object Util {
         val ldt = LocalDateTime(date, time)
         return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
+
+    fun Int.toCurrency(): String{
+        val isNegative = this < 0
+        val digits = kotlin.math.abs(this).toString()
+
+        val sb = StringBuilder()
+        var count = 0
+
+        for (i in digits.length - 1 downTo 0){
+            sb.append(digits[i])
+            count++
+            if (count == 3 && i != 0){
+                sb.append(",")
+                count = 0
+            }
+        }
+        val formatted = sb.reverse().toString()
+        return if (isNegative) "-$formatted" else formatted
+    }
 }

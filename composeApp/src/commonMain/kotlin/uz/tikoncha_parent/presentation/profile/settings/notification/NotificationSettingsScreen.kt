@@ -26,6 +26,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class NotificationSettingsScreen: Screen {
@@ -88,7 +90,6 @@ fun NotificationSettingsUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 text = stringResource(Res.string.davom_etish),
-                fontSize = NormalLargeTextSize,
                 onClick = {
                     navigator!!.pop()
                 }
@@ -101,7 +102,11 @@ fun NotificationSettingsUi(
 @Preview
 @Composable
 private fun PreviewNotificationsettingsScreen(){
-    NotificationSettingsUi(
-        navigator = null
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        NotificationSettingsUi(
+            navigator = null
+        )
+    }
 }

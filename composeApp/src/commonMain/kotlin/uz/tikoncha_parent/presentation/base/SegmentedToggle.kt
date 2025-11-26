@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -39,6 +40,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -48,7 +51,8 @@ fun SegmentedToggle(
     fontSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Bold,
     onOptionSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.extendedColor.cardColor
 ) {
 
     val itemCount = options.size
@@ -59,9 +63,10 @@ fun SegmentedToggle(
     Box(
         modifier = modifier
             .height(TextFieldHeight)
-
-            .clip(RoundedCornerShape(TextFieldCornerRadius))
-            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .tripleShadow(
+                shape = RoundedCornerShape(TextFieldCornerRadius),
+            )
+            .background(backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(4.dp)
             .onGloballyPositioned { layoutCoordinates ->
                 val totalWidth = layoutCoordinates.size.width
@@ -143,15 +148,19 @@ fun SegmentedToggle(
 @Preview
 @Composable
 private fun PRe() {
-    SegmentedToggle(
-        options = listOf(
-            "Ertalabdan" to painterResource(Res.drawable.father_icon),
-            "Tushlikdan" to painterResource(Res.drawable.mather_icon)
-        ),
-        selectedIndex = 1,
-        onOptionSelected = {  },
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        SegmentedToggle(
+            options = listOf(
+                "Ertalabdan" to painterResource(Res.drawable.father_icon),
+                "Tushlikdan" to painterResource(Res.drawable.mather_icon)
+            ),
+            selectedIndex = 1,
+            onOptionSelected = {  },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        )
+    }
 }

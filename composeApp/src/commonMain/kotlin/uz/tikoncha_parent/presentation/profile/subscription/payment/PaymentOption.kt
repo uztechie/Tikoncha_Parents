@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.profile.subscription
+package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,7 +19,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.pay_me
 
 @Composable
-fun PaymentOptionKMP(
+fun PaymentOption(
     modifier: Modifier = Modifier,
     painter: Painter = painterResource(Res.drawable.pay_me),
     isSelected: Boolean,
@@ -66,7 +66,7 @@ fun PaymentOptionKMP(
 @Composable
 @Preview
 private fun Preview() {
-    PaymentOptionKMP(
+    PaymentOption(
         onClick = {},
         isSelected = true
     )

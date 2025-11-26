@@ -7,5 +7,6 @@ sealed class OtpEvent {
     object TimeStart: OtpEvent()
     object Tick : OtpEvent()
     object Reset : OtpEvent()
+    object ResendOtp : OtpEvent()
     object ClearNavigation : OtpEvent()
 }

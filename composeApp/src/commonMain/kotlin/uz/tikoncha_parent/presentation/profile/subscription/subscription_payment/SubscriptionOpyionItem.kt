@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.profile.subscription
+package uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalTextSizeSp
-import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceMedium
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
