@@ -1,14 +1,25 @@
 package uz.tikoncha_parent.data.remote.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AppsResponse(
-    val id: String,
-    val name: String,
-    val iconUrl: String?,
-    val checked: Boolean
+    val success: Boolean,
+    val data: AppsData?,
+    val error: String?,
+    val code:Int
 )
 
-data class AppsCategoryDto(
-    val id: String,
-    val title: String,
-    val apps: List<AppsResponse>
+@Serializable
+data class AppsData(
+    val items: List<AppDto>
+)
+
+@Serializable
+data class AppDto(
+    val `package`: String,
+    val name: String? = null,
+    val category: String? = null,
+    val logo: String? = null,
+    val order: Int
 )

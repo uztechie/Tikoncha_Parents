@@ -33,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.boshlanishi
 import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tugashi
+import tikoncha_parents.composeapp.generated.resources.ushbu_oraliqdan_tashqari
 import tikoncha_parents.composeapp.generated.resources.vaqt
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
@@ -160,7 +161,7 @@ fun TimeRuleDialog(
                 SpaceMedium()
 
                 WeekdayChips(
-                    selected = state.selectedDays,
+                    chips = state.weekDays,
                     onToggle = {
                         event(TimeRuleEvent.SelectDay(it))
                     }
@@ -266,7 +267,7 @@ fun TimeRuleDialog(
                                 )
                             SpaceSmall()
                             CustomText(
-                                text = "Ushbu oraliqdan tashqari"
+                                text = stringResource(Res.string.ushbu_oraliqdan_tashqari)
                             )
                         }
 
@@ -300,7 +301,7 @@ fun TimeRuleDialog(
                         event(TimeRuleEvent.SaveTime)
                         onDismiss()
                     },
-                    enabled = state.selectedDays.isNotEmpty(),
+                    enabled = state.weekDays.any { it.enabled },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(DialogButtonHeight),

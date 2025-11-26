@@ -1,17 +1,15 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.policy
 
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.PolicyRepository
-import uz.tikoncha_parent.domain.repository.RulesRepository
 
 class CreatePolicyUseCase(
     private val policyRepository: PolicyRepository
 ) {
-    suspend operator fun invoke(createPolicyRequest: CreatePolicyRequest): Resource<String>{
+    suspend operator fun invoke(createPolicyRequest: CreatePolicyRequest): Resource<String> {
         return try {
             val response = policyRepository.createPolicy(createPolicyRequest)
             if (response.success){

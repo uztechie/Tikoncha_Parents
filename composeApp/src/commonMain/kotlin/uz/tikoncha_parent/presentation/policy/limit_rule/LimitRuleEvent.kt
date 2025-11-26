@@ -22,4 +22,5 @@ sealed interface LimitRuleEvent {
     data class RemoveLimitRule(val usageLimit: LimitRuleUi) : LimitRuleEvent
     data class SetUsageType(val isDaily: Boolean) : LimitRuleEvent
     data class SelectLimitType(val dayHour: DayHour) : LimitRuleEvent
+    data class ShowSetupDialog(val show: Boolean) : LimitRuleEvent
 }

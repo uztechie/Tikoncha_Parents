@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,23 +22,27 @@ import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.CheckBoxCheckBackgroundColor
 import uz.tikoncha_parent.ui.CheckBoxCheckBorderColor
 import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun RoundedCheckbox(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     val boxSize = 26.dp
     val shape = RoundedCornerShape(8.dp)
     val green = CheckBoxCheckBackgroundColor
     val borderColor = if (checked) CheckBoxCheckBorderColor else BorderColor
 
+    val bg = if (enabled) Color.Transparent else MaterialTheme.extendedColor.disabledBgColor
+
     Box(
         modifier = modifier
             .size(boxSize)
             .clip(shape)
-            .background(if (checked) green else Color.Transparent)
+            .background(bg)
             .then(
                 if (!checked) Modifier.border(
                     width = 1.dp,
@@ -49,7 +54,9 @@ fun RoundedCheckbox(
                     shape = shape
                 )
             )
-            .clickable { onCheckedChange(!checked) },
+            .clickable {
+                if (enabled) onCheckedChange(!checked)
+                       },
         contentAlignment = Alignment.Center
     ) {
         if (checked) {

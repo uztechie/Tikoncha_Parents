@@ -4,9 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreatePolicyRequest(
-    val policy_name: String,
+    val policy_name: String = "",
+    val rule_name: String,
     val scope_type: String,
-    val scope_id: String,
+    val scope_id: String?,
     val policy_is_active: Boolean,
     val resource_type: String,
     val action: String,

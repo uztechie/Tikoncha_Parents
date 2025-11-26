@@ -132,7 +132,7 @@ fun LimitRuleDialog(
                 SpaceMedium()
 
                 WeekdayChips(
-                    selected = state.weekDays,
+                    chips = state.weekDays,
                     onToggle = {
                         event(LimitRuleEvent.SelectWeekDay(it))
                     }
@@ -209,7 +209,7 @@ fun LimitRuleDialog(
                         event(LimitRuleEvent.SaveLimit)
                         onDismiss()
                     },
-                    enabled = (state.weekDays.isNotEmpty() && (state.hourMinute.hour != 0 || state.hourMinute.minute != 0)),
+                    enabled = (state.weekDays.any { it.selected } && (state.hourMinute.hour != 0 || state.hourMinute.minute != 0)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(DialogButtonHeight),

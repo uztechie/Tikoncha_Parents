@@ -1,9 +1,21 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 
+
+
 sealed class AppWebEvent {
-    data class OnAppWebSelected(val genderIndex: Int): AppWebEvent()
-    data class ExpandCategory(val category: AppCategoryUi): AppWebEvent()
-    data class ToggleCategory(val category: AppCategoryUi, val checked: Boolean): AppWebEvent()
-    data class ToggleApp(val app: AppsUi, val checked: Boolean): AppWebEvent()
+    data class OnAppWebSelected(val index: Int): AppWebEvent()
+    data class SetChildId(val id: String): AppWebEvent()
+    data class ToggleApp(val app: AppSelectionUi, val checked: Boolean): AppWebEvent()
+    data class SetSelectedApps(val apps: List<AppSelectionUi>): AppWebEvent()
+
+    data class SetServerPackages(val packages: List<String>) : AppWebEvent()
+
+    data object GetAppsFromServer: AppWebEvent()
+    data object ClearData: AppWebEvent()
+    data object ClearAppList: AppWebEvent()
+
+//    data class SetSubscriptionLimit(val subscriptionLimitEntity: SubscriptionLimitEntity?): AppWebEvent()
+    data object DismissLimitDialog: AppWebEvent()
+
 
 }

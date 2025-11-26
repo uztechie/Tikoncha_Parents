@@ -25,9 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -36,22 +34,24 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt
+import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
-
+import kotlin.compareTo
 
 
 class TimeRuleListScreen(): Screen {
@@ -82,6 +82,7 @@ class TimeRuleListScreen(): Screen {
         TimeRuleListUi(
             state = state,
             event = event,
+            sharedState = sharedState,
             navigator = navigator
         )
 
@@ -95,26 +96,42 @@ class TimeRuleListScreen(): Screen {
 fun TimeRuleListUi(
     navigator: Navigator?,
     state: TimeRuleState,
-    event: (TimeRuleEvent) -> Unit
+    event: (TimeRuleEvent) -> Unit,
+    sharedState: PolicySharedState
 )
 {
-    var showSetupDialog by remember {
-        mutableStateOf(false)
+
+    var showLimitDialog by remember { mutableStateOf(false) }
+    CustomDialog(
+        title = stringResource(Res.string.limit_tugadi),
+        message = "Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.",
+        show = showLimitDialog,
+//        lottieAsset = DialogLottie.WARNING,
+        onDismiss = {showLimitDialog = false},
+        onButtonClick = {
+            showLimitDialog = false
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        event(TimeRuleEvent.BeginCreateRule())
     }
+
+
+
 
 
     TimeRuleDialog(
-        show = showSetupDialog,
+        show = state.showSetupDialog && sharedState.canUpdate,
         state = state,
         event = event,
-        onDismiss = {showSetupDialog = false}
+        onDismiss = {
+            event(TimeRuleEvent.ClearTime)
+            event(TimeRuleEvent.ShowSetupDialog(false))
+
+        }
     )
 
-    LaunchedEffect(Unit){
-        if (state.timeList.isEmpty()){
-            showSetupDialog = true
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -151,77 +168,86 @@ fun TimeRuleListUi(
                                 event(TimeRuleEvent.SetTimeRuleData(
                                     it
                                 ))
-                                showSetupDialog = true
+                                event(TimeRuleEvent.ShowSetupDialog(true))
                             }
                         ),
                     item = it,
                     onRemove = {
                         event(TimeRuleEvent.RemoveTimeRule(it))
-                    }
+                    },
+                    canRemove = sharedState.canUpdate
                 )
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .bottomShadow(
-                    shape = RoundedCornerShape(
-                        topStart = ButtonCornerRadius,
-                        topEnd = ButtonCornerRadius
-                    ),
-                    color = MaterialTheme.extendedColor.backgroundColor
-//                    color = Color.Red
-                )
-                .bottomShadow(
-                    shape = RoundedCornerShape(
-                        topStart = ButtonCornerRadius,
-                        topEnd = ButtonCornerRadius
-                    ),
-                    color = MaterialTheme.extendedColor.backgroundColor,
-                    lowerOffset = - 5.dp,
-                    radius = 10.dp
-
-                )
-                .background(MaterialTheme.extendedColor.backgroundColor)
-                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
-
-
-        )
-        {
-
-
-            CustomOutlinedButton(
-                enabled = !state.timeList.any { it.allDay && it.weekDays.size == 7 },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    showSetupDialog = true
-                },
-                text = stringResource(Res.string.oraliq_qoshish),
-                endingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                    )
-                }
-
-            )
-
-            SpaceSmall()
-
-
-            CustomButton(
-                text = stringResource(Res.string.saqlash),
+        if (sharedState.canUpdate){
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight),
-                onClick = {
-                    navigator?.popUntil {
-                        it is PolicySetupScreen
-                    }
-                }
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor
+                    )
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor,
+                        lowerOffset = -5.dp,
+                        radius = 10.dp
+
+                    )
+                    .background(MaterialTheme.extendedColor.backgroundColor)
+                    .padding(
+                        start = ContainerPadding,
+                        end = ContainerPadding,
+                        bottom = ContainerPadding
+                    )
+
+
             )
+            {
+                CustomOutlinedButton(
+                    enabled = !state.timeList.any { it.allDay && it.weekDays.size == 7 },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = {
+//                        val count = sharedState.subscriptionLimitEntity?.limit_rule
+//                        val listCount = state.timeList.size
+//
+//                        if (count != null && listCount >= count) {
+//                            showLimitDialog = true
+//                            return@CustomOutlinedButton
+//                        }
+                        event(TimeRuleEvent.ShowSetupDialog(true))
+                    },
+                    text = stringResource(Res.string.oraliq_qoshish),
+                    endingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.add_square),
+                            contentDescription = "",
+                        )
+                    }
+
+                )
+
+                SpaceSmall()
+                CustomButton(
+                    text = stringResource(Res.string.saqlash),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                    onClick = {
+                        navigator?.popUntil {
+                            it is PolicySetupScreen
+                        }
+                    }
+                )
+            }
         }
     }
 }

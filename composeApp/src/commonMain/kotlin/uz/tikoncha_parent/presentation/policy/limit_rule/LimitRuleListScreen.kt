@@ -36,6 +36,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
@@ -43,8 +44,10 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.extendedColor
+import kotlin.compareTo
 
 
 class LimitRuleListScreen : Screen {
@@ -74,7 +77,8 @@ class LimitRuleListScreen : Screen {
         LimitRuleListUi(
             navigator = navigator,
             state = state.value,
-            event = event
+            event = event,
+            sharedState = sharedState
         )
     }
 }
@@ -82,27 +86,33 @@ class LimitRuleListScreen : Screen {
 fun LimitRuleListUi(
     navigator: Navigator?,
     state: LimitRuleState,
-    event: (LimitRuleEvent) -> Unit
+    event: (LimitRuleEvent) -> Unit,
+    sharedState: PolicySharedState
 )
 {
 
-    var showSetupDialog by remember {
-        mutableStateOf(false)
-    }
 
-    LimitRuleDialog(
-        show = showSetupDialog,
-        state = state,
-        event = event,
-        onDismiss = { showSetupDialog = false }
+
+    var showLimitDialog by remember { mutableStateOf(false) }
+    CustomDialog(
+        title = stringResource(Res.string.limit_tugadi),
+        message = "Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.",
+        show = showLimitDialog,
+        onDismiss = {showLimitDialog = false},
+        onButtonClick = {
+            showLimitDialog = false
+        }
     )
 
-
-    LaunchedEffect(Unit){
-        if (state.limitRuleList.isEmpty()){
-            showSetupDialog = true
+    LimitRuleDialog(
+        show = state.showSetupDialog && sharedState.canUpdate,
+        state = state,
+        event = event,
+        onDismiss = {
+            event(LimitRuleEvent.ClearData)
+            event(LimitRuleEvent.ShowSetupDialog(false))
         }
-    }
+    )
 
     Column(
         modifier = Modifier
@@ -137,77 +147,90 @@ fun LimitRuleListUi(
                                 event(LimitRuleEvent.SetUsageLimitData(
                                     it
                                 ))
-                                showSetupDialog = true
+                                event(LimitRuleEvent.ShowSetupDialog(true))
                             }
                         ),
                     item = it,
                     onRemove = {
                         event(LimitRuleEvent.RemoveLimitRule(it))
-                    }
+                    },
+                    canRemove = sharedState.canUpdate
                 )
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .bottomShadow(
-                    shape = RoundedCornerShape(
-                        topStart = ButtonCornerRadius,
-                        topEnd = ButtonCornerRadius
-                    ),
-                    color = MaterialTheme.extendedColor.backgroundColor
-                )
-                .bottomShadow(
-                    shape = RoundedCornerShape(
-                        topStart = ButtonCornerRadius,
-                        topEnd = ButtonCornerRadius
-                    ),
-                    color = MaterialTheme.extendedColor.backgroundColor,
-                    lowerOffset = -5.dp,
-                    radius = 10.dp
-
-                )
-                .background(MaterialTheme.extendedColor.backgroundColor)
-                .padding(
-                    start = ContainerPadding,
-                    end = ContainerPadding,
-                    bottom = ContainerPadding
-                )
-
-
-        )
-        {
-            CustomOutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    showSetupDialog = true
-                },
-                text = stringResource(Res.string.oraliq_qoshish),
-                endingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                    )
-                }
-
-            )
-            SpaceSmall()
-
-            CustomButton(
-                text = stringResource(Res.string.saqlash),
+        if (sharedState.canUpdate){
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight),
-                onClick = {
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor
+                    )
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor,
+                        lowerOffset = -5.dp,
+                        radius = 10.dp
+
+                    )
+                    .background(MaterialTheme.extendedColor.backgroundColor)
+                    .padding(
+                        start = ContainerPadding,
+                        end = ContainerPadding,
+                        bottom = ContainerPadding
+                    )
+
+
+            )
+            {
+                CustomOutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = {
+//                        val count = sharedState.subscriptionLimitEntity?.limit_rule
+//                        val listCount = state.limitRuleList.size
+//
+//                        if (count != null && listCount >= count) {
+//                            showLimitDialog = true
+//                            return@CustomOutlinedButton
+//                        }
+                        event(LimitRuleEvent.ShowSetupDialog(true))
+                    },
+                    text = stringResource(Res.string.oraliq_qoshish),
+                    endingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.add_square),
+                            contentDescription = "",
+                        )
+                    }
+
+                )
+                SpaceSmall()
+
+                CustomButton(
+                    text = stringResource(Res.string.saqlash),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                    onClick = {
                     navigator?.popUntil {
                         it is PolicySetupScreen
                     }
-                }
-            )
+                    }
+                )
+            }
         }
     }
+
+
+
 }
 
 @Preview
@@ -216,6 +239,7 @@ private fun PreviewScheduleTimeListScreen() {
     LimitRuleListUi(
         navigator = null,
         state = LimitRuleState(),
-        event = {}
+        event = {},
+        sharedState = PolicySharedState()
     )
 }

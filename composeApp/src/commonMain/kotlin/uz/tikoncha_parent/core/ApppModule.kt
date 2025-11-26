@@ -65,7 +65,8 @@ import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
-import uz.tikoncha_parent.domain.use_case.CreatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.SubscriptionPurchaseUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
@@ -82,6 +83,9 @@ import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
+import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
+import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
@@ -167,9 +171,13 @@ val sharedModule = module {
     single { NewsUseCase(get()) }
     single { MyCoinsUseCase(get()) }
     single { CreatePolicyUseCase(get()) }
+    single { UpdatePolicyUseCase(get()) }
+    single { DeletePolicyUseCase(get()) }
     single { SubscriptionPurchaseUseCase(get()) }
+    single { GetChildAppsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
+    single { GetPoliciesFromServerUseCase(get() ) }
 
 
 
@@ -198,14 +206,14 @@ val sharedModule = module {
     ) }
     viewModel { MonitorViewModel(get(), get()) }
     viewModel { NotificationViewModel(get(), get()) }
-    viewModel { PolicyViewModel() }
-    viewModel { AppWebViewModel() }
+    viewModel { PolicyViewModel(get()) }
     viewModel { TimeRuleViewModel() }
     viewModel { LimitRuleViewModel() }
     viewModel { MyCoinsViewModel(get()) }
 
-    viewModel { PolicySetupViewModel(get()) }
+    viewModel { PolicySetupViewModel(get(), get(), get()) }
     single { PolicySharedModel() }
+    factory { AppWebViewModel(get()) }
 
     viewModel { PaymentViewModel(get(), get()) }
 

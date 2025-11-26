@@ -1,74 +1,147 @@
-@file:Suppress("EQUALITY_NOT_APPLICABLE_WARNING")
-
 package uz.tikoncha_parent.presentation.policy.app_selection
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FloatingActionButtonDefaults.LargeIconSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ilovalar
 import tikoncha_parents.composeapp.generated.resources.jadval
+import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.saqlash
-import tikoncha_parents.composeapp.generated.resources.search_normal
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
+import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class AppWebSelectionScreen : Screen {
+
+
+
+class AppWebSelectionScreen(): Screen{
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current ?: return
 
-        val navigator = LocalNavigator.current
-
-        val viewModel = koinViewModel<AppWebViewModel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
+        val viewModel = navigator.koinNavigatorScreenModel<AppWebViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        ScheduleAppsSelectUi(
-            navigator = navigator,
-            state = state.value,
-            event = event
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
+        val sharedEvent = sharedViewModel::onEvent
+
+        AppWebSelectionUi(
+            state = state,
+            event = event,
+            sharedState = sharedState
         )
+
+        Logger.d("SALOM", "selectedChild=${sharedState.selectedChild?.userId}")
+
+        LaunchedEffect(Unit){
+            event(AppWebEvent.GetAppsFromServer)
+        }
     }
+
 }
 
 @Composable
-fun ScheduleAppsSelectUi(
-    navigator: Navigator?,
+fun AppWebSelectionUi(
     state: AppWebState,
-    event: (AppWebEvent) -> Unit
+    event: (AppWebEvent) -> Unit,
+    sharedState: PolicySharedState
+
 ) {
 
-    val navigator = LocalNavigator.currentOrThrow
+    val navigator = LocalNavigator.current
+
+
+
+
+//    CustomDialog(
+//        title = stringResource(Res.string.limit_tugadi),
+//        message = "Sizda ${state.subscriptionLimitEntity?.app_count} dan ko'p ilovalarni tanlay olmaysiz. Ko'proq ilovalarni qo'shish uchun PLUS obunani sotib oling.",
+//        show = state.showLimitReachedDialog,
+////        lottieAsset = DialogLottie.WARNING,
+//        onDismiss = {
+//            event(AppWebEvent.DismissLimitDialog)
+//        },
+//        onButtonClick = {
+//            event(AppWebEvent.DismissLimitDialog)
+//        }
+//    )
+
+
+    val loading = state.appsResponseState is ResponseState.Loading
+    val errorText = state.appsResponseState.errorText()
+
+    LoadingDialog(loading)
+    var showErrorText by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(errorText){
+        showErrorText = errorText.isNotEmpty()
+    }
+
+    CustomDialog(
+        title = stringResource(Res.string.xatolik),
+        message = errorText,
+        show = showErrorText,
+        onDismiss = {
+            showErrorText = false
+        },
+        onButtonClick = {
+            showErrorText = false
+        }
+    )
+
+
+
 
 
     Column(
@@ -78,20 +151,13 @@ fun ScheduleAppsSelectUi(
     ) {
         CustomHeader(
             showBackButton = true,
-            onBackClick = { navigator?.pop() },
-            title = stringResource(Res.string.jadval),
-            trailingIcon = {
-                Image(
-                    painter = painterResource(Res.drawable.search_normal),
-                    contentDescription = "Search",
-                    modifier = Modifier
-                        .clickable {
-
-                        }
-                )
-            }
+            onBackClick = {
+                navigator?.pop()
+            },
+            title = stringResource(Res.string.jadval)
         )
 
+        SpaceMedium()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -109,46 +175,95 @@ fun ScheduleAppsSelectUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                fontWeight = FontWeight.W600,
                 fontSize = NormalTextSize,
             )
 
             SpaceLarge()
 
-            when(state.appWebSelectionIndex){
-                0->{
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(state.categories, key = {it.id}) { category ->
-                            AppCategoryItem(
-                                category = category,
-                                onHeaderClick = {
-                                    event(AppWebEvent.ExpandCategory(category))
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = ContainerPadding),
+                modifier = Modifier
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor
+                    )
+                    .bottomShadow(
+                        shape = RoundedCornerShape(
+                            topStart = ButtonCornerRadius,
+                            topEnd = ButtonCornerRadius
+                        ),
+                        color = MaterialTheme.extendedColor.backgroundColor,
+                        lowerOffset = -5.dp,
+                        radius = 10.dp
+
+                    )
+                    .weight(1f)
+            ) {
+                when(state.appWebSelectionIndex){
+                    0 -> {
+                        items(state.apps) { app ->
+                            AppRowItem(
+                                enabled = sharedState.canUpdate,
+                                modifier = Modifier
+                                    .padding(vertical = 10.dp),
+                                app = app,
+                                onCheckedChange = {
+                                    event(
+                                        AppWebEvent.ToggleApp(
+                                            app = app,
+                                            checked = it
+                                        )
+                                    )
                                 },
-                                onToggleApp = { app, checked ->
-                                    event(AppWebEvent.ToggleApp(app, checked))
-                                },
-                                onToggleAll = { checked ->
-                                    event(AppWebEvent.ToggleCategory(category, checked))
-                                }
+                            )
+                            DividerHorizontal(
+                                modifier = Modifier
+                                    .padding(start = LargeIconSize+15.dp)
                             )
                         }
                     }
+
+                    1 -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ){
+//                                LottiePlayer(
+//                                    size = 300.dp,
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .padding(ContainerPadding),
+//                                    filePath = "json/coming_soon.json",
+//                                    iterations = 1,
+//                                    speed = 0.5f
+//                                )
+                            }
+                        }
+
+                    }
                 }
 
-                1->{
-//                    navigator.push(ScheduleTimeListScreen() )
-                }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
-            CustomButton(
-                text = stringResource(Res.string.saqlash),
-                onClick = { },
-                modifier = Modifier.fillMaxWidth()
-            )
+
+            if (sharedState.canUpdate){
+                CustomButton(
+                    text = stringResource(Res.string.saqlash),
+                    onClick = {
+                        navigator?.pop()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                SpaceMedium()
+            }
+
+            
         }
     }
 }
@@ -156,9 +271,9 @@ fun ScheduleAppsSelectUi(
 @Preview
 @Composable
 private fun Preview() {
-    ScheduleAppsSelectUi(
-        navigator = null,
+    AppWebSelectionUi(
         state = AppWebState(),
-        event = {}
+        event = {},
+        sharedState = PolicySharedState()
     )
 }

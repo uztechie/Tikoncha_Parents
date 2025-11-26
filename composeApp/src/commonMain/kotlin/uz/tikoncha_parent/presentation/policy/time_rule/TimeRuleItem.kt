@@ -34,10 +34,10 @@ fun TimeRuleItem(
     modifier: Modifier = Modifier,
     item: TimeRuleUi,
     onRemove: () -> Unit,
+    canRemove: Boolean = false
 )
 {
 
-//    val bgColor = MaterialTheme.extendedColor.backgroundColor
     val bgColor = MaterialTheme.extendedColor.cardColor
 
 
@@ -56,20 +56,6 @@ fun TimeRuleItem(
     )
     {
 
-//        Box(
-//            modifier = Modifier
-//                .size(SmallIconButtonSize)
-//                .clip(RoundedCornerShape(ShapeCornerRadius))
-//                .background(MaterialTheme.extendedColor.tonalButtonColor),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Image(
-//                painter = painterResource(Res.drawable.clock),
-//                contentDescription = "",
-//                modifier = Modifier
-//                    .fillMaxSize(0.6f)
-//            )
-//        }
 
         SpaceSmall()
 
@@ -114,12 +100,14 @@ fun TimeRuleItem(
         }
 
 
-        SpaceSmall()
+        if (canRemove){
+            SpaceSmall()
 
-        CloseButton(
-            onClick = {
-                onRemove()
-            }
-        )
+            CloseButton(
+                onClick = {
+                    onRemove()
+                }
+            )
+        }
     }
 }

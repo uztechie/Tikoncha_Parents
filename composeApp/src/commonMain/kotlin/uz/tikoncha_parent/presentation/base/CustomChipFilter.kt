@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -32,34 +33,38 @@ import uz.tikoncha_parent.ui.theme.extendedColor
  * Ixcham chip: minimal padding, 2-3 harfli label, tanlanganda yashil.
  * KMP-friendly: Material3 + ripple bor, contentPaddingni o'zimiz boshqaramiz.
  */
+
 @Composable
 fun CustomChipFilter(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     // O'lchamlar
     height: Dp = 36.dp,
     minWidth: Dp = 42.dp,            // 2 harf sig'ishi uchun yetarli
     horizontalPadding: Dp = 6.dp,    // ichki horizontal padding (label atrofida)
     cornerRadius: Dp = 8.dp,         // yumaloqlik
     // Ranglar
-    selectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.primaryColor,
-    unselectedContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.cardColor,
-    selectedLabelColor: androidx.compose.ui.graphics.Color = Color.White,
-    unselectedLabelColor: androidx.compose.ui.graphics.Color = MaterialTheme.extendedColor.textColor,
+    selectedContainerColor: Color = MaterialTheme.extendedColor.primaryColor,
+    unselectedContainerColor: Color = MaterialTheme.extendedColor.cardColor,
+    selectedLabelColor: Color = Color.White,
+    unselectedLabelColor: Color = MaterialTheme.extendedColor.textColor,
     // Matn stili
-    fontSize: androidx.compose.ui.unit.TextUnit = 12.sp,
+    fontSize: TextUnit = 12.sp,
     fontWeight: FontWeight = FontWeight.W400,
 ) {
     val shape = RoundedCornerShape(cornerRadius)
+    val disabledContainerColor = MaterialTheme.extendedColor.disabledBgColor
+    val disabledContentColor = MaterialTheme.extendedColor.disabledContentColor
 
     val bg = animateColorAsState(
-        targetValue = if (selected) selectedContainerColor else unselectedContainerColor,
+        targetValue = if (selected) selectedContainerColor else if (!enabled) disabledContainerColor else unselectedContainerColor,
         label = "chip-bg"
     )
     val fg = animateColorAsState(
-        targetValue = if (selected) selectedLabelColor else unselectedLabelColor,
+        targetValue = if (selected) selectedLabelColor else if (!enabled) disabledContentColor else unselectedLabelColor,
         label = "chip-fg"
     )
 
@@ -74,7 +79,9 @@ fun CustomChipFilter(
             .clickable(
                 interactionSource = interaction,
                 indication = LocalIndication.current,
-                onClick = onClick
+                onClick = {
+                    if (enabled) onClick()
+                }
             ),
         contentAlignment = Alignment.Center
     ) {

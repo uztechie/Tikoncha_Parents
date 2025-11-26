@@ -1,91 +1,79 @@
 package uz.tikoncha_parent.presentation.policy
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
-import tikoncha_parents.composeapp.generated.resources.barcha_farzandlar
-import tikoncha_parents.composeapp.generated.resources.discord_icon
-import tikoncha_parents.composeapp.generated.resources.google_icon
-import tikoncha_parents.composeapp.generated.resources.har_kuni_bloklashni_rejalashtiring
-import tikoncha_parents.composeapp.generated.resources.ilovalar
-import tikoncha_parents.composeapp.generated.resources.instagram_icon
 import tikoncha_parents.composeapp.generated.resources.jadval
-import tikoncha_parents.composeapp.generated.resources.linkedin_icon
+import tikoncha_parents.composeapp.generated.resources.jadval_nomini_kiriting
+import tikoncha_parents.composeapp.generated.resources.limit_tugadi
+import tikoncha_parents.composeapp.generated.resources.misol_o_quv_markaz
 import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
-import tikoncha_parents.composeapp.generated.resources.social_x_icon
-import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
-import uz.saidburxon.newedu.presentation.base.CustomText
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomDialogTextField
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.verticalShadow
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebSelectionScreen
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
+import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.ui.ButtonCornerRadius
-import uz.tikoncha_parent.ui.ButtonHeight
-import uz.tikoncha_parent.ui.CardCornerRadius
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.HintTextColor
-import uz.tikoncha_parent.ui.LargeTextSize
-import uz.tikoncha_parent.ui.NormalIconSize
-import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
+@OptIn(InternalVoyagerApi::class)
 class PolicyListScreen(
     val child: UserInfo?
 ) : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current
+        val navigator = LocalNavigator.current?:return
 
 
         val sharedViewModel = koinViewModel<PolicySharedModel>()
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
         val sharedEvent = sharedViewModel::onEvent
+
+        val sharedAppViewModel = navigator.koinNavigatorScreenModel<AppWebViewModel>()
+        val sharedAppEvent = sharedAppViewModel::onEvent
 
         val viewModel = koinViewModel<PolicyViewModel>()
         val event = viewModel::onEvent
@@ -93,6 +81,13 @@ class PolicyListScreen(
 
         LaunchedEffect(Unit){
             event(PolicyEvent.SetSelectedChild(child))
+            sharedAppEvent(AppWebEvent.ClearData)
+            sharedEvent(PolicySharedEvent.ClearData)
+        }
+
+        BackHandler(true){
+            sharedAppEvent(AppWebEvent.ClearAppList)
+            navigator.pop()
         }
 
 
@@ -100,7 +95,9 @@ class PolicyListScreen(
             navigator = navigator,
             sharedEvent = sharedEvent,
             event = event,
-            state = state
+            state = state,
+            sharedState = sharedState,
+            sharedAppEvent = sharedAppEvent
         )
     }
 }
@@ -111,9 +108,77 @@ fun PolicyListUi(
     state: PolicyState,
     event: (PolicyEvent) -> Unit = {},
     sharedEvent: (PolicySharedEvent) -> Unit = {},
+    sharedState: PolicySharedState,
+    sharedAppEvent: (AppWebEvent) -> Unit
 ){
 
-    val bgColor = MaterialTheme.extendedColor.cardColor
+
+    val loading = state.policyResponseState is ResponseState.Loading
+    val errorText = state.policyResponseState.errorText()
+
+    LoadingDialog(loading)
+    var showErrorText by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(errorText){
+        showErrorText = errorText.isNotEmpty()
+    }
+
+    CustomDialog(
+        title = stringResource(Res.string.xatolik),
+        message = errorText,
+        show = showErrorText,
+        onDismiss = {
+            showErrorText = false
+        },
+        onButtonClick = {
+            showErrorText = false
+        }
+    )
+
+
+
+    var showCreatePolicyDialog by remember { mutableStateOf(false) }
+    var title by rememberSaveable(sharedState.policyTitle) { mutableStateOf(sharedState.policyTitle) }
+
+    CustomDialogTextField(
+        enabled = if (title.length < 2) false else true,
+        show = showCreatePolicyDialog,
+        title = stringResource(Res.string.jadval_nomini_kiriting),
+        label = stringResource(Res.string.misol_o_quv_markaz),
+        value = title,
+        onValueChange = {
+            title = it
+        },
+        onDismiss = {showCreatePolicyDialog = false},
+        onButtonClick = {
+            val finalTitle = title.trim()
+            if (finalTitle.isNotBlank()) {
+//                sharedEvent(PolicySharedEvent.ClearData)
+//                sharedAppEvent(AppWebEvent.ClearData)
+                sharedEvent(PolicySharedEvent.SetPolicyTitle(finalTitle))
+//                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimitEntity))
+                showCreatePolicyDialog = false
+                navigator?.push(PolicySetupScreen(state.selectedChild))
+            }
+        }
+    )
+
+    var showLimitDialog by remember { mutableStateOf(false) }
+
+
+    CustomDialog(
+        title = stringResource(Res.string.limit_tugadi),
+        message = "Sizda yana boshqa jadval yaratish uchun limitingiz tugadi. Yana yangi jadval yaratish uchun PLUS obunasini sotib oling.",
+        show = showLimitDialog,
+//        lottieAsset = DialogLottie.WARNING,
+        onDismiss = {showLimitDialog = false},
+        onButtonClick = {
+            showLimitDialog = false
+        }
+    )
+
 
     Column(
         modifier = Modifier
@@ -121,119 +186,82 @@ fun PolicyListUi(
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
-        val name = state.selectedChild?.name ?: ""
-        val title = StringBuilder()
-        title.append(stringResource(Res.string.jadval))
-        if (name.isEmpty()){
-            title.append(" - ")
-            title.append(stringResource(Res.string.barcha_farzandlar))
-        }
-        else{
-            title.append(" - ")
-            title.append(name)
-        }
+        var title = stringResource(Res.string.jadval)
 
         CustomHeader(
-            title = title.toString(),
+            title = title,
             showBackButton = true,
             onBackClick = {
+                sharedAppEvent(AppWebEvent.ClearAppList)
                 navigator?.pop()
             },
             modifier = Modifier.fillMaxWidth(),
         )
 
-        SpaceMedium()
-
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
+                .fillMaxWidth()
+                .weight(1f),
+            contentPadding = PaddingValues(ContainerPadding),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navigator?.push(AppWebSelectionScreen())
-                    }
-                    .verticalShadow(
-                        shape = RoundedCornerShape(CardCornerRadius),
-                        offset = 0.dp
-                    )
-                    .background(
-                        bgColor, RoundedCornerShape(CardCornerRadius)
-                    )
-                    .padding(ContainerPadding)
-            ) {
-                val icons = listOf(
-                    Res.drawable.instagram_icon,
-                    Res.drawable.whatsapp_icon,
-                    Res.drawable.discord_icon,
-                    Res.drawable.linkedin_icon,
-                    Res.drawable.social_x_icon,
-                    Res.drawable.google_icon
-                )
-
-                CustomText(
-                    text = stringResource(Res.string.ilovalar),
-                    fontSize = LargeTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                CustomText(
-                    text = stringResource(Res.string.har_kuni_bloklashni_rejalashtiring),
-                    fontSize = NormalTextSize,
-                    color = HintTextColor,
-                    style = TextStyle(lineHeight = 14.sp)
-                )
-
-                SpaceSmall()
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    icons.forEach { icon ->
-                        Image(
-                            painter = painterResource(icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(NormalIconSize)
+            items(state.policies){
+                PolicyListItem(
+                    modifier = Modifier,
+                    policy = it,
+                    onClick = {
+//                        sharedEvent(PolicySharedEvent.ClearData)
+//                        sharedAppEvent(AppWebEvent.ClearData)
+//                        sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimitEntity))
+                        sharedEvent(PolicySharedEvent.SetPolicy(it))
+                        navigator?.push(
+                            PolicySetupScreen(
+                                child = state.selectedChild,
+                                policyItemUi = it
+                            )
+                        )
+                    },
+                    onEdit = {
+//                        sharedEvent(PolicySharedEvent.ClearData)
+//                        sharedAppEvent(AppWebEvent.ClearData)
+                        sharedEvent(PolicySharedEvent.SetPolicy(it))
+                        navigator?.push(
+                            PolicySetupScreen(
+                                child = state.selectedChild,
+                                policyItemUi = it
+                            )
                         )
                     }
-                }
-            }
-
-            Spacer(Modifier.weight(1f))
-            TextButton(
-                onClick = {
-                    sharedEvent(PolicySharedEvent.ClearData)
-                    navigator?.push(PolicySetupScreen(child = state.selectedChild))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(ButtonCornerRadius))
-                    .height(ButtonHeight),
-            )
-            {
-                Text(
-                    text = stringResource(Res.string.shartlar_kiritish),
-                    color = PrimaryColor
                 )
+            }
+        }
 
-                SpaceMedium()
-
+        CustomOutlinedButton(
+            onClick = {
+//                val count = state.subscriptionLimitEntity?.policy_count
+//                val myPolicyCount = state.policyList.count { it.isMine }
+//                if (count == null || count > myPolicyCount){
+//                    showCreatePolicyDialog = true
+//                }
+//                else{
+//                    showLimitDialog = true
+//                }
+                showCreatePolicyDialog = true
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ContainerPadding),
+            text = stringResource(Res.string.shartlar_kiritish),
+            endingIcon = {
                 Icon(
                     painter = painterResource(Res.drawable.add_square),
                     contentDescription = "",
                     tint = PrimaryColor
                 )
-
             }
-            SpaceSmall()
-        }
+        )
+        SpaceSmall()
     }
+
+
 }

@@ -1,169 +1,255 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 
-import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import uz.tikoncha_parent.data.mapper.toAppSelectionUi
+import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
+import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
-class AppWebViewModel : ViewModel() {
+class AppWebViewModel(
+    private val getChildAppsUseCase: GetChildAppsUseCase
+) : ScreenModel {
 
-    private val _state = MutableStateFlow(AppWebState(isLoading = true))
+    private val _state = MutableStateFlow(AppWebState())
     val state = _state.asStateFlow()
 
-    init {
-        _state.update {
-            it.copy(
-                categories = createAppList()
-            )
-        }
-    }
+    private var alreadySetOnce: Boolean = false
+    private var alreadyLoadedOnce: Boolean = false
 
     fun onEvent(event: AppWebEvent) {
         when (event) {
-            is AppWebEvent.OnAppWebSelected -> {
+            AppWebEvent.ClearData -> {
+                Logger.d("AppWebViewModel", "Clear Data")
+
+                alreadySetOnce = false
+                alreadyLoadedOnce = false
                 _state.update {
                     it.copy(
-                        appWebSelectionIndex = event.genderIndex
+                        serverPkgs = emptySet(),
+                        serverRequestedCount = 0,
+                        serverPresentInstalledCount = 0,
+                        serverMissingCount = 0,
+                        apps = emptyList(),
+                        selectedPkgs = emptySet(),
+                        showLimitReachedDialog = false
+                    )
+                }
+            }
+            AppWebEvent.ClearAppList -> {
+                Logger.d("AppWebViewModel", "ClearAppList")
+                _state.update {
+                    it.copy(
+                        apps = emptyList(),
+                    )
+                }
+            }
+            AppWebEvent.DismissLimitDialog -> {
+                _state.update { it.copy(showLimitReachedDialog = false) }
+            }
+            is AppWebEvent.OnAppWebSelected -> {
+                _state.update { it.copy(appWebSelectionIndex = event.index) }
+            }
+            is AppWebEvent.SetServerPackages -> {
+                if (alreadySetOnce){
+                    return
+                }
+
+                val newServerPkgs = event.packages.toSet()
+                val current = _state.value
+
+                val updatedApps = if (current.apps.isNotEmpty()){
+                    current.apps.map {app->
+                        val shouldBeChecked = app.checked || newServerPkgs.contains(app.packageName)
+                        app.copy(checked = shouldBeChecked)
+                    }
+                }else{
+                    current.apps
+                }
+
+                val (requested, present, missing) = calculateServerStats(updatedApps, newServerPkgs)
+                val newSelectedPkgs: Set<String> = buildSet {
+                    addAll(current.selectedPkgs)
+                    addAll(updatedApps.filter {it.checked}.map { it.packageName })
+                }
+
+                _state.update {
+                    it.copy(
+                        serverPkgs = newServerPkgs,
+                        serverRequestedCount = requested,
+                        serverPresentInstalledCount = present,
+                        serverMissingCount = missing,
+                        apps = updatedApps,
+                        selectedPkgs = newSelectedPkgs
+                    )
+                }
+
+                alreadySetOnce = true
+
+            }
+
+            is AppWebEvent.SetSelectedApps -> {
+                val pkgs = event.apps
+                    .filter { it.checked }
+                    .map { it.packageName }
+                    .toSet()
+
+                _state.update { state ->
+                    val updatedApps = if (state.apps.isNotEmpty()){
+                        state.apps.map { app->
+                            if (pkgs.contains(app.packageName)){
+                                app.copy(
+                                    checked = true
+                                )
+                            }
+                            else{
+                                app
+                            }
+                        }
+                    }
+                    else{
+                        state.apps
+                    }
+                    state.copy(
+                        selectedPkgs = pkgs,
+                        apps = updatedApps
                     )
                 }
             }
 
-            is AppWebEvent.ExpandCategory -> {
-                expandCategory(event.category.id)
-            }
             is AppWebEvent.ToggleApp -> {
-                toggleApp(
-                    appId = event.app.id,
-                    checked = event.checked
-                )
-            }
-            is AppWebEvent.ToggleCategory -> {
-                toggleCategory(
-                    categoryId = event.category.id,
-                    checked = event.checked
-                )
-            }
-        }
-    }
+                val toggledApp = event.app
+                val checked = event.checked
 
-
-    fun expandCategory(categoryId: String) {
-        _state.update { state ->
-            val newCats = state.categories.map { c ->
-                if (c.id == categoryId) {
-                    // agar expanded true bo‘lsa false qilamiz, bo‘lmasa true
-                    c.copy(expanded = !c.expanded)
-                } else c
-            }
-            state.copy(categories = newCats)
-        }
-    }
-
-    fun collapseAll() {
-        _state.update { state ->
-            val newCats = state.categories.map { it.copy(expanded = false) }
-            state.copy(categories = newCats)
-        }
-    }
-
-    fun toggleCategory(categoryId: String, checked: Boolean) {
-        _state.update { state ->
-            val newCats = state.categories.map { c ->
-                if (c.id == categoryId) {
-                    val newApps = c.apps.map { it.copy(checked = checked) }
-                    c.copy(checked = checked, apps = newApps)
-                } else c
-            }
-            state.copy(categories = newCats)
-        }
-    }
-
-    fun toggleApp(appId: String, checked: Boolean) {
-        _state.update { state ->
-            val newCats = state.categories.map { c ->
-                if (c.apps.any { it.id == appId }) {
-                    val newApps = c.apps.map { a ->
-                        if (a.id == appId) a.copy(checked = checked) else a
-                    }
-                    val catChecked = newApps.all { it.checked }
-                    c.copy(apps = newApps, checked = catChecked)
-                } else c
-            }
-            state.copy(categories = newCats)
-        }
-    }
-
-    // -------- App toggle (category id + app id bilan) --------
-    fun toggleApp(categoryId: String, appId: String, checked: Boolean) {
-        _state.update { state ->
-            val newCats = state.categories.map { c ->
-                if (c.id == categoryId) {
-                    val newApps = c.apps.map { a ->
-                        if (a.id == appId) a.copy(checked = checked) else a
-                    }
-                    val catChecked = newApps.all { it.checked }
-                    c.copy(apps = newApps, checked = catChecked)
-                } else c
-            }
-            state.copy(categories = newCats)
-        }
-    }
-
-
-            private fun createAppList(): List<AppCategoryUi> {
-                return listOf(
-                    AppCategoryUi(
-                        id = "social",
-                        title = "Social",
-                        expanded = false,
-                        checked = false,
-                        apps = listOf(
-                            AppsUi(
-                                id = "dsad",
-                                title = "Instagram",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
-                            ),
-                            AppsUi(
-                                id = "asdasdasd",
-                                title = "Telegram",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
-                            ),
-                            AppsUi(
-                                id = "asdas",
-                                title = "WhatsApp",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
+                _state.update {state ->
+                    val newApps = state.apps.map {app->
+                        if (app.packageName == toggledApp.packageName){
+                            app.copy(
+                                checked = checked
                             )
-                        )
-                    ),
-                    AppCategoryUi(
-                        id = "productivity",
-                        title = "Productivity",
-                        expanded = false,
-                        checked = false,
-                        apps = listOf(
-                            AppsUi(
-                                id = "1sdsdaas",
-                                title = "Clash",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
-                            ),
-                            AppsUi(
-                                id = "2asasdsdd",
-                                title = "Imperius",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
-                            ),
-                            AppsUi(
-                                id = "3aaaaa",
-                                title = "Legends",
-                                iconUrl = "https://vk.com/images/community_100.png",
-                                checked = false
-                            )
-                        )
+                        }
+                        else{
+                            app
+                        }
+                    }
+
+                    val newSelectedPkgs = if (checked){
+                        state.selectedPkgs + toggledApp.packageName
+                    }
+                    else{
+                        state.selectedPkgs - toggledApp.packageName
+                    }
+                    state.copy(
+                        apps = newApps,
+                        selectedPkgs = newSelectedPkgs
                     )
-                )
+
+                }
+            }
+
+            AppWebEvent.GetAppsFromServer -> {
+                if (_state.value.apps.isEmpty()){
+                    if (alreadyLoadedOnce){
+                        return
+                    }
+                    getChildApps()
+                }
+            }
+
+            is AppWebEvent.SetChildId -> {
+                _state.update {
+                    it.copy(
+                        childId = event.id
+                    )
+                }
             }
         }
+    }
+
+    private fun calculateServerStats(
+        apps: List<AppSelectionUi>,
+        serverPkgs: Set<String>
+    ): Triple<Int, Int, Int>{
+        val requested = serverPkgs.size
+
+        val present = if (serverPkgs.isEmpty()) 0
+        else apps.count{ serverPkgs.contains(it.packageName) }
+
+        val missing = (requested - present).coerceAtLeast(0)
+        return Triple(requested, present, missing)
+    }
+
+
+    private var appJob: Job? = null
+    private fun getChildApps(){
+        appJob?.cancel()
+        appJob = screenModelScope.launch {
+            Logger.d("AppWebViewModel", "getChildApps")
+            _state.update {
+                it.copy(
+                    appsResponseState = ResponseState.Loading
+                )
+            }
+
+            val result = getChildAppsUseCase.invoke(_state.value.childId)
+            when(result){
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            appsResponseState = ResponseState.Error(message = result.message)
+                        )
+                    }
+                }
+                is Resource.Success -> {
+
+                    val prevState = _state.value
+                    val serverPkgs = prevState.serverPkgs
+                    val previousSelected = prevState.selectedPkgs
+
+                    val apps = result.data
+                        .sortedBy { item -> item.order }
+                        .map { item ->
+                            val ui = item.toAppSelectionUi()
+                            val pkg = ui.packageName
+                            val shouldBeChecked = previousSelected.contains(pkg) || serverPkgs.contains(pkg)
+                            ui.copy(checked = shouldBeChecked)
+                        }
+
+                    val (requested, present, missing) = calculateServerStats(apps, serverPkgs)
+
+                    val newSelectedPkgs: Set<String> = buildSet {
+                        addAll(previousSelected)
+                        addAll(apps.filter { it.checked }.map { it.packageName })
+                    }
+
+
+                    _state.update {
+                        it.copy(
+                            appsResponseState = ResponseState.Success(),
+                            apps = apps,
+                            selectedPkgs = newSelectedPkgs,
+                            serverRequestedCount = requested,
+                            serverPresentInstalledCount = present,
+                            serverMissingCount = missing
+                        )
+                    }
+                    alreadyLoadedOnce = true
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+}

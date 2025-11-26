@@ -20,15 +20,20 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.domain.model.weekdayLabel
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import kotlin.compareTo
 
 
 @Composable
 fun LimitRuleItem(
     modifier: Modifier = Modifier,
     item: LimitRuleUi,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    canRemove: Boolean = true
 )
 {
 
@@ -38,9 +43,8 @@ fun LimitRuleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .verticalShadow(
+            .tripleShadow(
                 shape = RoundedCornerShape(TextFieldCornerRadius),
-                offset = 0.dp
             )
             .background(
                 bgColor,
@@ -102,21 +106,27 @@ fun LimitRuleItem(
             )
         }
 
-        SpaceSmall()
+        if (canRemove){
+            SpaceSmall()
 
-        CloseButton(
-            onClick = {
-                onRemove()
-            }
-        )
+            CloseButton(
+                onClick = {
+                    onRemove()
+                }
+            )
+        }
     }
 }
+
 
 @Preview
 @Composable
 private fun PreviewScheduleTimeItem() {
-    LimitRuleItem(
-        item = LimitRuleUi(),
-        onRemove = {}
-    )
+    TikonchaParentTheme(mode = ThemeMode.LIGHT){
+        LimitRuleItem(
+            item = LimitRuleUi(),
+            onRemove = {}
+        )
+    }
+
 }

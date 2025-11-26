@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close
+import tikoncha_parents.composeapp.generated.resources.close_circle
 import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -31,10 +32,10 @@ fun CloseButton(
         shape = RoundedCornerShape(10.dp)
     ) {
         Icon(
-            painter = painterResource(Res.drawable.close),
+            painter = painterResource(Res.drawable.close_circle),
             contentDescription = "Delete",
             modifier = Modifier
-                .fillMaxSize(0.4f)
+
         )
     }
 }

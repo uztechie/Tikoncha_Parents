@@ -28,18 +28,18 @@ import uz.tikoncha_parent.presentation.base.CustomChipFilter
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.theme.extendedColor
 
+
+
 @Composable
 fun WeekdayChips(
-    selected: Set<WeekDay>,
+    chips: List<WeekDayChipUi>,
     onToggle: (WeekDay) -> Unit,
 ) {
 
-    val labels = if (selected.size == 7){
-        stringResource(Res.string.har_kuni)
-    }
-    else{
-        selected.map { it.weekdayLabel() }.joinToString(", ")
-    }
+
+    val selectedLabels = chips.filter { it.selected }.map { it.day.weekdayLabel() }
+    val header = if (selectedLabels.size == 7) stringResource(Res.string.har_kuni)
+    else selectedLabels.joinToString(", ")
 
     Column(
         modifier = Modifier
@@ -55,7 +55,7 @@ fun WeekdayChips(
             )
             Spacer(Modifier.weight(1f))
             CustomText(
-                text = labels,
+                text = header,
                 color = MaterialTheme.extendedColor.hintColor
             )
         }
@@ -68,22 +68,16 @@ fun WeekdayChips(
             horizontalArrangement = Arrangement.SpaceBetween
         )
         {
-            WeekDay.entries.forEach { day ->
-                val on = day in selected
-                val label = day.weekdayLabel()
-
+            chips.forEach { chip ->
                 CustomChipFilter(
-                    selected = on,
-                    text = label,
-                    onClick = { onToggle(day) },
+                    selected = chip.selected,
+                    text = chip.day.weekdayLabel(),
+                    onClick = { if (chip.enabled) onToggle(chip.day) },
                     height = 36.dp,
                     minWidth = 36.dp,
+                    enabled = chip.enabled
                 )
             }
         }
     }
-
-
 }
-
-

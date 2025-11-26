@@ -8,8 +8,10 @@ import uz.tikoncha_parent.domain.model.WeekDay
 
 sealed interface TimeRuleEvent {
 
+
     data class SetList(val list: List<TimeRuleUi>): TimeRuleEvent
     data class RemoveTimeRule(val time: TimeRuleUi) : TimeRuleEvent
+    data class BeginCreateRule(val resetSelection: Boolean = true) : TimeRuleEvent
     data class SelectDay(val day: WeekDay): TimeRuleEvent
     data class SetAllDay(val allDay: Boolean): TimeRuleEvent
     data class SetOutsideInterval(val outside: Boolean): TimeRuleEvent
@@ -17,4 +19,5 @@ sealed interface TimeRuleEvent {
     data class SetTimeRuleData(val timeData: TimeRuleUi): TimeRuleEvent
     data object SaveTime: TimeRuleEvent
     data object ClearTime: TimeRuleEvent
+    data class ShowSetupDialog(val show: Boolean): TimeRuleEvent
 }

@@ -4,9 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
-import uz.tikoncha_parent.data.remote.model.CreatePolicyResponse
-import uz.tikoncha_parent.data.remote.model.GetPoliciesResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseRequest
 import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseResponse
 

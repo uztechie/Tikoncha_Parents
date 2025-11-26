@@ -10,7 +10,15 @@ import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.WeekDay
+import uz.tikoncha_parent.presentation.policy.WeekDayChipUi
+import uz.tikoncha_parent.presentation.policy.asHasWeekDays
+import uz.tikoncha_parent.presentation.policy.buildChipsForClear
+import uz.tikoncha_parent.presentation.policy.buildChipsForCreate
+import uz.tikoncha_parent.presentation.policy.buildChipsForEdit
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
+import kotlin.compareTo
+import kotlin.text.set
 
 
 class LimitRuleViewModel : ViewModel() {
@@ -19,8 +27,12 @@ class LimitRuleViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     init {
-
+        _state.update { s ->
+            val rules = s.limitRuleList.map { it.asHasWeekDays() }
+            s.copy(weekDays = buildChipsForCreate(rules))
+        }
     }
+
 
     fun event(event: LimitRuleEvent) {
         when (event) {
@@ -33,40 +45,38 @@ class LimitRuleViewModel : ViewModel() {
 
 
             is LimitRuleEvent.SelectWeekDay -> {
-                _state.update { innerState ->
-
-                    val set = innerState.weekDays.toMutableSet()
-
-                    val added = set.add(event.usageDay)
-                    if (!added) set.remove(event.usageDay)
-
-                    innerState.copy(
-                        weekDays = set.sortedBy { it.num }.toSet()
-                    )
-                }
+                _state.update { s -> s.copy(weekDays = toggleDay(s.weekDays, event.usageDay)) }
             }
 
             is LimitRuleEvent.SaveLimit -> {
                 saveUsageTime()
-                clearUsageTime()
+                clearTime()
             }
 
             is LimitRuleEvent.RemoveLimitRule -> {
-                _state.update {
-                    it.copy(
-                        limitRuleList = it.limitRuleList.filter { it != event.usageLimit }
+                _state.update {s->
+                    val newList = s.limitRuleList.filter { it != event.usageLimit }
+                    val rules = newList.map { it.asHasWeekDays() }
+                    s.copy(
+                        limitRuleList = newList,
+                        weekDays = buildChipsForCreate(rules)
                     )
                 }
             }
 
             is LimitRuleEvent.SetUsageLimitData -> {
                 val data = event.usageLimitData
+                val weekdays = _state.value.limitRuleList.map { it.asHasWeekDays() }
                 _state.update {
                     it.copy(
                         currentId = data.id,
                         hourMinute = data.time,
-                        weekDays = data.weekDays,
-                        selectedLimitType = data.limitType
+                        selectedLimitType = data.limitType,
+                        weekDays = buildChipsForEdit(
+                            currentSelected = data.weekDays,
+                            rules = weekdays,
+                            excludeId = data.id
+                        )
                     )
                 }
             }
@@ -92,9 +102,20 @@ class LimitRuleViewModel : ViewModel() {
             }
 
             is LimitRuleEvent.SetList -> {
+                _state.update {s->
+                    val rules = event.list.map { it.asHasWeekDays() }
+                    s.copy(
+                        limitRuleList = event.list,
+                        showSetupDialog = event.list.isEmpty(),
+                        weekDays = buildChipsForCreate(rules)
+                    )
+                }
+            }
+
+            is LimitRuleEvent.ShowSetupDialog -> {
                 _state.update {
                     it.copy(
-                        limitRuleList = event.list
+                        showSetupDialog = event.show
                     )
                 }
             }
@@ -102,9 +123,10 @@ class LimitRuleViewModel : ViewModel() {
     }
 
     private fun clearTime() {
+        val rules = _state.value.limitRuleList.map { it.asHasWeekDays() }
         _state.update {
             it.copy(
-                weekDays = emptySet(),
+                weekDays = buildChipsForClear(rules),
                 hourMinute = HourMinute(),
                 selectedLimitType = DayHour.DAY,
                 currentId = null
@@ -113,22 +135,26 @@ class LimitRuleViewModel : ViewModel() {
 
     }
 
-
-
-
-    private fun clearUsageTime() {
-        _state.update {
-            it.copy(
-                weekDays = emptySet(),
-                hourMinute = HourMinute(),
-                selectedLimitType = DayHour.DAY
-            )
+    fun toggleDay(
+        chips: List<WeekDayChipUi>,
+        day: WeekDay
+    ): List<WeekDayChipUi> =
+        chips.map { c ->
+            if (c.day == day && c.enabled) c.copy(selected = !c.selected) else c
         }
-    }
 
+
+
+
+
+
+
+
+    private fun LimitRuleState.selectedDaysFromChips(): Set<WeekDay> =
+        weekDays.filter { it.selected }.mapTo(mutableSetOf()) { it.day }
     private fun saveUsageTime() {
         _state.update { innerState ->
-
+            val selectedDays = innerState.selectedDaysFromChips()
 
             val timeList = innerState.limitRuleList.toMutableList()
             val isUpdate = innerState.currentId != null
@@ -137,7 +163,7 @@ class LimitRuleViewModel : ViewModel() {
 
             val item = LimitRuleUi(
                 id = id,
-                weekDays = innerState.weekDays,
+                weekDays = selectedDays,
                 time = innerState.hourMinute,
                 limitType = innerState.selectedLimitType
             )
@@ -152,9 +178,13 @@ class LimitRuleViewModel : ViewModel() {
             } else {
                 timeList.add(item)
             }
+
+            val rules = timeList.map { it.asHasWeekDays() }          // HasWeekDays adapter (oldin berganman)
+            val rebuiltChips = buildChipsForCreate(rules)
             innerState.copy(
                 currentId = null,
-                limitRuleList = timeList
+                limitRuleList = timeList,
+                weekDays = rebuiltChips
             )
 
         }
