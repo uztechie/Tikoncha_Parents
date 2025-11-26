@@ -39,36 +39,6 @@ fun Modifier.verticalShadow(
 }
 
 
-@Composable
-fun Modifier.tripleShadow(
-    shape: Shape = RoundedCornerShape(10.dp),
-    darkColor: Color = MaterialTheme.extendedColor.shadowColor,
-) = composed {
-
-    this
-        .verticalShadow(
-            shape = shape,
-            offset = 8.dp,
-            radius = 5.dp,
-            spread = 0.dp,
-            darkColor = darkColor.copy(0.05f)
-        )
-        .verticalShadow(
-            shape = shape,
-            offset = 3.dp,
-            radius = 3.dp,
-            spread = 0.dp,
-            darkColor = darkColor.copy(0.09f)
-        )
-        .verticalShadow(
-            shape = shape,
-            offset = 1.dp,
-            radius = 2.dp,
-            spread = 0.dp,
-            darkColor = darkColor.copy(0.1f)
-        )
-
-}
 
 @Composable
 fun Modifier.tripleShadow(
