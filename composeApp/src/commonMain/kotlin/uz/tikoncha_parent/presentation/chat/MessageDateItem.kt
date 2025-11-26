@@ -17,6 +17,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.ui.ChatTextSize
 import uz.tikoncha_parent.ui.DividerColor
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -59,16 +61,20 @@ fun MessageDateItem(
 @Preview
 @Composable
 private fun Pre() {
-
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White),
-        contentAlignment = Alignment.Center
+    TikonchaParentTheme(
+        ThemeMode.DARK
     ){
-        MessageDateItem(
-            date = "10.05.2025"
-        )
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+            contentAlignment = Alignment.Center
+        ){
+            MessageDateItem(
+                date = "10.05.2025"
+            )
+        }
     }
+
 
 
 }

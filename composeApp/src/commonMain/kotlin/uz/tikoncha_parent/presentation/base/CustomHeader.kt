@@ -16,12 +16,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -44,6 +47,7 @@ fun CustomHeader(
 
     Row(
         modifier = modifier
+            .zIndex(1f)
             .fillMaxWidth()
             .height(HeaderHeight)
             .topShadow(
@@ -100,15 +104,18 @@ fun CustomHeader(
 @Preview
 @Composable
 private fun Preview() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        CustomHeader(
-            title = "Title",
-            showBackButton = true
-        )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            CustomHeader(
+                title = "Title",
+                showBackButton = true
+            )
+        }
     }
 }

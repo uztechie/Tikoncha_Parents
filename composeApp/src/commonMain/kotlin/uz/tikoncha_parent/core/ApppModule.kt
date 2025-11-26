@@ -93,7 +93,7 @@ import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
-import uz.tikoncha_parent.presentation.profile.subscription.PaymentViewModel
+import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 
 val sharedModule = module {
     single {
@@ -177,7 +177,7 @@ val sharedModule = module {
 
 
     viewModel { LoginViewmodel(get()) }
-    viewModel { OtpViewmodel(get()) }
+    viewModel { OtpViewmodel(get() , get()) }
     viewModel { RegisterViewmodel(get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { CreatePasswordViewmodel() }

@@ -35,6 +35,7 @@ import tikoncha_parents.composeapp.generated.resources.smena
 import tikoncha_parents.composeapp.generated.resources.telefon_nomer
 import tikoncha_parents.composeapp.generated.resources.two_users
 import tikoncha_parents.composeapp.generated.resources.yosh
+import tikoncha_parents.composeapp.generated.resources.yosh_1
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -67,7 +68,7 @@ fun PersonalInfoItem(userInfo: UserInfo?){
         PersonalInformationItemRow(
             icon = Res.drawable.calendar,
             title = stringResource(Res.string.yosh),
-            value = "${userInfo?.age} ${stringResource(Res.string.yosh)}"
+            value = "${userInfo?.age} ${stringResource(Res.string.yosh_1)}"
         )
         SpaceUltraSmall()
 

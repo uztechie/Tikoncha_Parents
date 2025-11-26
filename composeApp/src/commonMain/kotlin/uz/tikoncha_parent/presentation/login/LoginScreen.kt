@@ -55,6 +55,8 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class LoginScreen :Screen {
@@ -68,7 +70,7 @@ class LoginScreen :Screen {
 
         val navigator = LocalNavigator.current
 
-        Login(
+        LoginUi(
             navigator = navigator,
             state = state,
             event = event
@@ -80,7 +82,7 @@ class LoginScreen :Screen {
 
 
 @Composable
-fun Login(
+fun LoginUi(
     navigator: Navigator?,
     state: LoginState,
     event: (LoginEvent)-> Unit
@@ -233,9 +235,13 @@ fun Login(
 @Composable
 @Preview
 private fun Preview() {
-    Login(
-        navigator = null,
-        state = LoginState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        LoginUi(
+            navigator = null,
+            state = LoginState(),
+            event = {}
+        )
+    }
 }

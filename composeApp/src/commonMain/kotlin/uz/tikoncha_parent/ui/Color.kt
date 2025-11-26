@@ -17,6 +17,8 @@ val GrayColor = Color(0xFFAFAFAF)
 val DarkColor = Color(0xFF010D01)
 val DarkGrayColor = Color(0xFF1F1F1F)
 val ShadowColor = Color(0xFFedf0ed)
+val ShadowColorLight = Color(0XFF8F8F8F)
+val ShadowColorDark = Color(0xFF335B39)
 
 
 
@@ -92,4 +94,6 @@ val DisabledBgDark = Color(0xFF2A2A2A)
 
 val DisabledContentLight = Color(0xFF9B9B9B)
 val DisabledContentDark = Color(0xFF7C7C7C)
+
+val PriceSubscriptionColor = Color(0xFFF0BC39)
 

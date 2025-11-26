@@ -52,8 +52,11 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -126,10 +129,10 @@ fun TaskUi(
                         navigator?.push(CompletedTaskScreen())
                     },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.buttonColor,
+                        containerColor = MaterialTheme.extendedColor.cardColor,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ),
-                    shape = RoundedCornerShape(10.dp)
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.task_square2),
@@ -177,7 +180,7 @@ fun TaskUi(
 //                )
 //            }
 //
-//            SpaceLarge()
+            SpaceSmall()
 
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
@@ -231,37 +234,36 @@ fun TaskUi(
             SpaceSmall()
 
             if (state.parentTaskList.isEmpty()) {
-                Card(
+
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f),
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
-                    )
-                )
-                {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        CustomText(
-                            text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                            fontSize = SmallTextSize,
-                            color = MaterialTheme.extendedColor.hintColor,
-                            fontWeight = FontWeight.W500
+                        .aspectRatio(2f)
+                        .tripleShadow(
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
-                    }
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(TextFieldCornerRadius)
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CustomText(
+                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
+                        fontSize = SmallTextSize,
+                        color = MaterialTheme.extendedColor.hintColor,
+                        fontWeight = FontWeight.W500
+                    )
                 }
+
             } else {
 
                 if (state.showMineAll) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         state.parentTaskList.forEach { task ->
                             TaskItemUi(
@@ -353,30 +355,28 @@ fun TaskUi(
             SpaceSmall()
 
             if (state.childrenTaskList.isEmpty()) {
-                Card(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f),
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
-                    )
-                )
-                {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        CustomText(
-                            text = stringResource(Res.string.xozir_vazifalar_yo_q),
-                            fontSize = SmallTextSize,
-                            color = MaterialTheme.extendedColor.hintColor,
-                            fontWeight = FontWeight.W500
+                        .aspectRatio(2f)
+                        .tripleShadow(
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
-                    }
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(TextFieldCornerRadius)
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CustomText(
+                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
+                        fontSize = SmallTextSize,
+                        color = MaterialTheme.extendedColor.hintColor,
+                        fontWeight = FontWeight.W500
+                    )
                 }
+
             } else {
 
                 if (state.showChildrenAll) {
@@ -413,9 +413,13 @@ fun TaskUi(
 @Preview
 @Composable
 private fun Preview() {
-    TaskUi(
-        state = TaskState(),
-        event = {},
-        navigator = LocalNavigator.current
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        TaskUi(
+            state = TaskState(),
+            event = {},
+            navigator = LocalNavigator.current
+        )
+    }
 }

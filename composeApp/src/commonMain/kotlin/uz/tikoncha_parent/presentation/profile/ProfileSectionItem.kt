@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import uz.tikoncha_parent.ui.DividerHorizontal
@@ -33,6 +34,9 @@ import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.til
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.PrimaryLightColor
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -76,6 +80,7 @@ fun ProfileSectionItem(
                 Image(
                     painter = icon,
                     contentDescription = "",
+                    colorFilter = ColorFilter.tint(PrimaryLightColor),
                     modifier = Modifier
                         .fillMaxSize(0.6f)
                 )
@@ -89,9 +94,7 @@ fun ProfileSectionItem(
                 fontWeight = FontWeight.SemiBold
             )
         }
-
         SpaceSmall()
-
         DividerHorizontal()
     }
 }
@@ -99,11 +102,15 @@ fun ProfileSectionItem(
 @Preview
 @Composable
 private fun Pre(){
-    ProfileSectionItem(
-        icon = painterResource(Res.drawable.profile),
-        section = ProfileSection.PERSONAL_INFORMATION,
-        onItemClick = {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ProfileSectionItem(
+            icon = painterResource(Res.drawable.profile),
+            section = ProfileSection.PERSONAL_INFORMATION,
+            onItemClick = {
 
-        }
-    )
+            }
+        )
+    }
 }

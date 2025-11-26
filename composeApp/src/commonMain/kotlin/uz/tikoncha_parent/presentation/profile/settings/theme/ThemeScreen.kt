@@ -35,8 +35,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tema
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.profile.ProfileScreen
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ThemeScreen: Screen {
@@ -120,8 +124,8 @@ fun ThemeUi(
                     .weight(1f)
             )
 
-          CustomButton(
-                text = stringResource(Res.string.davom_etish),
+            CustomButton(
+                text = stringResource(Res.string.saqlash),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
@@ -129,6 +133,7 @@ fun ThemeUi(
                 fontSize = NormalLargeTextSize,
                 onClick = {
                     ThemeController.setMode(selectedTheme)
+                    navigator?.replaceAll(MainScreen())
                 }
             )
             SpaceLarge()
@@ -139,7 +144,11 @@ fun ThemeUi(
 @Preview
 @Composable
 private fun PreviewThemeScreen(){
-    ThemeUi(
-        navigator = null
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        ThemeUi(
+            navigator = null
+        )
+    }
 }

@@ -43,6 +43,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add
 import tikoncha_parents.composeapp.generated.resources.subtruct_icon
+import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.CoinsCornerRadius
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -82,11 +86,10 @@ fun CoinAmountTextField(
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
-                .border(
-                    width = 1.dp,
-                    color = BorderColor,
-                    shape = RoundedCornerShape(TextFieldCornerRadius)
+                .tripleShadow(
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
                 )
+                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
 
                     val currentAmount = coinsAmount.toIntOrNull()
@@ -122,18 +125,6 @@ fun CoinAmountTextField(
 
                 val newText = newTextFieldValue.text
 
-//                if ((newValue.all { it.isDigit() }) || newValue.isEmpty()) {
-//                    if (newValue.isNotEmpty() && newValue.toInt() <= 9999){
-//                        textState = newValue
-//                        onValueChange(newValue)
-//                    }
-//
-//                    if (newValue.isEmpty()){
-//                        textState = newValue
-//                        onValueChange(newValue)
-//                    }
-//                }
-
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
 
                     if (newText.isEmpty()){
@@ -166,7 +157,10 @@ fun CoinAmountTextField(
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
-                .clip(RoundedCornerShape(TextFieldCornerRadius))
+                .tripleShadow(
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
+                )
+                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
                     if (coinsAmount.isNotEmpty()){
                         if (coinsAmount.all { it.isDigit() }){
@@ -178,7 +172,6 @@ fun CoinAmountTextField(
                         }
                     }
                 }
-                .background(PrimaryColor)
                 .padding(AppIconInnerPadding),
             contentAlignment = Alignment.Center
         ) {
@@ -198,16 +191,20 @@ fun CoinAmountTextField(
 @Preview
 @Composable
 private fun PreviewCoinAmountTextField() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)
-    ) {
-        CoinAmountTextField(
-            coinsAmount = "12",
-            onAddCoinClicked = {},
-            onSubtractButtonClicked = {},
-            onValueChange = {}
-        )
+    TikonchaParentTheme(
+    ThemeMode.DARK
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor)
+        ) {
+            CoinAmountTextField(
+                coinsAmount = "12",
+                onAddCoinClicked = {},
+                onSubtractButtonClicked = {},
+                onValueChange = {}
+            )
+        }
     }
 }

@@ -6,16 +6,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import org.jetbrains.compose.resources.StringResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.bugun
-import tikoncha_parents.composeapp.generated.resources.kecha
-import uz.tikoncha_parent.presentation.task.formatTime
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -103,6 +98,47 @@ object DateTimeUtil {
         }
     }
 
+    fun formatDayMonthLocalized(
+        localDate: LocalDate?,
+        lang: LanguageType,     // UZ yoki RU
+        bugun: String,
+        kecha: String,
+        timeZone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (localDate == null) return ""
+
+        val today = Clock.System.todayIn(timeZone)
+        val yesterday = today.minus(1, DateTimeUnit.DAY)
+
+        return when (localDate) {
+            today -> bugun
+            yesterday -> kecha
+            else -> formatDayMonthLocal(localDate, lang)
+        }
+    }
+
+    fun formatDayMonthLocal(date: LocalDate, lang: LanguageType): String {
+        val uzMonths = listOf(
+            "yanvar", "fevral", "mart", "aprel", "may", "iyun",
+            "iyul", "avgust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+        )
+
+        val ruMonths = listOf(
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        )
+
+        val months = when (lang) {
+            LanguageType.RU -> ruMonths
+            LanguageType.UZ -> uzMonths
+        }
+
+        val day = date.dayOfMonth
+        val monthName = months[date.month.ordinal]
+
+        return "$day $monthName"
+    }
+
     fun formatDateTimeForChatUserStatus(
         millis: Long,
         bugun: String,
@@ -136,6 +172,57 @@ object DateTimeUtil {
         val today = Clock.System.now().toLocalDateTime(zone).date
 
         return if (date == today) formatTime(longDate) else formatDate_ddMMyyyy(date)
+    }
+
+    fun formatDateTimeMonthlyForChat(
+        longDate: Long,
+        lang: LanguageType,  // yoki "ru", "en" kerak bo‘lsa
+        zone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (longDate == 0L) return ""
+
+        val instant = Instant.fromEpochMilliseconds(longDate)
+
+        val date = instant.toLocalDateTime(zone).date
+        val today = Clock.System.now().toLocalDateTime(zone).date
+
+        return if (date == today)
+            formatTime(longDate)
+        else
+            formatDayMonth(longDate, lang, zone)
+    }
+
+
+    fun formatDayMonth(
+        millis: Long,
+        lang: LanguageType,
+        zone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+
+        val uzMonths = listOf(
+            "yanvar", "fevral", "mart", "aprel", "may", "iyun",
+            "iyul", "avgust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+        )
+
+        val ruMonths = listOf(
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        )
+
+        if (millis == 0L) return ""
+
+        val date = Instant.fromEpochMilliseconds(millis)
+            .toLocalDateTime(zone).date
+
+        val months = when (lang) {
+            LanguageType.RU -> ruMonths
+            LanguageType.UZ -> uzMonths
+        }
+
+        val day = date.dayOfMonth
+        val monthName = months[date.month.ordinal]
+
+        return "$day $monthName"
     }
 
 

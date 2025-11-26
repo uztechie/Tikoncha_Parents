@@ -25,4 +25,6 @@ sealed interface TaskEvent {
     data class OnEditTask(val task: Task) : TaskEvent
     data class OnCoinChange(val coin: Int) : TaskEvent
     data object LoadParentCoins : TaskEvent
+
+    data object LoadAllChildrenActiveTasks : TaskEvent
 }

@@ -40,6 +40,8 @@ import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.star_setting
 import tikoncha_parents.composeapp.generated.resources.warning_1
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -57,8 +59,6 @@ fun ProfileSettingsItem(
     ) {
 
         SettingType.values().forEach { setting ->
-
-            SpaceSmall()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -98,18 +98,10 @@ fun ProfileSettingsItem(
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.W500
                     )
-
-                    CustomText(
-                        text = stringResource(setting.subtitle),
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.W500,
-                        color = MaterialTheme.extendedColor.hintColor
-                    )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Radio Circle (border + inner circle if selected)
                 IconButton(
                     onClick = {
                         onSettingSelected(setting)
@@ -122,9 +114,6 @@ fun ProfileSettingsItem(
                     )
                 }
             }
-
-            SpaceSmall()
-
             DividerHorizontal()
         }
     }
@@ -156,10 +145,14 @@ enum class SettingType(
 @Preview
 @Composable
 private fun Preview() {
-    ProfileSettingsItem(
-        selectedSetting = SettingType.NOTIFICATION,
-        onSettingSelected = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ProfileSettingsItem(
+            selectedSetting = SettingType.NOTIFICATION,
+            onSettingSelected = {}
+        )
+    }
 
 
 }

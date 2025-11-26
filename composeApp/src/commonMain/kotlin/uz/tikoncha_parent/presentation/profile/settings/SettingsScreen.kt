@@ -26,6 +26,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SettingsScreen: Screen {
@@ -79,24 +81,7 @@ fun SettingsUi(
                     }
                 }
             )
-
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-            )
-
-            CustomButton(
-                text = stringResource(Res.string.davom_etish),
-                fontSize = NormalLargeTextSize,
-                onClick = {
-                    navigator!!.pop()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                enabled = true
-            )
-            SpaceLarge()
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -104,7 +89,11 @@ fun SettingsUi(
 @Preview
 @Composable
 fun PreviewSettingsScreen(){
-    SettingsUi(
-        navigator = null
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        SettingsUi(
+            navigator = null
+        )
+    }
 }

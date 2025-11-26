@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -45,7 +48,8 @@ fun CustomTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
+    shadow: Boolean = true,
+    containerColor: Color = MaterialTheme.extendedColor.cardColor,
     contentColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -75,71 +79,92 @@ fun CustomTextField(
         modifier
     }
 
-
-
-    BasicTextField(
-        cursorBrush = Brush.sweepGradient(listOf(contentColor,contentColor)),
-        value = value,
-        onValueChange = {
-           onValueChange(it)
-        },
-        readOnly = readOnly,
-        interactionSource = interactionSource,
-        enabled = enabled,
-        modifier = newModifier
-            .clip(shape)
+    val columnModifier = if (shadow) {
+        modifier
             .fillMaxWidth()
-            .background(backgroundColor),
-        singleLine = singleLine,
-        maxLines = if(singleLine) 1 else 5,
-        textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = contentColor,
-            fontSize = fonSize,
-            fontWeight = fontWeight
-        ),
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        decorationBox = { innerTextField ->
+            .tripleShadow(
+                shape = RoundedCornerShape(TextFieldCornerRadius),
+            )
+            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+    } else {
+        modifier
+            .fillMaxWidth()
+            .background(Color.Transparent, RoundedCornerShape(TextFieldCornerRadius))
+    }
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = TextFieldInnerPadding),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if(leadingIcon != null){
-                    leadingIcon()
-                    Spacer(Modifier.size(TextFieldInnerPadding))
 
-                }
-                Box(
+    Column(
+        modifier = columnModifier
+
+    ) {
+        BasicTextField(
+            cursorBrush = Brush.sweepGradient(listOf(contentColor, contentColor)),
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+            },
+            readOnly = readOnly,
+            interactionSource = interactionSource,
+            enabled = enabled,
+            modifier = newModifier
+                .clip(shape)
+                .fillMaxWidth()
+                .background(backgroundColor),
+            singleLine = singleLine,
+            maxLines = if (singleLine) 1 else 5,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = contentColor,
+                fontSize = fonSize,
+                fontWeight = fontWeight
+            ),
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            decorationBox = { innerTextField ->
+
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                ){
-                    if (value.isEmpty()){
-                        CustomText(
-                            text = label,
-                            fontSize = fonSize,
-                            color = HintTextColor,
-                            fontWeight = fontWeight
-                        )
+                        .padding(horizontal = TextFieldInnerPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (leadingIcon != null) {
+                        leadingIcon()
+                        Spacer(Modifier.size(TextFieldInnerPadding))
+
                     }
-                    innerTextField()
-                }
-                if(trailingIcon != null){
-                    Spacer(Modifier.size(TextFieldInnerPadding))
-                    trailingIcon()
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        if (value.isEmpty()) {
+                            CustomText(
+                                text = label,
+                                fontSize = fonSize,
+                                color = HintTextColor,
+                                fontWeight = fontWeight
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (trailingIcon != null) {
+                        Spacer(Modifier.size(TextFieldInnerPadding))
+                        trailingIcon()
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun Preview() {
-    CustomTextField(
-        onValueChange = {},
-        label = "Shopping",
-        value = ""
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CustomTextField(
+            onValueChange = {},
+            label = "Shopping",
+            value = ""
+        )
+    }
 }

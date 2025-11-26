@@ -8,17 +8,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
+import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class OtpViewmodel(
-    private val verifyOtpUseCase: VerifyOtpUseCase
-): ViewModel() {
+    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val sendOtpUseCase: SendOtpUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(OtpState())
     val state = _state.asStateFlow()
@@ -28,8 +31,8 @@ class OtpViewmodel(
     private var timerJob: Job? = null
 
 
-    fun onEvent(event: OtpEvent){
-        when(event){
+    fun onEvent(event: OtpEvent) {
+        when (event) {
             is OtpEvent.OnOtpUpdate -> {
                 _state.update {
                     it.copy(
@@ -63,6 +66,7 @@ class OtpViewmodel(
                     )
                 }
             }
+
             OtpEvent.ClearNavigation -> {
                 _state.update {
                     it.copy(
@@ -74,9 +78,13 @@ class OtpViewmodel(
             OtpEvent.Reset -> {
                 _state.update {
                     it.copy(
-                       responseState = ResponseState.Idle
+                        responseState = ResponseState.Idle
                     )
                 }
+            }
+
+            OtpEvent.ResendOtp -> {
+                resendOtp()
             }
         }
     }
@@ -114,13 +122,16 @@ class OtpViewmodel(
 
                 is Resource.Success -> {
 
-                    AppSettings.refreshToken = response.data.refresh_token?:""
-                    AppSettings.accessToken = response.data.access_token?:""
+                    AppSettings.refreshToken = response.data.refresh_token ?: ""
+                    AppSettings.accessToken = response.data.access_token ?: ""
                     AppSettings.hasUserLogin = response.data.user_info != null
-                    AppSettings.userId = response.data.user_id?:""
+                    AppSettings.userId = response.data.user_id ?: ""
                     AppSettings.userInfo = response.data.user_info?.toUserInfo()
 
-                    Logger.d("TAG", "verifyOtp: userLogin = ${response.data.user_info != null}   hasUserLogin=${AppSettings.hasUserLogin}  refreshToken=${AppSettings.refreshToken}")
+                    Logger.d(
+                        "TAG",
+                        "verifyOtp: userLogin = ${response.data.user_info != null}   hasUserLogin=${AppSettings.hasUserLogin}  refreshToken=${AppSettings.refreshToken}"
+                    )
 
                     _state.update {
                         it.copy(
@@ -131,19 +142,63 @@ class OtpViewmodel(
                     }
                 }
             }
-
-
         }
-
-
     }
+
+    //    private fun startTimer() {
+//        _state.value = _state.value.copy(isRunning = true)
+//        timerJob?.cancel()
+//        timerJob = viewModelScope.launch {
+//            while (_state.value.timeLife > 0) {
+//                delay(1000L)
+//                onEvent(OtpEvent.Tick)
+//            }
+//        }
+//    }
     private fun startTimer() {
-        _state.value = _state.value.copy(isRunning = true)
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
+            _state.update { it.copy(timeLife = 60) }
             while (_state.value.timeLife > 0) {
-                delay(1000L)
-                onEvent(OtpEvent.Tick)
+                delay(1000)
+                _state.update { it.copy(timeLife = it.timeLife - 1) }
             }
         }
     }
+
+    private fun resendOtp() {
+        val phone = state.value.phoneNumber
+        if (phone.isNullOrBlank()) return
+
+        viewModelScope.launch {
+            // optional: responseState = Loading qilish mumkin
+            val request = SendOtpRequest(phone = phone)
+            when (val res = sendOtpUseCase(request)) {
+                is Resource.Success -> {
+                    // timerni qayta start qilamiz
+                    startTimer()
+                    _state.update {
+                        it.copy(
+                            otpCode = "",
+                            responseState = ResponseState.Idle
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            responseState = ResponseState.Error(
+                                res = res.resId,
+                                message = res.message
+                            )
+                        )
+                    }
+                }
+
+                is Resource.Loading -> {}
+            }
+        }
+    }
+
 }

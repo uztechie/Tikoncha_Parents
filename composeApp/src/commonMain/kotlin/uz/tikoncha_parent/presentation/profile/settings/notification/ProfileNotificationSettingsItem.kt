@@ -32,6 +32,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -67,14 +69,6 @@ fun ProfileNotificationItem(
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.Medium
                     )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    CustomText(
-                        text = stringResource(notification.subtitle),
-                        fontSize = SmallTextSize,
-                        color = HintTextColor
-                    )
                 }
 
                 Box(
@@ -95,11 +89,8 @@ fun ProfileNotificationItem(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
             DividerHorizontal()
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -122,13 +113,16 @@ enum class NotificationType(
 @Preview
 @Composable
 private fun Preview() {
-
-    ProfileNotificationItem(
-        notificationStates = mapOf(
-            NotificationType.E_MAIL to true,
-            NotificationType.SMS to false
-        ),
-        onNotificationChanged = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ProfileNotificationItem(
+            notificationStates = mapOf(
+                NotificationType.E_MAIL to true,
+                NotificationType.SMS to false
+            ),
+            onNotificationChanged = {}
+        )
+    }
 
 }

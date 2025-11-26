@@ -39,6 +39,7 @@ import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.CoinsCornerRadius
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -54,7 +55,7 @@ fun CoinGeneratorTextField(
     singleLine: Boolean = true,
     containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
     contentColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
-    shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
+    shape: RoundedCornerShape = RoundedCornerShape(CoinsCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
@@ -77,7 +78,7 @@ fun CoinGeneratorTextField(
 
     var newModifier = if (hasBorder){
         modifier
-            .border(1.dp, borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, borderColor, RoundedCornerShape(CoinsCornerRadius))
     }else{
         modifier
     }

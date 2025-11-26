@@ -116,6 +116,7 @@
     <string name="ai_yangi_imkoniyatlar">AI yordamida yangi imkoniyatlar</string>
     <string name="ism">Ism</string>
     <string name="yosh">Yosh</string>
+    <string name="yosh_1">yosh</string>
     <string name="jins">Jins</string>
     <string name="telefon_nomer">Telefon raqam</string>
     <string name="sinf">Sinf</string>
@@ -227,6 +228,24 @@
     <string name="barcha_farzandlar">Barcha farzandlar</string>
     <string name="diqqat" >Diqqat!</string>
     <string name="siz_tanlagan_vaqt_oraligida">Siz tanlagan Vaqt oralig'ida Ishlatish Limiti ish bermaydi! Ya'ni vaqt jadvalining ustuvorligi yuqori.</string>
-
+    <string name="obuna_holati">Obuna holati:</string>
+    <string name="tolandi">To‘landi</string>
+    <string name="tolov_kutilmoqda">To‘lov kutilmoqda</string>
+    <string name="tolanmagan">To‘lanmagan</string>
+    <string name="tolov_click_platformasi_orqali_amalga_oshiriladi">To‘lov click platformasi orqali amalga oshiriladi</string>
+    <string name="tolov_summasi">To‘lov summasi:</string>
+    <string name="tanga">%1$d Tanga</string>
+    <string name="xozr_sizning_obunangiz">Hozir sizning obunangiz</string>
+    <string name="ilovaning_barcha_funksiyalaridan_foydalanish_uchun_pro_versiyasini_sotib_oling">Ilovaning barcha funksiyalaridan foydalanish uchun Pro yoki Plus versiyasini sotib olishingizni maslahat beramiz</string>
+    <string name="baxtli_foydalanuvchimisiz">Baxtli foydalanuvchilarimiz safiga qo‘shiling va Tikonchani barcha funksiyalari bilan to‘liq foydalaning.</string>
+    <string name="som">so‘m</string>
+    <string name="foyda">Foyda</string>
+    <string name="imkoniyatlar">Imkoniyatlar</string>
+    <string name="obuna_faollashtirilgan">Obuna faollashtirilgan</string>
+    <string name="obunaga_sovga_sifatida">Obunaga sov‘ga sifatida</string>
+    <string name="premium">Premium</string>
+    <string name="sovga_qilish">Sovg’a qilish</string>
+    <string name="dostlarni_taklif_qilish">Do’stlarni taklif qilish</string>
+    <string name="faol_vazifalar">Faol vazifalar</string>
 
 </resources>

@@ -10,9 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
@@ -25,7 +23,7 @@ import uz.tikoncha_parent.presentation.profile.coins.CoinsScreen
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInformationScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionScreen
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceSmall
@@ -34,12 +32,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
-import org.koin.mp.KoinPlatform.getKoin
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
+import uz.tikoncha_parent.presentation.task.TaskEvent
+import uz.tikoncha_parent.presentation.task.TaskViewModel
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ProfileScreen : Screen {
@@ -52,9 +52,28 @@ class ProfileScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
+        val useCase: MyCoinsUseCase = koinInject()
+        val coinsViewModel = remember {
+            MyCoinsViewModel(useCase = useCase)
+        }
+        LaunchedEffect(Unit) {
+            coinsViewModel.load()
+        }
+        val ui by coinsViewModel.state.collectAsStateWithLifecycle()
+        val aiTokens = ui.coins
+
+        val taskViewModel = koinViewModel<TaskViewModel>()
+        val taskState by taskViewModel.state.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit){
+            taskViewModel.onEvent(TaskEvent.LoadAllChildrenActiveTasks)
+        }
+        val activeTasksCount = taskState.allChildrenActiveTaskCount
+
         ProfileUi(
             event = event,
-            state = state.value
+            state = state.value,
+            aiTokens = aiTokens?:0,
+            activeTasksCount = activeTasksCount,
         )
     }
 }
@@ -62,20 +81,10 @@ class ProfileScreen : Screen {
 @Composable
 fun ProfileUi(
     state: ProfileState,
+    aiTokens: Int,
+    activeTasksCount: Int,
     event: (ProfileEvent) -> Unit
 ) {
-
-    val useCase: MyCoinsUseCase = koinInject()
-    val coinsViewModel = remember {
-        MyCoinsViewModel(useCase = useCase)
-    }
-    LaunchedEffect(Unit){
-        coinsViewModel.load()
-    }
-    val ui by coinsViewModel.state.collectAsStateWithLifecycle()
-    val aiTokens = ui.coins
-
-
 
     val navigator = LocalNavigator.current
     val rootNavigator = navigator?.parent
@@ -85,7 +94,7 @@ fun ProfileUi(
     val sections = remember {
         mutableStateListOf(
             ProfileSectionItemData(
-                painter = Res.drawable.profile,
+                painter = Res.drawable.profile_info,
                 section = ProfileSection.PERSONAL_INFORMATION
             ),
             ProfileSectionItemData(
@@ -97,7 +106,7 @@ fun ProfileUi(
                 section = ProfileSection.SETTINGS
             ),
             ProfileSectionItemData(
-                painter = Res.drawable.telegrams_star,
+                painter = Res.drawable.crown,
                 section = ProfileSection.SUBSCRIPTIONS
             ),
             ProfileSectionItemData(
@@ -162,8 +171,8 @@ fun ProfileUi(
                 SpaceSmall()
 
                 UserStatsItem(
-                    title = stringResource(Res.string.farzandingiz_bajarilmagan_vazifalari),
-                    value = "0 ${stringResource(Res.string.ta)}",
+                    title = stringResource(Res.string.faol_vazifalar),
+                    value = "$activeTasksCount ${stringResource(Res.string.ta)}",
                     icon = painterResource(Res.drawable.file),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
@@ -196,7 +205,7 @@ fun ProfileUi(
                             }
 
                             ProfileSection.SUBSCRIPTIONS -> {
-                                rootNavigator!!.push(SubscriptionScreen())
+                                rootNavigator!!.push(SubscriptionPaymentScreen())
                             }
 
                             ProfileSection.COINS -> {
@@ -240,8 +249,14 @@ fun ProfileUi(
 @Preview
 @Composable
 private fun PreviewProfileScreen(){
-    ProfileUi(
-        state = ProfileState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ProfileUi(
+            state = ProfileState(),
+            aiTokens = 50,
+            activeTasksCount = 20,
+            event = {}
+        )
+    }
 }

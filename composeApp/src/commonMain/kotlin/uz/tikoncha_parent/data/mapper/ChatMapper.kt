@@ -2,18 +2,23 @@ package uz.tikoncha_parent.data.mapper
 
 import uz.tikoncha_parent.presentation.model.ChatMemberUi
 import uz.tikoncha_parent.common.DateTimeUtil
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.ChatDto
 import uz.tikoncha_parent.data.remote.model.ChatMemberDto
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.model.ChatUi
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 
 
 fun ChatDto.toChatUi(): ChatUi {
+    val lanCode = LanguagePrefs.loadOrDefault().languageCode
+    val lang = LanguageType.getLangType(lanCode)
     val date = last_message?.created_at
     val millis = DateTimeUtil.toMillisUtc(date)
-    val dateTime = DateTimeUtil.formatDateTimeForChat(millis)
+    val dateTime = DateTimeUtil.formatDateTimeMonthlyForChat(millis, lang)
 
     val type = when(type){
         "BOT" -> ChatType.BOT

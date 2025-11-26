@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +34,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -53,10 +57,11 @@ fun CustomSelectionButton(
 
     Row(
         modifier = modifier
-            .clip(RoundedCornerShape(TextFieldCornerRadius))
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .tripleShadow(
+                shape = RoundedCornerShape(TextFieldCornerRadius),
+            )
+            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)
             .clickable(
@@ -119,10 +124,22 @@ fun CustomSelectionButton(
 @Preview
 @Composable
 private fun Pre() {
-    CustomSelectionButton(
-        text = "",
-        painter = painterResource(Res.drawable.lock),
-        onClick = {},
-        label = "Viloyat"
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ColorWhite)
+                .padding(vertical = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            CustomSelectionButton(
+                text = "",
+                painter = painterResource(Res.drawable.lock),
+                onClick = {},
+                label = "Viloyat"
+            )
+        }
+    }
 }

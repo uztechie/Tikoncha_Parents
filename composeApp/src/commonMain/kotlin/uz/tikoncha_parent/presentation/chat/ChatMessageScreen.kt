@@ -60,6 +60,8 @@ import uz.saidburxon.newedu.presentation.feature.chat.*
 import uz.tikoncha_parent.presentation.base.CustomMultiLineTextField
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsScreen
 import uz.tikoncha_parent.presentation.model.ChatType
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -422,8 +424,12 @@ fun isAtBottom(state: LazyListState, itemsCount: Int, thresholdPx: Int = 12): Bo
 @Preview
 @Composable
 private fun PRe() {
-    ChatMessageUi(
-        state = ChatState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ChatMessageUi(
+            state = ChatState(),
+            event = {}
+        )
+    }
 }

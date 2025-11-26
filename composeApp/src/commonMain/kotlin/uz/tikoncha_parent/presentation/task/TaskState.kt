@@ -47,4 +47,6 @@ data class TaskState(
 
     val editingTaskCreatedAt: Long? = null,
 
+    val allChildrenActiveTaskCount: Int = 0,
+
 )

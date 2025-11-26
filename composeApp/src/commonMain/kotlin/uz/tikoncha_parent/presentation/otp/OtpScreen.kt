@@ -41,8 +41,12 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.login.LoginEvent
+import uz.tikoncha_parent.presentation.login.LoginViewmodel
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -61,9 +65,13 @@ class OtpScreen(
             event(OtpEvent.SetPhone(phoneNumber))
         }
 
+        val logViewModel = koinViewModel<LoginViewmodel>()
+        val logState = logViewModel.state.collectAsStateWithLifecycle()
+        val logEvent = logViewModel::onEvent
+
         val navigator = LocalNavigator.current
 
-        Otp(
+        OtpUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -72,7 +80,7 @@ class OtpScreen(
 }
 
 @Composable
-fun Otp(
+fun OtpUi(
     navigator: Navigator?,
     state: OtpState,
     event: (OtpEvent) -> Unit
@@ -80,24 +88,16 @@ fun Otp(
     val isOtpCodeValid = state.otpCode.length == 6 && state.otpCode.all { it.isDigit() }
 
     val formattedTime = formatTwoDigits(state.timeLife % 60)
-    var previousFormattedTime by remember { mutableStateOf(formattedTime) }
-    var finishedTime by remember { mutableStateOf(false) }
+    val finishedTime = state.timeLife <= 0
 
     val borderColor = when {
         finishedTime -> OtpErrorColor
         isOtpCodeValid -> PrimaryColor
-        else -> BorderColor
+        else -> MaterialTheme.extendedColor.borderColor
     }
 
     LaunchedEffect(Unit) {
         event(OtpEvent.TimeStart)
-    }
-
-    LaunchedEffect(formattedTime) {
-        if (formattedTime == "00" && previousFormattedTime != "00") {
-            finishedTime = true
-        }
-        previousFormattedTime = formattedTime
     }
 
     var showDialog by remember {
@@ -179,7 +179,7 @@ fun Otp(
         SpaceMedium()
         if (finishedTime) {
             CustomText(
-                text = stringResource(Res.string.siz_noto_g_ri_kodni_kirittingiz),
+                text = if (state.otpCode.isNotEmpty())stringResource(Res.string.siz_noto_g_ri_kodni_kirittingiz) else "",
                 fontSize = NormalTextSize,
                 fontStyle = FontStyle.Normal,
                 color = MaterialTheme.extendedColor.hintColor,
@@ -193,7 +193,9 @@ fun Otp(
                 fontWeight = FontWeight.W500,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
-                    .clickable { }
+                    .clickable {
+                        event(OtpEvent.ResendOtp)
+                    }
             )
 
         } else {
@@ -239,9 +241,13 @@ fun Otp(
 @Preview
 @Composable
 private fun Preview() {
-    Otp(
-        navigator = null,
-        state = OtpState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        OtpUi(
+            navigator = null,
+            state = OtpState(),
+            event = {}
+        )
+    }
 }

@@ -33,6 +33,8 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.PrimaryGraColor
 import uz.tikoncha_parent.ui.PrimaryLightColor
 import uz.tikoncha_parent.ui.ShadowColor
+import uz.tikoncha_parent.ui.ShadowColorDark
+import uz.tikoncha_parent.ui.ShadowColorLight
 import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TonalButtonContainerColor
 
@@ -61,7 +63,7 @@ private val LightExtendedColorScheme = ExtendedColors(
     textColor = TextColor,
     borderColor = BorderColor,
     buttonMenuColor = TextColor,
-    shadowColor = ShadowColor,
+    shadowColor = ShadowColorLight,
     shadowLightColor = Color.White,
     buttonColor = CardColors,
     tonalButtonColor = TonalButtonContainerColor,
@@ -79,7 +81,7 @@ private val DarkExtendedColorScheme = ExtendedColors(
     textColor = DarkTextColor,
     borderColor = DarkGrayColor,
     buttonMenuColor = HintTextColor,
-    shadowColor = PrimaryGraColor,
+    shadowColor = ShadowColorDark,
     shadowLightColor = PrimaryColor.copy(alpha = 0.1f),
     buttonColor = DarkButtonBackgroundColors,
     tonalButtonColor = DarkCardColors,

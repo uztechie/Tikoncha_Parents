@@ -28,17 +28,21 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDate
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallTextSize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_left
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_right
 import tikoncha_parents.composeapp.generated.resources.haftalik
 import tikoncha_parents.composeapp.generated.resources.kunlik
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -139,7 +143,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.extendedColor.borderColor,
+                    containerColor = MaterialTheme.extendedColor.cardColor,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier
@@ -194,7 +198,7 @@ fun DateSelectorSlider(
                     }
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.extendedColor.buttonMenuColor,
+                    containerColor = MaterialTheme.extendedColor.cardColor,
                     contentColor = PrimaryColor
                 ),
                 modifier = Modifier
@@ -209,5 +213,25 @@ fun DateSelectorSlider(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        DateSelectorSlider(
+            type = DateSelectionType.WEEK,
+            periodsDate = listOf(
+                UsagePeriod(
+                    type = DateSelectionType.DAY,
+                    label = "12.04.2023",
+                    startDate = LocalDate(2023, 4, 12),
+                )
+            ),
+            onDateSelected = {}
+        )
     }
 }

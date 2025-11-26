@@ -37,6 +37,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -60,9 +61,12 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -244,12 +248,7 @@ fun AddNewTask(
             CustomTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(TextFieldHeight)
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
-                    ),
+                    .height(TextFieldHeight),
                 value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
@@ -266,6 +265,8 @@ fun AddNewTask(
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
+                    autoCorrect = true,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 )
             )
@@ -278,13 +279,7 @@ fun AddNewTask(
                     event(TaskEvent.OnDescChange(it))
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
-                    )
-                    .padding(vertical = 10.dp),
+                    .fillMaxWidth(),
                 leadingIcon = {
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
@@ -338,11 +333,10 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        1.dp,
-                        MaterialTheme.extendedColor.borderColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
+                    .tripleShadow(
+                        shape = RoundedCornerShape(TextFieldCornerRadius),
                     )
+                    .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
@@ -477,9 +471,13 @@ fun AddNewTask(
 @Preview
 @Composable
 private fun Preview() {
-    AddNewTask(
-        navigator = null,
-        state = TaskState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        AddNewTask(
+            navigator = null,
+            state = TaskState(),
+            event = {}
+        )
+    }
 }

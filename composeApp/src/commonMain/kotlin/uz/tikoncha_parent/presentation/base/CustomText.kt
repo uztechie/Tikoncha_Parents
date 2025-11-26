@@ -64,7 +64,7 @@ fun CustomText(
     fontWeight: FontWeight = FontWeight.Normal,
     fontSize:TextUnit = NormalTextSize,
     softWrap: Boolean = true,
-    lineHeight:TextUnit = TextUnit.Unspecified,
+    lineHeight:TextUnit = fontSize * 1.4f,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
     textAlign: TextAlign = TextAlign.Start,
