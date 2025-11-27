@@ -68,7 +68,7 @@ import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
-import uz.tikoncha_parent.domain.use_case.SubscriptionPurchaseUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
@@ -83,6 +83,9 @@ import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
+import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
@@ -173,7 +176,10 @@ val sharedModule = module {
     single { CreatePolicyUseCase(get()) }
     single { UpdatePolicyUseCase(get()) }
     single { DeletePolicyUseCase(get()) }
-    single { SubscriptionPurchaseUseCase(get()) }
+    single { SubscriptionPaymentUseCase(get()) }
+    single { PaymentStatusUseCase(get()) }
+    single { SubscriptionLimitUseCase(get()) }
+    single { SubscriptionPlanUseCase(get()) }
     single { GetChildAppsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
@@ -193,7 +199,7 @@ val sharedModule = module {
     viewModel { LoginPasswordViewmodel() }
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+    factory { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChatDetailsViewModel(get()) }
     viewModel { ChatViewModel(
         get(),
@@ -206,7 +212,7 @@ val sharedModule = module {
     ) }
     viewModel { MonitorViewModel(get(), get()) }
     viewModel { NotificationViewModel(get(), get()) }
-    viewModel { PolicyViewModel(get()) }
+    viewModel { PolicyViewModel(get(), get()) }
     viewModel { TimeRuleViewModel() }
     viewModel { LimitRuleViewModel() }
     viewModel { MyCoinsViewModel(get()) }

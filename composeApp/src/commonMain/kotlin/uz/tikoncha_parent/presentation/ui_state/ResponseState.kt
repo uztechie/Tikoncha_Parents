@@ -18,6 +18,6 @@ sealed class ResponseState<out T> {
 
 @Composable
 fun ResponseState<*>.errorText(): String = when (this) {
-    is ResponseState.Error -> res?.let { stringResource(it) } ?: message?:""
+    is ResponseState.Error -> message?:res?.let { stringResource(it) } ?:""
     else -> ""
 }

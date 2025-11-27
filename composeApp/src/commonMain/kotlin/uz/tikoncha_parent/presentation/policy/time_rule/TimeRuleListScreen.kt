@@ -73,6 +73,7 @@ class TimeRuleListScreen(): Screen {
 
         DisposableEffect(Unit) {
             event(TimeRuleEvent.SetList(sharedState.timeList))
+            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
             onDispose {
                 sharedEvent(PolicySharedEvent.SetTimeRule(state.timeList))
             }
@@ -216,13 +217,13 @@ fun TimeRuleListUi(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-//                        val count = sharedState.subscriptionLimitEntity?.limit_rule
-//                        val listCount = state.timeList.size
-//
-//                        if (count != null && listCount >= count) {
-//                            showLimitDialog = true
-//                            return@CustomOutlinedButton
-//                        }
+                        val count = sharedState.subscriptionLimit.limitRule
+                        val listCount = state.timeList.size
+
+                        if (listCount >= count) {
+                            showLimitDialog = true
+                            return@CustomOutlinedButton
+                        }
                         event(TimeRuleEvent.ShowSetupDialog(true))
                     },
                     text = stringResource(Res.string.oraliq_qoshish),

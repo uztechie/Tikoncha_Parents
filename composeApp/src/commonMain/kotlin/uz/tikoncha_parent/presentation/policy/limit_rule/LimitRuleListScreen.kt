@@ -66,6 +66,7 @@ class LimitRuleListScreen : Screen {
 
         DisposableEffect(Unit) {
             event(LimitRuleEvent.SetList(sharedState.limitList))
+            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
 
             onDispose {
                 sharedEvent(PolicySharedEvent.SetLimitRule(state.value.limitRuleList))
@@ -194,13 +195,13 @@ fun LimitRuleListUi(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-//                        val count = sharedState.subscriptionLimitEntity?.limit_rule
-//                        val listCount = state.limitRuleList.size
-//
-//                        if (count != null && listCount >= count) {
-//                            showLimitDialog = true
-//                            return@CustomOutlinedButton
-//                        }
+                        val count = sharedState.subscriptionLimit.limitRule
+                        val listCount = state.limitRuleList.size
+
+                        if (listCount >= count) {
+                            showLimitDialog = true
+                            return@CustomOutlinedButton
+                        }
                         event(LimitRuleEvent.ShowSetupDialog(true))
                     },
                     text = stringResource(Res.string.oraliq_qoshish),

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toAppSelectionUi
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
@@ -19,6 +20,10 @@ class AppWebViewModel(
 
     private val _state = MutableStateFlow(AppWebState())
     val state = _state.asStateFlow()
+
+    init {
+        refreshSubscriptionLimit()
+    }
 
     private var alreadySetOnce: Boolean = false
     private var alreadyLoadedOnce: Boolean = false
@@ -128,6 +133,17 @@ class AppWebViewModel(
                 val checked = event.checked
 
                 _state.update {state ->
+
+                    val appLimitCount = state.subscriptionLimit.appCount
+                    val selectedAppCount = state.selectedPkgs.size
+
+                    if (selectedAppCount >= appLimitCount && checked) {
+                        return@update state.copy(
+                            showLimitReachedDialog = true
+                        )
+                    }
+
+
                     val newApps = state.apps.map {app->
                         if (app.packageName == toggledApp.packageName){
                             app.copy(
@@ -169,6 +185,18 @@ class AppWebViewModel(
                     )
                 }
             }
+
+            AppWebEvent.RefreshSubscriptionLimit -> {
+                refreshSubscriptionLimit()
+            }
+        }
+    }
+
+    private fun refreshSubscriptionLimit(){
+        _state.update {
+            it.copy(
+                subscriptionLimit = AppSettings.subscriptionLimit
+            )
         }
     }
 

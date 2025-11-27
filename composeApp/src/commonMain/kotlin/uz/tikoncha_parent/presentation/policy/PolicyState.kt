@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy
 
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
@@ -7,5 +8,6 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 data class PolicyState(
     val selectedChild: UserInfo? = null,
     val policyResponseState: ResponseState<Nothing> = ResponseState.Idle,
-    val policies: List<PolicyItemUi> = emptyList()
+    val policies: List<PolicyItemUi> = emptyList(),
+    val subscriptionLimit: SubscriptionLimit = SubscriptionLimit()
 )

@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class AppWebState(
@@ -16,5 +17,5 @@ data class AppWebState(
     val serverRequestedCount: Int = 0,                  // server ro‘yxati uzunligi
     val serverPresentInstalledCount: Int = 0,           // serverdan kelib, userda oʻrnatilgani nechta
     val serverMissingCount: Int = 0,
-//    val subscriptionLimitEntity: SubscriptionLimitEntity? = null
+    val subscriptionLimit: SubscriptionLimit = SubscriptionLimit()
 )

@@ -4,7 +4,10 @@ package uz.tikoncha_parent.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +35,7 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.UpsertRuleUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
@@ -42,10 +46,10 @@ import kotlin.time.ExperimentalTime
 class HomeViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val childrenUseCase: ChildrenUseCase,
-    private val refreshRulesUseCase: RefreshRulesUseCase,
-    private val upsertRuleUseCase: UpsertRuleUseCase,
-    private val registerDeviceUseCase: RegisterDeviceUseCase
-) : ViewModel()
+    private val registerDeviceUseCase: RegisterDeviceUseCase,
+    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
+
+) : ScreenModel
 {
 
     private val hasLoaded = MutableStateFlow(false)
@@ -58,10 +62,7 @@ class HomeViewModel(
 
     private var childrenJob: Job? = null
     private var appUsageJob: Job? = null
-    private var rulesJob: Job? = null
     private var computeAllJob: Job? = null
-    private var computeAppListJob: Job? = null
-    private var upsertRuleJob: Job? = null
 
     init {
         loadOnce()
@@ -71,6 +72,7 @@ class HomeViewModel(
         val setOk = hasLoaded.compareAndSet(expect = false, update = true)
         if (!setOk) return
         sendDeviceInfo()
+        getSubscriptionLimit()
     }
 
     fun onEvent(event: HomeEvent) {
@@ -121,13 +123,12 @@ class HomeViewModel(
                         selectedApp = event.appUsageUi
                     )
                 }
-                createRule()
             }
         }
     }
 
     private fun sendDeviceInfo(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             val token = AppSettings.fcmToken
             val info = getDeviceInfo()
             val request = DeviceRegisterRequest(
@@ -142,12 +143,18 @@ class HomeViewModel(
         }
     }
 
+    private fun getSubscriptionLimit(){
+        screenModelScope.launch {
+            subscriptionLimitUseCase.invoke()
+        }
+    }
+
 
 
 
     private fun loadChildren() {
         childrenJob?.cancel()
-        childrenJob = viewModelScope.launch {
+        childrenJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     childrenResponseState = ResponseState.Loading
@@ -182,7 +189,7 @@ class HomeViewModel(
 
     private fun loadAppUsages() {
         appUsageJob?.cancel()
-        appUsageJob = viewModelScope.launch {
+        appUsageJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     appUsageResponseState = ResponseState.Loading,
@@ -217,123 +224,18 @@ class HomeViewModel(
                             )
                     }
                     recomputeAll()
-                    refreshRules()
                 }
             }
         }
     }
 
 
-    private fun refreshRules() {
-        rulesJob?.cancel()
-        rulesJob = viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    rulesError = ""
-                )
-            }
 
-            val response: Resource<GetRulesData> =
-                refreshRulesUseCase.invoke(state.value.selectedChildren?.userId ?: "")
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            rulesError = response.message?:""
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    val rulesData = response.data
-                    val usageApps: List<AppUsage> = state.value.appUsageList
-
-                    val decisionsMap = buildDecisionsMap(rulesData.items)
-
-                    val patched: List<AppUsage> = usageApps.map { item ->
-                        val allowed = decisionsMap[item.packageName]
-                        item.copy(allowed = allowed?:false)
-                    }
-
-                    _state.update {
-                        it.copy(
-                            rulesError = "",
-                            appUsageList = patched,
-                            rulesAppList = response.data.items
-                        )
-                    }
-                    recomputeAppList()
-                }
-            }
-        }
-    }
-
-    private fun createRule() {
-        upsertRuleJob?.cancel()
-        upsertRuleJob = viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    createRuleResponseState = ResponseState.Loading,
-                )
-            }
-
-            val upsertRuleRequest = UpsertRuleRequest(
-                target_user_id = state.value.selectedChildren?.userId?:"",
-                `package` = state.value.selectedApp?.packageName?:"",
-                action = if (state.value.selectedApp?.allowed == true) PolicyActionType.DENY.name
-                else PolicyActionType.ALLOW.name
-            )
-
-            val response = upsertRuleUseCase.invoke(
-                upsertRuleRequest
-            )
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            createRuleResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            createRuleResponseState = ResponseState.Success(),
-                        )
-                    }
-                    refreshRules()
-//                    val appList = state.value.appUsageUiList
-//                        .map {
-//                            if (it.packageName == state.value.selectedApp?.packageName){
-//                                it.copy(
-//                                    allowed = !it.allowed
-//                                )
-//                            }
-//                            else{
-//                                it
-//                            }
-//                        }
-//
-//                    _state.update {
-//                        it.copy(
-//                            appUsageUiList = appList
-//                        )
-//                    }
-                }
-            }
-        }
-    }
 
     private fun recomputeAll(){
         val period = _usagePeriod.value ?: return
         computeAllJob?.cancel()
-        computeAllJob = viewModelScope.launch(Dispatchers.Default) {
+        computeAllJob = screenModelScope.launch(Dispatchers.IO) {
             val s = state.value
             val usageList = s.appUsageList
             val dateType = s.dateSelectionType
@@ -366,46 +268,6 @@ class HomeViewModel(
             }
 
         }
-    }
-
-    private fun recomputeAppList(){
-        val period = _usagePeriod.value ?: return
-        computeAppListJob?.cancel()
-        computeAppListJob = viewModelScope.launch(Dispatchers.Default) {
-
-            val s = state.value
-            val usageList = s.appUsageList
-
-            val uiList = usageList.toUsageUi(
-                startDate = period.startDate,
-                endDate = period.endDate
-            )
-
-
-
-            _state.update {
-                it.copy(
-                    appUsageUiList = uiList,
-                )
-            }
-
-        }
-    }
-
-
-    private fun buildDecisionsMap(items: List<GetRuleItem>): Map<String, Boolean> {
-        val map = LinkedHashMap<String, Boolean>()
-        items.forEach { item ->
-            val pkg = item.`package`.trim()
-            if (pkg.isNotEmpty()) {
-                when (item.decision.uppercase()) {
-                    "ALLOW" -> map[pkg] = true
-                    "DENY"  -> map[pkg] = false
-                    else    -> { map[pkg] = false }
-                }
-            }
-        }
-        return map
     }
 
 }

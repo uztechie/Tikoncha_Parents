@@ -301,7 +301,7 @@ fun TimeRuleDialog(
                         event(TimeRuleEvent.SaveTime)
                         onDismiss()
                     },
-                    enabled = state.weekDays.any { it.enabled },
+                    enabled = state.weekDays.any { it.selected },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(DialogButtonHeight),

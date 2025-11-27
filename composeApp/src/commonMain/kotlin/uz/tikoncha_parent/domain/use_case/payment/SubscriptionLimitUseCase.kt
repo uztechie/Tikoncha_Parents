@@ -1,0 +1,36 @@
+package uz.tikoncha_parent.domain.use_case.payment
+
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.server_connection_error
+import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.mapper.toSubscriptionLimit
+import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
+import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.repository.PaymentRepository
+
+class SubscriptionLimitUseCase(
+    private val paymentRepository: PaymentRepository,
+) {
+    suspend operator fun invoke(): Resource<String> {
+        return try {
+            val response = paymentRepository.getSubscriptionLimitsFromServer()
+            if (response.success && response.data != null){
+                AppSettings.subscriptionLimit = response.data.toSubscriptionLimit()
+                Resource.Success("")
+            }
+            else {
+                Resource.Error(
+                    message = response.error,
+                    resId = Res.string.server_connection_error
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(
+                resId = Res.string.server_connection_error,
+                cause = e
+            )
+        }
+
+    }
+}

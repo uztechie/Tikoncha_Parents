@@ -1,22 +1,28 @@
 package uz.tikoncha_parent.data.repository
 
 import uz.tikoncha_parent.data.remote.PaymentApiService
-import uz.tikoncha_parent.data.remote.RulesApiService
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
-import uz.tikoncha_parent.data.remote.model.CreatePolicyResponseTemp
-import uz.tikoncha_parent.data.remote.model.CreateRuleRequest
-import uz.tikoncha_parent.data.remote.model.CreateRuleResponse
-import uz.tikoncha_parent.data.remote.model.GetRulesResponse
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseRequest
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseResponse
-import uz.tikoncha_parent.data.remote.model.UpsertRuleRequest
-import uz.tikoncha_parent.data.remote.model.UpsertRuleResponse
+import uz.tikoncha_parent.data.remote.model.PaymentStatusResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.domain.repository.PaymentRepository
-import uz.tikoncha_parent.domain.repository.RulesRepository
 
 class PaymentRepositoryImpl(private val api: PaymentApiService): PaymentRepository {
-    override suspend fun subscriptionPurchase(subscriptionPurchaseRequest: SubscriptionPurchaseRequest): SubscriptionPurchaseResponse {
-        return api.subscriptionPurchase(subscriptionPurchaseRequest)
+    override suspend fun subscriptionPayment(subscriptionPaymentRequest: SubscriptionPaymentRequest): SubscriptionPaymentResponse {
+        return api.subscriptionPayment(subscriptionPaymentRequest)
+    }
+
+    override suspend fun getSubscriptionLimitsFromServer(): SubscriptionLimitResponse {
+        return api.subscriptionLimits()
+    }
+
+    override suspend fun subscriptionPlans(): SubscriptionPlansResponse {
+        return api.subscriptionPlans()
+    }
+
+    override suspend fun paymentStatus(merchantTransId: String): PaymentStatusResponse {
+        return api.paymentStatus(merchantTransId)
     }
 
 

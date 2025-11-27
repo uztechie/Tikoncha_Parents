@@ -83,6 +83,7 @@ class PolicyListScreen(
             event(PolicyEvent.SetSelectedChild(child))
             sharedAppEvent(AppWebEvent.ClearData)
             sharedEvent(PolicySharedEvent.ClearData)
+            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
         }
 
         BackHandler(true){
@@ -139,6 +140,7 @@ fun PolicyListUi(
 
 
 
+
     var showCreatePolicyDialog by remember { mutableStateOf(false) }
     var title by rememberSaveable(sharedState.policyTitle) { mutableStateOf(sharedState.policyTitle) }
 
@@ -155,10 +157,7 @@ fun PolicyListUi(
         onButtonClick = {
             val finalTitle = title.trim()
             if (finalTitle.isNotBlank()) {
-//                sharedEvent(PolicySharedEvent.ClearData)
-//                sharedAppEvent(AppWebEvent.ClearData)
                 sharedEvent(PolicySharedEvent.SetPolicyTitle(finalTitle))
-//                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimitEntity))
                 showCreatePolicyDialog = false
                 navigator?.push(PolicySetupScreen(state.selectedChild))
             }
@@ -210,9 +209,6 @@ fun PolicyListUi(
                     modifier = Modifier,
                     policy = it,
                     onClick = {
-//                        sharedEvent(PolicySharedEvent.ClearData)
-//                        sharedAppEvent(AppWebEvent.ClearData)
-//                        sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimitEntity))
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
                         navigator?.push(
                             PolicySetupScreen(
@@ -222,8 +218,6 @@ fun PolicyListUi(
                         )
                     },
                     onEdit = {
-//                        sharedEvent(PolicySharedEvent.ClearData)
-//                        sharedAppEvent(AppWebEvent.ClearData)
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
                         navigator?.push(
                             PolicySetupScreen(
@@ -238,15 +232,14 @@ fun PolicyListUi(
 
         CustomOutlinedButton(
             onClick = {
-//                val count = state.subscriptionLimitEntity?.policy_count
-//                val myPolicyCount = state.policyList.count { it.isMine }
-//                if (count == null || count > myPolicyCount){
-//                    showCreatePolicyDialog = true
-//                }
-//                else{
-//                    showLimitDialog = true
-//                }
-                showCreatePolicyDialog = true
+                val count = sharedState.subscriptionLimit.policyCount
+                val myPolicyCount = state.policies.count { it.isMine }
+                if (count > myPolicyCount){
+                    showCreatePolicyDialog = true
+                }
+                else{
+                    showLimitDialog = true
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButtonDefaults.LargeIconSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -38,24 +34,22 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
-import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
-import uz.tikoncha_parent.ui.ButtonCornerRadius
-import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -84,6 +78,7 @@ class AppWebSelectionScreen(): Screen{
 
         LaunchedEffect(Unit){
             event(AppWebEvent.GetAppsFromServer)
+            event(AppWebEvent.RefreshSubscriptionLimit)
         }
     }
 
@@ -102,18 +97,18 @@ fun AppWebSelectionUi(
 
 
 
-//    CustomDialog(
-//        title = stringResource(Res.string.limit_tugadi),
-//        message = "Sizda ${state.subscriptionLimitEntity?.app_count} dan ko'p ilovalarni tanlay olmaysiz. Ko'proq ilovalarni qo'shish uchun PLUS obunani sotib oling.",
-//        show = state.showLimitReachedDialog,
-////        lottieAsset = DialogLottie.WARNING,
-//        onDismiss = {
-//            event(AppWebEvent.DismissLimitDialog)
-//        },
-//        onButtonClick = {
-//            event(AppWebEvent.DismissLimitDialog)
-//        }
-//    )
+    CustomDialog(
+        title = stringResource(Res.string.limit_tugadi),
+        message = "Sizda ${state.subscriptionLimit.appCount } dan ko'p ilovalarni tanlay olmaysiz. Ko'proq ilovalarni qo'shish uchun PLUS obunani sotib oling.",
+        show = state.showLimitReachedDialog,
+//        lottieAsset = DialogLottie.WARNING,
+        onDismiss = {
+            event(AppWebEvent.DismissLimitDialog)
+        },
+        onButtonClick = {
+            event(AppWebEvent.DismissLimitDialog)
+        }
+    )
 
 
     val loading = state.appsResponseState is ResponseState.Loading
@@ -173,8 +168,7 @@ fun AppWebSelectionUi(
                     event(AppWebEvent.OnAppWebSelected(it))
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
+                    .fillMaxWidth(),
                 fontSize = NormalTextSize,
             )
 
@@ -183,23 +177,23 @@ fun AppWebSelectionUi(
             LazyColumn(
                 contentPadding = PaddingValues(vertical = ContainerPadding),
                 modifier = Modifier
-                    .bottomShadow(
-                        shape = RoundedCornerShape(
-                            topStart = ButtonCornerRadius,
-                            topEnd = ButtonCornerRadius
-                        ),
-                        color = MaterialTheme.extendedColor.backgroundColor
-                    )
-                    .bottomShadow(
-                        shape = RoundedCornerShape(
-                            topStart = ButtonCornerRadius,
-                            topEnd = ButtonCornerRadius
-                        ),
-                        color = MaterialTheme.extendedColor.backgroundColor,
-                        lowerOffset = -5.dp,
-                        radius = 10.dp
-
-                    )
+//                    .bottomShadow(
+//                        shape = RoundedCornerShape(
+//                            topStart = ButtonCornerRadius,
+//                            topEnd = ButtonCornerRadius
+//                        ),
+//                        color = MaterialTheme.extendedColor.backgroundColor
+//                    )
+//                    .bottomShadow(
+//                        shape = RoundedCornerShape(
+//                            topStart = ButtonCornerRadius,
+//                            topEnd = ButtonCornerRadius
+//                        ),
+//                        color = MaterialTheme.extendedColor.backgroundColor,
+//                        lowerOffset = -5.dp,
+//                        radius = 10.dp
+//
+//                    )
                     .weight(1f)
             ) {
                 when(state.appWebSelectionIndex){
@@ -271,9 +265,13 @@ fun AppWebSelectionUi(
 @Preview
 @Composable
 private fun Preview() {
-    AppWebSelectionUi(
-        state = AppWebState(),
-        event = {},
-        sharedState = PolicySharedState()
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        AppWebSelectionUi(
+            state = AppWebState(),
+            event = {},
+            sharedState = PolicySharedState()
+        )
+    }
 }

@@ -1,22 +1,45 @@
 package uz.tikoncha_parent.data.remote
 
 import io.ktor.client.HttpClient
-import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseRequest
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseResponse
+import uz.tikoncha_parent.data.remote.model.PaymentStatusResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 
 class PaymentApiService(private val client: HttpClient) {
 
+    suspend fun subscriptionLimits(): SubscriptionLimitResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "subscriptions/limits",
+            block = {}
+        )
+
+    suspend fun subscriptionPlans(): SubscriptionPlansResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "/subscription-plans",
+            block = {}
+        )
+
+    suspend fun paymentStatus(merchantTransId: String): PaymentStatusResponse =
+        client.safeRequest(
+            method = HttpMethod.Companion.Get,
+            url = "payments/status/$merchantTransId",
+            block = {}
+        )
 
 
-    suspend fun subscriptionPurchase(subscriptionPurchaseRequest: SubscriptionPurchaseRequest): SubscriptionPurchaseResponse =
+
+    suspend fun subscriptionPayment(subscriptionPaymentRequest: SubscriptionPaymentRequest): SubscriptionPaymentResponse =
         client.safeRequest(
             method = HttpMethod.Companion.Post,
             url = "/subscriptions/purchase-intent",
             block = {
-                setBody(subscriptionPurchaseRequest)
+                setBody(subscriptionPaymentRequest)
             }
         )
 

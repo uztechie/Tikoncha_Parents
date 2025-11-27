@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.policy.shared
 
 import uz.tikoncha_parent.domain.model.Policy
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.app_selection.AppSelectionUi
@@ -16,6 +17,6 @@ data class PolicySharedState(
     val policyTitle: String = "",
     val selectedPolicy: PolicyItemUi? = null,
     val canUpdate: Boolean = true,
-//    val subscriptionLimitEntity: SubscriptionLimitEntity? = null
+    val subscriptionLimit: SubscriptionLimit = SubscriptionLimit()
 
 )

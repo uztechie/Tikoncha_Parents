@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseRequest
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.service.PaymentService
-import uz.tikoncha_parent.domain.use_case.SubscriptionPurchaseUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PaymentViewModel(
-    private val subscriptionPurchaseUseCase: SubscriptionPurchaseUseCase,
+    private val subscriptionPaymentUseCase: SubscriptionPaymentUseCase,
     private val paymentService: PaymentService
 ): ViewModel() {
 
@@ -44,12 +44,12 @@ class PaymentViewModel(
                 )
             }
 
-            val request = SubscriptionPurchaseRequest(
+            val request = SubscriptionPaymentRequest(
                 child_user_id = "be13765f-3121-4db2-9308-4ebb28627da5",
                 tier = "MONTHLY_1"
             )
 
-            val result = subscriptionPurchaseUseCase(request)
+            val result = subscriptionPaymentUseCase(request)
             when(result){
                 is Resource.Loading<*> -> {}
                 is Resource.Error -> {

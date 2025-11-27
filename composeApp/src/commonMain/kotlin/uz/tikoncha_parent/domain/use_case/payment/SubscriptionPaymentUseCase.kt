@@ -1,22 +1,18 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.payment
 
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequestTemp
+import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseData
-import uz.tikoncha_parent.data.remote.model.SubscriptionPurchaseRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.PaymentRepository
-import uz.tikoncha_parent.domain.repository.PolicyRepository
-import uz.tikoncha_parent.domain.repository.RulesRepository
 
-class SubscriptionPurchaseUseCase(
+class SubscriptionPaymentUseCase(
     private val paymentRepository: PaymentRepository,
 ) {
-    suspend operator fun invoke(subscriptionPurchaseRequest: SubscriptionPurchaseRequest): Resource<SubscriptionPurchaseData>{
+    suspend operator fun invoke(subscriptionPaymentRequest: SubscriptionPaymentRequest): Resource<SubscriptionPurchaseData> {
         return try {
-            val response = paymentRepository.subscriptionPurchase(subscriptionPurchaseRequest)
+            val response = paymentRepository.subscriptionPayment(subscriptionPaymentRequest)
             if (response.success && response.data != null){
                 Resource.Success(response.data)
             }

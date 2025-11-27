@@ -42,6 +42,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
@@ -73,12 +75,13 @@ class HomeScreen : Screen {
 
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current?:return
+        val rootNavigator = navigator.parent?:return
 
-        val viewModel = koinViewModel<HomeViewModel>()
+        val viewModel = rootNavigator.koinNavigatorScreenModel<HomeViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        val navigator = LocalNavigator.current
 
         HomeUi(
             navigator = navigator,
@@ -303,6 +306,7 @@ fun HomeUi(
                 SpaceSmall()
 
                 FilledTonalIconButton(
+                    enabled = state.selectedChildren != null,
                     modifier = Modifier
                         .size(LargeIconButtonSize),
                     onClick = {

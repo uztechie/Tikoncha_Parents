@@ -15,5 +15,8 @@ sealed interface PolicySharedEvent {
     data object ClearData : PolicySharedEvent
     data class SetPolicyTitle(val title: String): PolicySharedEvent
 
+    data object RefreshSubscriptionLimit: PolicySharedEvent
+
+
 
 }

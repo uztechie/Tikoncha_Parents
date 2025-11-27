@@ -156,7 +156,7 @@ private fun PRe() {
                 "Ertalabdan" to painterResource(Res.drawable.father_icon),
                 "Tushlikdan" to painterResource(Res.drawable.mather_icon)
             ),
-            selectedIndex = 1,
+            selectedIndex = 0,
             onOptionSelected = {  },
             modifier = Modifier
                 .padding(16.dp)
