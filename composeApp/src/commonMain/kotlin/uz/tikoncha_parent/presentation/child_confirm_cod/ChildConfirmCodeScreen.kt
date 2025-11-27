@@ -48,6 +48,9 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ChildConfirmCodeScreen(
@@ -117,7 +120,7 @@ fun ChildConfirmCodeUi(
                 .verticalScroll(rememberScrollState())
         ) {
 
-
+            SpaceSmall()
             CustomText(
                 text = stringResource(Res.string.farzandingizni_tasdiqlang),
                 fontSize = 28.sp,
@@ -144,7 +147,10 @@ fun ChildConfirmCodeUi(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .tripleShadow(
+                        shape = RoundedCornerShape(TextFieldCornerRadius)
+                    )
+                    .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(TextFieldHeight),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -207,10 +213,14 @@ fun ChildConfirmCodeUi(
 @Preview
 @Composable
 private fun Pre(){
-    ChildConfirmCodeUi(
-        navigator = null,
-        state = ChildConfirmState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ChildConfirmCodeUi(
+            navigator = null,
+            state = ChildConfirmState(),
+            event = {}
+        )
+    }
 }
 

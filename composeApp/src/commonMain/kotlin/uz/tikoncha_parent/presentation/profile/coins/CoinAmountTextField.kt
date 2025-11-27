@@ -54,10 +54,11 @@ fun CoinAmountTextField(
     coinsAmount: String,
     onAddCoinClicked: (Int) -> Unit,
     onSubtractButtonClicked: (Int) -> Unit,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    allowManualInput: Boolean = true
 ) {
 
-    var textState by remember { mutableStateOf(coinsAmount.toString()) }
+    val maxAvailable = 100
 
     var textFieldValueState by remember {
         mutableStateOf(
@@ -66,10 +67,6 @@ fun CoinAmountTextField(
                 selection = TextRange(coinsAmount.length) // Place cursor at the end
             )
         )
-    }
-
-    LaunchedEffect(coinsAmount) {
-        textState = coinsAmount.toString()
     }
 
     LaunchedEffect(coinsAmount) {
@@ -82,7 +79,7 @@ fun CoinAmountTextField(
         }
     }
 
-    Row() {
+    Row {
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
@@ -90,28 +87,22 @@ fun CoinAmountTextField(
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                 )
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+                .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
 
-                    val currentAmount = coinsAmount.toIntOrNull()
-                    if (currentAmount != null && currentAmount > 1) {
-                        onSubtractButtonClicked(currentAmount - 1)
+                    val current = coinsAmount.toIntOrNull() ?: 0
+                    if (current > 0) {
+                        onSubtractButtonClicked(current - 1)
                     }
-                    if (currentAmount == null){
-                        onSubtractButtonClicked(0)
-                    }
-
                 }
-                .padding(AppIconInnerPadding)
-                .background(MaterialTheme.extendedColor.backgroundColor),
+                .padding(AppIconInnerPadding),
             contentAlignment = Alignment.Center
         ) {
-
             Icon(
                 painter = painterResource(Res.drawable.subtruct_icon),
                 tint = PrimaryColor,
                 contentDescription = ""
             )
-
         }
 
         SpaceSmall()
@@ -121,30 +112,22 @@ fun CoinAmountTextField(
                 .width(CoinTextFieldWidth)
                 .height(NormalIconButtonSize),
             singleLine = true,
+            readOnly = !allowManualInput,
             onValueChange = { newTextFieldValue ->
+                if (!allowManualInput) return@CoinGeneratorTextField
 
-                val newText = newTextFieldValue.text
+                val digest = newTextFieldValue.text.filter { it.isDigit() }
 
-                if (newText.isEmpty() || newText.all { it.isDigit() }) {
-
-                    if (newText.isEmpty()){
-                        onValueChange("0")
-                        textFieldValueState = newTextFieldValue.copy(
-                            text = "0", selection = TextRange(newText.length + 1)
-                        )
-                    }else{
-                        if ((newText.length == 4 && newText.toInt() < 9999)) {
-                            textFieldValueState = newTextFieldValue.copy(
-                                selection = TextRange(newText.length)
-                            )
-                            onValueChange(newText.toInt().toString())
-                        }
-                    }
-                }
-
+                val intValue = digest.toIntOrNull() ?: 0
+                val clampedValue = intValue.coerceIn(0, maxAvailable)
+                val finalText = if (digest.isEmpty()) "" else clampedValue.toString()
+                textFieldValueState = newTextFieldValue.copy(
+                    text = finalText,
+                    selection = TextRange(finalText.length)
+                )
+                onValueChange(finalText.ifEmpty {"0"})
             },
             value = textFieldValueState,
-            hasBorder = true,
             fonSize = NormalLargeTextSize,
             contentColor = PrimaryColor,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -161,15 +144,20 @@ fun CoinAmountTextField(
                     shape = RoundedCornerShape(TextFieldCornerRadius),
                 )
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+                .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
-                    if (coinsAmount.isNotEmpty()){
-                        if (coinsAmount.all { it.isDigit() }){
-                            val current = coinsAmount.toInt()
-                            val maxAvailable = 50
-                            if (current < maxAvailable) {
-                                onAddCoinClicked(current + 1)
-                            }
-                        }
+//                    if (coinsAmount.isNotEmpty()){
+//                        if (coinsAmount.all { it.isDigit() }){
+//                            val current = coinsAmount.toInt()
+//                            val maxAvailable = 50
+//                            if (current < maxAvailable) {
+//                                onAddCoinClicked(current + 1)
+//                            }
+//                        }
+//                    }
+                    val current = coinsAmount.toIntOrNull() ?: 0
+                    if (current < maxAvailable) {
+                        onAddCoinClicked(current + 1)
                     }
                 }
                 .padding(AppIconInnerPadding),
@@ -178,7 +166,7 @@ fun CoinAmountTextField(
 
             Icon(
                 painter = painterResource(Res.drawable.add),
-                tint = BackgroundColor,
+                tint = PrimaryColor,
                 contentDescription = ""
             )
 

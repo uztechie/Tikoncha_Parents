@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,10 @@ import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.CoinsCornerRadius
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -53,8 +57,9 @@ fun CoinGeneratorTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.backgroundColor,
-    contentColor: Color = MaterialTheme.extendedColor.onBackgroundColor,
+    shadow: Boolean = true,
+    containerColor: Color = MaterialTheme.extendedColor.cardColor,
+    contentColor: Color = MaterialTheme.extendedColor.textColor,
     shape: RoundedCornerShape = RoundedCornerShape(CoinsCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -83,73 +88,97 @@ fun CoinGeneratorTextField(
         modifier
     }
 
-
-
-    BasicTextField(
-        cursorBrush = Brush.sweepGradient(listOf(contentColor,contentColor)),
-        value = value,
-        onValueChange = {
-            onValueChange(it)
-        },
-        readOnly = readOnly,
-        interactionSource = interactionSource,
-        enabled = enabled,
-        modifier = newModifier
-            .clip(shape)
+    val columnModifier = if (shadow) {
+        modifier
             .fillMaxWidth()
-            .background(backgroundColor),
-        singleLine = singleLine,
-        maxLines = if(singleLine) 1 else 5,
-        textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = contentColor,
-            fontFamily = MyFontFamily(),
-            fontSize = fonSize,
-            textAlign = if (isCenteredText){ TextAlign.Center}else { TextAlign.Start }
-        ),
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
+            .tripleShadow(
+                shape = RoundedCornerShape(TextFieldCornerRadius),
+            )
+            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+    } else {
+        modifier
+            .fillMaxWidth()
+            .background(Color.Transparent, RoundedCornerShape(TextFieldCornerRadius))
+    }
 
-        decorationBox = { innerTextField ->
+    Column(
+        modifier = columnModifier
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = TextFieldInnerPadding),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if(leadingIcon != null){
-                    leadingIcon()
-                    Spacer(Modifier.size(TextFieldInnerPadding))
-
+    ) {
+        BasicTextField(
+            cursorBrush = Brush.sweepGradient(listOf(contentColor, contentColor)),
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+            },
+            readOnly = readOnly,
+            interactionSource = interactionSource,
+            enabled = enabled,
+            modifier = newModifier
+                .clip(shape)
+                .fillMaxWidth()
+                .background(backgroundColor),
+            singleLine = singleLine,
+            maxLines = if (singleLine) 1 else 5,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = contentColor,
+                fontFamily = MyFontFamily(),
+                fontSize = fonSize,
+                textAlign = if (isCenteredText) {
+                    TextAlign.Center
+                } else {
+                    TextAlign.Start
                 }
-                Box(
+            ),
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+
+            decorationBox = { innerTextField ->
+
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                ){
-                    if (value.text.isEmpty()){
-                        CustomText(
-                            text = label,
-                            fontSize = fonSize,
-                            color = HintTextColor
-                        )
+                        .padding(horizontal = TextFieldInnerPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (leadingIcon != null) {
+                        leadingIcon()
+                        Spacer(Modifier.size(TextFieldInnerPadding))
+
                     }
-                    innerTextField()
-                }
-                if(trailingIcon != null){
-                    Spacer(Modifier.size(TextFieldInnerPadding))
-                    trailingIcon()
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        if (value.text.isEmpty()) {
+                            CustomText(
+                                text = label,
+                                fontSize = fonSize,
+                                color = HintTextColor
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (trailingIcon != null) {
+                        Spacer(Modifier.size(TextFieldInnerPadding))
+                        trailingIcon()
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 
 @Preview
 @Composable
 private fun Preview() {
-    CoinGeneratorTextField(
-        onValueChange = {},
-        label = "Shopping",
-        value = TextFieldValue("")
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CoinGeneratorTextField(
+            onValueChange = {},
+            label = "Shopping",
+            value = TextFieldValue("")
+        )
+    }
 }

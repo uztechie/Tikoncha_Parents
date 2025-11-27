@@ -124,7 +124,7 @@ fun Modifier.coverShadow(
     spread: Dp = 0.dp,
     upperOffset: Dp = (-4).dp,
     lowerOffset: Dp = 4.dp,
-    lightColor: Color = MaterialTheme.extendedColor.shadowLightColor,
+    lightColor: Color = MaterialTheme.extendedColor.shadowLightColor.copy(0.7f),
     darkColor: Color = MaterialTheme.extendedColor.shadowColor,
 ) = composed {
     this

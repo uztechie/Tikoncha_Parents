@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,8 +45,11 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class AddChildScreen : Screen {
@@ -159,7 +163,10 @@ fun AddChildUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else MaterialTheme.extendedColor.borderColor, shape = RoundedCornerShape(TextFieldCornerRadius)),
+                    .tripleShadow(
+                        shape = RoundedCornerShape(TextFieldCornerRadius)
+                    )
+                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else Color.Transparent, shape = RoundedCornerShape(TextFieldCornerRadius)),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
             )
             {
@@ -214,9 +221,13 @@ fun AddChildUi(
 @Composable
 @Preview
 private fun Preview() {
-    AddChildUi(
-        navigator = null,
-        state = ChildState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        AddChildUi(
+            navigator = null,
+            state = ChildState(),
+            event = {}
+        )
+    }
 }

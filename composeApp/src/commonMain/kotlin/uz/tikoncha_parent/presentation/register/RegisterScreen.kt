@@ -44,6 +44,8 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -132,7 +134,6 @@ fun Register(
         CustomTextField(
             value = state.name,
             onValueChange = { event(RegisterEvent.OnNameInsert(it)) },
-            hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.ismingizni_kiriting),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
@@ -151,7 +152,6 @@ fun Register(
         CustomTextField(
             value = state.fullName,
             onValueChange = { event(RegisterEvent.OnFullNameInsert(it)) },
-            hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.familiyangizni_kiriting),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
@@ -170,7 +170,6 @@ fun Register(
         CustomTextField(
             value = state.middleName,
             onValueChange = { event(RegisterEvent.OnMiddleNameInsert(it)) },
-            hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.otangizni_ismini_kiriting),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
@@ -189,7 +188,6 @@ fun Register(
         CustomTextField(
             value = state.idNumber,
             onValueChange = { event(RegisterEvent.OnIdNumberInsert(it)) },
-            hasBorder = true,
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.passport_id_raqamingiz),
             leadingIcon = {
@@ -243,9 +241,13 @@ fun Register(
 @Preview
 @Composable
 private fun Preview() {
-    Register(
-        navigator = null,
-        state = RegisterState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        Register(
+            navigator = null,
+            state = RegisterState(),
+            event = {}
+        )
+    }
 }

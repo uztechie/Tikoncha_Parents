@@ -45,6 +45,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.coverShadow
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.abs
 
@@ -71,8 +72,12 @@ fun TimePickerDialog(
             )
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .coverShadow(
+                        radius = CardCornerRadius
+                    ),
+                shape = RoundedCornerShape(CardCornerRadius),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor)
             ) {
                 Column(
@@ -112,8 +117,6 @@ fun TimePickerDialog(
                             modifier = Modifier
                                 .height(DialogButtonHeight)
                                 .fillMaxWidth(),
-                            textColor = PrimaryColor,
-                            borderColor = BorderColor,
                             shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
 
@@ -126,14 +129,9 @@ fun TimePickerDialog(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(
-                                    1.dp,
-                                    PrimaryColor, RoundedCornerShape(TextFieldCornerRadius)
-                                )
                                 .height(DialogButtonHeight),
                             text = stringResource(Res.string.saqlash),
                             shape = RoundedCornerShape(TextFieldCornerRadius),
-                            textColor = OnPrimaryColor,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
