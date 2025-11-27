@@ -3,6 +3,7 @@ package uz.tikoncha_parent.presentation.completedTask
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,9 +20,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
@@ -37,6 +48,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.topShadow
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class CompletedTaskScreen : Screen {
@@ -124,6 +138,7 @@ fun CompletedTaskUi(
 //
 //            SpaceLarge()
 
+            SpaceMedium()
             CustomText(
                 text = stringResource(Res.string.farzandingiz_vazifalari),
                 fontSize = SmallTextSize,
@@ -157,35 +172,23 @@ fun CompletedTaskUi(
                 fontWeight = FontWeight.W600,
             )
 
-            SpaceSmall()
+            val bottomRoundedShape = RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = 0.dp,
+                bottomStart = ShapeCornerRadius,
+                bottomEnd = ShapeCornerRadius
+            )
 
             LazyColumn(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
-                    .padding(vertical = 8.dp),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(state.selectedCompletedTaskList) { task ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .border(
-                                1.dp,
-                                MaterialTheme.extendedColor.borderColor,
-                                RoundedCornerShape(TextFieldCornerRadius)
-                            ),
-                        shape = RoundedCornerShape(TextFieldCornerRadius),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.extendedColor.cardColor
-                        )
-                    ) {
-                        CompletedTaskItem(
-                            task = task,
-                            onDetailsIconClick = {},
-                        )
-                    }
+                    CompletedTaskItem(
+                        task = task,
+                        onDetailsIconClick = {},
+                    )
                 }
             }
         }
@@ -195,5 +198,13 @@ fun CompletedTaskUi(
 @Preview
 @Composable
 fun Preview() {
-    CompletedTaskScreen()
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CompletedTaskUi(
+            state = TaskState(),
+            event = {},
+            navigator = LocalNavigator.current
+        )
+    }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,10 +21,16 @@ import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.coverShadow
+import uz.tikoncha_parent.presentation.task.AddNewTask
+import uz.tikoncha_parent.presentation.task.TaskState
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -53,9 +60,15 @@ fun CalendarDialog(
         containerColor = MaterialTheme.extendedColor.backgroundColor,
         modifier = Modifier.fillMaxWidth(),
         text = {
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .coverShadow(
+                    radius = CardCornerRadius
+                )
+                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(CardCornerRadius))
+                .padding(ContainerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -174,8 +187,6 @@ fun CalendarDialog(
                     modifier = Modifier
                         .height(DialogButtonHeight)
                         .fillMaxWidth(),
-                    textColor = PrimaryColor,
-                    borderColor = BorderColor,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
 
@@ -187,7 +198,6 @@ fun CalendarDialog(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                         .height(DialogButtonHeight),
                     enabled = tempSelectedDate != null,
                     text = stringResource(Res.string.saqlash),
@@ -206,5 +216,19 @@ fun reformattedYearDay(reformatedDate: LocalDate?): String {
     val year = reformatedDate.year.toString()
 
     return "$day.$month.$year"
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CalendarDialog(
+            onDateSelected = {},
+            onDismissRequest = {},
+            selectedDate = null
+        )
+    }
 }
 

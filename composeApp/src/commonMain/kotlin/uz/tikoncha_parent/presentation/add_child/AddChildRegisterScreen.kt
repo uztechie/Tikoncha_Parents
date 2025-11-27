@@ -49,6 +49,8 @@ import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 class AddChildRegisterScreen : Screen {
 
@@ -225,9 +227,13 @@ fun AddChildRegisterUi(
 @Composable
 @Preview
 private fun Preview() {
-    AddChildRegisterUi(
-        navigator = null,
-        state = ChildState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        AddChildRegisterUi(
+            navigator = null,
+            state = ChildState(),
+            event = {}
+        )
+    }
 }

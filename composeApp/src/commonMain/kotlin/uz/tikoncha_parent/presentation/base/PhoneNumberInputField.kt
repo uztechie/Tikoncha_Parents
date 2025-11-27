@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.base
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -44,11 +47,10 @@ fun PhoneNumberInputField(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.extendedColor.borderColor,
-                    shape = RoundedCornerShape(TextFieldCornerRadius)
+                .tripleShadow(
+                    shape = RoundedCornerShape(TextFieldCornerRadius),
                 )
+                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Icon(
@@ -64,6 +66,7 @@ fun PhoneNumberInputField(
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
+                shadow = false,
                 value = phoneNumber,
                 onValueChange = { input ->
                     val digits = input.filter { it.isDigit() }
@@ -125,7 +128,11 @@ class PhoneNumberTransformation : VisualTransformation {
 @Preview
 @Composable
 private fun Preview() {
-    PhoneNumberInputField(
-        phoneNumber = ""
-    ) { }
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        PhoneNumberInputField(
+            phoneNumber = ""
+        ) { }
+    }
 }

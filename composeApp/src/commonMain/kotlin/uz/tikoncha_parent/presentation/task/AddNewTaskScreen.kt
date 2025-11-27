@@ -4,7 +4,9 @@ import TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -34,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -103,12 +107,12 @@ fun AddNewTask(
     state: TaskState,
     event: (TaskEvent) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
 
     val available = state.availableCoins
     val toGift = state.coin
     val remaining = (available - toGift).coerceAtLeast(0)
-
-
+    
     var coinsAmount by remember { mutableStateOf("0") }
     val maxAvailable = 50
 //    val remaining = (maxAvailable - (coinsAmount.toIntOrNull() ?: 0)).coerceAtLeast(0)
@@ -192,11 +196,18 @@ fun AddNewTask(
     if (showDialogData) {
         CalendarDialog(
             selectedDate = selectedDate,
-            onDismissRequest = { showDialogData = false },
+            onDismissRequest = {
+                showDialogData = false
+                focusManager.clearFocus()
+                hidKeyboard()
+            },
             onDateSelected = {
                 println("AAAA = $dateAnd")
                 event(TaskEvent.OnDateChange(it))
                 showDialogData = false
+                focusManager.clearFocus()
+                hidKeyboard()
+
             }
         )
     }
@@ -206,10 +217,17 @@ fun AddNewTask(
         TimePickerDialog(
             show = showDialogTime,
             initialTime = selectedTime ?: Util.getCurrentTime(),
-            onDismiss = { showDialogTime = false },
+            onDismiss = {
+                showDialogTime = false
+                focusManager.clearFocus()
+                hidKeyboard()
+            },
             onTimeSelected = {
                 println("AAAA = $timeAnd")
                 event(TaskEvent.OnTimeChange(it))
+                focusManager.clearFocus()
+                hidKeyboard()
+
             }
         )
     }
@@ -220,7 +238,10 @@ fun AddNewTask(
             .background(MaterialTheme.extendedColor.backgroundColor)
             .verticalScroll(rememberScrollState())
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { hidKeyboard() })
+                detectTapGestures {
+                    focusManager.clearFocus()
+                    hidKeyboard()
+                }
             }
     ) {
 
@@ -238,7 +259,7 @@ fun AddNewTask(
                 .padding(CardCornerPadding)
         ) {
             CustomText(
-                text = stringResource(Res.string.vazifa_nomi),
+                text = stringResource(Res.string.vazifa_malumotlari),
                 fontSize = NormalLargeTextSize,
                 fontWeight = FontWeight.W600,
             )
@@ -259,15 +280,14 @@ fun AddNewTask(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(SliderPageColor)
                     )
                 },
                 fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
-                    autoCorrect = true,
+                    autoCorrectEnabled = true,
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
+                    imeAction = ImeAction.Next
                 )
             )
 
@@ -285,7 +305,6 @@ fun AddNewTask(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
                         modifier = Modifier.size(22.dp),
-                        colorFilter = ColorFilter.tint(SliderPageColor)
                     )
                 },
                 label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
@@ -382,8 +401,9 @@ fun AddNewTask(
 
             CustomText(
                 text = stringResource(Res.string.tangachalar_sovg_a_qiling),
-                fontSize = NormalLargeTextSize,
-                fontWeight = FontWeight.W600
+                fontSize = NormalTextSize,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.extendedColor.hintColor
             )
 
             SpaceMedium()
@@ -391,7 +411,7 @@ fun AddNewTask(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 CustomText(
                     text = stringResource(Res.string.sizda_mavjud_tangachalar),
-                    fontSize = NormalLargeTextSize,
+                    fontSize = NormalTextSize,
                 )
                 SpaceSmall()
                 Text(text = "$remaining ${stringResource(Res.string.ta)}")
@@ -407,9 +427,12 @@ fun AddNewTask(
 
                 Box(
                     modifier = Modifier
-                        .size(SmallIconButtonSize)
-                        .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(MaterialTheme.extendedColor.cardColor),
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(TextFieldCornerRadius)
+                        )
+                        .padding(2.dp)
+                        .size(SmallIconButtonSize),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -434,17 +457,24 @@ fun AddNewTask(
                 )
 
                 CoinAmountTextField(
+                    allowManualInput = false,
                     coinsAmount = toGift.toString(),
                     onValueChange = { new ->
                         val value = new.toIntOrNull() ?: 0
                         event(TaskEvent.OnCoinChange(value.coerceAtMost(available)))
                     },
                     onAddCoinClicked = { plus ->
-                        val value = (toGift + plus).coerceAtMost(available)
+//                        val value = (toGift + plus).coerceAtMost(available)
+//                        event(TaskEvent.OnCoinChange(value))
+
+                        val value = plus.coerceAtMost(available)
                         event(TaskEvent.OnCoinChange(value))
                     },
                     onSubtractButtonClicked = {minus ->
-                        val value = (toGift - minus).coerceAtMost(0)
+//                        val value = (toGift - minus).coerceAtLeast(0)
+//                        event(TaskEvent.OnCoinChange(value))
+
+                        val value = minus.coerceAtLeast(0)
                         event(TaskEvent.OnCoinChange(value))
                     }
                 )
@@ -458,8 +488,8 @@ fun AddNewTask(
                 event(TaskEvent.OnConfirmClicked)
             },
             modifier = Modifier
-                .padding(20.dp)
                 .fillMaxWidth()
+                .padding(ContainerPadding)
                 .height(ButtonHeight),
             enabled = onClick,
             text = stringResource(Res.string.saqlash)

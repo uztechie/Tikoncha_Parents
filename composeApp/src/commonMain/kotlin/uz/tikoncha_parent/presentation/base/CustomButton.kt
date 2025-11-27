@@ -30,9 +30,10 @@ fun CustomButton(
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
+    disabledContainerColor: Color = MaterialTheme.extendedColor.disabledBgColor
 ) {
 
-    val contentColor = if (enabled) textColor else DisableButtonContentColor
+    val contentColor = if (enabled) textColor else MaterialTheme.extendedColor.disabledContentColor
 
 
     Button(
@@ -42,8 +43,8 @@ fun CustomButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
             contentColor = contentColor,
-            disabledContainerColor = DisableButtonColor,
-            disabledContentColor = DisableButtonContentColor
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = MaterialTheme.extendedColor.disabledContentColor
         ),
         shape = shape,
         enabled = enabled,

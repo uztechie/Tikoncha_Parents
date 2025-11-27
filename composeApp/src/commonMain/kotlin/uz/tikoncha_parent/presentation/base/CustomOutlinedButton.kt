@@ -42,8 +42,8 @@ fun CustomOutlinedButton(
     endingIcon: (@Composable () -> Unit)? = null
 ) {
 
-    val borderColor = if (enabled) borderColor else DisableButtonContentColor
-    val contentColor = if (enabled) textColor else DisableButtonContentColor
+    val borderColor = if (enabled) borderColor else MaterialTheme.extendedColor.disabledBgColor
+    val contentColor = if (enabled) textColor else MaterialTheme.extendedColor.disabledContentColor
 
     OutlinedButton(
         onClick = onClick,

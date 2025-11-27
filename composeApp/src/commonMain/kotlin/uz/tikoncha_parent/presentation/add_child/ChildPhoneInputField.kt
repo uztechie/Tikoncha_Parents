@@ -35,9 +35,12 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.call
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -61,7 +64,7 @@ fun ChildPhoneInputField(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = if (isAccepted) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.buttonColor,
+                    color = if (isAccepted) MaterialTheme.extendedColor.primaryColor else Color.Transparent,
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .background(Color.Transparent)
@@ -81,6 +84,7 @@ fun ChildPhoneInputField(
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
+                shadow = false,
                 value = phoneNumber,
                 onValueChange = { input ->
                     val digits = input.filter { it.isDigit() }
@@ -97,7 +101,7 @@ fun ChildPhoneInputField(
                     .fillMaxWidth()
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
-                containerColor = Color.Transparent,
+                containerColor = MaterialTheme.extendedColor.backgroundColor,
                 contentColor = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor,
                 fontWeight = FontWeight.W500
             )
@@ -136,5 +140,18 @@ class PhoneNumberTransformation : VisualTransformation
         }
 
         return TransformedText(AnnotatedString(formatted), offsetTranslator)
+    }
+}
+
+@Composable
+@Preview
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ChildPhoneInputField(
+            phoneNumber = "",
+            onPhoneNumberChange = {}
+        )
     }
 }

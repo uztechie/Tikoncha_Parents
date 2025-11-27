@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import cafe.adriel.voyager.navigator.LocalNavigator
 import uz.tikoncha_parent.presentation.base.Loading
 import uz.tikoncha_parent.ui.CloseButtonInnerPadding
 import uz.tikoncha_parent.ui.CloseButtonSize
@@ -41,11 +43,18 @@ import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldIconSize
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_circle
 import tikoncha_parents.composeapp.generated.resources.happyemoji_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.coverShadow
+import uz.tikoncha_parent.presentation.task.TaskState
+import uz.tikoncha_parent.presentation.task.TaskUi
+import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.DividerHorizontal
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -91,7 +100,10 @@ fun <T>CustomListDialog(
                 Card(
                     modifier = Modifier
                         .width(dialogWidth)
-                        .height(dialogHeight),
+                        .height(dialogHeight)
+                        .coverShadow(
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
+                        ),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.extendedColor.backgroundColor
                     ),
@@ -100,6 +112,7 @@ fun <T>CustomListDialog(
                     Column (
                         modifier = Modifier
                             .fillMaxWidth()
+                            .background(MaterialTheme.extendedColor.backgroundColor)
                             .padding(ContainerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -139,7 +152,7 @@ fun <T>CustomListDialog(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .border(1.dp, MaterialTheme.extendedColor.primaryColor, RoundedCornerShape(TextFieldCornerRadius)),
+                                .border(1.dp, MaterialTheme.extendedColor.primaryColor.copy(0.2f), RoundedCornerShape(TextFieldCornerRadius)),
                             contentAlignment = Alignment.Center
                         ){
                             if (loading || errorMessage.isNotEmpty()){
@@ -196,5 +209,23 @@ fun <T>CustomListDialog(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        CustomListDialog(
+            title = "Tikoncha",
+            items = listOf("Tikoncha", "Tikoncha", "Tikoncha", "Tikoncha", "Tikoncha"),
+            show = true,
+            loading = false,
+            errorMessage = "",
+            onItemSelected = {},
+            onDismiss = {}
+        )
     }
 }

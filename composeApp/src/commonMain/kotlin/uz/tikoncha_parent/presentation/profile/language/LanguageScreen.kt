@@ -95,7 +95,7 @@ fun LanguageUi(
             )
 
             CustomButton(
-                text = stringResource(Res.string.davom_etish),
+                text = stringResource(Res.string.saqlash),
                 enabled = true,
                 fontSize = NormalLargeTextSize,
                 modifier = Modifier

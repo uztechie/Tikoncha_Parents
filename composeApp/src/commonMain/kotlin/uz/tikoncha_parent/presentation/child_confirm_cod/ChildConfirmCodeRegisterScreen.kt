@@ -50,6 +50,9 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class ChildConfirmCodeRegisterScreen(
@@ -137,7 +140,10 @@ fun ChildConfirmCodeRegisterUi(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
+                    .tripleShadow(
+                        shape = RoundedCornerShape(TextFieldCornerRadius)
+                    )
+                    .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(TextFieldHeight),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -199,10 +205,14 @@ fun ChildConfirmCodeRegisterUi(
 @Preview
 @Composable
 private fun Pre(){
-    ChildConfirmCodeRegisterUi(
-        navigator = null,
-        state = ChildConfirmState(),
-        event = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ChildConfirmCodeRegisterUi(
+            navigator = null,
+            state = ChildConfirmState(),
+            event = {}
+        )
+    }
 }
 
