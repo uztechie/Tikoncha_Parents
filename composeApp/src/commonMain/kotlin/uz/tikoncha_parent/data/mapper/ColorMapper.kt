@@ -1,15 +1,11 @@
 package uz.tikoncha_parent.data.mapper
 
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
-import uz.tikoncha_parent.ui.DarkColor
-import uz.tikoncha_parent.ui.LightColor
 
 
 data class ExtendedColors(
     val primaryColor: Color,
-    val primaryLightColor: Color,
+    val primaryAlphaColor: Color,
     val backgroundColor: Color,
     val cardColor: Color,
     val onBackgroundColor: Color,

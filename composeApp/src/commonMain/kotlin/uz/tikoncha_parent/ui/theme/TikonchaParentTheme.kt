@@ -8,31 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import uz.tikoncha_parent.data.mapper.ExtendedColors
 import uz.tikoncha_parent.platform.SystemBarTheme
-import uz.tikoncha_parent.ui.Background
 import uz.tikoncha_parent.ui.BackgroundColor
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.CardColors
-import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.DarkBackgroundColor
 import uz.tikoncha_parent.ui.DarkButtonBackgroundColors
 import uz.tikoncha_parent.ui.DarkCardColors
-import uz.tikoncha_parent.ui.DarkCardColorsButton
-import uz.tikoncha_parent.ui.DarkColor
 import uz.tikoncha_parent.ui.DarkGrayColor
 import uz.tikoncha_parent.ui.DarkTextColor
-import uz.tikoncha_parent.ui.DisableButtonColor
 import uz.tikoncha_parent.ui.DisabledBgDark
 import uz.tikoncha_parent.ui.DisabledBgLight
 import uz.tikoncha_parent.ui.DisabledContentDark
 import uz.tikoncha_parent.ui.DisabledContentLight
-import uz.tikoncha_parent.ui.GrayColor
 import uz.tikoncha_parent.ui.HintTextColor
-import uz.tikoncha_parent.ui.LightColor
-import uz.tikoncha_parent.ui.LightGrayColor
 import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.PrimaryGraColor
-import uz.tikoncha_parent.ui.PrimaryLightColor
-import uz.tikoncha_parent.ui.ShadowColor
 import uz.tikoncha_parent.ui.ShadowColorDark
 import uz.tikoncha_parent.ui.ShadowColorLight
 import uz.tikoncha_parent.ui.TextColor
@@ -55,7 +44,7 @@ private val LightColorScheme = lightColorScheme(
 
 private val LightExtendedColorScheme = ExtendedColors(
     primaryColor = PrimaryColor,
-    primaryLightColor = HintTextColor,
+    primaryAlphaColor = HintTextColor,
     backgroundColor = BackgroundColor,
     cardColor = CardColors,
     onBackgroundColor = TextColor,
@@ -73,7 +62,7 @@ private val LightExtendedColorScheme = ExtendedColors(
 )
 private val DarkExtendedColorScheme = ExtendedColors(
     primaryColor = PrimaryColor,
-    primaryLightColor = HintTextColor,
+    primaryAlphaColor = HintTextColor,
     backgroundColor = DarkBackgroundColor,
     cardColor = DarkCardColors,
     onBackgroundColor = DarkTextColor,

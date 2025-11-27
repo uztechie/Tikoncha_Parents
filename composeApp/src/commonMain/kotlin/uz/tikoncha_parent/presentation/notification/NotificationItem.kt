@@ -21,7 +21,7 @@ import uz.tikoncha_parent.data.mapper.NewsUi
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.GrayColor
 import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.PrimaryLightColor
+import uz.tikoncha_parent.ui.PrimaryAlphaColor
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -78,7 +78,7 @@ fun NotificationItem(
                         modifier = Modifier
                             .size(15.dp)
                             .clip(CircleShape)
-                            .background(PrimaryLightColor)
+                            .background(PrimaryAlphaColor)
                     )
                 }
 

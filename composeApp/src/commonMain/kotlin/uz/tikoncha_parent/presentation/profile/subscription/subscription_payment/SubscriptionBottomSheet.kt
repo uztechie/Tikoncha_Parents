@@ -45,7 +45,7 @@ import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OnPrimaryColor
 import uz.tikoncha_parent.ui.PriceSubscriptionColor
-import uz.tikoncha_parent.ui.PrimaryLightColor
+import uz.tikoncha_parent.ui.PrimaryAlphaColor
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
@@ -199,7 +199,7 @@ fun SubscriptionBottomSheet(
                     }
                     SpaceUltraSmall()
                     Box(
-                        modifier = Modifier.background(PrimaryLightColor, RoundedCornerShape(2.dp))
+                        modifier = Modifier.background(PrimaryAlphaColor, RoundedCornerShape(2.dp))
                             .padding(horizontal = 6.dp)
                     ){
                         CustomText(
