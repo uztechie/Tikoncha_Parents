@@ -1,9 +1,7 @@
 @file:OptIn(ExperimentalTime::class)
 
-package uz.tikoncha_parent.presentation.home
+package uz.tikoncha_parent.presentation.statistic
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
@@ -24,17 +22,10 @@ import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
 import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
-import uz.tikoncha_parent.data.remote.model.GetRuleItem
-import uz.tikoncha_parent.data.remote.model.GetRulesData
-import uz.tikoncha_parent.data.remote.model.UpsertRuleRequest
-import uz.tikoncha_parent.domain.model.AppUsage
-import uz.tikoncha_parent.domain.model.PolicyActionType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
-import uz.tikoncha_parent.domain.use_case.UpsertRuleUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
@@ -43,18 +34,15 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
 
-class HomeViewModel(
+class StatisticViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
-    private val childrenUseCase: ChildrenUseCase,
-    private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
 
 ) : ScreenModel
 {
 
-    private val hasLoaded = MutableStateFlow(false)
 
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(StatisticState())
     val state = _state.asStateFlow()
 
     private val _usagePeriod = MutableStateFlow<UsagePeriod?>(null)
@@ -65,19 +53,15 @@ class HomeViewModel(
     private var computeAllJob: Job? = null
 
     init {
-        loadOnce()
+
     }
 
-    fun loadOnce(){
-        val setOk = hasLoaded.compareAndSet(expect = false, update = true)
-        if (!setOk) return
-        sendDeviceInfo()
-        getSubscriptionLimit()
-    }
 
-    fun onEvent(event: HomeEvent) {
+
+
+    fun onEvent(event: StatisticEvent) {
         when (event) {
-            is HomeEvent.GetUsageList -> {
+            is StatisticEvent.GetUsageList -> {
                 _usagePeriod.value = event.usagePeriod
                 _state.update {
                     it.copy(
@@ -88,28 +72,13 @@ class HomeViewModel(
 
             }
 
-            HomeEvent.OnChildSelectClicked -> {
 
-            }
-
-            is HomeEvent.OnChildSelected -> {
-                _state.update {
-                    it.copy(selectedChildren = event.child)
-                }
-                AppSettings.selectedChildId = event.child.userId
-                loadAppUsages()
-
-            }
-
-            HomeEvent.GetAppUsage -> {
+            StatisticEvent.GetAppUsage -> {
                 loadAppUsages()
             }
 
-            HomeEvent.GetChildren -> {
-                loadChildren()
-            }
 
-            is HomeEvent.TodaySelected -> {
+            is StatisticEvent.TodaySelected -> {
                 _state.update {
                     it.copy(
                         isTodaySelected = event.today
@@ -117,75 +86,34 @@ class HomeViewModel(
                 }
             }
 
-            is HomeEvent.OnLockClicked -> {
+
+            StatisticEvent.RefreshSubscriptionLimit -> {
+                getSubscriptionLimit()
+            }
+
+            StatisticEvent.RefreshChild -> {
                 _state.update {
                     it.copy(
-                        selectedApp = event.appUsageUi
+                        selectedChild = AppSettings.selectedChild
                     )
                 }
             }
         }
     }
 
-    private fun sendDeviceInfo(){
-        screenModelScope.launch {
-            val token = AppSettings.fcmToken
-            val info = getDeviceInfo()
-            val request = DeviceRegisterRequest(
-                fcm_token = token,
-                manufacturer = info.manufacturer,
-                model_name = info.modelName,
-                os_version = info.osVersion,
-                os = info.os,
-                app_code = AppCode.currentAppCode
-            )
-            registerDeviceUseCase.invoke(request)
-        }
-    }
+
 
     private fun getSubscriptionLimit(){
         screenModelScope.launch {
             subscriptionLimitUseCase.invoke()
         }
-    }
-
-
-
-
-    private fun loadChildren() {
-        childrenJob?.cancel()
-        childrenJob = screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    childrenResponseState = ResponseState.Loading
-                )
-            }
-
-            val response = childrenUseCase.invoke()
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Success(),
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
-                        )
-                    }
-                }
-            }
+        _state.update {
+            it.copy(
+                subscriptionLimit = AppSettings.subscriptionLimit
+            )
         }
     }
+
 
     private fun loadAppUsages() {
         appUsageJob?.cancel()
@@ -197,7 +125,7 @@ class HomeViewModel(
             }
 
 
-            val response = appUsagesUseCase.invoke(state.value.selectedChildren?.userId ?: "")
+            val response = appUsagesUseCase.invoke(state.value.selectedChild?.userId ?: "")
             when (response) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {

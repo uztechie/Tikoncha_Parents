@@ -24,7 +24,7 @@ import ru.sulgik.mapkit.MapKit
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
 import uz.tikoncha_parent.presentation.chat.ChatScreen
-import uz.tikoncha_parent.presentation.home.HomeScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
@@ -132,7 +132,7 @@ fun App() {
 
 private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
     is DeepLink.Chat -> listOf(
-        HomeScreen(),
+        StatisticScreen(),
         ChatScreen(),
         ChatMessageScreen(
             chatId = link.chatId,
@@ -141,8 +141,8 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
             chatType = ChatType.NONE
         )
     )
-    is DeepLink.News -> listOf(HomeScreen(), NotificationScreen())
-    is DeepLink.Todo -> listOf(HomeScreen(), TaskScreen())
+    is DeepLink.News -> listOf(StatisticScreen(), NotificationScreen())
+    is DeepLink.Todo -> listOf(StatisticScreen(), TaskScreen())
     else -> null
 }
 

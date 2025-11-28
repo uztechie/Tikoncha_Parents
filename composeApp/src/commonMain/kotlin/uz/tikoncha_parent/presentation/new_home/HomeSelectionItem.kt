@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.home.new_home
+package uz.tikoncha_parent.presentation.new_home
 
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource

@@ -188,31 +188,31 @@ fun ProfileUi(
 
                 ProfileSectionItem(
                     icon = painterResource(data.painter),
-                    section = data.section,
                     onItemClick = { section ->
                         when (section) {
 
                             ProfileSection.PERSONAL_INFORMATION -> {
-                                rootNavigator?.push(PersonalInformationScreen())
+                                navigator?.push(PersonalInformationScreen())
                             }
 
                             ProfileSection.LANGUAGE -> {
-                                rootNavigator!!.push(LanguageScreen())
+                                navigator?.push(LanguageScreen())
                             }
 
                             ProfileSection.SETTINGS -> {
-                                rootNavigator!!.push(SettingsScreen())
+                                navigator?.push(SettingsScreen())
                             }
 
                             ProfileSection.SUBSCRIPTIONS -> {
-                                rootNavigator!!.push(SubscriptionPaymentScreen())
+                                navigator?.push(SubscriptionPaymentScreen())
                             }
 
                             ProfileSection.COINS -> {
-                                rootNavigator!!.push(CoinsScreen())
+                                navigator?.push(CoinsScreen())
                             }
                         }
-                    }
+                    },
+                    section = data.section
                 )
             }
 

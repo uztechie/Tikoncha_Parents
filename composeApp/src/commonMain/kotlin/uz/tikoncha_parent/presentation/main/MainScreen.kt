@@ -1,4 +1,4 @@
-package uz.saidburxon.newedu.presentation.feature.main
+package uz.tikoncha_parent.presentation.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,9 +24,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.presentation.home.HomeScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.map.MapScreen
-import uz.tikoncha_parent.presentation.monitoring.MonitorScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.ui.*
@@ -34,6 +33,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.feature.main.BottomNavItem
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.base.topShadow
 import uz.tikoncha_parent.presentation.chat.ChatScreen
@@ -64,7 +64,7 @@ fun MainUi() {
 
     val bottomNavItems = listOf(
         BottomNavItem(
-            HomeScreen(),
+            StatisticScreen(),
             painterResource(Res.drawable.home_only_borders),
             stringResource(Res.string.asosiy)
         ),
@@ -95,7 +95,7 @@ fun MainUi() {
         )
     )
 
-    Navigator(HomeScreen()) {
+    Navigator(StatisticScreen()) {
         val mainNavigator = LocalNavigator.current
         Scaffold(
             modifier = Modifier
@@ -186,7 +186,7 @@ private fun RowScope.NavigationItem(item: BottomNavItem, mainNavigator: Navigato
         selected = isSelected,
         onClick = {
 //            mainNavigator?.push(item.key)
-            mainNavigator?.replaceAll(listOf(HomeScreen(), item.screen))
+            mainNavigator?.replaceAll(listOf(StatisticScreen(), item.screen))
         },
         label = {
             Text(

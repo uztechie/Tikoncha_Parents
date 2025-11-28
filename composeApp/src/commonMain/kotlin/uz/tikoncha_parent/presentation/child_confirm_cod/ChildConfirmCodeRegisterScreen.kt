@@ -2,7 +2,6 @@ package uz.tikoncha_parent.presentation.child_confirm_cod
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,8 +48,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
 import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -186,7 +185,7 @@ fun ChildConfirmCodeRegisterUi(
 
             CustomButton(
                 onClick = {
-                    navigator?.replaceAll(MainScreen())
+                    navigator?.replaceAll(NewHomeScreen())
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)

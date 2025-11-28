@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.home
+package uz.tikoncha_parent.presentation.statistic
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing

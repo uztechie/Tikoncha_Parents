@@ -16,8 +16,8 @@ import uz.tikoncha_parent.data.remote.model.AppUsageDataDto
 import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
-import uz.tikoncha_parent.presentation.home.AppUsageUi
-import uz.tikoncha_parent.presentation.home.DateSelectionType
+import uz.tikoncha_parent.presentation.statistic.AppUsageUi
+import uz.tikoncha_parent.presentation.statistic.DateSelectionType
 import kotlin.text.toInt
 import kotlin.time.ExperimentalTime
 

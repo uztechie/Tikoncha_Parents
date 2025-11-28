@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.home
+package uz.tikoncha_parent.presentation.statistic
 
 import uz.tikoncha_parent.domain.model.HourMinute
 

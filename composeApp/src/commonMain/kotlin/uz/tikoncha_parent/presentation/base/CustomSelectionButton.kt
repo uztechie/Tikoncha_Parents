@@ -53,15 +53,15 @@ fun CustomSelectionButton(
     tint: Color = SliderPageColor
 ) {
 
-    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.onBackgroundColor
+    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.primaryColor
     val newText = text.ifEmpty { label }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
+//            .tripleShadow(
+//                shape = RoundedCornerShape(TextFieldCornerRadius),
+//            )
             .background(background, RoundedCornerShape(TextFieldCornerRadius))
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)

@@ -1,12 +1,11 @@
 package uz.tikoncha_parent.presentation.push
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
 import uz.tikoncha_parent.presentation.chat.ChatScreen
-import uz.tikoncha_parent.presentation.home.HomeScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.task.TaskScreen
@@ -32,7 +31,7 @@ fun DeepLinkEffect(navigator: Navigator) {
 
     val top = navigator.lastItem
     LaunchedEffect(top) {
-        if (top is HomeScreen) handled.clear()
+        if (top is StatisticScreen) handled.clear()
     }
 
 }
@@ -51,7 +50,7 @@ fun navigateByDeepLink(navigator: Navigator, link: DeepLink) {
     when (link) {
         is DeepLink.Chat -> navigator.push(
             listOf(
-                HomeScreen(),
+                StatisticScreen(),
                 ChatScreen(),
                 ChatMessageScreen(
                     chatId = link.chatId,

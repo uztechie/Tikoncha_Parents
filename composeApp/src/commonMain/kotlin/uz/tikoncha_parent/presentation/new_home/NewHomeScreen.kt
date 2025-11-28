@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.home.new_home
+package uz.tikoncha_parent.presentation.new_home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,29 +52,38 @@ import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.chat.ChatScreen
-import uz.tikoncha_parent.presentation.home.HomeEvent
-import uz.tikoncha_parent.presentation.home.HomeState
-import uz.tikoncha_parent.presentation.home.HomeViewModel
+import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
+import uz.tikoncha_parent.presentation.profile.ProfileScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticEvent
+import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.task.TaskScreen
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.NewBackgroundColor
 import uz.tikoncha_parent.ui.NewTextColor
+import uz.tikoncha_parent.ui.NormalIconButtonSize
+import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SmallIconButtonSize
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.UltraLargeIconButtonSize
+import uz.tikoncha_parent.ui.UltraSmallIconButtonSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -77,14 +91,16 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 class NewHomeScreen : Screen {
 
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current?:return
-        val rootNavigator = navigator.parent?:return
 
-        val viewModel = rootNavigator.koinNavigatorScreenModel<HomeViewModel>()
+        val viewModel = navigator.koinNavigatorScreenModel<HomeViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        Logger.d("NewHomeScreen", "Content")
 
         NewHomeUi(
             navigator = navigator,
@@ -100,29 +116,57 @@ fun NewHomeUi(
     event: (HomeEvent) -> Unit
 ){
 
+    LaunchedEffect(true){
+        event(HomeEvent.GetChildren)
+    }
+
+
+    Logger.d("NewHomeScreen", "NewHomeUi")
     val baloo2 = FontFamily(
         Font(Res.font.baloo_2_medium)
+    )
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    val childrenLoading = state.childrenResponseState is ResponseState.Loading
+    val childrenErrorText = state.childrenResponseState.errorText()
+
+    CustomListDialog(
+        title = stringResource(Res.string.farzandlaringiz),
+        items = state.childrenList,
+        show = showDialog,
+        loading = childrenLoading,
+        errorMessage = childrenErrorText,
+        onItemSelected = {
+            event(HomeEvent.OnChildSelected(it))
+        },
+        onDismiss = {
+            showDialog = false
+        }
     )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(NewBackgroundColor)
+            .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(ContainerPadding)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CustomSelectionButton(
-                background = ColorWhite,
                 label = stringResource(Res.string.farzandlaringiz),
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .height(TextFieldHeight),
-                text = state.selectedChildren?.name?:"",
+                text = state.selectedChild?.name?:"",
                 painter = painterResource(Res.drawable.profile),
                 tint = MaterialTheme.extendedColor.primaryAlphaColor,
-                onClick = { }
+                onClick = {
+                    showDialog = true
+                }
             )
 
             Spacer(Modifier.weight(1f))
@@ -130,7 +174,7 @@ fun NewHomeUi(
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(ColorWhite)
+                    .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
                     .clip(CircleShape)
                     .clickable{
@@ -140,6 +184,27 @@ fun NewHomeUi(
                 Image(
                     painter = painterResource(Res.drawable.notification),
                     contentDescription = "",
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
+                    modifier = Modifier
+                        .size(NormalIconSize)
+                )
+            }
+            SpaceUltraSmall()
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.extendedColor.cardColor)
+                    .padding(12.dp)
+                    .clip(CircleShape)
+                    .clickable{
+                        navigator?.push(ProfileScreen())
+                    }
+            ){
+                Image(
+                    painter = painterResource(Res.drawable.profile),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(NormalIconSize),
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor)
                 )
             }
@@ -156,7 +221,11 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(ColorWhite, RoundedCornerShape(CardCornerRadius))
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                        .clip(RoundedCornerShape(CardCornerRadius))
+                        .clickable{
+                            navigator?.push(StatisticScreen())
+                        }
                         .padding(CardCornerPadding),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -185,7 +254,7 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.5f)
-                                .background(NewBackgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
                         ){
@@ -200,7 +269,7 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.65f)
-                                .background(NewBackgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
                         ){
@@ -215,7 +284,7 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.8f)
-                                .background(NewBackgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
                         ){
@@ -236,7 +305,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(ColorWhite, RoundedCornerShape(CardCornerRadius))
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
@@ -276,12 +345,12 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(ColorWhite, RoundedCornerShape(CardCornerRadius))
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable{
                             navigator?.push(PolicyListScreen(
-                                state.selectedChildren
+                                state.selectedChild
                             ))
                         },
                 ) {

@@ -56,7 +56,6 @@ class   PersonalInformationScreen : Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
-        val rootNavigator = navigator?.parent
 
         val viewModel = koinViewModel<ProfileViewModel>()
 

@@ -17,14 +17,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.delay
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.login.LoginScreen
-import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.presentation.slider.SliderScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tikoncha_logo
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
-import uz.tikoncha_parent.platform.KmpLogger
+import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SplashScreen : Screen {
@@ -43,7 +42,8 @@ class SplashScreen : Screen {
 
             delay(1000) // 1 sekund
             if (AppSettings.hasUserLogin){
-                navigator?.replaceAll(MainScreen())
+                Logger.d("SplashScreen", "hasUserLogin")
+                navigator?.replaceAll(NewHomeScreen())
             }else{
                 if (AppSettings.isFirstLaunch){
                     navigator?.replaceAll(SliderScreen())

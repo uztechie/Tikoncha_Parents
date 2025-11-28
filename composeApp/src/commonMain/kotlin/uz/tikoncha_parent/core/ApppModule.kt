@@ -34,7 +34,7 @@ import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
 import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
 import uz.tikoncha_parent.presentation.add_child.ChildViewmodel
 import uz.tikoncha_parent.presentation.child_confirm_cod.ChildConfirmViewModel
-import uz.tikoncha_parent.presentation.home.HomeViewModel
+import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
 import uz.tikoncha_parent.presentation.login.LoginViewmodel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
@@ -92,6 +92,7 @@ import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
+import uz.tikoncha_parent.presentation.new_home.HomeViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.policy.PolicyViewModel
@@ -200,8 +201,8 @@ val sharedModule = module {
     viewModel { LoginPasswordViewmodel() }
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
-    factory { HomeViewModel(get(), get(), get(), get()) }
-    viewModel { ChatDetailsViewModel(get()) }
+    factory { StatisticViewModel(get(), get()) }
+    factory { HomeViewModel(get(), get(), get()) }
     viewModel { ChatViewModel(
         get(),
         get(),

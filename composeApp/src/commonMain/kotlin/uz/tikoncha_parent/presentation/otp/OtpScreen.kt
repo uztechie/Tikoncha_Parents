@@ -40,9 +40,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
-import uz.tikoncha_parent.presentation.login.LoginEvent
 import uz.tikoncha_parent.presentation.login.LoginViewmodel
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -134,7 +133,7 @@ fun OtpUi(
                 navigator?.push(RegisterScreen())
             }
             else{
-                navigator?.replaceAll(MainScreen())
+                navigator?.replaceAll(NewHomeScreen())
             }
         }
 

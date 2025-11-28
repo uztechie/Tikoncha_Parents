@@ -18,8 +18,8 @@ val GrayColor = Color(0xFFAFAFAF)
 val DarkColor = Color(0xFF010D01)
 val DarkGrayColor = Color(0xFF1F1F1F)
 val ShadowColor = Color(0xFFedf0ed)
-val ShadowColorLight = Color(0XFF8F8F8F)
-val ShadowColorDark = Color(0xFF335B39)
+
+
 
 
 
@@ -28,6 +28,12 @@ val DividerColor = Color(0xFFE9E9E9)
 val BackgroundColor = Color(0xFFFAF8F6)
 val NewBackgroundColor = Color(0xFFF1EEE2)
 //val PrimaryColor = Color(0xFF4BB462)
+
+
+val DarkBackgroundColor = Color(0xFF130D00)
+
+val ShadowColorDark = DarkBackgroundColor
+val ShadowColorLight = Color(0XFF8F8F8F)
 
 val BorderColor = Color(0xFFE7E7E7)
 //val BorderColor = Color(0xFFE7E7E7)
@@ -83,7 +89,6 @@ val ProgressColor4 = Color(0xFFAEEA00)
 val ProgressColor5 = PrimaryColor
 
 //val DarkBackgroundColor = Color(0xFF010D01)
-val DarkBackgroundColor = Color(0xFF130D00)
 
 val DarkCardColors = Color(0xFF1A1A1A)
 

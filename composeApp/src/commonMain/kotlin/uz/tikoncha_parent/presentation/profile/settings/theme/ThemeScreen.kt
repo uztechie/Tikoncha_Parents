@@ -34,12 +34,10 @@ import uz.tikoncha_parent.ui.theme.ThemeSelectorWithImage
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tema
 import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
-import uz.tikoncha_parent.presentation.profile.ProfileScreen
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -133,7 +131,7 @@ fun ThemeUi(
                 fontSize = NormalLargeTextSize,
                 onClick = {
                     ThemeController.setMode(selectedTheme)
-                    navigator?.replaceAll(MainScreen())
+                    navigator?.replaceAll(NewHomeScreen())
                 }
             )
             SpaceLarge()

@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.home.new_home
+package uz.tikoncha_parent.presentation.new_home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +37,7 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun NewHomeItem(
@@ -53,7 +55,7 @@ fun NewHomeItem(
                     .clip(RoundedCornerShape(CardCornerRadius))
                     .clickable { onSettingSelected(selection) }
                     .background(
-                        color = ColorWhite,
+                        color = MaterialTheme.extendedColor.cardColor,
                         shape = RoundedCornerShape(CardCornerRadius)
                     )
                     .padding(horizontal = 20.dp, vertical = 8.dp)

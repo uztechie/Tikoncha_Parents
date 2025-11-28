@@ -45,7 +45,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.feature.main.MainScreen
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -196,7 +196,7 @@ fun AddChildRegisterUi(
 
             CustomOutlinedButton(
                 onClick = {
-                    navigator?.replaceAll(MainScreen())
+                    navigator?.replaceAll(NewHomeScreen())
                 },
                 text = stringResource(Res.string.o_tkazib_yuborish),
                 modifier = Modifier
