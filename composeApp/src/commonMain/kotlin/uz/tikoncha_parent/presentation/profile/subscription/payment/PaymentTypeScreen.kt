@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -381,6 +382,7 @@ fun PaymentTypeScreenUi(
                                 Image(
                                     painter = painterResource(Res.drawable.money_light),
                                     contentDescription = null,
+                                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                                     modifier = Modifier
                                         .size(NormalIconSize)
                                 )

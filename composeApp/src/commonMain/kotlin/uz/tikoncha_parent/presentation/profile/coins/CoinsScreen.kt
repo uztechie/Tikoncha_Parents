@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,7 @@ fun CoinsUi(
                     .height(TextFieldHeight),
                 text = selectedChildren.value,
                 painter = painterResource(Res.drawable.profile),
+                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 onClick = {
                     showDialog = true
                 }
@@ -364,6 +366,7 @@ fun CoinsUi(
                                 Image(
                                     painter = painterResource(Res.drawable.money_light),
                                     contentDescription = null,
+                                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                                     modifier = Modifier
                                         .size(NormalIconSize)
                                 )

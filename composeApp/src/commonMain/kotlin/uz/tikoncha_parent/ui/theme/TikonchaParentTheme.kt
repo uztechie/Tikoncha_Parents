@@ -21,6 +21,7 @@ import uz.tikoncha_parent.ui.DisabledBgLight
 import uz.tikoncha_parent.ui.DisabledContentDark
 import uz.tikoncha_parent.ui.DisabledContentLight
 import uz.tikoncha_parent.ui.HintTextColor
+import uz.tikoncha_parent.ui.PrimaryAlphaColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.ShadowColorDark
 import uz.tikoncha_parent.ui.ShadowColorLight
@@ -44,7 +45,7 @@ private val LightColorScheme = lightColorScheme(
 
 private val LightExtendedColorScheme = ExtendedColors(
     primaryColor = PrimaryColor,
-    primaryAlphaColor = HintTextColor,
+    primaryAlphaColor = PrimaryColor,
     backgroundColor = BackgroundColor,
     cardColor = CardColors,
     onBackgroundColor = TextColor,
@@ -62,7 +63,7 @@ private val LightExtendedColorScheme = ExtendedColors(
 )
 private val DarkExtendedColorScheme = ExtendedColors(
     primaryColor = PrimaryColor,
-    primaryAlphaColor = HintTextColor,
+    primaryAlphaColor = PrimaryAlphaColor,
     backgroundColor = DarkBackgroundColor,
     cardColor = DarkCardColors,
     onBackgroundColor = DarkTextColor,

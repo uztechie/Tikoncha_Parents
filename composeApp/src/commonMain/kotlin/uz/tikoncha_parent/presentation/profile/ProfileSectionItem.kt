@@ -80,7 +80,7 @@ fun ProfileSectionItem(
                 Image(
                     painter = icon,
                     contentDescription = "",
-                    colorFilter = ColorFilter.tint(PrimaryAlphaColor),
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                     modifier = Modifier
                         .fillMaxSize(0.6f)
                 )

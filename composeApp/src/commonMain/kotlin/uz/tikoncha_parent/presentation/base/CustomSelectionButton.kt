@@ -49,6 +49,7 @@ fun CustomSelectionButton(
     fonSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
     showTrailingIcon: Boolean = true,
+    background: Color = MaterialTheme.extendedColor.cardColor,
     tint: Color = SliderPageColor
 ) {
 
@@ -61,7 +62,7 @@ fun CustomSelectionButton(
             .tripleShadow(
                 shape = RoundedCornerShape(TextFieldCornerRadius),
             )
-            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(background, RoundedCornerShape(TextFieldCornerRadius))
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)
             .clickable(

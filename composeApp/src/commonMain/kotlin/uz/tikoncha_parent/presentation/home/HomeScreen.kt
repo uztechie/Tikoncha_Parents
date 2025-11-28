@@ -349,6 +349,7 @@ fun HomeUi(
                         .height(TextFieldHeight),
                     text = state.selectedChildren?.name?:"",
                     painter = painterResource(Res.drawable.profile),
+                    tint = MaterialTheme.extendedColor.primaryAlphaColor,
                     onClick = {
                         showDialog = true
                     }

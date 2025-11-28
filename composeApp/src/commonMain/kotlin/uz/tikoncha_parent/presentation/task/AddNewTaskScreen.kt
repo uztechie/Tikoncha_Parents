@@ -279,6 +279,7 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.note),
                         contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                         modifier = Modifier.size(22.dp),
                     )
                 },
@@ -304,6 +305,7 @@ fun AddNewTask(
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
                         contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                         modifier = Modifier.size(22.dp),
                     )
                 },
@@ -322,6 +324,7 @@ fun AddNewTask(
                     .height(TextFieldHeight),
                 label = stringResource(Res.string.tugatish_sanasi),
                 painter = painterResource(Res.drawable.calendar_2),
+                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 onClick = {
                     showDialogData = true
                 },
@@ -339,6 +342,7 @@ fun AddNewTask(
                     .height(TextFieldHeight),
                 label = stringResource(Res.string.tugash_vaqti),
                 painter = painterResource(Res.drawable.alarm),
+                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 onClick = {
                     showDialogTime = true
                 },

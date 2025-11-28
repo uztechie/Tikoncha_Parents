@@ -143,6 +143,7 @@ fun SubscriptionPaymentUi(
                     .height(TextFieldHeight),
                 text = selectedChildren.value,
                 painter = painterResource(Res.drawable.profile),
+                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 onClick = {
                     showDialog = true
                 }

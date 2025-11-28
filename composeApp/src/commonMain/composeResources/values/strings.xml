@@ -264,5 +264,7 @@
     <string name="sovga_qilish">Sovg‘a qilish</string>
     <string name="dostlarni_taklif_qilish">Do‘stlarni taklif qilish</string>
     <string name="faol_vazifalar">Faol vazifalar</string>
+    <string name="farzandlaringiz_qayerdaligi">Farzandlaringiz qayerdaligini ko‘ring</string>
+    <string name="farzand_va_maktab_bilan_boglaning">Farzand va maktab bilan bog‘laning</string>
 
 </resources>
