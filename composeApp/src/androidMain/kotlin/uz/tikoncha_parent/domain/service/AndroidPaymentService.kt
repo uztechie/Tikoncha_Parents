@@ -10,11 +10,11 @@ class AndroidPaymentService(
 ): PaymentService {
     override fun openClickPayment(
         serviceId: String,
-        merchantTransId: String,
+        merchantId: String,
         amount: String,
         transactionId: String
     ) {
-        val url = buildClickUrl(serviceId, merchantTransId, amount, transactionId)
+        val url = buildClickUrl(serviceId, merchantId, amount, transactionId)
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

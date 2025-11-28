@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SubscriptionLimit(
+    val subscriptionType: SubscriptionType = SubscriptionType.FREE,
     val appUsageDaily: Int = Int.MAX_VALUE,
     val appUsageWeekly: Int = Int.MAX_VALUE,
     val policyCount: Int = Int.MAX_VALUE,

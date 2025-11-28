@@ -21,7 +21,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class PolicySetupViewModel(
     private val createPolicyUseCase: CreatePolicyUseCase,
     private val updatePolicyUseCase: UpdatePolicyUseCase,
-    private val deletePolicyUseCase: DeletePolicyUseCase
+    private val deletePolicyUseCase: DeletePolicyUseCase,
 ): ViewModel() {
 
 

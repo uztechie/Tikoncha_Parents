@@ -2,7 +2,6 @@ package uz.tikoncha_parent.presentation.profile.coins
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +41,6 @@ import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeS
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
@@ -51,16 +49,13 @@ import uz.tikoncha_parent.ui.SmallIconButtonSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
-import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.bitta_tanga
 import tikoncha_parents.composeapp.generated.resources.coin
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
-import tikoncha_parents.composeapp.generated.resources.hammasi
 import tikoncha_parents.composeapp.generated.resources.money_light
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
@@ -69,7 +64,6 @@ import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
 import tikoncha_parents.composeapp.generated.resources.tolov_summasi
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -396,7 +390,7 @@ fun CoinsUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
-                    navigator!!.push(PaymentTypeScreen(coinsAmount = coinsAmount.toInt()))
+//                    navigator!!.push(PaymentTypeScreen(coinsAmount = coinsAmount.toInt(),))
                 },
                 text = stringResource(Res.string.sotib_olish),
                 enabled = true,

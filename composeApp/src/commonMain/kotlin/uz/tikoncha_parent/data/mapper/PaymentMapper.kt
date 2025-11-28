@@ -28,6 +28,7 @@ fun SubscriptionPlansData.toSubscriptionPlanUi(): SubscriptionUi {
 
 fun SubscriptionLimitData.toSubscriptionLimit(): SubscriptionLimit{
     return SubscriptionLimit(
+        subscriptionType = SubscriptionType.fromString(subscription),
         appUsageDaily = app_usage.app_usage_daily ?: Int.MAX_VALUE,
         appUsageWeekly = app_usage.app_usage_weekly ?: Int.MAX_VALUE,
         policyCount = policy.policy_count ?: Int.MAX_VALUE,

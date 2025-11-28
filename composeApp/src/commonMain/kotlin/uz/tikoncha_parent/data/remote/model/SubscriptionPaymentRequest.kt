@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SubscriptionPaymentRequest(
-    val tier: String,
+    val plan_id: String,
+    val plan_duration: String,
     val child_user_id: String?
 )

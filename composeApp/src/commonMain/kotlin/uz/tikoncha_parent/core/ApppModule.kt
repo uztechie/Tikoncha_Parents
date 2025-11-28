@@ -101,6 +101,7 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 
 val sharedModule = module {
     single {
@@ -218,10 +219,11 @@ val sharedModule = module {
     viewModel { MyCoinsViewModel(get()) }
 
     viewModel { PolicySetupViewModel(get(), get(), get()) }
-    single { PolicySharedModel() }
+    single { PolicySharedModel(get()) }
     factory { AppWebViewModel(get()) }
 
-    viewModel { PaymentViewModel(get(), get()) }
+    viewModel { PaymentViewModel(get(), get(), get(), get()) }
+    viewModel { SubscriptionPaymentViewModel(get(), get()) }
 
 
 }

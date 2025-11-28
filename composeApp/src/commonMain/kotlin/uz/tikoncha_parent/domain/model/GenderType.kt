@@ -1,10 +1,12 @@
 package uz.tikoncha_parent.domain.model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ayol
 import tikoncha_parents.composeapp.generated.resources.erkak
 
+@Serializable
 enum class GenderType(
     val resId: StringResource,
     val key: String

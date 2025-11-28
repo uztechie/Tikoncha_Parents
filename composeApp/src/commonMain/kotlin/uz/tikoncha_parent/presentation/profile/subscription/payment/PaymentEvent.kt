@@ -1,8 +1,12 @@
 package uz.tikoncha_parent.presentation.profile.subscription.payment
 
-sealed interface PaymentEvent {
-    data object Purchase: PaymentEvent
-    data object ResetResponseState: PaymentEvent
+import uz.tikoncha_parent.domain.model.SubscriptionDuration
 
+sealed interface PaymentEvent {
+    data object Pay: PaymentEvent
+    data class SetAmount(val amount:Int): PaymentEvent
+    data object ResetPaymentResponse: PaymentEvent
+    data class SetSubscriptionDuration(val duration: SubscriptionDuration): PaymentEvent
+    data class SetPlanId(val planId: String): PaymentEvent
 
 }

@@ -16,6 +16,7 @@ sealed interface PolicySharedEvent {
     data class SetPolicyTitle(val title: String): PolicySharedEvent
 
     data object RefreshSubscriptionLimit: PolicySharedEvent
+    data object LoadSubscriptionLimit: PolicySharedEvent
 
 
 

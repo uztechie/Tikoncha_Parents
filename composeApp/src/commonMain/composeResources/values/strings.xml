@@ -265,4 +265,8 @@
     <string name="dostlarni_taklif_qilish">Do‘stlarni taklif qilish</string>
     <string name="faol_vazifalar">Faol vazifalar</string>
 
+    <string name="tabriklaymiz">TABRIKLAYMIZ!</string>
+    <string name="endi_siz_ushbu_obunaga_egasiz">Endi siz ushbu obunaga egasiz</string>
+    <string name="maxsus_imkoniyatlar_va_qollab_quvvatlashdan_foydalaning">Maxsus imkoniyatlar va birinchi navbatdagi qo‘llab-quvvatlashdan foydalaning!</string>
+
 </resources>

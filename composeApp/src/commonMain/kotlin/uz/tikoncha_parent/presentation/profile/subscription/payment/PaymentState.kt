@@ -5,11 +5,13 @@ import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class PaymentState(
-    val serviceId: Int = 0,
-    val merchantTransId: String = "",
     val amount: Int = 0,
-    val responseState: ResponseState<Nothing> = ResponseState.Idle,
-
+    val paymentResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val merchantTransId: String = "",
+    val serviceId: Int = 0,
+    val merchantId: Int = 46788,
     val subscriptionDuration: SubscriptionDuration = SubscriptionDuration.MONTHLY,
     val paymentStatus: PaymentStatus = PaymentStatus.START,
+    val paymentStatusError: String = "",
+    val planId: String = ""
 )

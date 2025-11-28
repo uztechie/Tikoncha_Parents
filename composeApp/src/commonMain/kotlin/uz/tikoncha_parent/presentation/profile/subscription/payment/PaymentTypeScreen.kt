@@ -2,7 +2,6 @@ package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +44,7 @@ import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -55,8 +54,9 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class PaymentTypeScreen(
-    private val subscriptionPrice: Int? = null,
-    private val coinsAmount: Int? = null
+    val subDuration: SubscriptionDuration,
+    val amount: Int,
+    val planId: String
 ) : Screen {
     @Composable
     override fun Content() {
@@ -67,10 +67,14 @@ class PaymentTypeScreen(
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
+        LaunchedEffect(Unit) {
+            event(PaymentEvent.SetSubscriptionDuration(subDuration))
+            event(PaymentEvent.SetAmount(amount = amount))
+            event(PaymentEvent.SetPlanId(planId))
+        }
+
         PaymentTypeScreenUi(
             navigator = navigator,
-            subscriptionPrice = subscriptionPrice,
-            coinsAmount = coinsAmount,
             state = state,
             event = event
         )
@@ -80,8 +84,6 @@ class PaymentTypeScreen(
 @Composable
 fun PaymentTypeScreenUi(
     navigator: Navigator?,
-    subscriptionPrice: Int? = null,
-    coinsAmount: Int? = null,
     state: PaymentState = PaymentState(),
     event: (PaymentEvent) -> Unit = {}
 ) {
@@ -95,57 +97,59 @@ fun PaymentTypeScreenUi(
     }
 
 
-    val loading = state.responseState is ResponseState.Loading
-    val errorText = state.responseState.errorText()
-    val success = state.responseState is ResponseState.Success
+    val paymentLoading = state.paymentResponseState is ResponseState.Loading
+    val paymentError = state.paymentResponseState.errorText()
+    LoadingDialog(paymentLoading)
 
 
-    LoadingDialog(loading)
-
-    var showErrorDialog by remember() {
-        mutableStateOf(false)
-    }
-    var showSuccessDialog by remember() {
+    var showCreatePaymentErrorDialog by remember() {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(errorText){
-        if (errorText.isNotEmpty()){
-            showErrorDialog = true
-        }
-    }
-    LaunchedEffect(success){
-        if (success){
-
+    LaunchedEffect(paymentError, ) {
+        if (paymentError.isNotEmpty()) {
+            showCreatePaymentErrorDialog = true
         }
     }
 
-    CustomDialog(
-        show = showErrorDialog,
-        title = stringResource(Res.string.xatolik),
-        message = errorText,
-        buttonText = stringResource(Res.string.ok),
-        showCloseButton = false,
+    var showPaymentCompletedDialog by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state.paymentStatus) {
+        showPaymentCompletedDialog = state.paymentStatus == PaymentStatus.COMPLETED
+    }
+
+
+    CustomPaymentDialog(
+        show = showPaymentCompletedDialog,
         onDismiss = {
-            showErrorDialog = false
+            showPaymentCompletedDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
+            navigator?.pop()
         },
         onButtonClick = {
-            showErrorDialog = false
+            showPaymentCompletedDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
+            navigator?.pop()
         }
     )
 
+
     CustomDialog(
-        show = showSuccessDialog,
-        title = stringResource(Res.string.muvaffaqiyatli),
-        message = stringResource(Res.string.jadval_muvaffaqiyatli_yaratildi),
+//        lottieAsset = DialogLottie.ERROR,
+        show = showCreatePaymentErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = paymentError,
         buttonText = stringResource(Res.string.ok),
         showCloseButton = false,
         onDismiss = {
-            showSuccessDialog = false
+            showCreatePaymentErrorDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
         },
         onButtonClick = {
-            showSuccessDialog = false
-            navigator?.pop()
+            showCreatePaymentErrorDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
         }
     )
 
@@ -160,7 +164,7 @@ fun PaymentTypeScreenUi(
             title = stringResource(Res.string.tasdiqlash),
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                navigator?.pop()
             }
         )
 
@@ -197,7 +201,7 @@ fun PaymentTypeScreenUi(
                 PaymentOption(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.click_pay),
-                    isSelected = selectedPayment == "click",
+                    isSelected = true,
                     onClick = { selectedPayment = "click" }
                 )
             }
@@ -406,92 +410,6 @@ fun PaymentTypeScreenUi(
                 }
             }
 
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(1.dp, MaterialTheme.extendedColor.borderColor, RoundedCornerShape(TextFieldCornerRadius))
-//                    .padding(4.dp)
-//            )
-//            {
-//
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(64.dp),
-//                    shape = RoundedCornerShape(TextFieldCornerRadius),
-//                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor),
-//                )
-//                {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize(),
-//                        verticalArrangement = Arrangement.Center, // ⬅️ Vertikal markaz
-//                    ) {
-//
-//                        Row(
-//                            modifier = Modifier.padding(6.dp),
-//                            horizontalArrangement = Arrangement.SpaceBetween,
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .clip(CircleShape)
-//                                    .background(MaterialTheme.extendedColor.tonalButtonColor)
-//                                    .padding(10.dp)
-//                            ) {
-//                                Image(
-//                                    painter = painterResource(Res.drawable.money_light),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.size(NormalIconButtonSize)
-//                                )
-//                            }
-//
-//                            SpaceMedium()
-//
-//                            CustomText(
-//                                text = if (subscriptionPrice != null) {
-//                                    if (subscriptionPrice < 1000000){
-//                                        "${stringResource(Res.string.obuna_pro)} ${subscriptionPrice / 1000} ${stringResource(Res.string.ming_sum)}"
-//                                    }else{
-//
-//                                        val millions = subscriptionPrice / 1000000
-//                                        val thousands = (subscriptionPrice - (millions * 1000000)) / 1000
-//
-//                                        "${stringResource(Res.string.obuna_pro)} $millions ${stringResource(Res.string.million)} $thousands ${stringResource(Res.string.ming_sum)}"
-//                                    }
-//                                }else "${coinsAmount.toString()} ${stringResource(Res.string.ta_tanga)}",
-//                                fontSize = NormalTextSizeSp,
-//                                fontWeight = FontWeight.W500,
-//                            )
-//                        }
-//                    }
-//
-//                    SpaceUltraSmall()
-//
-//                }
-//
-//                SpaceLarge()
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = ContainerPadding),
-//                    horizontalArrangement = Arrangement.SpaceBetween
-//                )
-//                {
-//                    CustomText(
-//                        text = stringResource(Res.string.hammasi),
-//                        fontSize = NormalTextSize,
-//                        fontWeight = FontWeight.W600
-//                    )
-//                    CustomText(
-//                        text = if (subscriptionPrice != null) "${subscriptionPrice}.00 UZS" else "${coinsAmount!! * 100}.00 UZS",
-//                        fontSize = NormalTextSize,
-//                        color = PrimaryColor,
-//                        fontWeight = FontWeight.W600
-//                    )
-//                }
-//            }
-
             SpaceLarge()
 
             CustomButton(
@@ -499,10 +417,10 @@ fun PaymentTypeScreenUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 text = stringResource(Res.string.sotib_olish),
-                enabled = isSelected,
+                enabled = state.paymentStatus != PaymentStatus.PENDING,
                 fontSize = NormalLargeTextSize,
                 onClick = {
-                    event(PaymentEvent.Purchase)
+                    event(PaymentEvent.Pay)
                 }
             )
             SpaceLarge()
@@ -516,7 +434,10 @@ private fun Preview() {
     TikonchaParentTheme(ThemeMode.LIGHT){
         PaymentTypeScreenUi(
             navigator = null,
-            coinsAmount = 1000
+            state = PaymentState(
+                amount = 10000
+            ),
+            event = {}
         )
     }
 

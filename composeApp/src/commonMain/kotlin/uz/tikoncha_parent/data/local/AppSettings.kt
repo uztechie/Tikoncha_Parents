@@ -88,6 +88,26 @@ object AppSettings {
             settings.putString("children", json)
         }
 
+    var selectedChild: UserInfo?
+        get() {
+            val json = settings.getStringOrNull("selectedChild") ?: ""
+            return try {
+                Json.decodeFromString<UserInfo>(json)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+        set(value){
+            if (value == null){
+                settings.remove("selectedChild")
+            }
+            else{
+                val json = Json.encodeToString(value)
+                settings.putString("selectedChild", json)
+            }
+        }
+
 
     var subscriptionLimit: SubscriptionLimit
         get() {

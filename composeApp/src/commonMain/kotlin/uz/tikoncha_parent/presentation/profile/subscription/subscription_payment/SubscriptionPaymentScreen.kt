@@ -8,9 +8,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,24 +17,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.common.*
-import uz.tikoncha_parent.presentation.domain.model.Subscription
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.SubscriptionType
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -45,10 +48,15 @@ class SubscriptionPaymentScreen : Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
+        val viewModel = koinViewModel<SubscriptionPaymentViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
 
         SubscriptionPaymentUi(
             navigator = navigator,
-            state = SubscriptionPaymentState()
+            state = state,
+            event = event
         )
     }
 }
@@ -56,56 +64,59 @@ class SubscriptionPaymentScreen : Screen {
 @Composable
 fun SubscriptionPaymentUi(
     navigator: Navigator?,
-    state: SubscriptionPaymentState = SubscriptionPaymentState()
+    state: SubscriptionPaymentState = SubscriptionPaymentState(),
+    event: (SubscriptionPaymentEvent) -> Unit,
+
 ) {
 
     var showButtonSheetState by remember { mutableStateOf(false) }
+    val planLoading = state.subscriptionPlanState is ResponseState.Loading
+    val planErrorText = state.subscriptionPlanState.errorText()
 
-    val title = stringResource(Res.string.yillik)
-    val title2 = stringResource(Res.string.oylik)
 
-    val childrenList = remember {
-        mutableStateListOf(
-            "Saidburxon",
-            "Muhammadsaid",
-            "Muhammadyusuf",
-            "Beka"
-        )
+    LoadingDialog(planLoading)
+    var showPlanErrorDialog by remember() {
+        mutableStateOf(false)
     }
 
-    val subscriptions = remember {
-        mutableStateMapOf(
-            0 to Subscription(
-                title = title,
-                price = 1500000,
-                isSelected = false
-            ),
-            1 to Subscription(
-                title = title2,
-                price = 150000,
-                isSelected = false
-            )
-        )
+    LaunchedEffect(planErrorText) {
+        if (planErrorText.isNotEmpty()) {
+            showPlanErrorDialog = true
+        }
     }
 
-    val selectedChildren = remember {
-        mutableStateOf(childrenList[0])
-    }
+    CustomDialog(
+//        lottieAsset = DialogLottie.ERROR,
+        show = showPlanErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = planErrorText,
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showPlanErrorDialog = false
+            event(SubscriptionPaymentEvent.ResetResponseState)
+        },
+        onButtonClick = {
+            showPlanErrorDialog = false
+            event(SubscriptionPaymentEvent.ResetResponseState)
+        }
+    )
+
+
+
+
 
     var showDialog by remember {
         mutableStateOf(false)
     }
 
-    var isSelected = subscriptions.values.any { it.isSelected }
-
-    val selectedPrice = subscriptions.values.find { it.isSelected }?.price
 
     CustomListDialog(
         title = stringResource(Res.string.farzandingiz),
-        items = childrenList,
+        items = AppSettings.children,
         show = showDialog,
         onItemSelected = { child ->
-            selectedChildren.value = child
+
         },
         onDismiss = {
             showDialog = false
@@ -123,17 +134,16 @@ fun SubscriptionPaymentUi(
             title = stringResource(Res.string.obuna),
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                navigator?.pop()
             },
             fonWeight = FontWeight.W600
         )
 
-        SpaceMedium()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
+                .padding(ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
 
@@ -141,7 +151,7 @@ fun SubscriptionPaymentUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight),
-                text = selectedChildren.value,
+                text = state.selectedChild?.name?:"",
                 painter = painterResource(Res.drawable.profile),
                 onClick = {
                     showDialog = true
@@ -164,7 +174,6 @@ fun SubscriptionPaymentUi(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
                 ) {
 
                     Row(
@@ -259,27 +268,27 @@ fun SubscriptionPaymentUi(
                     }
                 )
             }
-
-
-            Spacer(Modifier.weight(1f))
-
-            SpaceMedium()
-
-            CustomButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                text = stringResource(Res.string.sotib_olish),
-                enabled = isSelected,
-                fontSize = NormalLargeTextSize,
-                onClick = {
-                    if (selectedPrice != null) {
-                        navigator?.push(PaymentTypeScreen(subscriptionPrice = selectedPrice))
-                    }
-                }
-            )
-            SpaceMedium()
         }
+    }
+    if (showButtonSheetState && state.subscriptionUi != null) {
+        SubscriptionBottomSheet(
+            hasSubscription = state.currentPlan != SubscriptionType.FREE,
+            visible = showButtonSheetState,
+            subscription = state.subscriptionUi,
+            onDismiss = {
+                showButtonSheetState = false
+            },
+            onByClick = { price, tier, planId ->
+                showButtonSheetState = false
+                navigator?.push(
+                    PaymentTypeScreen(
+                        amount = price,
+                        subDuration = tier,
+                        planId = planId
+                    )
+                )
+            }
+        )
     }
 }
 
@@ -291,7 +300,8 @@ fun PreviewSubscriptionScreen() {
     ){
         SubscriptionPaymentUi(
             navigator = null,
-            state = SubscriptionPaymentState()
+            state = SubscriptionPaymentState(),
+            event = {}
         )
     }
 }

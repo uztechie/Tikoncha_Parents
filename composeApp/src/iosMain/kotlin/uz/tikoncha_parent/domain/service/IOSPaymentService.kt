@@ -7,11 +7,11 @@ import uz.tikoncha_parent.domain.util.buildClickUrl
 class IOSPaymentService : PaymentService {
     override fun openClickPayment(
         serviceId: String,
-        merchantTransId: String,
+        merchantId: String,
         amount: String,
         transactionId: String
     ) {
-        val url = NSURL(string = buildClickUrl(serviceId, merchantTransId, amount, transactionId))
+        val url = NSURL(string = buildClickUrl(serviceId, merchantId, amount, transactionId))
         UIApplication.sharedApplication.openURL(url)
 
     }

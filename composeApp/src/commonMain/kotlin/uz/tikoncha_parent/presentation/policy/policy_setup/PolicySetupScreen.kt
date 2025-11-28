@@ -172,6 +172,12 @@ fun PolicySetupUi(
 
     val selectedApps = sharedAppState.apps.filter { it.checked }
 
+    LaunchedEffect(deleteSuccess){
+        if (deleteSuccess){
+            sharedEvent(PolicySharedEvent.LoadSubscriptionLimit)
+        }
+    }
+
 
 
     LoadingDialog(loading)
