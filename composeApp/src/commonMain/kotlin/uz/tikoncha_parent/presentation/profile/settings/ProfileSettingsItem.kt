@@ -85,6 +85,7 @@ fun ProfileSettingsItem(
                     Image(
                         painter = painterResource(setting.iconId),
                         contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                         modifier = Modifier.size(24.dp)
                     )
                 }
