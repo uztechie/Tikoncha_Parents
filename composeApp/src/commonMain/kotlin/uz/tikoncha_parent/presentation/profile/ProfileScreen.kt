@@ -87,7 +87,7 @@ fun ProfileUi(
 ) {
 
     val navigator = LocalNavigator.current
-    val rootNavigator = navigator?.parent
+    val rootNavigator = navigator?:return
 
     var showQrCode by remember { mutableStateOf(false) }
 
@@ -131,6 +131,10 @@ fun ProfileUi(
             .verticalScroll(rememberScrollState())
     ) {
         CustomHeader(
+            showBackButton = true,
+            onBackClick = {
+                rootNavigator?.pop()
+            },
             title = stringResource(Res.string.profil),
         )
 
@@ -173,7 +177,7 @@ fun ProfileUi(
                 UserStatsItem(
                     title = stringResource(Res.string.faol_vazifalar),
                     value = "$activeTasksCount ${stringResource(Res.string.ta)}",
-                    icon = painterResource(Res.drawable.file),
+                    icon = painterResource(Res.drawable.file_png),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
                         .weight(1f)
