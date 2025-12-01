@@ -116,6 +116,10 @@ fun ChatUi(
     ) {
 
         CustomHeader(
+            showBackButton = true,
+            onBackClick = {
+                parentNavigator?.pop()
+            },
             title = stringResource(Res.string.suhbat),
         )
 

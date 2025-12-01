@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,7 +67,7 @@ class TaskScreen : Screen {
         val viewModel = koinViewModel<TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
-        val navigator = LocalNavigator.current?.parent
+        val navigator = LocalNavigator.current?:return
 
         TaskUi(
             navigator = navigator,
@@ -118,6 +119,10 @@ fun TaskUi(
     {
 
         CustomHeader(
+            showBackButton = true,
+            onBackClick = {
+                navigator?.pop()
+            },
             title = stringResource(Res.string.vazifalar),
             trailingIcon = {
 
@@ -302,8 +307,9 @@ fun TaskUi(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(TextFieldCornerRadius))
                     .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
-                    .height(ButtonHeight),
+                    .height(ButtonHeight)
             ) {
                 Row {
 

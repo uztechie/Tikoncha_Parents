@@ -87,7 +87,6 @@ fun CustomText(
         letterSpacing = letterSpacing,
         fontStyle = fontStyle,
         textDecoration = textDecoration,
-
     )
 }
 
