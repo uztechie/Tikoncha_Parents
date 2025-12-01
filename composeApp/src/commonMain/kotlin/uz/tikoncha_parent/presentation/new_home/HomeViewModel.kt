@@ -44,6 +44,11 @@ class HomeViewModel(
 
     init {
         loadOnce()
+        _state.update {
+            it.copy(
+                selectedChild = AppSettings.selectedChild,
+            )
+        }
     }
 
     fun loadOnce(){
@@ -124,9 +129,15 @@ class HomeViewModel(
                     _state.update {
                         it.copy(
                             childrenResponseState = ResponseState.Success(),
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
+                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() },
+                            selectedChild = AppSettings.selectedChild
                         )
                     }
+                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
+                    if (AppSettings.selectedChild == null){
+                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
+                    }
+
                 }
             }
         }

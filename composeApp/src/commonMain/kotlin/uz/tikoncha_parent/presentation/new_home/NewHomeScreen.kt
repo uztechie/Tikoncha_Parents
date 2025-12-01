@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +54,7 @@ import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
@@ -156,17 +158,15 @@ fun NewHomeUi(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CustomSelectionButton(
-                label = stringResource(Res.string.farzandlaringiz),
+
+            ChildSelectionButton(
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(TextFieldHeight),
+                    .widthIn(120.dp, 160.dp),
                 text = state.selectedChild?.name?:"",
-                painter = painterResource(Res.drawable.profile),
-                tint = MaterialTheme.extendedColor.primaryAlphaColor,
+                label = stringResource(Res.string.farzandingizni_tanlang),
                 onClick = {
                     showDialog = true
-                }
+                },
             )
 
             Spacer(Modifier.weight(1f))
