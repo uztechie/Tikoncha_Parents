@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,18 +56,43 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_down
+import tikoncha_parents.composeapp.generated.resources.arrow_left
+import tikoncha_parents.composeapp.generated.resources.arrow_pay
+import tikoncha_parents.composeapp.generated.resources.arrow_previous
+import tikoncha_parents.composeapp.generated.resources.arrow_right
+import tikoncha_parents.composeapp.generated.resources.arrow_right_rounded
+import tikoncha_parents.composeapp.generated.resources.arrow_up
+import tikoncha_parents.composeapp.generated.resources.chegirma
+import tikoncha_parents.composeapp.generated.resources.chegirmalar
 import tikoncha_parents.composeapp.generated.resources.coin
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.money_light
+import tikoncha_parents.composeapp.generated.resources.obuna_holati
+import tikoncha_parents.composeapp.generated.resources.primary_arrow_right
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
+import tikoncha_parents.composeapp.generated.resources.tikoncha_plus
+import tikoncha_parents.composeapp.generated.resources.tolandi
+import tikoncha_parents.composeapp.generated.resources.tolanmagan
+import tikoncha_parents.composeapp.generated.resources.tolov_kutilmoqda
 import tikoncha_parents.composeapp.generated.resources.tolov_summasi
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.ui.CardCornerRadius
+import uz.tikoncha_parent.ui.DividerHorizontal
+import uz.tikoncha_parent.ui.ImportantButtonColor
+import uz.tikoncha_parent.ui.LargeIconButtonSize
+import uz.tikoncha_parent.ui.LargeIconSize
 import uz.tikoncha_parent.ui.NormalIconSize
+import uz.tikoncha_parent.ui.OtpErrorColor
+import uz.tikoncha_parent.ui.SmallIconSize
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -146,48 +172,17 @@ fun CoinsUi(
                 .imePadding()
         ) {
 
-            CustomSelectionButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight),
-                text = selectedChildren.value,
-                painter = painterResource(Res.drawable.profile),
-                tint = MaterialTheme.extendedColor.primaryAlphaColor,
-                onClick = {
-                    showDialog = true
-                }
-            )
-
-            SpaceMedium()
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(ContainerCornerRadius))
-                    .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(ContainerPadding)
-            ) {
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = PrimaryColor,
-                    fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                SpaceUltraSmall()
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar_orqali),
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = NormalTextSize,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    style = TextStyle()
-                )
-            }
+//            CustomSelectionButton(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(TextFieldHeight),
+//                text = selectedChildren.value,
+//                painter = painterResource(Res.drawable.profile),
+//                tint = MaterialTheme.extendedColor.primaryAlphaColor,
+//                onClick = {
+//                    showDialog = true
+//                }
+//            )
 
             SpaceMedium()
 
@@ -237,6 +232,132 @@ fun CoinsUi(
                         coinsAmount = it.toString()
                     }
                 )
+            }
+
+            SpaceMedium()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(ContainerCornerRadius))
+                    .background(MaterialTheme.extendedColor.cardColor)
+                    .padding(ContainerPadding)
+            ) {
+
+                CustomText(
+                    text = stringResource(Res.string.tangachalar),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = PrimaryColor,
+                    fontSize = NormalLargeTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                SpaceUltraSmall()
+
+                CustomText(
+                    text = stringResource(Res.string.tangachalar_orqali),
+                    color = MaterialTheme.extendedColor.hintColor,
+                    fontSize = NormalTextSize,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    style = TextStyle()
+                )
+            }
+            
+            SpaceMedium()
+
+            CustomText(
+                text = stringResource(Res.string.chegirmalar),
+                fontSize = NormalTextSize,
+            )
+
+            SpaceMedium()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.extendedColor.cardColor,
+                        RoundedCornerShape(CardCornerRadius)
+                    )
+                    .padding(16.dp)
+            ){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(SmallIconButtonSize)
+                            .clip(RoundedCornerShape(ShapeCornerRadius))
+                            .background(MaterialTheme.extendedColor.backgroundColor),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Image(
+                            painter = painterResource(Res.drawable.coin),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxSize(0.7f)
+                        )
+                    }
+
+                    SpaceSmall()
+                    Column {
+                        CustomText(
+                            text = stringResource(Res.string.tangachalar),
+                            fontSize = NormalTextSize,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.extendedColor.hintColor
+                        )
+                        CustomText(
+                            text = "5 000 tanga"
+                        )
+                    }
+
+                    Spacer(Modifier.weight(1f))
+
+                    CustomText(
+                        text = "350 000 UZS",
+                        fontSize = NormalTextSize,
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.W600
+                    )
+                }
+                SpaceMedium()
+                DividerHorizontal()
+                SpaceMedium()
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .background(
+                            MaterialTheme.extendedColor.primaryColor,
+                            RoundedCornerShape(TextFieldCornerRadius))
+                            .padding(horizontal = 6.dp)
+                    ){
+                        CustomText(
+                            text = "30%"
+                        )
+                    }
+                    SpaceSmall()
+                    CustomText(
+                        text = stringResource(Res.string.chegirma),
+                        color = MaterialTheme.extendedColor.hintColor,
+                        fontSize = NormalTextSize,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                   Image(
+                       painter = painterResource(Res.drawable.arrow_pay),
+                       contentDescription = null,
+                       modifier = Modifier
+                           .size(LargeIconSize)
+                           .background(PrimaryColor, CircleShape)
+                           .padding(8.dp)
+                   )
+                }
             }
 
             SpaceLarge()

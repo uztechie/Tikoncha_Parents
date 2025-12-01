@@ -7,15 +7,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import org.jetbrains.compose.resources.Font
 import uz.tikoncha_parent.ui.NormalTextSize
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.baloo_2_medium
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -32,8 +36,8 @@ fun CustomText(
     lineHeight:TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
-    overflow: TextOverflow = TextOverflow.Ellipsis
-
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    fontFamily: FontFamily = FontFamily(Font(Res.font.baloo_2_medium))
 ) {
     Text(
         overflow = overflow,
@@ -48,7 +52,8 @@ fun CustomText(
         softWrap = softWrap,
         lineHeight = lineHeight,
         letterSpacing = letterSpacing,
-        fontStyle = fontStyle
+        fontStyle = fontStyle,
+        fontFamily = fontFamily
     )
 }
 
@@ -69,7 +74,8 @@ fun CustomText(
     fontStyle: FontStyle = FontStyle.Normal,
     textAlign: TextAlign = TextAlign.Start,
     textDecoration: TextDecoration = TextDecoration.None,
-    overflow: TextOverflow = TextOverflow.Ellipsis
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    fontFamily: FontFamily = FontFamily(Font(Res.font.baloo_2_medium))
 ) {
     Text(
         overflow = overflow,
@@ -87,6 +93,7 @@ fun CustomText(
         letterSpacing = letterSpacing,
         fontStyle = fontStyle,
         textDecoration = textDecoration,
+        fontFamily = fontFamily
     )
 }
 

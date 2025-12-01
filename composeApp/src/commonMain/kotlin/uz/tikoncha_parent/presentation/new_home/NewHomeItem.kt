@@ -29,9 +29,8 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.baloo_2_medium
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.ui.CardCornerRadius
-import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.LargeIconSize
-import uz.tikoncha_parent.ui.NewTextColor
+import uz.tikoncha_parent.ui.TitleLightColor
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -72,12 +71,11 @@ fun NewHomeItem(
                     )
                     SpaceMedium()
                     Column {
-                        Text(
+                        CustomText(
                             text = stringResource(selection.title),
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
-                            color = NewTextColor,
-                            fontFamily = baloo2,
+                            color = MaterialTheme.extendedColor.titleColor,
                         )
                         CustomText(
                             text = stringResource(selection.subtitle),
