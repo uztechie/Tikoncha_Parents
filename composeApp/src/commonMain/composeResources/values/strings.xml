@@ -266,10 +266,11 @@
     <string name="faol_vazifalar">Faol vazifalar</string>
     <string name="farzandlaringiz_qayerdaligi">Farzandlaringiz qayerdaligini ko‘ring</string>
     <string name="farzand_va_maktab_bilan_boglaning">Farzand va maktab bilan bog‘laning</string>
-
     <string name="tabriklaymiz">TABRIKLAYMIZ!</string>
     <string name="endi_siz_ushbu_obunaga_egasiz">Endi siz ushbu obunaga egasiz</string>
     <string name="maxsus_imkoniyatlar_va_qollab_quvvatlashdan_foydalaning">Maxsus imkoniyatlar va birinchi navbatdagi qo‘llab-quvvatlashdan foydalaning!</string>
     <string name="statistika">Statistika</string>
+    <string name="chegirmalar">Chegirmalar</string>
+    <string name="chegirma">Chegirma</string>
 
 </resources>

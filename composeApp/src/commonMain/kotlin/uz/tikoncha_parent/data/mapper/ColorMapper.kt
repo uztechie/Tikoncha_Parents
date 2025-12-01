@@ -18,5 +18,6 @@ data class ExtendedColors(
     val buttonColor: Color,
     val tonalButtonColor: Color,
     val disabledBgColor: Color,
-    val disabledContentColor: Color
+    val disabledContentColor: Color,
+    val titleColor: Color
 )

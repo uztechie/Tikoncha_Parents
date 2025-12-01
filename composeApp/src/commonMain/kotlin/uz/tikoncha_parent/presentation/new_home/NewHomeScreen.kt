@@ -58,34 +58,26 @@ import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
-import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
-import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
-import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.NewBackgroundColor
-import uz.tikoncha_parent.ui.NewTextColor
-import uz.tikoncha_parent.ui.NormalIconButtonSize
+import uz.tikoncha_parent.ui.TitleLightColor
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.SmallIconButtonSize
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
-import uz.tikoncha_parent.ui.UltraLargeIconButtonSize
-import uz.tikoncha_parent.ui.UltraSmallIconButtonSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -233,12 +225,11 @@ fun NewHomeUi(
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        Text(
+                        CustomText(
                             text = "25 daq",
-                            color = NewTextColor,
+                            color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
-                            fontFamily = baloo2
                         )
                         CustomText(
                             text = "bugun sarfladi",
@@ -316,12 +307,11 @@ fun NewHomeUi(
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        Text(
+                        CustomText(
                             text = "Topshiriqlar",
-                            color = NewTextColor,
+                            color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
-                            fontFamily = baloo2
                         )
                         CustomText(
                             text = "4 ta faol vazifa",
@@ -358,12 +348,11 @@ fun NewHomeUi(
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        Text(
+                        CustomText(
                             text = "Jadvallar",
-                            color = NewTextColor,
+                            color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
-                            fontFamily = baloo2
                         )
                         CustomText(
                             text = "42 ta ilova cheklangan",
