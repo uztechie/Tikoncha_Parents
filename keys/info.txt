@@ -1,2 +1,2 @@
-alias: Tikoncha_parent
+alias: Tikoncha-Parent
 password: Tikoncha2025

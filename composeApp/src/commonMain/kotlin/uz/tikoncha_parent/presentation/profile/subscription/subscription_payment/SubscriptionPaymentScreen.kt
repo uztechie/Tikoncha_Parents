@@ -3,6 +3,7 @@ package uz.tikoncha_parent.presentation.profile.subscription.subscription_paymen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -30,9 +32,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.SubscriptionType
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.tripleShadow
@@ -113,10 +116,10 @@ fun SubscriptionPaymentUi(
 
     CustomListDialog(
         title = stringResource(Res.string.farzandingiz),
-        items = AppSettings.children,
+        items = state.children,
         show = showDialog,
         onItemSelected = { child ->
-
+            event(SubscriptionPaymentEvent.SetSelectedChild(child))
         },
         onDismiss = {
             showDialog = false
@@ -136,7 +139,20 @@ fun SubscriptionPaymentUi(
             onBackClick = {
                 navigator?.pop()
             },
-            fonWeight = FontWeight.W600
+            fonWeight = FontWeight.W600,
+            trailingIcon = {
+                SpaceMedium()
+
+                ChildSelectionButton(
+                    modifier = Modifier
+                        .widthIn(120.dp, 160.dp),
+                    text = state.selectedChild?.name?:"",
+                    label = stringResource(Res.string.farzandingizni_tanlang),
+                    onClick = {
+                        showDialog = true
+                    },
+                )
+            }
         )
 
 
@@ -147,30 +163,16 @@ fun SubscriptionPaymentUi(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            CustomSelectionButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight),
-                text = state.selectedChild?.name?:"",
-                painter = painterResource(Res.drawable.profile),
-                tint = MaterialTheme.extendedColor.primaryAlphaColor,
-                onClick = {
-                    showDialog = true
-                }
-            )
 
-            SpaceMedium()
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .tripleShadow(
-                        shape = RoundedCornerShape(CardCornerRadius),
-                    )
                     .background(
                         MaterialTheme.extendedColor.cardColor,
                         RoundedCornerShape(CardCornerRadius)
-                    ),
+                    )
+                    .padding(ContainerPadding),
             ) {
                 Column(
                     modifier = Modifier
@@ -297,7 +299,7 @@ fun SubscriptionPaymentUi(
 @Composable
 fun PreviewSubscriptionScreen() {
     TikonchaParentTheme(
-        ThemeMode.DARK,
+        ThemeMode.LIGHT,
     ){
         SubscriptionPaymentUi(
             navigator = null,

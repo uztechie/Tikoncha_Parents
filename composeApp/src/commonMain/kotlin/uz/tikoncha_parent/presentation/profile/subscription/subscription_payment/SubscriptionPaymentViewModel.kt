@@ -29,6 +29,12 @@ class SubscriptionPaymentViewModel(
     init {
         requestSubscriptionPlans()
         getCurrentLimit()
+        _state.update {
+            it.copy(
+                selectedChild = AppSettings.selectedChild,
+                children = AppSettings.children
+            )
+        }
     }
 
 
@@ -43,6 +49,11 @@ class SubscriptionPaymentViewModel(
             }
 
             is SubscriptionPaymentEvent.SetSelectedChild -> {
+                _state.update {
+                    it.copy(
+                        selectedChild = event.child
+                    )
+                }
                 AppSettings.selectedChild = event.child
             }
         }

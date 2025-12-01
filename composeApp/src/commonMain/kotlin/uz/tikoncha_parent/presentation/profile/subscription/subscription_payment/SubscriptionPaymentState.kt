@@ -9,5 +9,6 @@ data class SubscriptionPaymentState(
     val subscriptionUi: SubscriptionUi? = null,
     val currentPlan: SubscriptionType = SubscriptionType.FREE,
     val subscriptionPlanState: ResponseState<Nothing> = ResponseState.Idle,
-    val selectedChild: UserInfo? = null
+    val selectedChild: UserInfo? = null,
+    val children: List<UserInfo> = emptyList(),
 )

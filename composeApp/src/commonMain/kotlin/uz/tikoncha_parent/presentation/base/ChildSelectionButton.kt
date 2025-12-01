@@ -1,21 +1,17 @@
 package uz.tikoncha_parent.presentation.base
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,36 +20,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.ui.*
+import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.ColorWhite
+import uz.tikoncha_parent.ui.DialogButtonHeight
+import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
+
 @Composable
-fun CustomSelectionButton(
+fun ChildSelectionButton(
     modifier: Modifier = Modifier,
     text: String,
-    painter: Painter,
-    onClick: () -> Unit,
-    loading: Boolean = false,
     label: String = "",
-    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
+    imageUrl: String = "",
+    onClick: () -> Unit,
+    shape: Shape = CircleShape,
     fonSize: TextUnit = NormalTextSize,
     fontWeight: FontWeight = FontWeight.Normal,
-    showLeadingIcon: Boolean = true,
-    showTrailingIcon: Boolean = true,
     background: Color = MaterialTheme.extendedColor.cardColor,
-    tint: Color = SliderPageColor
 ) {
 
     val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.primaryColor
@@ -62,34 +59,38 @@ fun CustomSelectionButton(
     Row(
         modifier = modifier
             .fillMaxWidth()
-//            .tripleShadow(
-//                shape = RoundedCornerShape(TextFieldCornerRadius),
-//            )
             .background(background, shape)
-            .padding(horizontal = TextFieldInnerPadding)
-            .height(TextFieldHeight)
+            .padding(horizontal = 8.dp)
+            .height(DialogButtonHeight)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    if (!loading) {
-                        onClick()
-                    }
+                    onClick()
                 }
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (showLeadingIcon) {
-            Icon(
-                painter = painter,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(20.dp),
-                tint = tint
-            )
 
-            Spacer(Modifier.width(TextFieldInnerPadding))
+
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .background(MaterialTheme.extendedColor.backgroundColor,  CircleShape)
+                .padding(2.dp)
+        ){
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "",
+                error = painterResource(Res.drawable.profile_hedgehog_img),
+                placeholder = painterResource(Res.drawable.profile_hedgehog_img),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+            )
         }
+        SpaceSmall()
+
 
 
         CustomText(
@@ -101,30 +102,6 @@ fun CustomSelectionButton(
             modifier = Modifier
                 .weight(1f)
         )
-
-        if (showTrailingIcon) {
-
-            SpaceSmall()
-
-            if (loading) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.extendedColor.primaryColor,
-                    modifier = Modifier.size(20.dp),
-                    strokeWidth = 2.dp,
-                )
-            } else {
-                Icon(
-                    painter = painterResource(Res.drawable.arrow_right),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(20.dp)
-                        .graphicsLayer {
-                            rotationZ = 90f
-                        },
-                    tint = MaterialTheme.extendedColor.onBackgroundColor
-                )
-            }
-        }
     }
 }
 
@@ -141,9 +118,8 @@ private fun Pre() {
                 .padding(vertical = 100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CustomSelectionButton(
+            ChildSelectionButton(
                 text = "",
-                painter = painterResource(Res.drawable.lock),
                 onClick = {},
                 label = "Viloyat"
             )
