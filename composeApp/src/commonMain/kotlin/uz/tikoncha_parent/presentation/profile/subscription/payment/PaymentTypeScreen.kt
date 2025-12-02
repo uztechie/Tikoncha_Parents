@@ -195,7 +195,7 @@ fun PaymentTypeScreenUi(
                 PaymentOption(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.pay_me),
-                    isSelected = selectedPayment == "payme",
+                    isSelected = false,
                     onClick = { selectedPayment = "payme" }
                 )
                 PaymentOption(
@@ -217,13 +217,13 @@ fun PaymentTypeScreenUi(
                 PaymentOption(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.paynet),
-                    isSelected = selectedPayment == "paynet",
+                    isSelected = false,
                     onClick = { selectedPayment = "paynet" }
                 )
                 PaymentOption(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.uzum),
-                    isSelected = selectedPayment == "uzum",
+                    isSelected = false,
                     onClick = { selectedPayment = "uzum" }
                 )
             }

@@ -86,7 +86,8 @@ class PaymentViewModel(
                     _state.update {
                         it.copy(
                             paymentResponseState = ResponseState.Error(
-                                message = result.message
+                                message = result.message,
+                                res = result.resId
                             )
                         )
                     }

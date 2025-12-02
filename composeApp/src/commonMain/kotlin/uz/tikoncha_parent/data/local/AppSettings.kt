@@ -3,7 +3,6 @@ package uz.tikoncha_parent.data.local
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -109,9 +108,23 @@ object AppSettings {
         }
 
 
-    var subscriptionLimit: SubscriptionLimit
+    var subscriptionLimitList: List<SubscriptionLimit>
         get() {
-            val json = settings.getStringOrNull("SubscriptionLimit") ?: return SubscriptionLimit()
+            val json = settings.getStringOrNull("SubscriptionLimit") ?: return emptyList()
+            return try {
+                Json.decodeFromString(json)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+        set(value) {
+            val json = Json.encodeToString(value)
+            settings.putString("SubscriptionLimit", json)
+        }
+
+    var selectSubscriptionLimit: SubscriptionLimit
+        get() {
+            val json = settings.getStringOrNull("selectSubscriptionLimit") ?: return SubscriptionLimit()
             return try {
                 Json.decodeFromString(json)
             } catch (e: Exception) {
@@ -120,7 +133,7 @@ object AppSettings {
         }
         set(value) {
             val json = Json.encodeToString(value)
-            settings.putString("SubscriptionLimit", json)
+            settings.putString("selectSubscriptionLimit", json)
         }
 
 }

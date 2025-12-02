@@ -47,7 +47,7 @@ kotlin {
             isStatic = true
         }
         pod("YandexMapsMobile") {
-            version = "4.17.0-lite"
+            version = "4.24.0-lite"
         }
 //        pod("Firebase/Messaging")
     }
@@ -101,10 +101,10 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation("network.chaintech:qr-kit:3.1.2")
 
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.3.0")
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.3.0")
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko:0.3.0") // optional: moko support
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko-compose:0.3.0")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.4.1")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.4.1")
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko:0.4.1") // optional: moko support
+            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko-compose:0.4.1")
 
 
             //location

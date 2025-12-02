@@ -2,17 +2,15 @@ package uz.tikoncha_parent.presentation.policy
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toAppSelectionUi
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -26,11 +24,6 @@ class PolicyViewModel(
     val state = _state.asStateFlow()
 
     init {
-        _state.update {
-            it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimit
-            )
-        }
         getSubscriptionLimit()
     }
 
@@ -39,7 +32,8 @@ class PolicyViewModel(
         when(event){
             is PolicyEvent.SetSelectedChild -> {
                 _state.value = _state.value.copy(
-                    selectedChild = event.child
+                    selectedChild = event.child,
+                    subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == event.child?.userId }?: SubscriptionLimit()
                 )
                 getPolicies()
             }
@@ -58,7 +52,7 @@ class PolicyViewModel(
     private fun refreshSubscriptionLimit(){
         _state.update {
             it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimit
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
             )
         }
     }

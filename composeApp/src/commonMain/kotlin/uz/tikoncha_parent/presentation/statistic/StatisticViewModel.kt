@@ -11,24 +11,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.mapToDailyUsagePeriods
 import uz.tikoncha_parent.data.mapper.mapToWeeklyUsagePeriods
 import uz.tikoncha_parent.data.mapper.toDailyAverage
 import uz.tikoncha_parent.data.mapper.toDailyUsageMinutesForChart
 import uz.tikoncha_parent.data.mapper.toUsageUi
-import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
 import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
-import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
@@ -92,9 +87,11 @@ class StatisticViewModel(
             }
 
             StatisticEvent.RefreshChild -> {
-                _state.update {
-                    it.copy(
-                        selectedChild = AppSettings.selectedChild
+                _state.update { innerState->
+                    val limit = AppSettings.subscriptionLimitList.find { it.childId == AppSettings.selectedChild?.userId }?: SubscriptionLimit()
+                    innerState.copy(
+                        selectedChild = AppSettings.selectedChild,
+                        subscriptionLimit = limit
                     )
                 }
             }
@@ -106,11 +103,6 @@ class StatisticViewModel(
     private fun getSubscriptionLimit(){
         screenModelScope.launch {
             subscriptionLimitUseCase.invoke()
-        }
-        _state.update {
-            it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimit
-            )
         }
     }
 

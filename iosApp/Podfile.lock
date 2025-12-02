@@ -1,6 +1,6 @@
 PODS:
   - composeApp (1.0.0):
-    - YandexMapsMobile (= 4.17.0-lite)
+    - YandexMapsMobile (= 4.24.0-lite)
   - Firebase/CoreOnly (12.4.0):
     - FirebaseCore (~> 12.4.0)
   - Firebase/Messaging (12.4.0):
@@ -59,12 +59,12 @@ PODS:
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
   - PromisesObjC (2.4.0)
-  - YandexMapsMobile (4.17.0-lite)
+  - YandexMapsMobile (4.24.0-lite)
 
 DEPENDENCIES:
   - composeApp (from `../composeApp`)
   - Firebase/Messaging
-  - YandexMapsMobile (= 4.17.0-lite)
+  - YandexMapsMobile (= 4.24.0-lite)
 
 SPEC REPOS:
   trunk:
@@ -84,7 +84,7 @@ EXTERNAL SOURCES:
     :path: "../composeApp"
 
 SPEC CHECKSUMS:
-  composeApp: c6732a5352552f98e659a1e2b3f4b961792d0a5a
+  composeApp: 463335a37ec2447c1c3a1b5b664d5c2f0086e9ce
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
   FirebaseCore: bb595f3114953664e3c1dc032f008a244147cfd3
   FirebaseCoreInternal: d7f5a043c2cd01a08103ab586587c1468047bca6
@@ -94,8 +94,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  YandexMapsMobile: 6e2193ed08ab11682efafd3a88e5de854cecc0cf
+  YandexMapsMobile: 2286dac072a1444b4e726e63e09b0e5061d97d07
 
-PODFILE CHECKSUM: 65c262659ec91b27fdf12422e0b8d65ba12e5bfb
+PODFILE CHECKSUM: 20d035897ec48ebc12a1126d77ca4ebc4930dc87
 
 COCOAPODS: 1.16.2

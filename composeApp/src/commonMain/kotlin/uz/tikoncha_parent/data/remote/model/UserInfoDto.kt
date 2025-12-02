@@ -17,5 +17,6 @@ data class UserInfoDto(
     val school_class_name: String? = null,
     val school_class_id: String? = null,
     val shift: String? = null,
-    val passport_id: String? = null
+    val passport_id: String? = null,
+    val avatar_url: String? = null,
 )

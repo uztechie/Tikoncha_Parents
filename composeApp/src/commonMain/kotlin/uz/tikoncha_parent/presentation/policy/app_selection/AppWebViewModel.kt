@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toAppSelectionUi
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -184,6 +185,7 @@ class AppWebViewModel(
                         childId = event.id
                     )
                 }
+                refreshSubscriptionLimit()
             }
 
             AppWebEvent.RefreshSubscriptionLimit -> {
@@ -193,9 +195,9 @@ class AppWebViewModel(
     }
 
     private fun refreshSubscriptionLimit(){
-        _state.update {
-            it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimit
+        _state.update { innerState->
+            innerState.copy(
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == innerState.childId }?: SubscriptionLimit()
             )
         }
     }

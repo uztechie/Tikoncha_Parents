@@ -4,7 +4,6 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toSubscriptionLimit
-import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 
@@ -15,7 +14,9 @@ class SubscriptionLimitUseCase(
         return try {
             val response = paymentRepository.getSubscriptionLimitsFromServer()
             if (response.success && response.data != null){
-                AppSettings.subscriptionLimit = response.data.toSubscriptionLimit()
+                AppSettings.subscriptionLimitList = response.data.children.map {
+                    it.toSubscriptionLimit()
+                }
                 Resource.Success("")
             }
             else {

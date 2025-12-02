@@ -2,17 +2,15 @@ package uz.tikoncha_parent.presentation.policy.shared
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.PolicyType
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupState
 
 class PolicySharedModel(
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase
@@ -96,7 +94,7 @@ class PolicySharedModel(
     private fun refreshSubscriptionLimit(){
         _state.update {
             it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimit
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
             )
         }
     }

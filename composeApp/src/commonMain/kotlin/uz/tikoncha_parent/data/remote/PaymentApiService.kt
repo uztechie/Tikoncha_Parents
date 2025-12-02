@@ -14,7 +14,7 @@ class PaymentApiService(private val client: HttpClient) {
     suspend fun subscriptionLimits(): SubscriptionLimitResponse =
         client.safeRequest(
             method = HttpMethod.Get,
-            url = "subscriptions/limits",
+            url = "subscriptions/limits/children",
             block = {}
         )
 

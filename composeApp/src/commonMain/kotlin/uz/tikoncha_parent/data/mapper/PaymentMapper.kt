@@ -1,6 +1,6 @@
 package uz.tikoncha_parent.data.mapper
 
-import uz.tikoncha_parent.data.remote.model.SubscriptionLimitData
+import uz.tikoncha_parent.data.remote.model.SubscriptionLimitDto
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansData
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.SubscriptionType
@@ -26,8 +26,11 @@ fun SubscriptionPlansData.toSubscriptionPlanUi(): SubscriptionUi {
     )
 }
 
-fun SubscriptionLimitData.toSubscriptionLimit(): SubscriptionLimit{
+fun SubscriptionLimitDto.toSubscriptionLimit(): SubscriptionLimit{
     return SubscriptionLimit(
+        childId = child_id?:"",
+        name = first_name?:"",
+        lastname = last_name?:"",
         subscriptionType = SubscriptionType.fromString(subscription),
         appUsageDaily = app_usage.app_usage_daily ?: Int.MAX_VALUE,
         appUsageWeekly = app_usage.app_usage_weekly ?: Int.MAX_VALUE,

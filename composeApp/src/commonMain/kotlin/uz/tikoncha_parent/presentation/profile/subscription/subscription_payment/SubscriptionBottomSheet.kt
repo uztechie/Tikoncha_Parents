@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -107,7 +108,8 @@ fun SubscriptionBottomSheet(
                     SubscriptionType.PRO -> painterResource(Res.drawable.tikoncha_pro)
                 },
                 contentDescription = "",
-                modifier = Modifier.fillMaxWidth(0.5f)
+                modifier = Modifier.fillMaxWidth(0.5f),
+                colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor)
             )
 
             SpaceMedium()
@@ -185,25 +187,25 @@ fun SubscriptionBottomSheet(
                             append(title)
                         }
                     }
-                    Box(
-                        modifier = Modifier
-                            .background(PriceSubscriptionColor, RoundedCornerShape(2.dp))
-                            .padding(horizontal = 6.dp)
-                    ){
-                        CustomText(
-                            text = compareText,
-                            fontSize = NormalTextSize,
-                            fontWeight = FontWeight.W500,
-                            color = OnPrimaryColor
-                        )
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .background(PriceSubscriptionColor, RoundedCornerShape(2.dp))
+//                            .padding(horizontal = 6.dp)
+//                    ){
+//                        CustomText(
+//                            text = compareText,
+//                            fontSize = NormalTextSize,
+//                            fontWeight = FontWeight.W500,
+//                            color = OnPrimaryColor
+//                        )
+//                    }
                     SpaceUltraSmall()
                     Box(
-                        modifier = Modifier.background(PrimaryAlphaColor, RoundedCornerShape(2.dp))
+                        modifier = Modifier.background(PrimaryAlphaColor, RoundedCornerShape(12.dp))
                             .padding(horizontal = 6.dp)
                     ){
                         CustomText(
-                            text = "${stringResource(Res.string.foyda)} - $profitPrice%",
+                            text = "${stringResource(Res.string.foyda)} ↑ - $profitPrice%",
                             fontSize = NormalTextSize,
                             fontWeight = FontWeight.W500,
                             color = OnPrimaryColor

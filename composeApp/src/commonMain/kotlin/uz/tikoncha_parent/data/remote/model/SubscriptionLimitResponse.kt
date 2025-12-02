@@ -11,8 +11,17 @@ data class SubscriptionLimitResponse(
     val code: Int? = null
 )
 
+
 @Serializable
 data class SubscriptionLimitData(
+    val children: List<SubscriptionLimitDto>
+)
+
+@Serializable
+data class SubscriptionLimitDto(
+    val child_id: String? = null,
+    val first_name: String? = null,
+    val last_name: String? = null,
     val subscription: String? = null,
     val app_usage: SubscriptionAppUsageDto,
     val policy: SubscriptionPolicyDto

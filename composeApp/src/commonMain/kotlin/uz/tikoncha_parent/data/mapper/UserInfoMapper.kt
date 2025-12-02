@@ -19,6 +19,7 @@ fun UserInfoDto.toUserInfo(): UserInfo{
         schoolClassName = school_class_name,
         schoolClassId = school_class_id,
         shift = shift,
-        fullName = "$last_name $first_name $patronymic"
+        fullName = "$last_name $first_name $patronymic",
+        avatarUrl = avatar_url
     )
 }

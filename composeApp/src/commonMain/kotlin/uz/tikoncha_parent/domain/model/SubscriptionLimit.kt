@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SubscriptionLimit(
+    val childId: String = "",
+    val name: String = "",
+    val lastname: String = "",
     val subscriptionType: SubscriptionType = SubscriptionType.FREE,
     val appUsageDaily: Int = Int.MAX_VALUE,
     val appUsageWeekly: Int = Int.MAX_VALUE,

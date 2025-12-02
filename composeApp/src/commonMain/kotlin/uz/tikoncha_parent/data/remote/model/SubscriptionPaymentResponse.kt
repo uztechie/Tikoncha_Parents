@@ -15,6 +15,6 @@ data class SubscriptionPurchaseData(
     val merchant_trans_id: String,
     val amount: Int,
     val service_id: Int,
-    val tier: String,
+    val plan_duration: String,
     val coins_included: Int
 )

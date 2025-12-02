@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -28,13 +29,13 @@ class SubscriptionPaymentViewModel(
 
     init {
         requestSubscriptionPlans()
-        getCurrentLimit()
         _state.update {
             it.copy(
                 selectedChild = AppSettings.selectedChild,
                 children = AppSettings.children
             )
         }
+        getCurrentLimit()
     }
 
 
@@ -55,6 +56,7 @@ class SubscriptionPaymentViewModel(
                     )
                 }
                 AppSettings.selectedChild = event.child
+                getCurrentLimit()
             }
         }
     }
@@ -96,12 +98,12 @@ class SubscriptionPaymentViewModel(
         limitJob?.cancel()
         limitJob = viewModelScope.launch {
             subscriptionLimitUseCase.invoke()
-            _state.update {
-                it.copy(
-                    currentPlan = AppSettings.subscriptionLimit.subscriptionType
+            _state.update { innerState->
+                val limit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
+                innerState.copy(
+                    currentPlan = limit.subscriptionType
                 )
             }
         }
-
     }
 }
