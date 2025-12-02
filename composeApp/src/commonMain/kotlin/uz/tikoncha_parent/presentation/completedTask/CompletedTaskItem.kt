@@ -33,10 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.presentation.task.TaskUi
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -68,9 +65,6 @@ fun CompletedTaskItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius)
-            )
             .clip(RoundedCornerShape(TextFieldCornerRadius))
             .background(
                 MaterialTheme.extendedColor.cardColor,

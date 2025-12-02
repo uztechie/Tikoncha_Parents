@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.presentation.policy.policy_setup
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -8,30 +7,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.close_circle
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CloseButton
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.presentation.base.verticalShadow
-import uz.tikoncha_parent.ui.CardCornerRadius
-import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.LargeTextSize
-import uz.tikoncha_parent.ui.NormalTextLineHeight
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.SmallIconButtonSize
-import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -49,9 +34,6 @@ fun PolicySetupRuleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(CardCornerRadius),
-            )
             .background(
                 MaterialTheme.extendedColor.cardColor,
                 RoundedCornerShape(CardCornerRadius)

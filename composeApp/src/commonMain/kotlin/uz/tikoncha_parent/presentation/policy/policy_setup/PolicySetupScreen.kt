@@ -52,7 +52,6 @@ import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebSelectionScreen
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleTypeSelectionScreen
@@ -62,11 +61,8 @@ import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.domain.util.capitalizeFirst
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomDialogTextField
-import uz.tikoncha_parent.presentation.base.CustomMultiLineTextField
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.presentation.policy.PolicyEvent
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebState
@@ -500,9 +496,6 @@ fun PolicySetupUi(
                     .clickable {
                         navigator?.push(AppWebSelectionScreen())
                     }
-                    .tripleShadow(
-                        shape = RoundedCornerShape(CardCornerRadius),
-                    )
                     .clip(RoundedCornerShape(CardCornerRadius))
                     .background(
                         MaterialTheme.extendedColor.cardColor

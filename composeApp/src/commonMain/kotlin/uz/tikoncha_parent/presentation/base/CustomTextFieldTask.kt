@@ -79,9 +79,6 @@ fun CustomTextFieldTask(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
             .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
     ) {
         BasicTextField(

@@ -1,20 +1,19 @@
 package uz.tikoncha_parent.presentation.profile.coins
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.option.viewModelScopeFactory
+import uz.tikoncha_parent.domain.model.CoinPackage
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 
 class MyCoinsViewModel(
     private val useCase: MyCoinsUseCase,
+    private val getCoinPackagesUseCase: GetCoinPackagesUseCase
 ): ViewModel() {
 
     private val _state = MutableStateFlow(MyCoinsState())
@@ -49,6 +48,45 @@ class MyCoinsViewModel(
                     }
                 }
                 is Resource.Loading<*> -> {}
+            }
+        }
+    }
+
+    fun loadCoinsPackages(){
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+            val result = getCoinPackagesUseCase()
+            when (result){
+                is Resource.Success -> {
+                    val list = result.data
+
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            packages = list.map { coinPackage ->
+                                CoinPackage(
+                                    coins = coinPackage.coins,
+                                    price = coinPackage.price,
+                                    discountPercent = coinPackage.discountPercent
+                                )
+                            }
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message
+                        )
+                    }
+                }
+                is Resource.Loading -> {}
             }
         }
     }

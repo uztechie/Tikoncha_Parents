@@ -82,9 +82,6 @@ fun CustomTextField(
     val columnModifier = if (shadow) {
         modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
             .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
     } else {
         modifier

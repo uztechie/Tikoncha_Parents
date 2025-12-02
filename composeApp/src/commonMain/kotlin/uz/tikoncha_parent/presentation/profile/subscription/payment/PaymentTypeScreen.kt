@@ -46,7 +46,6 @@ import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -270,7 +269,6 @@ fun PaymentTypeScreenUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .tripleShadow(RoundedCornerShape(TextFieldCornerRadius))
                     .background(
                         MaterialTheme.extendedColor.cardColor,
                         RoundedCornerShape(TextFieldCornerRadius)
@@ -351,7 +349,6 @@ fun PaymentTypeScreenUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .tripleShadow(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor, CircleShape)
                     .padding(6.dp)
             ) {

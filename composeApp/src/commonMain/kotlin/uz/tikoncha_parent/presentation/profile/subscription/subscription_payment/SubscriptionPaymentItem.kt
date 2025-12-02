@@ -25,7 +25,6 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.SubscriptionType
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.profile.subscription.PlanUi
 import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
 import uz.tikoncha_parent.ui.*
@@ -83,9 +82,6 @@ fun SubscriptionPaymentItem(
                 interactionSource = null,
                 indication = null,
                 onClick = onClick
-            )
-            .tripleShadow(
-                shape = RoundedCornerShape(CardCornerRadius),
             )
             .clip(RoundedCornerShape(CardCornerRadius))
             .background(MaterialTheme.extendedColor.cardColor)

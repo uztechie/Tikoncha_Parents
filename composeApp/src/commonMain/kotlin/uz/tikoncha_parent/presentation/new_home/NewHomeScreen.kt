@@ -116,13 +116,12 @@ fun NewHomeUi(
 
 
     Logger.d("NewHomeScreen", "NewHomeUi")
-    val baloo2 = FontFamily(
-        Font(Res.font.baloo_2_medium)
-    )
 
     var showDialog by remember {
         mutableStateOf(false)
     }
+    val tableCount = 42
+    val taskCount = 4
 
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
     val childrenErrorText = state.childrenResponseState.errorText()
@@ -232,7 +231,7 @@ fun NewHomeUi(
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = "bugun sarfladi",
+                            text = stringResource(Res.string.bugun_telefonda_sarfladi),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
                         )
@@ -308,13 +307,13 @@ fun NewHomeUi(
                             .weight(1f)
                     ) {
                         CustomText(
-                            text = "Topshiriqlar",
+                            text = stringResource(Res.string.topshiriqlar),
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = "4 ta faol vazifa",
+                            text = stringResource(Res.string.faol_vazifa,taskCount),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
                         )
@@ -349,13 +348,13 @@ fun NewHomeUi(
                             .weight(1f)
                     ) {
                         CustomText(
-                            text = "Jadvallar",
+                            text = stringResource(Res.string.jadvallar),
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = "42 ta ilova cheklangan",
+                            text = stringResource(Res.string.ilova_cheklangan,tableCount),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
                         )

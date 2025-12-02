@@ -34,6 +34,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent
@@ -53,8 +54,9 @@ class ProfileScreen : Screen {
         val event = viewModel::onEvent
 
         val useCase: MyCoinsUseCase = koinInject()
+        val coinCase: GetCoinPackagesUseCase = koinInject()
         val coinsViewModel = remember {
-            MyCoinsViewModel(useCase = useCase)
+            MyCoinsViewModel(useCase = useCase, getCoinPackagesUseCase = coinCase)
         }
         LaunchedEffect(Unit) {
             coinsViewModel.load()
@@ -143,8 +145,7 @@ fun ProfileUi(
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
         ) {
-
-
+            SpaceSmall()
             ProfileHeader(
                 fullName = state.userInfo?.name?:"",
                 fathersName = "",
