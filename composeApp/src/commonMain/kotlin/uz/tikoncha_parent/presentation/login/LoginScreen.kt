@@ -197,37 +197,37 @@ fun LoginUi(
                 fontWeight = FontWeight.W600,
                 fontSize = 18.sp
             )
-            SpaceLarge()
-            val annotatedText = buildAnnotatedString {
+            SpaceSmall()
 
-                append("Авторизуясь, вы принимаете наши Условия использования и ")
-                pushStringAnnotation(
-                    tag = "POLICY",
-                    annotation = "policy",
-                )
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.extendedColor.primaryColor,
-                        textDecoration = TextDecoration.Underline,
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.W500
-                    )
-                ) {
-                    append("Политику конфиденциальности.")
-                }
-                pop()
-            }
-
-            ClickableText(
-                text = annotatedText,
-                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.extendedColor.onBackgroundColor),
-                onClick = { offset ->
-                    annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
-                        .firstOrNull()?.let {
-                        }
-                }
-            )
-            SpaceLarge()
+//            val annotatedText = buildAnnotatedString {
+//
+//                append("Авторизуясь, вы принимаете наши Условия использования и ")
+//                pushStringAnnotation(
+//                    tag = "POLICY",
+//                    annotation = "policy",
+//                )
+//                withStyle(
+//                    style = SpanStyle(
+//                        color = MaterialTheme.extendedColor.primaryColor,
+//                        textDecoration = TextDecoration.Underline,
+//                        fontSize = NormalTextSize,
+//                        fontWeight = FontWeight.W500
+//                    )
+//                ) {
+//                    append("Политику конфиденциальности.")
+//                }
+//                pop()
+//            }
+//            ClickableText(
+//                text = annotatedText,
+//                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.extendedColor.onBackgroundColor),
+//                onClick = { offset ->
+//                    annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
+//                        .firstOrNull()?.let {
+//                        }
+//                }
+//            )
+//            SpaceSmall()
         }
     }
 }

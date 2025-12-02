@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,8 +56,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.topShadow
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -77,6 +80,9 @@ class StatisticScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
+        LaunchedEffect(Unit){
+            event(StatisticEvent.GetChildren)
+        }
 
         StatisticUi(
             navigator = navigator,
@@ -102,16 +108,13 @@ fun StatisticUi(
         bottomEnd = ShapeCornerRadius
     )
 
-
-
     val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
     val appUsageErrorText = state.appUsageResponseState.errorText()
     val appUsageSuccess = state.appUsageResponseState is ResponseState.Success
 
-
-
-
-
+    var showDialog by remember { mutableStateOf(false) }
+    val childrenLoading = state.childrenResponseState is ResponseState.Loading
+    val childrenErrorText = state.childrenResponseState.errorText()
 
     LoadingDialog(appUsageLoading)
 
@@ -134,6 +137,19 @@ fun StatisticUi(
         }
     }
 
+    CustomListDialog(
+        title = stringResource(Res.string.farzandlaringiz),
+        items = state.childrenList,
+        show = showDialog,
+        loading = childrenLoading,
+        errorMessage = childrenErrorText,
+        onItemSelected = {
+            event(StatisticEvent.OnChildSelected(it))
+        },
+        onDismiss = {
+            showDialog = false
+        }
+    )
 
     CustomDialog(
         onDismiss = {showAppUsageErrorDialog = false},
@@ -145,19 +161,12 @@ fun StatisticUi(
         }
     )
 
-
-
-
-
-
-
     var selectionTypeIndex by remember {
         mutableIntStateOf(0)
     }
     var selectionType by remember {
         mutableStateOf(DateSelectionType.WEEK)
     }
-
 
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
@@ -187,6 +196,17 @@ fun StatisticUi(
                 showBackButton = true,
                 onBackClick = {
                     navigator?.pop()
+                },
+                trailingIcon = {
+                    ChildSelectionButton(
+                        modifier = Modifier
+                            .widthIn(120.dp, 160.dp),
+                        text = state.selectedChild?.name?:"",
+                        label = stringResource(Res.string.farzandingizni_tanlang),
+                        onClick = {
+                            showDialog = true
+                        },
+                    )
                 }
             )
 

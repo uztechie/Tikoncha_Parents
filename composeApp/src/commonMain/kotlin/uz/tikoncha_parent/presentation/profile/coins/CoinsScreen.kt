@@ -27,12 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -45,9 +43,11 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.new_home.HomeViewModel
-import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -60,15 +60,21 @@ class CoinsScreen : Screen {
 
         val viewModel = koinViewModel<MyCoinsViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
         AppSettings.hasUserLogin = false
 
         LaunchedEffect(Unit){
             viewModel.loadCoinsPackages()
         }
+        LaunchedEffect(Unit){
+            event(CoinsEvent.GetChildren)
+        }
 
         CoinsUi(
             navigator = navigator,
-            state = state.value
+            state = state.value,
+            event = event
         )
 
     }
@@ -78,6 +84,7 @@ class CoinsScreen : Screen {
 fun CoinsUi(
     navigator: Navigator?,
     state: MyCoinsState,
+    event: (CoinsEvent) -> Unit
 ) {
 
     var coinsAmount by remember {
@@ -97,16 +104,18 @@ fun CoinsUi(
         mutableStateOf(childrenList[0])
     }
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
+    var showDialog by remember { mutableStateOf(false) }
+    val childrenLoading = state.childrenResponseState is ResponseState.Loading
+    val childrenErrorText = state.childrenResponseState.errorText()
 
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
-        items = childrenList,
+        items = state.childrenList,
         show = showDialog,
-        onItemSelected = { child ->
-            selectedChildren.value = child
+        loading = childrenLoading,
+        errorMessage = childrenErrorText,
+        onItemSelected = {
+            event(CoinsEvent.OnChildSelected(it))
         },
         onDismiss = {
             showDialog = false
@@ -123,6 +132,17 @@ fun CoinsUi(
             showBackButton = true,
             onBackClick = {
                 navigator!!.pop()
+            },
+            trailingIcon = {
+                ChildSelectionButton(
+                    modifier = Modifier
+                        .widthIn(120.dp, 160.dp),
+                    text = state.selectedChild?.name?:"",
+                    label = stringResource(Res.string.farzandingizni_tanlang),
+                    onClick = {
+                        showDialog = true
+                    },
+                )
             }
         )
 
@@ -331,7 +351,8 @@ private fun PreviewCoinsScreen() {
     ){
         CoinsUi(
             navigator = null,
-            state = MyCoinsState()
+            state = MyCoinsState(),
+            event = {}
         )
     }
 }

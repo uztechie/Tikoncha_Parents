@@ -2,6 +2,7 @@
 
 package uz.tikoncha_parent.presentation.statistic
 
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
@@ -17,14 +18,18 @@ import uz.tikoncha_parent.data.mapper.mapToWeeklyUsagePeriods
 import uz.tikoncha_parent.data.mapper.toDailyAverage
 import uz.tikoncha_parent.data.mapper.toDailyUsageMinutesForChart
 import uz.tikoncha_parent.data.mapper.toUsageUi
+import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
 import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
+import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
+import uz.tikoncha_parent.presentation.profile.coins.CoinsEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
@@ -32,7 +37,7 @@ import kotlin.time.ExperimentalTime
 class StatisticViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-
+    private val childrenUseCase: ChildrenUseCase,
 ) : ScreenModel
 {
 
@@ -56,6 +61,15 @@ class StatisticViewModel(
 
     fun onEvent(event: StatisticEvent) {
         when (event) {
+
+            is StatisticEvent.OnChildSelected -> {
+                _state.update {
+                    it.copy(selectedChild = event.child)
+                }
+                AppSettings.selectedChildId = event.child.userId
+                AppSettings.selectedChild = event.child
+            }
+
             is StatisticEvent.GetUsageList -> {
                 _usagePeriod.value = event.usagePeriod
                 _state.update {
@@ -64,14 +78,11 @@ class StatisticViewModel(
                     )
                 }
                 recomputeAll()
-
             }
-
 
             StatisticEvent.GetAppUsage -> {
                 loadAppUsages()
             }
-
 
             is StatisticEvent.TodaySelected -> {
                 _state.update {
@@ -80,7 +91,6 @@ class StatisticViewModel(
                     )
                 }
             }
-
 
             StatisticEvent.RefreshSubscriptionLimit -> {
                 getSubscriptionLimit()
@@ -94,6 +104,10 @@ class StatisticViewModel(
                         subscriptionLimit = limit
                     )
                 }
+            }
+
+            StatisticEvent.GetChildren -> {
+                loadChildren()
             }
         }
     }
@@ -189,5 +203,47 @@ class StatisticViewModel(
 
         }
     }
+
+    private fun loadChildren() {
+        childrenJob?.cancel()
+        childrenJob = screenModelScope.launch {
+            _state.update {
+                it.copy(
+                    childrenResponseState = ResponseState.Loading
+                )
+            }
+
+            val response = childrenUseCase.invoke()
+            when (response) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            childrenResponseState = ResponseState.Error(
+                                res = response.resId,
+                                message = response.message
+                            )
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            childrenResponseState = ResponseState.Success(),
+                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() },
+                            selectedChild = AppSettings.selectedChild
+                        )
+                    }
+                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
+                    if (AppSettings.selectedChild == null){
+                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
+                    }
+
+                }
+            }
+        }
+    }
+
 
 }
