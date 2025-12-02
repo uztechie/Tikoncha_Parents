@@ -208,7 +208,7 @@ val sharedModule = module {
     viewModel { LoginPasswordViewmodel() }
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
-    factory { StatisticViewModel(get(), get()) }
+    factory { StatisticViewModel(get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get()) }
     viewModel { ChatViewModel(
         get(),
@@ -224,7 +224,7 @@ val sharedModule = module {
     viewModel { PolicyViewModel(get(), get()) }
     viewModel { TimeRuleViewModel() }
     viewModel { LimitRuleViewModel() }
-    viewModel { MyCoinsViewModel(get(), get()) }
+    viewModel { MyCoinsViewModel(get(), get(), get()) }
 
     viewModel { PolicySetupViewModel(get(), get(), get()) }
     single { PolicySharedModel(get()) }

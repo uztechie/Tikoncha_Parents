@@ -29,7 +29,8 @@ data class StatisticState(
     val dateSelectionType: DateSelectionType = DateSelectionType.WEEK,
 
     val selectedApp: AppUsageUi? = null,
-    val subscriptionLimit: SubscriptionLimit? = null
+    val subscriptionLimit: SubscriptionLimit? = null,
 
-
+    val childrenList: List<UserInfo> = emptyList(),
+    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
 )
