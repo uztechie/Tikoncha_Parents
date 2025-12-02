@@ -45,7 +45,6 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -163,9 +162,6 @@ fun AddChildUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .tripleShadow(
-                        shape = RoundedCornerShape(TextFieldCornerRadius)
-                    )
                     .border(width = 1.dp, color = if (state.accept) PrimaryColor else Color.Transparent, shape = RoundedCornerShape(TextFieldCornerRadius)),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
             )

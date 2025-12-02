@@ -47,9 +47,6 @@ fun PhoneNumberInputField(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .tripleShadow(
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                )
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {

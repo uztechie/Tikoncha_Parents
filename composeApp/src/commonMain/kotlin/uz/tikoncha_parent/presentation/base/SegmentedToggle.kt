@@ -63,9 +63,6 @@ fun SegmentedToggle(
     Box(
         modifier = modifier
             .height(TextFieldHeight)
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
             .background(backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
             .padding(4.dp)
             .onGloballyPositioned { layoutCoordinates ->

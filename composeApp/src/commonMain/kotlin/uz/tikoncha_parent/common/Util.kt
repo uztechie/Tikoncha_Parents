@@ -1,8 +1,6 @@
 package uz.tikoncha_parent.common
 
 
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -156,6 +154,25 @@ object Util {
     }
 
     fun Int.toCurrency(): String{
+        val isNegative = this < 0
+        val digits = kotlin.math.abs(this).toString()
+
+        val sb = StringBuilder()
+        var count = 0
+
+        for (i in digits.length - 1 downTo 0){
+            sb.append(digits[i])
+            count++
+            if (count == 3 && i != 0){
+                sb.append(",")
+                count = 0
+            }
+        }
+        val formatted = sb.reverse().toString()
+        return if (isNegative) "-$formatted" else formatted
+    }
+
+    fun Long.toCurrency(): String{
         val isNegative = this < 0
         val digits = kotlin.math.abs(this).toString()
 

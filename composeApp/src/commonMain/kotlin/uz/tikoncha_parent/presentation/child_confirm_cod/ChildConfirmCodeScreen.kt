@@ -48,7 +48,6 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -147,9 +146,6 @@ fun ChildConfirmCodeUi(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .tripleShadow(
-                        shape = RoundedCornerShape(TextFieldCornerRadius)
-                    )
                     .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                     .height(TextFieldHeight),
                 verticalAlignment = Alignment.CenterVertically,

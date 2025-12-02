@@ -48,23 +48,27 @@ import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordVie
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
+import uz.tikoncha_parent.data.remote.GetCoinPackageApiService
 import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.remote.PaymentApiService
 import uz.tikoncha_parent.data.remote.PolicyApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
+import uz.tikoncha_parent.data.repository.GetCoinPackageRepositoryImpl
 import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
+import uz.tikoncha_parent.domain.repository.CoinPackageRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
@@ -125,6 +129,7 @@ val sharedModule = module {
     single { MyCoinsApiService(get()) }
     single { PolicyApiService(get()) }
     single { PaymentApiService(get()) }
+    single { GetCoinPackageApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -136,6 +141,7 @@ val sharedModule = module {
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single< MyCoinsRepository> { MyCoinsRepositoryImpl(get()) }
+    single< CoinPackageRepository> { GetCoinPackageRepositoryImpl(get()) }
     single< PolicyRepository> { PolicyRepositoryImpl(get()) }
     single< PaymentRepository> { PaymentRepositoryImpl(get()) }
 
@@ -186,6 +192,7 @@ val sharedModule = module {
 
     single { ChatConnectionManager(get(), get()) }
     single { GetPoliciesFromServerUseCase(get() ) }
+    single { GetCoinPackagesUseCase(get() ) }
 
 
 
@@ -217,7 +224,7 @@ val sharedModule = module {
     viewModel { PolicyViewModel(get(), get()) }
     viewModel { TimeRuleViewModel() }
     viewModel { LimitRuleViewModel() }
-    viewModel { MyCoinsViewModel(get()) }
+    viewModel { MyCoinsViewModel(get(), get()) }
 
     viewModel { PolicySetupViewModel(get(), get(), get()) }
     single { PolicySharedModel(get()) }

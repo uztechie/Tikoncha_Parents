@@ -65,7 +65,6 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
 import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -356,9 +355,6 @@ fun AddNewTask(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .tripleShadow(
-                        shape = RoundedCornerShape(TextFieldCornerRadius),
-                    )
                     .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),

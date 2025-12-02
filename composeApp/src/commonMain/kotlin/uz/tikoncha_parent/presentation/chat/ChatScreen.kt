@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -39,12 +40,14 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 class ChatScreen: Screen {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current?:return
 
         val viewModel = koinViewModel<ChatViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
         ChatUi(
+            navigator = navigator,
             state = state,
             event = event
         )
@@ -54,13 +57,10 @@ class ChatScreen: Screen {
 
 @Composable
 fun ChatUi(
+    navigator: Navigator?,
     state: ChatState,
     event: (ChatEvent) -> Unit,
 ) {
-
-    val parentNavigator = LocalNavigator.current?.parent
-    val navigator = LocalNavigator.current
-
 
     LaunchedEffect(true) {
         ChatUnreadEventBus.tryEmit(
@@ -118,7 +118,7 @@ fun ChatUi(
         CustomHeader(
             showBackButton = true,
             onBackClick = {
-                parentNavigator?.pop()
+                navigator?.pop()
             },
             title = stringResource(Res.string.suhbat),
         )
@@ -155,6 +155,7 @@ fun ChatUi(
 private fun Preview() {
     TikonchaParentTheme(mode = ThemeMode.LIGHT) {
         ChatUi(
+            navigator = null,
             state = ChatState(),
             event = {}
         )

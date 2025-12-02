@@ -40,7 +40,6 @@ import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.CoinsCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -91,9 +90,6 @@ fun CoinGeneratorTextField(
     val columnModifier = if (shadow) {
         modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
             .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
     } else {
         modifier

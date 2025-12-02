@@ -272,5 +272,10 @@
     <string name="statistika">Statistika</string>
     <string name="chegirmalar">Chegirmalar</string>
     <string name="chegirma">Chegirma</string>
+    <string name="topshiriqlar">Topshiriqlar</string>
+    <string name="jadvallar">Jadvallar</string>
+    <string name="ilova_cheklangan">%1$d ta ilova cheklangan</string>
+    <string name="faol_vazifa">%1$d ta faol vazifa</string>
+    <string name="bugun_telefonda_sarfladi">Bugun telefonda sarfladi</string>
 
 </resources>

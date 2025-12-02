@@ -209,5 +209,10 @@
     <string name="farzand_va_maktab_bilan_boglaning">Свяжитесь с ребёнком и школой</string>
     <string name="chegirmalar">Скидки</string>
     <string name="chegirma">Скидкa</string>
+    <string name="topshiriqlar">Задания</string>
+    <string name="jadvallar">Расписания</string>
+    <string name="ilova_cheklangan">%1$d приложений ограничено</string>
+    <string name="faol_vazifa">%1$d активных заданий</string>
+    <string name="bugun_telefonda_sarfladi">Cегодня потратил(а) в телефоне</string>
 
 </resources>

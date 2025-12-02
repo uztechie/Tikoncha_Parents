@@ -53,7 +53,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -195,16 +195,13 @@ fun TaskUi(
             )
 
             SpaceMedium()
-
-            CustomSelectionButton(
+            ChildSelectionButton(
                 text = state.selectedChildren?.name ?: "",
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = { showDialog = true },
-                painter = painterResource(Res.drawable.parent),
                 label = stringResource(Res.string.farzandlaringiz),
-                loading = false,
-                tint = PrimaryColor
+                onClick = {showDialog = true},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TextFieldHeight)
             )
 
             SpaceMedium()
@@ -244,9 +241,6 @@ fun TaskUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(2f)
-                        .tripleShadow(
-                            shape = RoundedCornerShape(TextFieldCornerRadius)
-                        )
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(TextFieldCornerRadius)
@@ -365,9 +359,6 @@ fun TaskUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(2f)
-                        .tripleShadow(
-                            shape = RoundedCornerShape(TextFieldCornerRadius)
-                        )
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(TextFieldCornerRadius)

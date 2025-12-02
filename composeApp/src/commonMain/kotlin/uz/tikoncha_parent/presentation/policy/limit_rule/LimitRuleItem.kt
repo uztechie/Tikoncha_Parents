@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,14 +16,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CloseButton
-import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.domain.model.weekdayLabel
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
-import kotlin.compareTo
 
 
 @Composable
@@ -43,9 +38,6 @@ fun LimitRuleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .tripleShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-            )
             .background(
                 bgColor,
                 RoundedCornerShape(TextFieldCornerRadius)

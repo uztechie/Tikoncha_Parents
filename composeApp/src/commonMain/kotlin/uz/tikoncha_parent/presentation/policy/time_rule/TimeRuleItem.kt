@@ -20,7 +20,6 @@ import tikoncha_parents.composeapp.generated.resources.kun_davomida
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CloseButton
-import uz.tikoncha_parent.presentation.base.verticalShadow
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SmallTextSize
@@ -44,10 +43,6 @@ fun TimeRuleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .verticalShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-                offset = 0.dp
-            )
             .background(
                 bgColor,
                 RoundedCornerShape(TextFieldCornerRadius)

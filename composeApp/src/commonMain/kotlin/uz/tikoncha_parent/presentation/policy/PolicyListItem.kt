@@ -25,43 +25,11 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.apps_icon
-import tikoncha_parents.composeapp.generated.resources.cheklovlar
-import tikoncha_parents.composeapp.generated.resources.detail_icon
-import tikoncha_parents.composeapp.generated.resources.dot
-import tikoncha_parents.composeapp.generated.resources.family
-import tikoncha_parents.composeapp.generated.resources.faol
-import tikoncha_parents.composeapp.generated.resources.faol_emas
-import tikoncha_parents.composeapp.generated.resources.global
-import tikoncha_parents.composeapp.generated.resources.location
-import tikoncha_parents.composeapp.generated.resources.profile
-import tikoncha_parents.composeapp.generated.resources.school
-import tikoncha_parents.composeapp.generated.resources.shartlar
-import tikoncha_parents.composeapp.generated.resources.shift_clock
-import tikoncha_parents.composeapp.generated.resources.star_vector
-import tikoncha_parents.composeapp.generated.resources.ta_ilovaga
-import tikoncha_parents.composeapp.generated.resources.ta_vebsaytga
-import tikoncha_parents.composeapp.generated.resources.time_limit
-import tikoncha_parents.composeapp.generated.resources.ustuvorligi
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.PolicyType
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.ui.CardCornerRadius
-import uz.tikoncha_parent.ui.ContainerCornerRadius
-import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.DividerHorizontal
-import uz.tikoncha_parent.ui.LargeTextSize
-import uz.tikoncha_parent.ui.NormalIconButtonSize
-import uz.tikoncha_parent.ui.NormalIconSize
-import uz.tikoncha_parent.ui.OtpErrorColor
-import uz.tikoncha_parent.ui.SmallIconSize
-import uz.tikoncha_parent.ui.SmallTextSize
-import uz.tikoncha_parent.ui.SpaceSmall
-import uz.tikoncha_parent.ui.SpaceUltraSmall
-import uz.tikoncha_parent.ui.UltraSmallTextSize
-import uz.tikoncha_parent.ui.theme.ThemeMode
-import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.theme.*
 
 
 @Composable
@@ -98,9 +66,6 @@ fun PolicyListItem(
                 interactionSource = null,
                 indication = null,
                 onClick = onClick
-            )
-            .tripleShadow(
-                shape = RoundedCornerShape(CardCornerRadius),
             )
             .clip(RoundedCornerShape(CardCornerRadius))
             .background(MaterialTheme.extendedColor.cardColor)

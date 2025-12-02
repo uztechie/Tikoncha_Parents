@@ -38,7 +38,6 @@ import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText

@@ -27,24 +27,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.presentation.common.CoinGeneratorTextField
-import uz.tikoncha_parent.ui.AppIconInnerPadding
-import uz.tikoncha_parent.ui.BackgroundColor
-import uz.tikoncha_parent.ui.BorderColor
-import uz.tikoncha_parent.ui.CoinTextFieldWidth
-import uz.tikoncha_parent.ui.NormalIconButtonSize
-import uz.tikoncha_parent.ui.NormalLargeTextSize
-import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.SpaceSmall
-import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add
 import tikoncha_parents.composeapp.generated.resources.subtruct_icon
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.ui.CoinsCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -83,9 +72,6 @@ fun CoinAmountTextField(
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
-                .tripleShadow(
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                )
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {
@@ -140,9 +126,6 @@ fun CoinAmountTextField(
         Box(
             modifier = Modifier
                 .size(NormalIconButtonSize)
-                .tripleShadow(
-                    shape = RoundedCornerShape(TextFieldCornerRadius),
-                )
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
                 .clip(RoundedCornerShape(TextFieldCornerRadius))
                 .clickable {

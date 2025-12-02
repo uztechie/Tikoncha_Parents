@@ -2,24 +2,16 @@ package uz.tikoncha_parent.presentation.profile.coins
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,66 +24,29 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.common.CustomListDialog
-import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
-import uz.tikoncha_parent.ui.ButtonHeight
-import uz.tikoncha_parent.ui.ContainerCornerRadius
-import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.NormalLargeTextSize
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.ShapeCornerRadius
-import uz.tikoncha_parent.ui.SmallIconButtonSize
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
-import uz.tikoncha_parent.ui.TextFieldHeight
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.arrow_down
-import tikoncha_parents.composeapp.generated.resources.arrow_left
-import tikoncha_parents.composeapp.generated.resources.arrow_pay
-import tikoncha_parents.composeapp.generated.resources.arrow_previous
-import tikoncha_parents.composeapp.generated.resources.arrow_right
-import tikoncha_parents.composeapp.generated.resources.arrow_right_rounded
-import tikoncha_parents.composeapp.generated.resources.arrow_up
-import tikoncha_parents.composeapp.generated.resources.chegirma
-import tikoncha_parents.composeapp.generated.resources.chegirmalar
-import tikoncha_parents.composeapp.generated.resources.coin
-import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
-import tikoncha_parents.composeapp.generated.resources.money_light
-import tikoncha_parents.composeapp.generated.resources.obuna_holati
-import tikoncha_parents.composeapp.generated.resources.primary_arrow_right
-import tikoncha_parents.composeapp.generated.resources.profile
-import tikoncha_parents.composeapp.generated.resources.sotib_olish
-import tikoncha_parents.composeapp.generated.resources.tangachalar
-import tikoncha_parents.composeapp.generated.resources.tangachalar_orqali
-import tikoncha_parents.composeapp.generated.resources.tikoncha_plus
-import tikoncha_parents.composeapp.generated.resources.tolandi
-import tikoncha_parents.composeapp.generated.resources.tolanmagan
-import tikoncha_parents.composeapp.generated.resources.tolov_kutilmoqda
-import tikoncha_parents.composeapp.generated.resources.tolov_summasi
+import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.domain.model.PaymentStatus
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.ui.CardCornerRadius
-import uz.tikoncha_parent.ui.DividerHorizontal
-import uz.tikoncha_parent.ui.ImportantButtonColor
-import uz.tikoncha_parent.ui.LargeIconButtonSize
-import uz.tikoncha_parent.ui.LargeIconSize
-import uz.tikoncha_parent.ui.NormalIconSize
-import uz.tikoncha_parent.ui.OtpErrorColor
-import uz.tikoncha_parent.ui.SmallIconSize
-import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.presentation.new_home.HomeViewModel
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -101,12 +56,19 @@ class CoinsScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current
+        val navigator = LocalNavigator.current?:return
 
+        val viewModel = koinViewModel<MyCoinsViewModel>()
+        val state = viewModel.state.collectAsStateWithLifecycle()
         AppSettings.hasUserLogin = false
 
+        LaunchedEffect(Unit){
+            viewModel.loadCoinsPackages()
+        }
+
         CoinsUi(
-            navigator = navigator
+            navigator = navigator,
+            state = state.value
         )
 
     }
@@ -114,7 +76,8 @@ class CoinsScreen : Screen {
 
 @Composable
 fun CoinsUi(
-    navigator: Navigator?
+    navigator: Navigator?,
+    state: MyCoinsState,
 ) {
 
     var coinsAmount by remember {
@@ -171,18 +134,6 @@ fun CoinsUi(
                 .padding(horizontal = ContainerPadding)
                 .imePadding()
         ) {
-
-//            CustomSelectionButton(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(TextFieldHeight),
-//                text = selectedChildren.value,
-//                painter = painterResource(Res.drawable.profile),
-//                tint = MaterialTheme.extendedColor.primaryAlphaColor,
-//                onClick = {
-//                    showDialog = true
-//                }
-//            )
 
             SpaceMedium()
 
@@ -273,181 +224,28 @@ fun CoinsUi(
             )
 
             SpaceMedium()
-
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        MaterialTheme.extendedColor.cardColor,
-                        RoundedCornerShape(CardCornerRadius)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(state.packages){ pac->
+                    CoinPackItem(
+                        coins = pac.coins,
+                        price = pac.price,
+                        discountPercent = pac.discountPercent,
+                        onClick = {}
                     )
-                    .padding(16.dp)
-            ){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(SmallIconButtonSize)
-                            .clip(RoundedCornerShape(ShapeCornerRadius))
-                            .background(MaterialTheme.extendedColor.backgroundColor),
-                        contentAlignment = Alignment.Center
-                    ){
-                        Image(
-                            painter = painterResource(Res.drawable.coin),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .fillMaxSize(0.7f)
-                        )
-                    }
-
-                    SpaceSmall()
-                    Column {
-                        CustomText(
-                            text = stringResource(Res.string.tangachalar),
-                            fontSize = NormalTextSize,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.extendedColor.hintColor
-                        )
-                        CustomText(
-                            text = "5 000 tanga"
-                        )
-                    }
-
-                    Spacer(Modifier.weight(1f))
-
-                    CustomText(
-                        text = "350 000 UZS",
-                        fontSize = NormalTextSize,
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W600
-                    )
-                }
-                SpaceMedium()
-                DividerHorizontal()
-                SpaceMedium()
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                            MaterialTheme.extendedColor.primaryColor,
-                            RoundedCornerShape(TextFieldCornerRadius))
-                            .padding(horizontal = 6.dp)
-                    ){
-                        CustomText(
-                            text = "30%"
-                        )
-                    }
-                    SpaceSmall()
-                    CustomText(
-                        text = stringResource(Res.string.chegirma),
-                        color = MaterialTheme.extendedColor.hintColor,
-                        fontSize = NormalTextSize,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                   Image(
-                       painter = painterResource(Res.drawable.arrow_pay),
-                       contentDescription = null,
-                       modifier = Modifier
-                           .size(LargeIconSize)
-                           .background(PrimaryColor, CircleShape)
-                           .padding(8.dp)
-                   )
                 }
             }
 
             SpaceLarge()
 
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-            )
-
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(
-//                        TextFieldCornerRadius
-//                    ))
-//                    .padding(4.dp)
-//            ) {
-//
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(64.dp),
-//                    shape = RoundedCornerShape(TextFieldCornerRadius),
-//                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor),
-//                )
-//                {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize(),
-//                        verticalArrangement = Arrangement.Center,
-//                    ) {
-//
-//                        Row(
-//                            modifier = Modifier.padding(6.dp),
-//                            horizontalArrangement = Arrangement.SpaceBetween,
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .clip(CircleShape)
-//                                    .background(MaterialTheme.colorScheme.background)
-//                                    .padding(10.dp)
-//                            ){
-//                                Image(
-//                                    painter = painterResource(Res.drawable.money_light),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.size(NormalIconButtonSize)
-//                                )
-//                            }
-//
-//                            SpaceMedium()
-//
-//                            CustomText(
-//                                text = stringResource(Res.string.bitta_tanga),
-//                                fontSize = NormalTextSize,
-//                                fontWeight = FontWeight.Medium,
-//                            )
-//                        }
-//                    }
-//                    SpaceUltraSmall()
-//                }
-//
-//                SpaceLarge()
-//
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = ContainerPadding),
-//                    horizontalArrangement = Arrangement.SpaceBetween
-//                )
-//                {
-//                    CustomText(
-//                        text = stringResource(Res.string.hammasi),
-//                        fontSize = NormalTextSize,
-//                        fontWeight = FontWeight.W600
-//                    )
-//
-//                    CustomText(
-//                        text = "${coinsAmount.toInt() * 100} UZS",
-//                        fontSize = NormalTextSize,
-//                        color = PrimaryColor,
-//                        fontWeight = FontWeight.W600
-//                    )
-//                }
-//            }
-
             Column(
                 modifier = Modifier
+                    .zIndex(1f)
                     .fillMaxWidth()
-                    .tripleShadow(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor, CircleShape)
                     .padding(6.dp)
             ) {
@@ -527,12 +325,13 @@ fun CoinsUi(
 
 @Preview
 @Composable
-fun PreviewCoinsScreen() {
+private fun PreviewCoinsScreen() {
     TikonchaParentTheme(
         ThemeMode.DARK
     ){
         CoinsUi(
-            navigator = null
+            navigator = null,
+            state = MyCoinsState()
         )
     }
 }

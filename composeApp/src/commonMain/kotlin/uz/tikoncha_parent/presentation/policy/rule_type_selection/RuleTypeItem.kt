@@ -17,14 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.SoonBox
-import uz.tikoncha_parent.presentation.base.verticalShadow
-import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
-import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -52,10 +48,6 @@ fun RuleTypeItem(
     if (enabled) {
         updatedModifier = modifier
             .fillMaxWidth()
-            .verticalShadow(
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-                offset = 0.dp
-            )
     } else {
         updatedModifier = modifier
             .fillMaxWidth()
