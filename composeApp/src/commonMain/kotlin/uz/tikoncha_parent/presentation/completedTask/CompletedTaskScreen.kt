@@ -87,9 +87,6 @@ fun CompletedTaskUi(
 
     val showTask = stringResource(showTaskRes)
 
-    LaunchedEffect(true) {
-        event(TaskEvent.GetChildren)
-    }
 
 
     Column(

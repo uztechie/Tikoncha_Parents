@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -41,7 +39,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.common.Util
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.completedTask.CompletedTaskScreen
 import uz.tikoncha_parent.ui.PrimaryColor
@@ -107,9 +104,6 @@ fun TaskUi(
         }
     )
 
-    LaunchedEffect(true) {
-        event(TaskEvent.GetChildren)
-    }
 
     Column(
         modifier = Modifier
@@ -196,9 +190,10 @@ fun TaskUi(
 
             SpaceMedium()
             ChildSelectionButton(
-                text = state.selectedChildren?.name ?: "",
+                text = state.selectedChild?.name ?: "",
                 label = stringResource(Res.string.farzandlaringiz),
                 onClick = {showDialog = true},
+                imageUrl = state.selectedChild?.avatarUrl?:"",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight)

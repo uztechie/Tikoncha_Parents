@@ -65,7 +65,7 @@ import ru.sulgik.mapkit.map.CameraPosition
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 
-class MapScreen2 : Screen {
+class MapScreen : Screen {
 
 
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import uz.tikoncha_parent.platform.KmpWebView
 
-class MapScreen : Screen {
+class MapScreen2 : Screen {
 
 
     val json = """

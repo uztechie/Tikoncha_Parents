@@ -147,6 +147,7 @@ fun SubscriptionPaymentUi(
                         .widthIn(120.dp, 160.dp),
                     text = state.selectedChild?.name?:"",
                     label = stringResource(Res.string.farzandingizni_tanlang),
+                    imageUrl = state.selectedChild?.avatarUrl?:"",
                     onClick = {
                         showDialog = true
                     },

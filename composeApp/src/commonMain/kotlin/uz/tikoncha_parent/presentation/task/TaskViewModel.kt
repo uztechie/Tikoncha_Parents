@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import uz.tikoncha_parent.common.DateTimeUtil
-import uz.tikoncha_parent.common.SessionStore
 import uz.tikoncha_parent.common.Util.millisToLocalDate
 import uz.tikoncha_parent.common.Util.millisToLocalTime
 import uz.tikoncha_parent.common.Util.toMillis
@@ -53,6 +52,13 @@ class TaskViewModel (
     val state = _state.asStateFlow()
 
     init {
+        _state.update {
+            it.copy(
+                selectedChild = AppSettings.selectedChild,
+                childrenList = AppSettings.children
+            )
+        }
+        loadTasks()
         onEvent(TaskEvent.LoadParentCoins)
     }
 
@@ -131,9 +137,9 @@ class TaskViewModel (
 
             is TaskEvent.OnChildSelected -> {
                 _state.update {
-                    it.copy(selectedChildren = event.child)
+                    it.copy(selectedChild = event.child)
                 }
-                SessionStore.selectedChildId = event.child.userId
+                AppSettings.selectedChild = event.child
                 loadTasks()
             }
 
@@ -155,10 +161,6 @@ class TaskViewModel (
                 else {
                     requestTodo()
                 }
-            }
-
-            TaskEvent.GetChildren->{
-                loadChildren()
             }
 
             TaskEvent.OnReset -> {
@@ -226,7 +228,7 @@ class TaskViewModel (
                 )
             }
 
-            val  selectedChildUserId = SessionStore.selectedChildId
+            val  selectedChildUserId = state.value.selectedChild?.userId
 
             val request = TodoRequest(
                 title = _state.value.title,
@@ -364,62 +366,18 @@ class TaskViewModel (
             isCompleted = state.completed == true,
             dateTime = dueMillis,
             createdAt = editedNowMillis,
-            targetUserId = SessionStore.selectedChildId ?: "",
+            targetUserId = state.selectedChild?.userId ?: "",
             authorId = AppSettings.userId ?: "",
             isMine = true,
         )
     }
 
-    private fun loadChildren() {
-        childrenJob?.cancel()
-        childrenJob = viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    childrenResponseState = ResponseState.Loading
-                )
-            }
-
-            val response = childrenUseCase.invoke()
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-
-                    val list = response.data.map { it.toUserInfo() }
-                    val savedId = SessionStore.selectedChildId
-                    val selected = savedId.let { id -> list.firstOrNull() {it.userId == id} }
-
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Success(),
-                            childrenList = list,
-                            selectedChildren = selected
-                        )
-                    }
-
-                    if (selected != null){
-                        loadTasks()
-                    }
-                }
-            }
-        }
-    }
 
     private fun loadTasks(){
         listJob?.cancel()
         listJob = viewModelScope.launch {
 
-            val selectedId = SessionStore.selectedChildId
+            val selectedId = state.value.selectedChild?.userId
 
             if (selectedId == null){
                 _state.update {

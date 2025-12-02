@@ -21,7 +21,7 @@ data class TaskState(
     val availableCoins: Int = 0,
 
     val childrenList: List<UserInfo> = emptyList(),
-    val selectedChildren: UserInfo? = null,
+    val selectedChild: UserInfo? = null,
     val genderIndex: Int = 0,
 
     val taskResponseState: ResponseState<Nothing> = ResponseState.Idle,
@@ -49,4 +49,4 @@ data class TaskState(
 
     val allChildrenActiveTaskCount: Int = 0,
 
-)
+    )

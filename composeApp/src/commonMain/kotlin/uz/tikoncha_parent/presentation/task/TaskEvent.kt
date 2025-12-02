@@ -10,7 +10,6 @@ sealed interface TaskEvent {
     object OnConfirmClicked: TaskEvent
     object OnReset: TaskEvent
     object LoadTasks: TaskEvent
-    object GetChildren: TaskEvent
     object ShowMineAll : TaskEvent
     object ShowChildrenAll : TaskEvent
 
