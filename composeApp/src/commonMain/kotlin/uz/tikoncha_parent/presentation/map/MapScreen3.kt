@@ -65,14 +65,7 @@ import ru.sulgik.mapkit.map.CameraPosition
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 
-class MapScreen : Screen {
-
-
-
-
-
-
-
+class MapScreen3 : Screen {
 
     @OptIn(YandexMapsComposeExperimentalApi::class)
     @Preview

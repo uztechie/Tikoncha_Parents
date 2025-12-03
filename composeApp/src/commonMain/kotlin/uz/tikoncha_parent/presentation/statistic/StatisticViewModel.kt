@@ -68,6 +68,7 @@ class StatisticViewModel(
                 }
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
+                loadAppUsages()
             }
 
             is StatisticEvent.GetUsageList -> {

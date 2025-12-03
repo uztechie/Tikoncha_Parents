@@ -26,7 +26,7 @@ fun Loading(
 
     Box(
         modifier = Modifier
-            .size(100.dp)
+            .size(60.dp)
             .padding(10.dp),
         contentAlignment = Alignment.Center,
 

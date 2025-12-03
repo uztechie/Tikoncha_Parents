@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -109,7 +110,8 @@ fun SubscriptionBottomSheet(
                 },
                 contentDescription = "",
                 modifier = Modifier.fillMaxWidth(0.5f),
-                colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor)
+                colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                contentScale = ContentScale.FillWidth
             )
 
             SpaceMedium()
