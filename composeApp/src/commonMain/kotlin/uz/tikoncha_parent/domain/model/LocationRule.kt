@@ -9,6 +9,6 @@ data class LocationRule(
     val centerLat:Double? = null,
     val centerLng:Double? = null,
     val radiusMeters:Double? = null,
-    val polygon: List<LatLng>? = null,
+    val polygon: List<LocationData>? = null,
     val isIncluded: Boolean = true
 )

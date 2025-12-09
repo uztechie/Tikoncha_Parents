@@ -87,7 +87,6 @@ class MapScreen3 : Screen {
         val locationViewModel = viewModel {
             LocationViewModel(
                 tracker = locationTracker,
-                useCase
             )
         }
 
@@ -320,7 +319,6 @@ class MapScreen3 : Screen {
 
             FilledTonalIconButton(
                 onClick = {
-                    locationViewModel.reset()
                     permissionViewModel.requestPermission()
                 },
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
