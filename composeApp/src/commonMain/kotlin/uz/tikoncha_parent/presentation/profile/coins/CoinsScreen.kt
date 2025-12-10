@@ -5,8 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +64,7 @@ class CoinsScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        AppSettings.hasUserLogin = false
+//        AppSettings.hasUserLogin = false
 
         LaunchedEffect(Unit){
             viewModel.loadCoinsPackages()
@@ -89,19 +91,6 @@ fun CoinsUi(
 
     var coinsAmount by remember {
         mutableStateOf("1")
-    }
-
-    val childrenList = remember {
-        mutableStateListOf(
-            "Saidburxon",
-            "Muhammadsaid",
-            "Muhammadyusuf",
-            "Beka"
-        )
-    }
-
-    val selectedChildren = remember {
-        mutableStateOf(childrenList[0])
     }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -138,6 +127,7 @@ fun CoinsUi(
                     modifier = Modifier
                         .widthIn(120.dp, 160.dp),
                     text = state.selectedChild?.name?:"",
+                    imageUrl = state.selectedChild?.avatarUrl?:"",
                     label = stringResource(Res.string.farzandingizni_tanlang),
                     onClick = {
                         showDialog = true
@@ -153,9 +143,8 @@ fun CoinsUi(
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
                 .imePadding()
+                .verticalScroll(rememberScrollState())
         ) {
-
-            SpaceMedium()
 
             Row(
                 modifier = Modifier
@@ -204,64 +193,7 @@ fun CoinsUi(
                     }
                 )
             }
-
             SpaceMedium()
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(ContainerCornerRadius))
-                    .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(ContainerPadding)
-            ) {
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = PrimaryColor,
-                    fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                SpaceUltraSmall()
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar_orqali),
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = NormalTextSize,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    style = TextStyle()
-                )
-            }
-            
-            SpaceMedium()
-
-            CustomText(
-                text = stringResource(Res.string.chegirmalar),
-                fontSize = NormalTextSize,
-            )
-
-            SpaceMedium()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(state.packages){ pac->
-                    CoinPackItem(
-                        coins = pac.coins,
-                        price = pac.price,
-                        discountPercent = pac.discountPercent,
-                        onClick = {}
-                    )
-                }
-            }
-
-            SpaceLarge()
-
             Column(
                 modifier = Modifier
                     .zIndex(1f)
@@ -325,7 +257,7 @@ fun CoinsUi(
                 }
             }
 
-            SpaceLarge()
+            SpaceMedium()
 
             CustomButton(
                 modifier = Modifier
@@ -339,6 +271,57 @@ fun CoinsUi(
                 fontSize = NormalLargeTextSize
             )
             SpaceLarge()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(ContainerCornerRadius))
+                    .background(MaterialTheme.extendedColor.cardColor)
+                    .padding(ContainerPadding)
+            ) {
+
+                CustomText(
+                    text = stringResource(Res.string.tangachalar),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = PrimaryColor,
+                    fontSize = NormalLargeTextSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                SpaceUltraSmall()
+
+                CustomText(
+                    text = stringResource(Res.string.tangachalar_orqali),
+                    color = MaterialTheme.extendedColor.hintColor,
+                    fontSize = NormalTextSize,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    style = TextStyle()
+                )
+            }
+            
+            SpaceMedium()
+
+            CustomText(
+                text = stringResource(Res.string.chegirmalar),
+                fontSize = NormalTextSize,
+            )
+
+            SpaceMedium()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                state.packages.forEach { pac ->
+                    CoinPackItem(
+                        coins = pac.coins,
+                        price = pac.price,
+                        discountPercent = pac.discountPercent,
+                        onClick = {}
+                    )
+                }
+            }
+            SpaceMedium()
         }
     }
 }
