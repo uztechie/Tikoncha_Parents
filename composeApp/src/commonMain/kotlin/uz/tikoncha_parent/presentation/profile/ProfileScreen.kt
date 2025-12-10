@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
 import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
 import uz.tikoncha_parent.platform.rememberImagePicker
@@ -34,9 +35,13 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent
 import uz.tikoncha_parent.presentation.task.TaskViewModel
@@ -78,6 +83,7 @@ class ProfileScreen : Screen {
         val activeTasksCount = taskState.allChildrenActiveTaskCount
 
         ProfileUi(
+            navigator = navigator,
             event = event,
             state = state.value,
             aiTokens = aiTokens?:0,
@@ -88,15 +94,12 @@ class ProfileScreen : Screen {
 
 @Composable
 fun ProfileUi(
+    navigator: Navigator?,
     state: ProfileState,
     aiTokens: Int,
     activeTasksCount: Int,
     event: (ProfileEvent) -> Unit
 ) {
-
-    val navigator = LocalNavigator.current
-    val rootNavigator = navigator?:return
-
     var showQrCode by remember { mutableStateOf(false) }
 
     val sections = remember {
@@ -131,17 +134,45 @@ fun ProfileUi(
     }
 
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
+    var logout by remember {  mutableStateOf(false)}
+
+    if (showQrCode){
+        TransparentQrScreen(
+            painter =  painter,
+            onDismissRequest = {
+                showQrCode = false
+            }
+        )
+    }
+
+    CustomDialog(
+        title = stringResource(Res.string.chiqishni_xohlaysizmi),
+        message = stringResource(Res.string.chiqishni_tasdiqlang),
+        buttonText = stringResource(Res.string.tasdiqlash),
+        show = logout,
+        showCloseButton = true,
+        onDismiss = { logout = false },
+        onButtonClick = {
+            AppSettings.hasUserLogin = false
+            AppSettings.userInfo = null
+            AppSettings.children = emptyList()
+            AppSettings.selectedChild = null
+            AppSettings.selectedChildId = ""
+            AppSettings.policyId = ""
+            AppSettings.subscriptionLimitList = emptyList()
+            navigator?.replaceAll(LoginScreen())
+        }
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
-            .verticalScroll(rememberScrollState())
     ) {
         CustomHeader(
             showBackButton = true,
             onBackClick = {
-                rootNavigator?.pop()
+                navigator?.pop()
             },
             title = stringResource(Res.string.profil),
         )
@@ -150,6 +181,7 @@ fun ProfileUi(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
             SpaceSmall()
             ProfileHeader(
@@ -245,14 +277,24 @@ fun ProfileUi(
                 modifier = Modifier.width(130.dp)
             )
 
-            if (showQrCode){
-                TransparentQrScreen(
-                    painter =  painter,
-                    onDismissRequest = {
-                        showQrCode = false
-                    }
-                )
-            }
+            Spacer(Modifier.weight(1f))
+            CustomOutlinedButton(
+                text = stringResource(Res.string.chiqish),
+                borderColor = OtpErrorColor,
+                onClick = {
+                    logout = true
+                },
+                textColor = OtpErrorColor,
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.logout),
+                        contentDescription = "",
+                        tint = OtpErrorColor,
+                        modifier = Modifier.size(LargeIconSize)
+                    )
+                },
+                modifier = Modifier.fillMaxWidth().width(ButtonHeight)
+            )
         }
     }
 }
@@ -264,6 +306,7 @@ private fun PreviewProfileScreen(){
         ThemeMode.DARK
     ){
         ProfileUi(
+            navigator = null,
             state = ProfileState(),
             aiTokens = 50,
             activeTasksCount = 20,

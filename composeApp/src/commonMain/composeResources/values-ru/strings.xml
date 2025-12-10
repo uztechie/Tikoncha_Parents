@@ -214,5 +214,11 @@
     <string name="ilova_cheklangan">%1$d приложений ограничено</string>
     <string name="faol_vazifa">%1$d активных заданий</string>
     <string name="bugun_telefonda_sarfladi">Cегодня потратил(а) в телефоне</string>
+    <string name="chiqish">Выход</string>
+    <string name="chiqishni_xohlaysizmi">Вы действительно хотите выйти?</string>
+    <string name="chiqishni_tasdiqlang">Подтвердите процесс выхода из аккаунта.</string>
+    <string name="hisobdan_chiqish">Выйти из аккаунта.</string>
+    <string name="ilovani_ochirish">Удалить приложение</string>
+    <string name="hisobdan_chiqish_uchun_sorov">Для выхода из аккаунта необходимо отправить запрос</string>
 
 </resources>

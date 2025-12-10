@@ -202,6 +202,7 @@ fun StatisticUi(
                         modifier = Modifier
                             .widthIn(120.dp, 160.dp),
                         text = state.selectedChild?.name?:"",
+                        imageUrl = state.selectedChild?.avatarUrl?:"",
                         label = stringResource(Res.string.farzandingizni_tanlang),
                         onClick = {
                             showDialog = true

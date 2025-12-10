@@ -277,6 +277,12 @@
     <string name="ilova_cheklangan">%1$d ta ilova cheklangan</string>
     <string name="faol_vazifa">%1$d ta faol vazifa</string>
     <string name="bugun_telefonda_sarfladi">Bugun telefonda sarfladi</string>
+    <string name="chiqish">Chiqish</string>
+    <string name="chiqishni_xohlaysizmi">Chiqishni xohlaysizmi?</string>
+    <string name="chiqishni_tasdiqlang">Hisobdan chiqish jarayonini tasdiqlang.</string>
+    <string name="hisobdan_chiqish">Hisobdan chiqish</string>
+    <string name="ilovani_ochirish">Ilovani o‘chirish</string>
+    <string name="hisobdan_chiqish_uchun_sorov">Hisobdan chiqish uchun so‘rov yuborish kerak</string>
     <string name="siz">Siz</string>
 
 </resources>
