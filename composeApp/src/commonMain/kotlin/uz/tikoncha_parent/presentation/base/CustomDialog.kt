@@ -1,6 +1,8 @@
 package uz.tikoncha_parent.presentation.base
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,16 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutState
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutUi
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -37,9 +39,11 @@ fun CustomDialog(
     message: String,
     show: Boolean = true,
     buttonText: String = "Ok",
+    buttonText2: String = stringResource(Res.string.bekor_qilish),
     showCloseButton: Boolean = false,
     onButtonClick: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    isRow: Boolean = false
 ) {
 
 
@@ -55,7 +59,7 @@ fun CustomDialog(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.extendedColor.backgroundColor
                 ),
-                shape = RoundedCornerShape(TextFieldCornerRadius)
+                shape = RoundedCornerShape(CardCornerRadius)
             )
             {
                 Column(
@@ -64,20 +68,8 @@ fun CustomDialog(
                         .padding(ContainerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    IconButton(
-                        onClick = {
-                            onDismiss()
-                        },
-                        modifier = Modifier
-                            .size(CloseButtonSize)
-                            .padding(CloseButtonInnerPadding)
-                            .align(Alignment.End)
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.close_circle),
-                            contentDescription = ""
-                        )
-                    }
+
+                    SpaceLarge()
                     CustomText(
                         text = title,
                         fontSize = NormalTextSize,
@@ -93,18 +85,58 @@ fun CustomDialog(
                         text = message,
                         fontSize = NormalTextSize,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     SpaceLarge()
 
-                    CustomButton(
-                        text = buttonText,
-                        onClick = onButtonClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(DialogButtonHeight)
-                    )
+                    if (isRow) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            if (showCloseButton) {
+                                CustomOutlinedButton(
+                                    text = buttonText2,
+                                    onClick = onDismiss,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(DialogButtonHeight)
+                                )
+                            }
+
+                            CustomButton(
+                                text = buttonText,
+                                onClick = onButtonClick,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(DialogButtonHeight)
+                            )
+                        }
+
+                    } else {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+
+                            if (showCloseButton) {
+                                CustomOutlinedButton(
+                                    text = stringResource(Res.string.bekor_qilish),
+                                    onClick = onDismiss,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(DialogButtonHeight)
+                                )
+                                SpaceSmall()
+                            }
+
+                            CustomButton(
+                                text = buttonText,
+                                onClick = onButtonClick,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(DialogButtonHeight)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -124,7 +156,8 @@ private fun Preview() {
             buttonText = "Ok",
             showCloseButton = false,
             onButtonClick = {},
-            onDismiss = {}
+            onDismiss = {},
+            isRow = true
         )
     }
 }

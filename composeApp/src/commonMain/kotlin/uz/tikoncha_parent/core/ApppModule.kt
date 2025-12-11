@@ -49,7 +49,7 @@ import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
 import uz.tikoncha_parent.data.remote.GetCoinPackageApiService
-import uz.tikoncha_parent.data.remote.LogoutApiService
+import uz.tikoncha_parent.data.remote.ParentRequestsApiService
 import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.remote.PaymentApiService
@@ -57,7 +57,7 @@ import uz.tikoncha_parent.data.remote.PolicyApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
 import uz.tikoncha_parent.data.repository.GetCoinPackageRepositoryImpl
-import uz.tikoncha_parent.data.repository.LogoutRepositoryImpl
+import uz.tikoncha_parent.data.repository.ParentRequestsRepositoryImpl
 import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
@@ -65,7 +65,7 @@ import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.CoinPackageRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
-import uz.tikoncha_parent.domain.repository.LogoutRepository
+import uz.tikoncha_parent.domain.repository.ParentRequestsRepository
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
@@ -74,7 +74,7 @@ import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.LogoutUseCase
+import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
@@ -98,11 +98,9 @@ import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
-import uz.tikoncha_parent.presentation.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.new_home.HomeViewModel
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutUi
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutViewModel
+import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.policy.PolicyViewModel
@@ -136,7 +134,7 @@ val sharedModule = module {
     single { PolicyApiService(get()) }
     single { PaymentApiService(get()) }
     single { GetCoinPackageApiService(get()) }
-    single { LogoutApiService(get()) }
+    single { ParentRequestsApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -151,7 +149,7 @@ val sharedModule = module {
     single< CoinPackageRepository> { GetCoinPackageRepositoryImpl(get()) }
     single< PolicyRepository> { PolicyRepositoryImpl(get()) }
     single< PaymentRepository> { PaymentRepositoryImpl(get()) }
-    single< LogoutRepository> { LogoutRepositoryImpl(get()) }
+    single< ParentRequestsRepository> { ParentRequestsRepositoryImpl(get()) }
 
 
 
@@ -201,7 +199,7 @@ val sharedModule = module {
     single { ChatConnectionManager(get(), get()) }
     single { GetPoliciesFromServerUseCase(get() ) }
     single { GetCoinPackagesUseCase(get() ) }
-    single { LogoutUseCase(get() ) }
+    single { ParentRequestsUseCase(get() ) }
 
 
 
@@ -241,7 +239,7 @@ val sharedModule = module {
 
     viewModel { PaymentViewModel(get(), get(), get(), get()) }
     viewModel { SubscriptionPaymentViewModel(get(), get()) }
-    viewModel { LogoutViewModel(get()) }
+    viewModel { ParentRequestViewModel(get()) }
 
 
 }

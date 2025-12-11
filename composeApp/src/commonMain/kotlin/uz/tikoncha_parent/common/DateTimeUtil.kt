@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
+import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
@@ -345,4 +346,17 @@ object DateTimeUtil {
             0L
         }
     }
+
+
+    fun LocalDateTime.toUIData(): String {
+        val d = date
+        return "${d.day.toString().padStart(2,'0')}." +
+                "${d.month.number.toString().padStart(2,'0')}." +
+                d.year.toString().padStart(4,'0')
+    }
+
+    fun LocalDateTime.toUiTime(): String =
+        "${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}"
+
+
 }

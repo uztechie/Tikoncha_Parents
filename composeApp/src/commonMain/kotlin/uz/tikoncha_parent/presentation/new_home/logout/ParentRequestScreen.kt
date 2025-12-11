@@ -27,6 +27,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.farzand_chiqish_ruxsat
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirmoqchi
+import tikoncha_parents.composeapp.generated.resources.ha
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqishni_bekor_qilasizmi
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqishni_bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqishni_tasdiqlaysizmi
@@ -35,6 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.sorovlar
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import tikoncha_parents.composeapp.generated.resources.xatolik
+import tikoncha_parents.composeapp.generated.resources.yoq
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -44,17 +46,17 @@ import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class LogoutScreen : Screen {
+class ParentRequestScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current?:return
 
-        val viewModel = koinViewModel<LogoutViewModel>()
+        val viewModel = koinViewModel<ParentRequestViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
         LaunchedEffect(Unit){
-            viewModel.loadLogout()
+            viewModel.loadParentRequests()
         }
 
         LogoutUi(
@@ -67,8 +69,8 @@ class LogoutScreen : Screen {
 @Composable
 fun LogoutUi(
     navigator: Navigator?,
-    state: LogoutState,
-    event: (LogoutEvent) -> Unit
+    state: ParentRequestState,
+    event: (ParentRequestEvent) -> Unit
 ) {
 
     var logoutDialog by remember { mutableStateOf(false) }
@@ -114,25 +116,27 @@ fun LogoutUi(
         showCloseButton = false,
         onDismiss = {
             showErrorDialog = false
-            event(LogoutEvent.ResetResponseState)
+            event(ParentRequestEvent.ResetResponseState)
         },
         onButtonClick = {
             showErrorDialog = false
-            event(LogoutEvent.ResetResponseState)
+            event(ParentRequestEvent.ResetResponseState)
         }
     )
 
     CustomDialog(
         title = stringResource(Res.string.hisobdan_chiqishni_tasdiqlaysizmi),
         message = stringResource(Res.string.farzand_chiqish_ruxsat),
-        buttonText = stringResource(Res.string.tasdiqlash),
+        buttonText = stringResource(Res.string.ha),
+        buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
+        isRow = true,
         show = logoutDialog,
         onDismiss = {
             logoutDialog = false
         },
         onButtonClick = {
-            event(LogoutEvent.CreateRequest)
+            event(ParentRequestEvent.CreateRequest)
             logoutDialog = false
 
         }
@@ -141,14 +145,16 @@ fun LogoutUi(
     CustomDialog(
         title = stringResource(Res.string.ilovani_ochirishni_tasdiqlaysizmi),
         message = stringResource(Res.string.farzand_ilovani_ochirmoqchi),
-        buttonText = stringResource(Res.string.ok),
+        buttonText = stringResource(Res.string.ha),
+        buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
+        isRow = true,
         show = deleteDialog,
         onDismiss = {
             deleteDialog = false
         },
         onButtonClick = {
-            event(LogoutEvent.CreateRequest)
+            event(ParentRequestEvent.CreateRequest)
             deleteDialog = false
         }
     )
@@ -156,14 +162,16 @@ fun LogoutUi(
     CustomDialog(
         title = stringResource(Res.string.hisobdan_chiqishni_bekor_qilish),
         message = stringResource(Res.string.hisobdan_chiqishni_bekor_qilasizmi),
-        buttonText = stringResource(Res.string.bekor_qilish),
+        buttonText = stringResource(Res.string.ha),
+        buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
+        isRow = true,
         show = canselDialog,
         onDismiss = {
             canselDialog = false
         },
         onButtonClick = {
-            event(LogoutEvent.CreateRequest)
+            event(ParentRequestEvent.CreateRequest)
             canselDialog = false
         }
     )
@@ -188,18 +196,18 @@ fun LogoutUi(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(state.items) { item ->
-                LogoutItem(
-                    logoutUi = item,
+                ParentRequestItem(
+                    parentRequestUi = item,
                     onActionClick = {
                         when(item.type){
-                            LogoutType.LOGOUT -> {
+                            ParentRequestType.LOGOUT -> {
                                 logoutDialog = true
                             }
-                            LogoutType.DELETE -> {
+                            ParentRequestType.DELETE -> {
                                 deleteDialog = true
                             }
                         }
-                        event(LogoutEvent.SetType(item.type))
+                        event(ParentRequestEvent.SetType(item.type))
                     },
                     onCancelRequestClick = {
                         canselDialog = true
@@ -218,7 +226,7 @@ private fun Preview() {
     ){
         LogoutUi(
             navigator = null,
-            state = LogoutState(),
+            state = ParentRequestState(),
             event = {}
         )
     }

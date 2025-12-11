@@ -7,34 +7,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.LogoutUseCase
+import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
-class LogoutViewModel(
-    private val logoutUseCase: LogoutUseCase
+class ParentRequestViewModel(
+    private val parentRequestsUseCase: ParentRequestsUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(LogoutState())
+    private val _state = MutableStateFlow(ParentRequestState())
     val state = _state.asStateFlow()
 
-    private var logoutJob: Job? = null
+    private var ParentRequestJob: Job? = null
 
-    fun onEvent(event: LogoutEvent) {
+    fun onEvent(event: ParentRequestEvent) {
         when (event) {
-            is LogoutEvent.CreateRequest -> {
+            is ParentRequestEvent.CreateRequest -> {
 
             }
 
-            is LogoutEvent.DeleteRequest -> {
+            is ParentRequestEvent.DeleteRequest -> {
 
             }
 
-            LogoutEvent.RefreshList -> {
+            ParentRequestEvent.RefreshList -> {
 
             }
 
-            is LogoutEvent.SetType -> {
+            is ParentRequestEvent.SetType -> {
                 _state.update {
                     it.copy(
                         currentType = event.type
@@ -42,7 +43,7 @@ class LogoutViewModel(
                 }
             }
 
-            LogoutEvent.ResetResponseState -> {
+            ParentRequestEvent.ResetResponseState -> {
                 _state.update {
                     it.copy(
                         listResponseState = ResponseState.Idle,
@@ -54,16 +55,16 @@ class LogoutViewModel(
         }
     }
 
-    fun loadLogout(){
-        logoutJob?.cancel()
-        logoutJob = viewModelScope.launch {
+    fun loadParentRequests(){
+        ParentRequestJob?.cancel()
+        ParentRequestJob = viewModelScope.launch {
             _state.update {
                 it.copy(
                     listResponseState = ResponseState.Loading,
                 )
             }
 
-            val result = logoutUseCase()
+            val result = parentRequestsUseCase()
             when(result){
                 is Resource.Error -> {
                     _state.update {
@@ -77,7 +78,6 @@ class LogoutViewModel(
                 }
                 is Resource.Success -> {
                     val list = result.data
-
                     _state.update {
                         it.copy(
                             listResponseState = ResponseState.Success(),

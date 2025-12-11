@@ -1,9 +1,9 @@
-package uz.tikoncha_parent.data.remote.model.logout
+package uz.tikoncha_parent.data.remote.model.parent_requests
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LogoutResponseDto(
+data class ParentRequestsResponseDto(
     val id: String,
     val user_id: String,
     val action: String,

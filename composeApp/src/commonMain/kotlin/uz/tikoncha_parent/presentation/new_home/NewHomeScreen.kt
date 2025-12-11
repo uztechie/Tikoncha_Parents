@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,12 +38,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.baloo_2_medium
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.instagram_icon
@@ -58,8 +55,7 @@ import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.map.MapScreen
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutScreen
-import uz.tikoncha_parent.presentation.new_home.logout.LogoutState
+import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
@@ -211,7 +207,7 @@ fun NewHomeUi(
                 .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                 .clip(RoundedCornerShape(CardCornerRadius))
                 .clickable{
-                    navigator?.push(LogoutScreen())
+                    navigator?.push(ParentRequestScreen())
                 }
                 .padding(horizontal = CardCornerPadding, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically

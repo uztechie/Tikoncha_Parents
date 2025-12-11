@@ -6,7 +6,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 
 
-enum class LogoutType(
+enum class ParentRequestType(
     val iconId: DrawableResource,
     val title: StringResource,
 ) {
@@ -20,17 +20,17 @@ enum class LogoutType(
     );
 
     companion object {
-        fun fromString(value: String): LogoutType {
+        fun fromString(value: String): ParentRequestType {
             return when (value) {
-                "logout" -> LogoutType.LOGOUT
-                "delete" -> LogoutType.DELETE
-                else -> LogoutType.LOGOUT
+                "logout" -> ParentRequestType.LOGOUT
+                "delete" -> ParentRequestType.DELETE
+                else -> ParentRequestType.LOGOUT
             }
         }
 
-        fun LogoutType.toValue(): String = when (this) {
-            LogoutType.LOGOUT -> "logout"
-            LogoutType.DELETE -> "delete"
+        fun ParentRequestType.toValue(): String = when (this) {
+            ParentRequestType.LOGOUT -> "logout"
+            ParentRequestType.DELETE -> "delete"
         }
     }
 }

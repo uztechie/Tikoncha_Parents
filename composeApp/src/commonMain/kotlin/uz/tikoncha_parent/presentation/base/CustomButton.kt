@@ -23,7 +23,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun CustomButton(
     text:String,
     fontSize:TextUnit = NormalTextSize,
-    fontWeight: FontWeight = FontWeight.Normal,
+    fontWeight: FontWeight = FontWeight.SemiBold,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.extendedColor.primaryColor,
     textColor: Color = OnPrimaryColor,

@@ -8,6 +8,8 @@ import kotlinx.datetime.number
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.common.DateTimeUtil.fromServerToLocalDateTime
 import uz.tikoncha_parent.common.DateTimeUtil.serverDateTimeToMillis
+import uz.tikoncha_parent.common.DateTimeUtil.toUIData
+import uz.tikoncha_parent.common.DateTimeUtil.toUiTime
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.TodoDto
 import uz.tikoncha_parent.presentation.task.Task
@@ -54,15 +56,6 @@ fun Task.toTodoDto(): TodoDto{
 
 
 
-private fun LocalDateTime.toUIData(): String {
-    val d = date
-    return "${d.day.toString().padStart(2,'0')}." +
-            "${d.month.number.toString().padStart(2,'0')}." +
-            d.year.toString().padStart(4,'0')
-}
-
-private fun LocalDateTime.toUiTime(): String =
-    "${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}"
 
 
 
