@@ -220,5 +220,17 @@
     <string name="hisobdan_chiqish">Выйти из аккаунта.</string>
     <string name="ilovani_ochirish">Удалить приложение</string>
     <string name="hisobdan_chiqish_uchun_sorov">Для выхода из аккаунта необходимо отправить запрос</string>
+    <string name="sorovlar">Запросы</string>
+    <string name="ruxsat_yoq">Нет доступа</string>
+    <string name="jarayonda">В процессе</string>
+    <string name="hisobdan_chiqishni_tasdiqlaysizmi">Вы подтверждаете выход из аккаунта?</string>
+    <string name="farzand_chiqish_ruxsat">Ваш ребёнок хочет выйти из учётной записи Tikoncha. Подтверждаете разрешение?</string>
+    <string name="hisobdan_chiqishni_bekor_qilasizmi">Вы отменяете выход из аккаунта?</string>
+    <string name="hisobdan_chiqishni_bekor_qilish">Отменить выход из аккаунта</string>
+    <string name="ilovani_ochirishni_tasdiqlaysizmi">Вы подтверждаете удаление приложения?</string>
+    <string name="farzand_ilovani_ochirmoqchi">
+            Ваш ребёнок хочет удалить приложение Tikoncha. Если вы дадите разрешение,
+            ограничения и защита в приложении будут временно отключены, и появится
+            возможность удалить приложение. Подтверждаете разрешение?</string>
 
 </resources>

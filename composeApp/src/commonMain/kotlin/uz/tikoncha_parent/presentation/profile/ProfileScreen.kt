@@ -40,7 +40,6 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent

@@ -27,7 +27,7 @@ val DividerColor = Color(0xFFE9E9E9)
 //val BackgroundColor = Color(0xFFF5F7F5)
 val BackgroundColor = Color(0xFFFAF8F6)
 val NewBackgroundColor = Color(0xFFF1EEE2)
-//val PrimaryColor = Color(0xFF4BB462)
+val SuccessColor = Color(0xFF4BB462)
 
 
 val DarkBackgroundColor = Color(0xFF130D00)

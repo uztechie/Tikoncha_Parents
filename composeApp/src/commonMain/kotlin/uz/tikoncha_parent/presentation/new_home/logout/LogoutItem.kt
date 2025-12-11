@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -27,13 +28,15 @@ import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish_uchun_sorov
 import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.new_home.logout.LogoutType.*
+import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DialogButtonHeight
+import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OtpErrorColor
@@ -41,6 +44,7 @@ import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SuccessColor
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -49,8 +53,6 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun LogoutItem(
     logoutUi: LogoutUi,
     onActionClick: () -> Unit = {},
-    onSendRequestClick: () -> Unit = {},
-    onCheckStatusClick: () -> Unit = {},
     onCancelRequestClick: () -> Unit = {},
 ) {
 
@@ -77,23 +79,43 @@ fun LogoutItem(
                 )
                 .padding(ContainerPadding),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row{
 
                 Image(
                     painter = painterResource(logoutUi.type.iconId),
                     contentDescription = "",
-                    modifier = Modifier.size(NormalIconSize),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(NormalIconSize),
                     colorFilter = ColorFilter.tint(OtpErrorColor)
                 )
                 SpaceMedium()
                 Column {
-                    CustomText(
-                        text = text,
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CustomText(
+                            text = text,
+                            fontSize = NormalTextSize,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(Modifier.weight(1f))
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.extendedColor.backgroundColor,
+                                    RoundedCornerShape(CardCornerRadius)
+                                )
+                                .padding(horizontal = CardCornerPadding),
+                        ){
+                            CustomText(
+                                text = "Said",
+                                color = MaterialTheme.extendedColor.hintColor,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
 
                     SpaceSmall()
                     CustomText(
@@ -104,7 +126,13 @@ fun LogoutItem(
                 }
             }
 
-            SpaceLarge()
+            CustomText(
+                text = "11.12.2025",
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.extendedColor.hintColor
+            )
+            SpaceSmall()
 
             when(logoutUi.type){
 
@@ -128,7 +156,7 @@ fun LogoutItem(
                         CustomOutlinedButton(
                             backgroundColor = Color.Transparent,
                             text = "Tasdiqlash",
-                            onClick = onCheckStatusClick,
+                            onClick = onActionClick,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(DialogButtonHeight)
@@ -154,9 +182,11 @@ fun LogoutItem(
                         )
                         SpaceSmall()
                         CustomOutlinedButton(
+                            borderColor = SuccessColor,
+                            textColor = SuccessColor,
                             backgroundColor = Color.Transparent,
-                            text = "Tasdiqlash",
-                            onClick = onCheckStatusClick,
+                            text = stringResource(Res.string.tasdiqlash),
+                            onClick = onActionClick,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(DialogButtonHeight)

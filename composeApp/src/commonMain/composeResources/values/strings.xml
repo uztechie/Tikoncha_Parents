@@ -284,5 +284,18 @@
     <string name="ilovani_ochirish">Ilovani o‘chirish</string>
     <string name="hisobdan_chiqish_uchun_sorov">Hisobdan chiqish uchun so‘rov yuborish kerak</string>
     <string name="siz">Siz</string>
+    <string name="sorovlar">So‘rovlar</string>
+    <string name="ruxsat_yoq">Ruxsat yo‘q</string>
+    <string name="jarayonda">Jarayonda</string>
+    <string name="tasdiqlandi">Tasdiqlandi</string>
+    <string name="hisobdan_chiqishni_tasdiqlaysizmi">Hisobdan chiqishni tasdiqlaysizmi?</string>
+    <string name="farzand_chiqish_ruxsat">Farzandingiz Tikoncha hisobidan chiqmoqchi. Ruxsatni tasdiqlaysizmi?</string>
+    <string name="hisobdan_chiqishni_bekor_qilasizmi">Hisobdan chiqishni bekor qilasizmi?</string>
+    <string name="hisobdan_chiqishni_bekor_qilish">Hisobdan chiqishni bekor qilish</string>
+    <string name="ilovani_ochirishni_tasdiqlaysizmi">Ilovani o‘chirishni tasdiqlaysizmi?</string>
+    <string name="farzand_ilovani_ochirmoqchi">
+            Farzandingiz Tikoncha ilovasini o‘chirmoqchi. Agar ruxsat bersangiz,
+            ilovadagi cheklovlar va himoya vaqtincha o‘chadi va ilovani o‘chirib yuborish
+            imkoni paydo bo‘ladi. Ruxsatni tasdiqlaysizmi?</string>
 
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,6 +58,8 @@ import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.map.MapScreen
+import uz.tikoncha_parent.presentation.new_home.logout.LogoutScreen
+import uz.tikoncha_parent.presentation.new_home.logout.LogoutState
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
@@ -67,12 +70,15 @@ import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -110,6 +116,7 @@ fun NewHomeUi(
         event(HomeEvent.GetChildren)
     }
 
+    val count = 10
 
     Logger.d("NewHomeScreen", "NewHomeUi")
 
@@ -195,6 +202,37 @@ fun NewHomeUi(
                         .size(NormalIconSize),
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor)
                 )
+            }
+        }
+        SpaceLarge()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                .clip(RoundedCornerShape(CardCornerRadius))
+                .clickable{
+                    navigator?.push(LogoutScreen())
+                }
+                .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomText(
+                text = stringResource(Res.string.sorovlar),
+                fontSize = LargeTextSize,
+                modifier = Modifier.weight(1f)
+            )
+            if (count > 0) {
+                Badge(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    containerColor = OtpErrorColor,
+                    contentColor = TextColor
+                ) {
+                    CustomText(
+                        text = if (count > 99) "99+" else count.toString(),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
+                        maxLines = 1
+                    )
+                }
             }
         }
         SpaceLarge()
