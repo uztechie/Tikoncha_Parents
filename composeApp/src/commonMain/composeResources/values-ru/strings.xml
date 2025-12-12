@@ -229,5 +229,6 @@
     <string name="hisobdan_chiqishni_bekor_qilish">Отменить выход из аккаунта</string>
     <string name="ilovani_ochirishni_tasdiqlaysizmi">Вы подтверждаете удаление приложения?</string>
     <string name="farzand_ilovani_ochirmoqchi">Ваш ребёнок хочет удалить приложение Tikoncha. Если вы дадите разрешение, ограничения и защита в приложении будут временно отключены, и появится возможность удалить приложение. Подтверждаете разрешение?</string>
+    <string name="ilovani_ochirish_uchun_sorov_kerak">Для удаления приложения необходимо отправить запрос</string>
 
 </resources>

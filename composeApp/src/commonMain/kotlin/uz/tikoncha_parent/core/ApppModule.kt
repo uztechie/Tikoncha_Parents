@@ -76,6 +76,7 @@ import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
+import uz.tikoncha_parent.domain.use_case.UpdateParentRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
@@ -200,6 +201,7 @@ val sharedModule = module {
     single { GetPoliciesFromServerUseCase(get() ) }
     single { GetCoinPackagesUseCase(get() ) }
     single { ParentRequestsUseCase(get() ) }
+    single { UpdateParentRequestStatusUseCase(get() ) }
 
 
 
@@ -216,7 +218,7 @@ val sharedModule = module {
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get()) }
-    factory { HomeViewModel(get(), get(), get()) }
+    factory { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ChatViewModel(
         get(),
         get(),
@@ -239,7 +241,7 @@ val sharedModule = module {
 
     viewModel { PaymentViewModel(get(), get(), get(), get()) }
     viewModel { SubscriptionPaymentViewModel(get(), get()) }
-    viewModel { ParentRequestViewModel(get()) }
+    viewModel { ParentRequestViewModel(get(), get()) }
 
 
 }

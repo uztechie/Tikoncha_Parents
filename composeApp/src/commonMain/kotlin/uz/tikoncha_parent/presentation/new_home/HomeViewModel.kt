@@ -15,10 +15,12 @@ import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
+import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
@@ -27,7 +29,7 @@ class HomeViewModel(
     private val childrenUseCase: ChildrenUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-
+    private val parentRequestUseCase: ParentRequestsUseCase,
 ) : ScreenModel {
 
     private val hasLoaded = MutableStateFlow(false)
@@ -61,7 +63,6 @@ class HomeViewModel(
     fun onEvent(event: HomeEvent) {
         when (event) {
 
-
             is HomeEvent.OnChildSelected -> {
                 _state.update {
                     it.copy(selectedChild = event.child)
@@ -73,6 +74,10 @@ class HomeViewModel(
 
             HomeEvent.GetChildren -> {
                 loadChildren()
+            }
+
+            HomeEvent.RefreshParentRequest -> {
+                loadParentRequestsCount()
             }
         }
     }
@@ -138,6 +143,26 @@ class HomeViewModel(
                         AppSettings.selectedChild = AppSettings.children.firstOrNull()
                     }
 
+                }
+            }
+        }
+    }
+
+    fun loadParentRequestsCount(){
+        screenModelScope.launch {
+            val result = parentRequestUseCase()
+            when(result){
+                is Resource.Loading -> {}
+                is Resource.Error -> {}
+                is Resource.Success -> {
+                    val list = result.data
+                    val count = list?.size
+
+                    _state.update {
+                        it.copy(
+                            parentRequestCount = count?:0
+                        )
+                    }
                 }
             }
         }

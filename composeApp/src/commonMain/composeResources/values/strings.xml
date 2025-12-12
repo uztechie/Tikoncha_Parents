@@ -294,8 +294,8 @@
     <string name="hisobdan_chiqishni_bekor_qilish">Hisobdan chiqishni bekor qilish</string>
     <string name="ilovani_ochirishni_tasdiqlaysizmi">Ilovani o‘chirishni tasdiqlaysizmi?</string>
     <string name="farzand_ilovani_ochirmoqchi">Farzandingiz Tikoncha ilovasini o‘chirmoqchi. Agar ruxsat bersangiz, ilovadagi cheklovlar va himoya vaqtincha o‘chadi va ilovani o‘chirib yuborish imkoni paydo bo‘ladi. Ruxsatni tasdiqlaysizmi?</string>
-
     <string name="ha">Ha</string>
     <string name="yoq">Yo‘q</string>
+    <string name="ilovani_ochirish_uchun_sorov_kerak">Ilovani o‘chirish uchun so‘rov yuborish kerak</string>
 
 </resources>

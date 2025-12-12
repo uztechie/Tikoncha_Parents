@@ -28,6 +28,7 @@ import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish_uchun_sorov
 import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish
+import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish_uchun_sorov_kerak
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
@@ -61,6 +62,15 @@ fun ParentRequestItem(
         }
         ParentRequestType.DELETE -> {
             stringResource(Res.string.ilovani_ochirish)
+        }
+    }
+
+    val subtitle = when(parentRequestUi.type){
+        ParentRequestType.LOGOUT -> {
+            stringResource(Res.string.hisobdan_chiqish_uchun_sorov)
+        }
+        ParentRequestType.DELETE -> {
+            stringResource(Res.string.ilovani_ochirish_uchun_sorov_kerak)
         }
     }
 
@@ -103,7 +113,7 @@ fun ParentRequestItem(
 
                 SpaceSmall()
                 CustomText(
-                    text = stringResource(Res.string.hisobdan_chiqish_uchun_sorov),
+                    text = subtitle,
                     fontSize = SmallTextSize,
                     color = MaterialTheme.extendedColor.hintColor
                 )

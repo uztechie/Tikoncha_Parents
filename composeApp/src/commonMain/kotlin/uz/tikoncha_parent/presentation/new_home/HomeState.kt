@@ -8,6 +8,8 @@ data class HomeState(
     val childrenList: List<UserInfo> = emptyList(),
     val selectedChild: UserInfo? = null,
 
+    val parentRequestCount: Int = 0,
+
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val appUsageResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val createRuleResponseState: ResponseState<Nothing> = ResponseState.Idle,

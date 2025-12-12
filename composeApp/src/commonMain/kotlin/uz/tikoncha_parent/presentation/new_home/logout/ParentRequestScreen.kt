@@ -136,7 +136,7 @@ fun LogoutUi(
             logoutDialog = false
         },
         onButtonClick = {
-            event(ParentRequestEvent.CreateRequest)
+            event(ParentRequestEvent.AccessSelectedRequest)
             logoutDialog = false
 
         }
@@ -154,7 +154,7 @@ fun LogoutUi(
             deleteDialog = false
         },
         onButtonClick = {
-            event(ParentRequestEvent.CreateRequest)
+            event(ParentRequestEvent.AccessSelectedRequest)
             deleteDialog = false
         }
     )
@@ -171,7 +171,7 @@ fun LogoutUi(
             canselDialog = false
         },
         onButtonClick = {
-            event(ParentRequestEvent.CreateRequest)
+            event(ParentRequestEvent.DenySelectedRequest)
             canselDialog = false
         }
     )
@@ -199,6 +199,9 @@ fun LogoutUi(
                 ParentRequestItem(
                     parentRequestUi = item,
                     onActionClick = {
+                        event(ParentRequestEvent.SelectedRequest(item))
+                        event(ParentRequestEvent.SetType(item.type))
+
                         when(item.type){
                             ParentRequestType.LOGOUT -> {
                                 logoutDialog = true
@@ -210,6 +213,7 @@ fun LogoutUi(
                         event(ParentRequestEvent.SetType(item.type))
                     },
                     onCancelRequestClick = {
+                        event(ParentRequestEvent.SelectedRequest(item))
                         canselDialog = true
                     }
                 )

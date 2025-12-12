@@ -278,7 +278,7 @@ fun ProfileUi(
 
             Spacer(Modifier.weight(1f))
             CustomOutlinedButton(
-                text = stringResource(Res.string.chiqish),
+                text = stringResource(Res.string.hisobdan_chiqish),
                 borderColor = OtpErrorColor,
                 onClick = {
                     logout = true
@@ -294,6 +294,7 @@ fun ProfileUi(
                 },
                 modifier = Modifier.fillMaxWidth().width(ButtonHeight)
             )
+            SpaceMedium()
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -72,17 +73,18 @@ import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallIconSize
+import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 class NewHomeScreen : Screen {
-
 
     @Composable
     override fun Content() {
@@ -112,7 +114,11 @@ fun NewHomeUi(
         event(HomeEvent.GetChildren)
     }
 
-    val count = 10
+    LaunchedEffect(Unit){
+        event(HomeEvent.RefreshParentRequest)
+    }
+
+    val count = state.parentRequestCount
 
     Logger.d("NewHomeScreen", "NewHomeUi")
 
@@ -200,39 +206,44 @@ fun NewHomeUi(
                 )
             }
         }
-        SpaceLarge()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
-                .clip(RoundedCornerShape(CardCornerRadius))
-                .clickable{
-                    navigator?.push(ParentRequestScreen())
-                }
-                .padding(horizontal = CardCornerPadding, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CustomText(
-                text = stringResource(Res.string.sorovlar),
-                fontSize = LargeTextSize,
-                modifier = Modifier.weight(1f)
-            )
-            if (count > 0) {
-                Badge(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    containerColor = OtpErrorColor,
-                    contentColor = TextColor
-                ) {
-                    CustomText(
-                        text = if (count > 99) "99+" else count.toString(),
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
-                        maxLines = 1
-                    )
+
+        if (count>0){
+            SpaceLarge()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                    .clip(RoundedCornerShape(CardCornerRadius))
+                    .clickable{
+                        navigator?.push(ParentRequestScreen())
+                    }
+                    .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomText(
+                    text = stringResource(Res.string.sorovlar),
+                    fontSize = LargeTextSize,
+                    modifier = Modifier.weight(1f)
+                )
+                if (count > 0) {
+                    Box(
+                        modifier = Modifier
+                            .background(OtpErrorColor, CircleShape)
+                            .size(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CustomText(
+                            text = if (count > 99) "99" else count.toString(),
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
+                            maxLines = 1,
+                            fontSize = SmallTextSize
+                        )
+                    }
                 }
             }
         }
-        SpaceLarge()
 
+        SpaceLarge()
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),

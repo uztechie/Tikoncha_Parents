@@ -7,33 +7,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
+import uz.tikoncha_parent.domain.use_case.UpdateParentRequestStatusUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ParentRequestViewModel(
-    private val parentRequestsUseCase: ParentRequestsUseCase
+    private val parentRequestsUseCase: ParentRequestsUseCase,
+    private val updateResponseUseCase: UpdateParentRequestStatusUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ParentRequestState())
     val state = _state.asStateFlow()
 
-    private var ParentRequestJob: Job? = null
+    private var parentRequestJob: Job? = null
+    private var updateRequestJob: Job? = null
+
 
     fun onEvent(event: ParentRequestEvent) {
         when (event) {
-            is ParentRequestEvent.CreateRequest -> {
-
-            }
-
-            is ParentRequestEvent.DeleteRequest -> {
-
-            }
-
-            ParentRequestEvent.RefreshList -> {
-
-            }
 
             is ParentRequestEvent.SetType -> {
                 _state.update {
@@ -52,12 +44,26 @@ class ParentRequestViewModel(
                     )
                 }
             }
+
+            ParentRequestEvent.AccessSelectedRequest -> {
+                updateParentRequest(status = "access", isSelect = true)
+            }
+            ParentRequestEvent.DenySelectedRequest -> {
+                updateParentRequest(status = "deny", isSelect = false)
+            }
+            is ParentRequestEvent.SelectedRequest -> {
+                _state.update {
+                    it.copy(
+                        selectedRequest = event.request
+                    )
+                }
+            }
         }
     }
 
     fun loadParentRequests(){
-        ParentRequestJob?.cancel()
-        ParentRequestJob = viewModelScope.launch {
+        parentRequestJob?.cancel()
+        parentRequestJob = viewModelScope.launch {
             _state.update {
                 it.copy(
                     listResponseState = ResponseState.Loading,
@@ -83,6 +89,81 @@ class ParentRequestViewModel(
                             listResponseState = ResponseState.Success(),
                             items = list?: emptyList()
                         )
+                    }
+                }
+                is Resource.Loading -> {}
+            }
+        }
+    }
+
+    fun updateParentRequest(status: String,isSelect: Boolean){
+        val selected = _state.value.selectedRequest
+        updateRequestJob?.cancel()
+        updateRequestJob = viewModelScope.launch {
+            if (isSelect){
+                _state.update {
+                    it.copy(
+                        createResponseState = ResponseState.Loading
+                    )
+                }
+            } else {
+                _state.update {
+                    it.copy(
+                        deleteResponseState = ResponseState.Loading
+                    )
+                }
+            }
+
+            val result = updateResponseUseCase(
+                requestId = selected?.requestId ?: "",
+                status = status
+            )
+
+            when(result){
+                is Resource.Error -> {
+                    if (isSelect){
+                        _state.update {
+                            it.copy(
+                                createResponseState = ResponseState.Error(
+                                    res = result.resId,
+                                    message = result.message
+                                )
+                            )
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                deleteResponseState = ResponseState.Error(
+                                    res = result.resId,
+                                    message = result.message
+                                )
+                            )
+                        }
+                    }
+                }
+                is Resource.Success -> {
+                    val updateItem = result.data
+                    _state.update { state ->
+                        val newsList = state.items.map { item->
+                            if (item.requestId == updateItem.requestId){
+                                updateItem
+                            } else {
+                                item
+                            }
+                        }
+                        if (isSelect){
+                            state.copy(
+                                createResponseState = ResponseState.Success(),
+                                items = newsList,
+                                selectedRequest = null
+                            )
+                        } else {
+                            state.copy(
+                                deleteResponseState = ResponseState.Success(),
+                                items = newsList,
+                                selectedRequest = null
+                            )
+                        }
                     }
                 }
                 is Resource.Loading -> {}

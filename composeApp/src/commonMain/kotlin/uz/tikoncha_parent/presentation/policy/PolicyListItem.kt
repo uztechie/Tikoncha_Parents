@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -89,33 +90,6 @@ fun PolicyListItem(
                 maxLines = 1
             )
             SpaceSmall()
-            Spacer(Modifier.weight(1f))
-
-
-            Row(
-                modifier = Modifier.background(
-                    isActiveColor.copy(0.25f),
-                    RoundedCornerShape(ContainerCornerRadius / 2)
-                )
-                    .padding(horizontal = 8.dp, vertical = 0.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.dot),
-                    contentDescription = "clock",
-                    tint = isActiveColor,
-                    modifier = Modifier
-                        .size(8.dp)
-                )
-                SpaceUltraSmall()
-                CustomText(
-                    maxLines = 1,
-                    text = activeText,
-                    color = isActiveColor,
-                    fontSize = UltraSmallTextSize,
-                    fontWeight = FontWeight.W600
-                )
-            }
         }
 
         SpaceSmall()
@@ -272,9 +246,12 @@ fun PolicyListItem(
             SpaceSmall()
 
             Image(
-                painter = painterResource(Res.drawable.detail_icon),
-                contentDescription = "clock",
-                modifier = Modifier.size(NormalIconButtonSize)
+                painter = painterResource(Res.drawable.arrow_pay),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(LargeIconSize)
+                    .background(PrimaryColor, CircleShape)
+                    .padding(9.dp)
             )
         }
     }

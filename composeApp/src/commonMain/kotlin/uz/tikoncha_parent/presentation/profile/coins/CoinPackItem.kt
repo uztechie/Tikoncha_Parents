@@ -119,7 +119,7 @@ fun CoinPackItem(
                 modifier = Modifier
                     .size(LargeIconSize)
                     .background(PrimaryColor, CircleShape)
-                    .padding(8.dp)
+                    .padding(9.dp)
             )
         }
     }
