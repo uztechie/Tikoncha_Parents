@@ -64,8 +64,11 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.assignment.CalendarDialog
-import uz.saidburxon.newedu.presentation.feature.assignment.reformattedYearDay
+import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthForTask
+import uz.tikoncha_parent.common.DateTimeUtil.reformattedYearDay
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -118,9 +121,11 @@ fun AddNewTask(
 
     val hidKeyboard = rememberHideKeyboard()
 
+    val languageCode = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
+
     var selectedDate by remember { mutableStateOf(state.date) }
     var selectedTime by remember { mutableStateOf(state.time) }
-    val dateText = state.date?.let { reformattedYearDay(it) } ?: ""
+    val dateText = state.date?.let { reformattedDayMonthForTask(date = it, languageCode = languageCode) } ?: ""
     val timeText = state.time?.let { formatTime(it) } ?: ""
 
 

@@ -120,13 +120,13 @@ object DateTimeUtil {
 
     fun formatDayMonthLocal(date: LocalDate, lang: LanguageType): String {
         val uzMonths = listOf(
-            "yanvar", "fevral", "mart", "aprel", "may", "iyun",
-            "iyul", "avgust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
         )
 
         val ruMonths = listOf(
-            "января", "февраля", "марта", "апреля", "мая", "июня",
-            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
         )
 
         val months = when (lang) {
@@ -134,7 +134,7 @@ object DateTimeUtil {
             LanguageType.UZ -> uzMonths
         }
 
-        val day = date.dayOfMonth
+        val day = date.day
         val monthName = months[date.month.ordinal]
 
         return "$day $monthName"
@@ -177,7 +177,7 @@ object DateTimeUtil {
 
     fun formatDateTimeMonthlyForChat(
         longDate: Long,
-        lang: LanguageType,  // yoki "ru", "en" kerak bo‘lsa
+        lang: LanguageType,
         zone: TimeZone = TimeZone.currentSystemDefault()
     ): String {
         if (longDate == 0L) return ""
@@ -201,13 +201,13 @@ object DateTimeUtil {
     ): String {
 
         val uzMonths = listOf(
-            "yanvar", "fevral", "mart", "aprel", "may", "iyun",
-            "iyul", "avgust", "sentyabr", "oktyabr", "noyabr", "dekabr"
+            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
         )
 
         val ruMonths = listOf(
-            "января", "февраля", "марта", "апреля", "мая", "июня",
-            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
         )
 
         if (millis == 0L) return ""
@@ -220,10 +220,37 @@ object DateTimeUtil {
             LanguageType.UZ -> uzMonths
         }
 
-        val day = date.dayOfMonth
+        val day = date.day
         val monthName = months[date.month.ordinal]
 
-        return "$day $monthName"
+        return "$day-$monthName"
+    }
+
+    fun reformattedDayMonthForTask(
+        date: LocalDate?,
+        languageCode: LanguageType
+    ): String {
+        if (date == null) return ""
+
+        val uzMonths = listOf(
+            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
+        )
+
+        val ruMonths = listOf(
+            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
+        )
+
+        val day = date.day
+        val monthIndex = date.month.ordinal
+
+        val monthName = when (languageCode) {
+            LanguageType.RU -> ruMonths.getOrNull(monthIndex)
+            LanguageType.UZ -> uzMonths.getOrNull(monthIndex)
+        } ?: ""
+
+        return "$day-$monthName"
     }
 
 
@@ -345,6 +372,16 @@ object DateTimeUtil {
         } catch (_: Throwable) {
             0L
         }
+    }
+
+    fun reformattedYearDay(reformatedDate: LocalDate?): String {
+        if (reformatedDate == null) return ""
+
+        val day = reformatedDate.day.toString().padStart(2, '0')
+        val month = reformatedDate.month.number.toString().padStart(2, '0')
+        val year = reformatedDate.year.toString()
+
+        return "$day.$month.$year"
     }
 
 

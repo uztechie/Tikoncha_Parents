@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import uz.tikoncha_parent.common.Util.computeTimeProgress
 import uz.tikoncha_parent.common.Util.currentMillis
-import uz.tikoncha_parent.common.Util.formatDateDdMmYyyy
 import uz.tikoncha_parent.common.Util.formatTimeHHmm
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
@@ -39,6 +38,9 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.common.DateTimeUtil.formatDateTimeMonthlyForChat
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -62,8 +64,10 @@ fun TaskItemUi(
         formatTimeHHmm(task.dateTime)
     }
 
+    val languageCode = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
+
     val shownDate = remember(task.id, task.dateTime) {
-        formatDateDdMmYyyy(task.dateTime)
+        formatDateTimeMonthlyForChat(task.dateTime, languageCode)
     }
 
     var timeProgress by remember(task.id, task.createdAt, task.dateTime) {

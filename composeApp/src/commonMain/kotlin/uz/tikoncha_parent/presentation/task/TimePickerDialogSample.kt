@@ -31,10 +31,12 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
-fun TimePickerDialog(
+fun TimePickerDialog2(
     hour: Int,
     minute: Int,
     onHourChange: (Int) -> Unit,
@@ -137,7 +139,18 @@ fun NumberPicker(
 @Preview
 @Composable
 private fun Preview() {
-
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        TimePickerDialog2(
+            hour = 2,
+            minute = 30,
+            onHourChange = {},
+            onMinuteChange = {},
+            onSave = {},
+            onDismiss = {}
+        )
+    }
 }
 
 

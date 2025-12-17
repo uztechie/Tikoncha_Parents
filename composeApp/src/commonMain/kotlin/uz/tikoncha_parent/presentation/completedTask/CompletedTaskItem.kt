@@ -34,6 +34,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.common.DateTimeUtil.formatDateTimeMonthlyForChat
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -58,8 +61,10 @@ fun CompletedTaskItem(
         formatTimeHHmm(task.dateTime)
     }
 
+    val languageCode = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
+
     val shownDate = remember(task.id, task.dateTime) {
-        formatDateDdMmYyyy(task.dateTime)
+        formatDateTimeMonthlyForChat(task.dateTime, languageCode)
     }
 
     Column(

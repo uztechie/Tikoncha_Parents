@@ -72,7 +72,6 @@ class TaskScreen : Screen {
             event = event
         )
     }
-
 }
 
 @Composable
@@ -81,8 +80,6 @@ fun TaskUi(
     state: TaskState,
     event: (TaskEvent) -> Unit
 ) {
-
-    val today = Util.getCurrentDate()
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -208,18 +205,18 @@ fun TaskUi(
                 CustomText(
                     text = stringResource(Res.string.sizdan_vazifalar),
                     fontWeight = FontWeight.W600,
-                    fontSize = NormalLargeTextSize
+                    fontSize = NormalTextSize
                 )
 
                 if (state.parentTaskList.isNotEmpty()) {
-
+                    SpaceSmall()
                     CustomText(
                         text = if (!state.showMineAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
                             Res.string.qisqartirish
                         ),
                         color = PrimaryColor,
                         fontWeight = FontWeight.W600,
-                        fontSize = NormalLargeTextSize,
+                        fontSize = NormalTextSize,
                         modifier = Modifier
                             .clickable {
                                 event(TaskEvent.ShowMineAll)
@@ -326,19 +323,20 @@ fun TaskUi(
             ) {
                 CustomText(
                     text = stringResource(Res.string.farzandingiz_vazifalari),
-                    fontSize = NormalLargeTextSize,
+                    fontSize = NormalTextSize,
                     fontWeight = FontWeight.W600,
                 )
 
                 if (state.childrenTaskList.isNotEmpty()) {
-
+                    SpaceSmall()
                     CustomText(
                         text = if (!state.showChildrenAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
                             Res.string.qisqartirish
                         ),
                         color = PrimaryColor,
                         fontWeight = FontWeight.W600,
-                        fontSize = NormalLargeTextSize,
+                        fontSize = NormalTextSize,
+                        maxLines = 1,
                         modifier = Modifier
                             .clickable {
                                 event(TaskEvent.ShowChildrenAll)

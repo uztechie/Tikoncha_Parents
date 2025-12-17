@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
@@ -57,8 +58,7 @@ fun CalendarDialog(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
-        containerColor = MaterialTheme.extendedColor.backgroundColor,
-        modifier = Modifier.fillMaxWidth(),
+        containerColor = Color.Transparent,
         text = {
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -208,27 +208,21 @@ fun CalendarDialog(
     )
 }
 
-fun reformattedYearDay(reformatedDate: LocalDate?): String {
-    if (reformatedDate == null) return ""
-
-    val day = reformatedDate.day.toString().padStart(2, '0')
-    val month = reformatedDate.month.number.toString().padStart(2, '0')
-    val year = reformatedDate.year.toString()
-
-    return "$day.$month.$year"
-}
-
 @Preview
 @Composable
 private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.DARK
     ){
-        CalendarDialog(
-            onDateSelected = {},
-            onDismissRequest = {},
-            selectedDate = null
-        )
+        Column(
+            modifier = Modifier.fillMaxSize().background(OnPrimaryColor)
+        ) {
+            CalendarDialog(
+                onDateSelected = {},
+                onDismissRequest = {},
+                selectedDate = null
+            )
+        }
     }
 }
 
