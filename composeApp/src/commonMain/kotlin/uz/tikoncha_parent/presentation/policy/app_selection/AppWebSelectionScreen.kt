@@ -23,13 +23,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import kotlinx.coroutines.yield
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.app_limit_exceeded
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_subscription
 import tikoncha_parents.composeapp.generated.resources.ilovalar
 import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
+import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
 import tikoncha_parents.composeapp.generated.resources.xatolik
@@ -39,8 +45,10 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -68,17 +76,21 @@ class AppWebSelectionScreen(): Screen{
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
         val sharedEvent = sharedViewModel::onEvent
 
+        LaunchedEffect(Unit){
+            yield()
+            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
+        }
+
         AppWebSelectionUi(
             state = state,
             event = event,
             sharedState = sharedState
         )
 
-        Logger.d("SALOM", "selectedChild=${sharedState.selectedChild?.userId}")
 
         LaunchedEffect(Unit){
             event(AppWebEvent.GetAppsFromServer)
-            event(AppWebEvent.RefreshSubscriptionLimit)
+            event(AppWebEvent.SetSubscriptionLimit(sharedState.subscriptionLimit))
         }
     }
 
@@ -98,15 +110,25 @@ fun AppWebSelectionUi(
 
 
     CustomDialog(
-        title = stringResource(Res.string.limit_tugadi),
-        message = "Sizda ${state.subscriptionLimit.appCount } dan ko'p ilovalarni tanlay olmaysiz. Ko'proq ilovalarni qo'shish uchun PLUS obunani sotib oling.",
+        showCloseButton = true,
+        painter = painterResource(Res.drawable.dialog_subscription),
+        title = stringResource(Res.string.obuna_bolish),
+        message = stringResource(
+            resource = Res.string.app_limit_exceeded,
+            state.subscriptionLimit.appCount
+        ),
+        buttonText = stringResource(Res.string.obuna_bolish),
         show = state.showLimitReachedDialog,
-//        lottieAsset = DialogLottie.WARNING,
         onDismiss = {
             event(AppWebEvent.DismissLimitDialog)
         },
         onButtonClick = {
             event(AppWebEvent.DismissLimitDialog)
+            navigator?.push(
+                SubscriptionPaymentScreen(
+                    selectedChild = sharedState.selectedChild
+                )
+            )
         }
     )
 
@@ -124,6 +146,7 @@ fun AppWebSelectionUi(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         title = stringResource(Res.string.xatolik),
         message = errorText,
         show = showErrorText,

@@ -19,10 +19,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.suhbat
 import tikoncha_parents.composeapp.generated.resources.xatolik
@@ -95,6 +97,7 @@ fun ChatUi(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
         message = chatListErrorText,

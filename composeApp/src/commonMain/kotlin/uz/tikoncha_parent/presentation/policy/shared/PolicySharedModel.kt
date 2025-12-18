@@ -22,6 +22,11 @@ class PolicySharedModel(
     val state = _state.asStateFlow()
 
     init {
+        _state.update {
+            it.copy(
+                selectedChild = AppSettings.selectedChild
+            )
+        }
         refreshSubscriptionLimit()
         Logger.d("PolicySharedModel", "subscriptionLimit = ${_state.value.subscriptionLimit}")
     }
@@ -80,6 +85,15 @@ class PolicySharedModel(
             PolicySharedEvent.LoadSubscriptionLimit -> {
                 getSubscriptionLimit()
             }
+
+            is PolicySharedEvent.SetSelectedChild -> {
+                _state.update {
+                    it.copy(
+                        selectedChild = event.child
+                    )
+                }
+                refreshSubscriptionLimit()
+            }
         }
     }
 
@@ -92,9 +106,10 @@ class PolicySharedModel(
 
 
     private fun refreshSubscriptionLimit(){
-        _state.update {
-            it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
+        _state.update { innerState->
+            val selectedChild = innerState.selectedChild
+            innerState.copy(
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == selectedChild?.userId }?: SubscriptionLimit()
             )
         }
     }

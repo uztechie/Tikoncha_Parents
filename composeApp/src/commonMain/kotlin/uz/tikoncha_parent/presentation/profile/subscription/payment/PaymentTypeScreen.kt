@@ -136,7 +136,7 @@ fun PaymentTypeScreenUi(
 
 
     CustomDialog(
-//        lottieAsset = DialogLottie.ERROR,
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showCreatePaymentErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = paymentError,

@@ -30,6 +30,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -45,6 +46,7 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.compareTo
@@ -96,12 +98,20 @@ fun LimitRuleListUi(
 
     var showLimitDialog by remember { mutableStateOf(false) }
     CustomDialog(
+        showCloseButton = true,
+        painter = painterResource(Res.drawable.dialog_subscription),
         title = stringResource(Res.string.limit_tugadi),
-        message = "Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.",
+        message = stringResource(Res.string.sizda_foydalanish_chegarasini_qoshish),
         show = showLimitDialog,
         onDismiss = {showLimitDialog = false},
+        buttonText = stringResource(Res.string.obuna_bolish),
         onButtonClick = {
             showLimitDialog = false
+            navigator?.push(
+                SubscriptionPaymentScreen(
+                    selectedChild = sharedState.selectedChild
+                )
+            )
         }
     )
 

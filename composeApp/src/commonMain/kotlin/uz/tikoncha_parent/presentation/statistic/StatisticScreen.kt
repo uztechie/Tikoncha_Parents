@@ -152,6 +152,7 @@ fun StatisticUi(
     )
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         onDismiss = {showAppUsageErrorDialog = false},
         show = showAppUsageErrorDialog,
         title = stringResource(Res.string.xatolik),

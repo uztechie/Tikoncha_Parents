@@ -28,15 +28,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
+import tikoncha_parents.composeapp.generated.resources.dialog_subscription
 import tikoncha_parents.composeapp.generated.resources.faol_vaqt
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
+import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
+import tikoncha_parents.composeapp.generated.resources.sizda_vaqt_oraligi_qoshish
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -46,6 +50,7 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -104,13 +109,20 @@ fun TimeRuleListUi(
 
     var showLimitDialog by remember { mutableStateOf(false) }
     CustomDialog(
+        showCloseButton = true,
+        buttonText = stringResource(Res.string.obuna_bolish),
+        painter = painterResource(Res.drawable.dialog_subscription),
         title = stringResource(Res.string.limit_tugadi),
-        message = "Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.",
+        message = stringResource(Res.string.sizda_vaqt_oraligi_qoshish),
         show = showLimitDialog,
-//        lottieAsset = DialogLottie.WARNING,
         onDismiss = {showLimitDialog = false},
         onButtonClick = {
             showLimitDialog = false
+            navigator?.push(
+                SubscriptionPaymentScreen(
+                    selectedChild = sharedState.selectedChild
+                )
+            )
         }
     )
 

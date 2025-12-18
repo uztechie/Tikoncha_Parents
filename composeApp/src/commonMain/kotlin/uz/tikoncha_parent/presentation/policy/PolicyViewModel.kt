@@ -14,6 +14,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicyViewModel(
@@ -21,17 +22,19 @@ class PolicyViewModel(
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase
 ) : ViewModel() {
 
+    private val TAG = "PolicyViewModel"
     private val _state = MutableStateFlow<PolicyState>(PolicyState())
     val state = _state.asStateFlow()
 
     init {
-        getSubscriptionLimit()
+
         _state.update {
             it.copy(
                 childrenList = AppSettings.children,
                 selectedChild = AppSettings.selectedChild
             )
         }
+        getSubscriptionLimit()
         getPolicies()
     }
 
@@ -65,6 +68,8 @@ class PolicyViewModel(
                 subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
             )
         }
+        Logger.d(TAG, " subscriptionLimit=${_state.value.subscriptionLimit}")
+
     }
 
 

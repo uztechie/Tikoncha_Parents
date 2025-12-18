@@ -29,6 +29,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.yourpackage.utils.formatTwoDigits
+import org.jetbrains.compose.resources.painterResource
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.LogoHeader
@@ -112,6 +113,7 @@ fun OtpUi(
 
     LoadingDialog(show = otpLoading)
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
         message = otpErrorText,

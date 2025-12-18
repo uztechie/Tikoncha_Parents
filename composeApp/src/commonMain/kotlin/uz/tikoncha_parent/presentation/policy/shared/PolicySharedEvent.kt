@@ -11,6 +11,8 @@ sealed interface PolicySharedEvent {
 
     data class SetLimitRule(val list: List<LimitRuleUi>) : PolicySharedEvent
     data class SetTimeRule(val list: List<TimeRuleUi>) : PolicySharedEvent
+    data class SetSelectedChild(val child: UserInfo) : PolicySharedEvent
+
     data class SetPolicy(val policyItemUi: PolicyItemUi): PolicySharedEvent
     data object ClearData : PolicySharedEvent
     data class SetPolicyTitle(val title: String): PolicySharedEvent

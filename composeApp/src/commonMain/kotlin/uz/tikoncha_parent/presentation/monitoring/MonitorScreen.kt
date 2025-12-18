@@ -103,6 +103,7 @@ private fun MonitorUi(
 
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         onDismiss = {showSendMessageError = false},
         show = showSendMessageError,
         title = stringResource(Res.string.xatolik),

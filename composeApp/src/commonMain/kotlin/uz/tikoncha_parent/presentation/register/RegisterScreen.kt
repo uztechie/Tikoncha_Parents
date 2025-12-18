@@ -91,6 +91,7 @@ fun Register(
         }
     }
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         onDismiss = {showRegisterErrorDialog = false},
         show = showRegisterErrorDialog,
         title = stringResource(Res.string.xatolik),

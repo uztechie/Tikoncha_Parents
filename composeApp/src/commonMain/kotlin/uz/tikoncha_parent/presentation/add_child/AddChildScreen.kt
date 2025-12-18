@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.jetbrains.compose.resources.painterResource
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
@@ -94,6 +95,7 @@ fun AddChildUi(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
         message = state.responseState.errorText(),

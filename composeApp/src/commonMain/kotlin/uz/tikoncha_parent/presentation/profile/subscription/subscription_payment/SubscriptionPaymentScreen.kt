@@ -96,7 +96,7 @@ fun SubscriptionPaymentUi(
     }
 
     CustomDialog(
-//        lottieAsset = DialogLottie.ERROR,
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showPlanErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = planErrorText,

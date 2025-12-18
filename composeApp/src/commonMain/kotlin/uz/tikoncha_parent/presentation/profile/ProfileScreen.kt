@@ -145,6 +145,7 @@ fun ProfileUi(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.logout),
         title = stringResource(Res.string.chiqishni_xohlaysizmi),
         message = stringResource(Res.string.chiqishni_tasdiqlang),
         buttonText = stringResource(Res.string.tasdiqlash),

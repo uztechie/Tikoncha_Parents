@@ -224,7 +224,7 @@ fun PolicySetupUi(
     )
 
     CustomDialog(
-//        lottieAsset = DialogLottie.ERROR,
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = createErrorText.ifEmpty { updateErrorText }.ifEmpty { deleteErrorText },
@@ -241,7 +241,7 @@ fun PolicySetupUi(
     )
 
     CustomDialog(
-//        lottieAsset = DialogLottie.SUCCESS,
+        painter = painterResource(Res.drawable.dialog_success),
         show = showSuccessDialog,
         title = stringResource(Res.string.muvaffaqiyatli),
         message = if (createSuccess) stringResource(Res.string.jadval_muvaffaqiyatli_yaratildi)
@@ -262,7 +262,7 @@ fun PolicySetupUi(
 
     CustomDialog(
         show = showDeleteConfirmDialog,
-//        lottieAsset = DialogLottie.WARNING,
+        painter = painterResource(Res.drawable.dialog_warning),
         title = stringResource(Res.string.diqqat),
         message = stringResource(Res.string.siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz),
         buttonText = stringResource(Res.string.ochirish),
@@ -278,7 +278,7 @@ fun PolicySetupUi(
 
     CustomDialog(
         show = showCloseConfirmDialog,
-//        lottieAsset = DialogLottie.WARNING,
+        painter = painterResource(Res.drawable.dialog_warning),
         title = stringResource(Res.string.diqqat),
         message = stringResource(Res.string.jadvalni_saqlamasdan_chiqishga_rozimisiz),
         buttonText = stringResource(Res.string.roziman).capitalizeFirst(),

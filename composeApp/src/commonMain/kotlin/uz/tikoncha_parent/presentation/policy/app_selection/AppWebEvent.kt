@@ -1,12 +1,13 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 
 
 sealed class AppWebEvent {
 
-    data object RefreshSubscriptionLimit: AppWebEvent()
     data class OnAppWebSelected(val index: Int): AppWebEvent()
     data class SetChildId(val id: String): AppWebEvent()
+    data class SetSubscriptionLimit(val limit: SubscriptionLimit): AppWebEvent()
     data class ToggleApp(val app: AppSelectionUi, val checked: Boolean): AppWebEvent()
     data class SetSelectedApps(val apps: List<AppSelectionUi>): AppWebEvent()
 

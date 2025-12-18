@@ -53,6 +53,8 @@ import org.koin.compose.getKoin
 import qrgenerator.qrkitpainter.event
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_left
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_info
 import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.gps_o_chirilgan
@@ -156,6 +158,7 @@ class MapScreen : Screen {
 
         // Joylashuv permission deny always bo‘lsa
         CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
             show = showPermissionDialog,
             title = stringResource(Res.string.joylashuv_uchun_ruxsat),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering),
@@ -172,6 +175,7 @@ class MapScreen : Screen {
 
         // GPS o‘chiq bo‘lsa
         CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
             show = showGpsDialog,
             title = stringResource(Res.string.gps_o_chirilgan),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing),

@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.base
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,7 @@ fun CustomDialog(
     title: String,
     message: String,
     show: Boolean = true,
+    painter: Painter = painterResource(Res.drawable.dialog_info),
     buttonText: String = "Ok",
     buttonText2: String = stringResource(Res.string.bekor_qilish),
     showCloseButton: Boolean = false,
@@ -69,6 +72,14 @@ fun CustomDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
+                    SpaceLarge()
+                    Image(
+                        painter = painter,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(60.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
                     SpaceLarge()
                     CustomText(
                         text = title,
@@ -137,6 +148,8 @@ fun CustomDialog(
                             )
                         }
                     }
+                    SpaceLarge()
+
                 }
             }
         }

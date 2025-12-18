@@ -1,7 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.rule_type_selection
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,10 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
@@ -35,12 +31,11 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupEvent
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupState
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -71,6 +66,10 @@ fun RuleTypeSelectionUi(
     event: (PolicySharedEvent) -> Unit = {}
 ) {
 
+    var showSubscriptionLimitDialog by remember {
+        mutableStateOf(false)
+    }
+
 
     var showWarningDialog by remember {
         mutableStateOf(false)
@@ -80,7 +79,31 @@ fun RuleTypeSelectionUi(
         mutableStateOf(RuleType.NONE)
     }
 
+
     CustomDialog(
+        showCloseButton = true,
+        painter = painterResource(Res.drawable.dialog_subscription),
+        show = showSubscriptionLimitDialog,
+        title = stringResource(Res.string.obuna),
+        message = stringResource(Res.string.obuna_dialog_message),
+        buttonText = stringResource(Res.string.obuna_bolish),
+        onDismiss = {
+            showSubscriptionLimitDialog = false
+        },
+        onButtonClick = {
+            showSubscriptionLimitDialog = false
+            navigator?.push(
+                SubscriptionPaymentScreen(
+                    selectedChild = state.selectedChild
+                )
+            )
+
+        }
+    )
+
+
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_info),
         show = showWarningDialog,
         title = stringResource(Res.string.diqqat),
         message = stringResource(Res.string.siz_tanlagan_vaqt_oraligida),
@@ -91,13 +114,26 @@ fun RuleTypeSelectionUi(
             showWarningDialog = false
             when(selectedRuleType){
                 RuleType.TIME -> {
-                    navigator?.push(TimeRuleListScreen())
+                    if (state.subscriptionLimit.timeRule < 1){
+                        showSubscriptionLimitDialog = true
+                    }else{
+                        navigator?.push(TimeRuleListScreen())
+                    }
                 }
                 RuleType.USAGE_LIMIT -> {
-                    navigator?.push(LimitRuleListScreen())
+                    if (state.subscriptionLimit.limitRule < 1){
+                        showSubscriptionLimitDialog = true
+                    }else{
+                        navigator?.push(LimitRuleListScreen())
+                    }
+
                 }
                 RuleType.LOCATION -> {
+                    if (state.subscriptionLimit.locationRule < 1){
+                        showSubscriptionLimitDialog = true
+                    }else{
 
+                    }
                 }
                else -> {}
             }
@@ -219,17 +255,31 @@ fun RuleTypeSelectionUi(
                                             showWarningDialog = true
                                             return@RuleTypeItem
                                         }
-                                        navigator?.push(TimeRuleListScreen())
+                                        if (state.subscriptionLimit.timeRule < 1){
+                                            showSubscriptionLimitDialog = true
+                                        }else{
+                                            navigator?.push(TimeRuleListScreen())
+                                        }
                                     }
                                     RuleType.USAGE_LIMIT -> {
                                         if (state.timeList.isNotEmpty()){
                                             showWarningDialog = true
                                             return@RuleTypeItem
                                         }
-                                        navigator?.push(LimitRuleListScreen())
+                                        if (state.subscriptionLimit.limitRule < 1){
+                                            showSubscriptionLimitDialog = true
+                                        }else{
+                                            navigator?.push(LimitRuleListScreen())
+                                        }
                                     }
 
-                                    RuleType.LOCATION -> {}
+                                    RuleType.LOCATION -> {
+                                        if (state.subscriptionLimit.locationRule < 1){
+                                            showSubscriptionLimitDialog = true
+                                        }else{
+
+                                        }
+                                    }
                                     RuleType.WIFI -> {}
                                     RuleType.LAUNCH_COUNT -> {}
 

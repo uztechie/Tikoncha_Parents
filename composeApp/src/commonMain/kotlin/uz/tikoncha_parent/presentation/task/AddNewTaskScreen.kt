@@ -163,6 +163,7 @@ fun AddNewTask(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         onDismiss = { showTaskErrorDialog = false },
         show = showTaskErrorDialog,
         title = stringResource(Res.string.xatolik),
@@ -174,6 +175,7 @@ fun AddNewTask(
 
     if (showTaskSuccessDialog) {
         CustomDialog(
+            painter = painterResource(Res.drawable.dialog_success),
             title = stringResource(Res.string.muvaffaqiyatli),
             message = successMessage,
             onDismiss = { showTaskSuccessDialog = false },

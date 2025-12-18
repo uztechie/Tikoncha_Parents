@@ -297,5 +297,12 @@
     <string name="ha">Ha</string>
     <string name="yoq">Yo‘q</string>
     <string name="ilovani_ochirish_uchun_sorov_kerak">Ilovani o‘chirish uchun so‘rov yuborish kerak</string>
+    <string name="obuna_dialog_message">Ushbu funksiyadan foydalanish uchun PLUS obunani sotib oling!</string>
+    <string name="obuna_bolish">Obuna bo‘lish</string>
+    <string name="app_limit_exceeded">
+    Siz %1$d tadan ko‘p ilovani tanlay olmaysiz. Ko‘proq ilovalarni qo‘shish uchun Plus obunani sotib oling.
+</string>
+    <string name="sizda_vaqt_oraligi_qoshish">Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.</string>
+    <string name="sizda_foydalanish_chegarasini_qoshish">Sizda foydalanish chegarasini qo'shish uchun limit tugadi. Ko'proq foydalanish chegaralarini yaratish uchun PLUS obunani sotib oling.</string>
 
 </resources>

@@ -137,6 +137,7 @@ class MapScreen3 : Screen {
 //        }
 
         CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
             show = showPermissionDialog,
             title = stringResource(Res.string.joylashuv_uchun_ruxsat),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering),
@@ -151,6 +152,7 @@ class MapScreen3 : Screen {
             }
         )
         CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
             show = showGpsDialog,
             title = stringResource(Res.string.gps_o_chirilgan),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing),

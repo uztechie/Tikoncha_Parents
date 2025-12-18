@@ -20,11 +20,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_info
+import tikoncha_parents.composeapp.generated.resources.dialog_warning
 import tikoncha_parents.composeapp.generated.resources.farzand_chiqish_ruxsat
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirmoqchi
 import tikoncha_parents.composeapp.generated.resources.ha
@@ -112,6 +116,7 @@ fun LogoutUi(
     Loading(loading)
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = createErrorText.ifEmpty { listErrorText }.ifEmpty { deleteErrorText },
@@ -128,6 +133,7 @@ fun LogoutUi(
     )
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_warning),
         title = stringResource(Res.string.hisobdan_chiqishni_tasdiqlaysizmi),
         message = stringResource(Res.string.farzand_chiqish_ruxsat),
         buttonText = stringResource(Res.string.ha),
@@ -146,6 +152,7 @@ fun LogoutUi(
     )
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_warning),
         title = stringResource(Res.string.ilovani_ochirishni_tasdiqlaysizmi),
         message = stringResource(Res.string.farzand_ilovani_ochirmoqchi),
         buttonText = stringResource(Res.string.ha),
@@ -163,6 +170,7 @@ fun LogoutUi(
     )
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_warning),
         title = stringResource(Res.string.hisobdan_chiqishni_bekor_qilish),
         message = stringResource(Res.string.hisobdan_chiqishni_bekor_qilasizmi),
         buttonText = stringResource(Res.string.ha),

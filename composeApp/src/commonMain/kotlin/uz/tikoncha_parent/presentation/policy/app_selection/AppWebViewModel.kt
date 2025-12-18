@@ -22,9 +22,6 @@ class AppWebViewModel(
     private val _state = MutableStateFlow(AppWebState())
     val state = _state.asStateFlow()
 
-    init {
-        refreshSubscriptionLimit()
-    }
 
     private var alreadySetOnce: Boolean = false
     private var alreadyLoadedOnce: Boolean = false
@@ -185,22 +182,19 @@ class AppWebViewModel(
                         childId = event.id
                     )
                 }
-                refreshSubscriptionLimit()
             }
 
-            AppWebEvent.RefreshSubscriptionLimit -> {
-                refreshSubscriptionLimit()
+            is AppWebEvent.SetSubscriptionLimit -> {
+                _state.update {
+                    it.copy(
+                        subscriptionLimit = event.limit
+                    )
+                }
             }
+
         }
     }
 
-    private fun refreshSubscriptionLimit(){
-        _state.update { innerState->
-            innerState.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == innerState.childId }?: SubscriptionLimit()
-            )
-        }
-    }
 
     private fun calculateServerStats(
         apps: List<AppSelectionUi>,

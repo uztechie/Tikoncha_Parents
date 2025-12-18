@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,15 +34,20 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_subscription
 import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.jadval_nomini_kiriting
-import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.misol_o_quv_markaz
+import tikoncha_parents.composeapp.generated.resources.obuna
+import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
+import tikoncha_parents.composeapp.generated.resources.obuna_dialog_message
+import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomDialogTextField
@@ -57,7 +61,7 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
-import uz.tikoncha_parent.presentation.statistic.StatisticEvent
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -85,11 +89,11 @@ class PolicyListScreen : Screen {
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(state.selectedChild){
             yield()
             sharedAppEvent(AppWebEvent.ClearData)
             sharedEvent(PolicySharedEvent.ClearData)
-            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
+            state.selectedChild?.let { sharedEvent(PolicySharedEvent.SetSelectedChild(it)) }
         }
 
         BackHandler(true){
@@ -137,6 +141,7 @@ fun PolicyListUi(
     }
 
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         title = stringResource(Res.string.xatolik),
         message = errorText,
         show = showErrorText,
@@ -156,6 +161,7 @@ fun PolicyListUi(
         errorMessage = "",
         onItemSelected = {
             event(PolicyEvent.SetSelectedChild(it))
+            sharedEvent(PolicySharedEvent.SetSelectedChild(it))
         },
         onDismiss = {
             showChildrenDialog = false
@@ -192,13 +198,20 @@ fun PolicyListUi(
 
 
     CustomDialog(
-        title = stringResource(Res.string.limit_tugadi),
-        message = "Sizda yana boshqa jadval yaratish uchun limitingiz tugadi. Yana yangi jadval yaratish uchun PLUS obunasini sotib oling.",
+        showCloseButton = true,
+        painter = painterResource(Res.drawable.dialog_subscription),
+        title = stringResource(Res.string.obuna_bolish),
+        message = stringResource(Res.string.obuna_dialog_message),
         show = showLimitDialog,
-//        lottieAsset = DialogLottie.WARNING,
+        buttonText = stringResource(Res.string.obuna_bolish),
         onDismiss = {showLimitDialog = false},
         onButtonClick = {
             showLimitDialog = false
+            navigator?.push(
+                SubscriptionPaymentScreen(
+                    selectedChild = state.selectedChild
+                )
+            )
         }
     )
 
@@ -270,6 +283,7 @@ fun PolicyListUi(
         CustomOutlinedButton(
             onClick = {
                 val count = sharedState.subscriptionLimit.policyCount
+                Logger.d("PolicyList", "subscriptionLimit=${sharedState.subscriptionLimit}")
                 val myPolicyCount = state.policies.count { it.isMine }
                 if (count > myPolicyCount){
                     showCreatePolicyDialog = true

@@ -14,11 +14,12 @@ import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
+import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PaymentViewModel(
-    private val subscriptionPaymentUseCase: SubscriptionPaymentUseCase,
+    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
     private val paymentUseCase: SubscriptionPaymentUseCase,
     private val paymentStatusUseCase: PaymentStatusUseCase,
     private val paymentService: PaymentService
@@ -151,7 +152,7 @@ class PaymentViewModel(
                         }
 
                         if (status == PaymentStatus.COMPLETED){
-//                            requestSubscriptionLimit()
+                            requestSubscriptionLimit()
                         }
 
                         if (status == PaymentStatus.COMPLETED || status == PaymentStatus.FAILED){
@@ -165,6 +166,11 @@ class PaymentViewModel(
         }
     }
 
+    private fun requestSubscriptionLimit(){
+        viewModelScope.launch {
+            subscriptionLimitUseCase.invoke()
+        }
+    }
     private fun openClickPayment(
         serviceId: String,
         merchantId: String,

@@ -106,6 +106,7 @@ fun LoginUi(
 
     LoadingDialog(show = otpLoading)
     CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
         message = otpErrorText,
