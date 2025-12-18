@@ -175,6 +175,36 @@ object DateTimeUtil {
         return if (date == today) formatTime(longDate) else formatDate_ddMMyyyy(date)
     }
 
+
+    fun formatDateTimeMonthlyForMap(
+        longDate: Long,
+        lang: LanguageType,
+        zone: TimeZone = TimeZone.currentSystemDefault()
+    ): String {
+        if (longDate == 0L) return ""
+
+        val instant = Instant.fromEpochMilliseconds(longDate)
+
+        val date = instant.toLocalDateTime(zone).date
+        val today = Clock.System.now().toLocalDateTime(zone).date
+        val time = formatTime(millis = longDate)
+
+        val todayString = when(lang) {
+            LanguageType.UZ -> {"Bugun"}
+            LanguageType.RU -> {"Сегодня"}
+        }
+
+
+
+        return if (date == today){
+            "$todayString $time"
+        }
+        else{
+            val formattedDate = formatDayMonth(longDate, lang, zone)
+            "$formattedDate $time"
+        }
+    }
+
     fun formatDateTimeMonthlyForChat(
         longDate: Long,
         lang: LanguageType,

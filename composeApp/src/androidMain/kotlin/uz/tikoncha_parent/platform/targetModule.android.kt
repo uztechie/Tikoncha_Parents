@@ -27,7 +27,8 @@ actual val targetModule = module {
 
     single {
         LocationViewModel(
-            tracker = get()
+            tracker = get(),
+            childrenLocationUseCase = get()
         )
     }
 

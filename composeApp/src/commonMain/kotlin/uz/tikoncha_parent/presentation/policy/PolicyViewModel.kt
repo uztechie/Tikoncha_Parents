@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import qrgenerator.qrkitpainter.event
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
 import uz.tikoncha_parent.domain.model.Resource
@@ -25,6 +26,13 @@ class PolicyViewModel(
 
     init {
         getSubscriptionLimit()
+        _state.update {
+            it.copy(
+                childrenList = AppSettings.children,
+                selectedChild = AppSettings.selectedChild
+            )
+        }
+        getPolicies()
     }
 
 
@@ -33,8 +41,10 @@ class PolicyViewModel(
             is PolicyEvent.SetSelectedChild -> {
                 _state.value = _state.value.copy(
                     selectedChild = event.child,
-                    subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == event.child?.userId }?: SubscriptionLimit()
+                    subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == event.child.userId }?: SubscriptionLimit()
                 )
+                AppSettings.selectedChildId = event.child.userId
+                AppSettings.selectedChild = event.child
                 getPolicies()
             }
 

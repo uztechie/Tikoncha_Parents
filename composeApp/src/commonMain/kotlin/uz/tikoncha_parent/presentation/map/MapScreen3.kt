@@ -87,6 +87,7 @@ class MapScreen3 : Screen {
         val locationViewModel = viewModel {
             LocationViewModel(
                 tracker = locationTracker,
+                useCase
             )
         }
 

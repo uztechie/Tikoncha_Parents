@@ -4,30 +4,59 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.geo.LocationTracker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
 
 class LocationViewModel(
     val tracker: LocationTracker,
-    private val childrenLocationUseCase: ChildrenLocationUseCase? = null
+    private val childrenLocationUseCase: ChildrenLocationUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LocationState())
     val state = _state.asStateFlow()
 
     init {
+
+        _state.update {
+            it.copy(
+                childrenList = AppSettings.children,
+                selectedChild = AppSettings.selectedChild,
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == AppSettings.selectedChild?.userId }?: SubscriptionLimit()
+            )
+        }
+
         observeLocation()
         loadChildrenLocation()
     }
+
+
+    fun onEvent(event: LocationEvent){
+        when(event){
+            is LocationEvent.SetSelectedChildId -> {
+                val childId = event.childId
+                val child = AppSettings.children.find { it.userId == childId }
+                if (child != null){
+                    _state.update {
+                        it.copy(
+                            selectedChild = child
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+
 
     private fun observeLocation() {
         viewModelScope.launch {
@@ -72,6 +101,7 @@ class LocationViewModel(
     fun stop() = tracker.stopTracking()
 
     private fun loadChildrenLocation() {
+        Logger.d("LocationViewmodel", "loadChildrenLocation usecase=$childrenLocationUseCase")
         val useCase = childrenLocationUseCase ?: return
 
         viewModelScope.launch {

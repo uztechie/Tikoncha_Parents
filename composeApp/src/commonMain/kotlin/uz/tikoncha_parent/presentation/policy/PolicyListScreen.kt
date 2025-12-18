@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -27,11 +29,14 @@ import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
+import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
+import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.jadval_nomini_kiriting
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
@@ -39,17 +44,20 @@ import tikoncha_parents.composeapp.generated.resources.misol_o_quv_markaz
 import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomDialogTextField
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -59,9 +67,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @OptIn(InternalVoyagerApi::class)
-class PolicyListScreen(
-    val child: UserInfo?
-) : Screen {
+class PolicyListScreen : Screen {
     @Composable
     override fun Content() {
 
@@ -80,7 +86,7 @@ class PolicyListScreen(
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit){
-            event(PolicyEvent.SetSelectedChild(child))
+            yield()
             sharedAppEvent(AppWebEvent.ClearData)
             sharedEvent(PolicySharedEvent.ClearData)
             sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
@@ -117,6 +123,10 @@ fun PolicyListUi(
     val loading = state.policyResponseState is ResponseState.Loading
     val errorText = state.policyResponseState.errorText()
 
+
+
+    var showChildrenDialog by remember { mutableStateOf(false) }
+
     LoadingDialog(loading)
     var showErrorText by remember {
         mutableStateOf(false)
@@ -135,6 +145,20 @@ fun PolicyListUi(
         },
         onButtonClick = {
             showErrorText = false
+        }
+    )
+
+    CustomListDialog(
+        title = stringResource(Res.string.farzandlaringiz),
+        items = state.childrenList,
+        show = showChildrenDialog,
+        loading = false,
+        errorMessage = "",
+        onItemSelected = {
+            event(PolicyEvent.SetSelectedChild(it))
+        },
+        onDismiss = {
+            showChildrenDialog = false
         }
     )
 
@@ -195,6 +219,19 @@ fun PolicyListUi(
                 navigator?.pop()
             },
             modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                ChildSelectionButton(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(horizontal = 10.dp),
+                    text = state.selectedChild?.name?:"",
+                    imageUrl = state.selectedChild?.avatarUrl?:"",
+                    label = stringResource(Res.string.farzandingizni_tanlang),
+                    onClick = {
+                        showChildrenDialog = true
+                    },
+                )
+            }
         )
 
         LazyColumn(

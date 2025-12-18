@@ -380,9 +380,7 @@ fun NewHomeUi(
                         .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable{
-                            navigator?.push(PolicyListScreen(
-                                state.selectedChild
-                            ))
+                            navigator?.push(PolicyListScreen())
                         },
                 ) {
                     Column(

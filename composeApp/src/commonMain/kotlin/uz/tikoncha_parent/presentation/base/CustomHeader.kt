@@ -89,9 +89,10 @@ fun CustomHeader(
             text = title,
             fontSize = LargeTextSize,
             fontWeight = fonWeight,
-            maxLines = 1
+            maxLines = 1,
+            modifier = Modifier
         )
-
+        SpaceMedium()
         Spacer(modifier = Modifier.weight(1f))
 
         if (trailingIcon != null) {

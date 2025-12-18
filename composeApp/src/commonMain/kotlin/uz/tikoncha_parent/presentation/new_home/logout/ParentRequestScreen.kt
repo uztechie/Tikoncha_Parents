@@ -39,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import tikoncha_parents.composeapp.generated.resources.yoq
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.Loading
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -107,6 +108,8 @@ fun LogoutUi(
             showSuccessDialog = true
         }
     }
+
+    Loading(loading)
 
     CustomDialog(
         show = showErrorDialog,

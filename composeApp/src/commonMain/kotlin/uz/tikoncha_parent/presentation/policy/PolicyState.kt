@@ -6,6 +6,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 
 data class PolicyState(
+    val childrenList: List<UserInfo> = emptyList(),
     val selectedChild: UserInfo? = null,
     val policyResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val policies: List<PolicyItemUi> = emptyList(),

@@ -35,6 +35,8 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.SubscriptionType
+import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
@@ -45,7 +47,7 @@ import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class SubscriptionPaymentScreen : Screen {
+class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
     @Composable
     override fun Content() {
 
@@ -54,6 +56,12 @@ class SubscriptionPaymentScreen : Screen {
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
+        LaunchedEffect(selectedChild){
+            if (selectedChild != null){
+                Logger.d("SubscriptionPaymentScreen", "selectedChild=$selectedChild")
+                event(SubscriptionPaymentEvent.SetSelectedChild(selectedChild))
+            }
+        }
 
         SubscriptionPaymentUi(
             navigator = navigator,
@@ -275,7 +283,7 @@ fun SubscriptionPaymentUi(
     }
     if (showButtonSheetState && state.subscriptionUi != null) {
         SubscriptionBottomSheet(
-            hasSubscription = state.currentPlan != SubscriptionType.FREE,
+            hasSubscription = state.currentPlan == SubscriptionType.PLUS,
             visible = showButtonSheetState,
             subscription = state.subscriptionUi,
             onDismiss = {

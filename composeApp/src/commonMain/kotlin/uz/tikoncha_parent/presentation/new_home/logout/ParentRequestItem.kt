@@ -155,33 +155,36 @@ fun ParentRequestItem(
         SpaceMedium()
 
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        if (parentRequestUi.status == ParentRequestStatus.PROCESS){
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
 
-            CustomOutlinedButton(
-                text = stringResource(Res.string.bekor_qilish),
-                backgroundColor = Color.Transparent,
-                borderColor = OtpErrorColor,
-                textColor = OtpErrorColor,
-                onClick = onCancelRequestClick,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(DialogButtonHeight),
-            )
-            SpaceSmall()
-            CustomOutlinedButton(
-                borderColor = SuccessColor,
-                textColor = SuccessColor,
-                backgroundColor = Color.Transparent,
-                text = stringResource(Res.string.tasdiqlash),
-                onClick = onActionClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(DialogButtonHeight)
-                    .weight(1f),
-            )
+                CustomOutlinedButton(
+                    text = stringResource(Res.string.bekor_qilish),
+                    backgroundColor = Color.Transparent,
+                    borderColor = OtpErrorColor,
+                    textColor = OtpErrorColor,
+                    onClick = onCancelRequestClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(DialogButtonHeight),
+                )
+                SpaceSmall()
+                CustomOutlinedButton(
+                    borderColor = SuccessColor,
+                    textColor = SuccessColor,
+                    backgroundColor = Color.Transparent,
+                    text = stringResource(Res.string.tasdiqlash),
+                    onClick = onActionClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(DialogButtonHeight)
+                        .weight(1f),
+                )
+            }
         }
     }
 }
