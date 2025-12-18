@@ -33,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -117,14 +118,14 @@ fun ProfileHeader(
 
             CustomText(
                 text = fullName,
-                fontSize = NormalTextSize,
+                fontSize = LargeTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
             )
 
             CustomText(
                 text = fathersName,
-                fontSize = NormalTextSize,
+                fontSize = LargeTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
             )

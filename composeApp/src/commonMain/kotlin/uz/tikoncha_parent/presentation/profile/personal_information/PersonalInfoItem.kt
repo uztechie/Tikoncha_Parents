@@ -19,6 +19,7 @@ import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.calendar
 import tikoncha_parents.composeapp.generated.resources.class_icon
@@ -37,6 +38,11 @@ import tikoncha_parents.composeapp.generated.resources.two_users
 import tikoncha_parents.composeapp.generated.resources.yosh
 import tikoncha_parents.composeapp.generated.resources.yosh_1
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.GenderType
+import uz.tikoncha_parent.presentation.profile.ProfileState
+import uz.tikoncha_parent.presentation.profile.children.ChildrenUi
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -49,26 +55,17 @@ fun PersonalInfoItem(userInfo: UserInfo?){
             .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
     )
     {
-        CustomText(
-            text = stringResource(Res.string.shaxsiy_malumotlar),
-            fontSize = NormalLargeTextSize,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .padding(start = 6.dp)
-        )
-
-        SpaceSmall()
-
         PersonalInformationItemRow(
             icon = Res.drawable.profile,
             title = stringResource(Res.string.ism),
             value = userInfo?.name?:""
         )
         SpaceUltraSmall()
+
         PersonalInformationItemRow(
             icon = Res.drawable.calendar,
             title = stringResource(Res.string.yosh),
-            value = "${userInfo?.age} ${stringResource(Res.string.yosh_1)}"
+            value = "${userInfo?.age}"
         )
         SpaceUltraSmall()
 
@@ -85,25 +82,16 @@ fun PersonalInfoItem(userInfo: UserInfo?){
             value = genderRes
         )
         SpaceUltraSmall()
+
         PersonalInformationItemRow(
             icon = Res.drawable.phone,
             title = stringResource(Res.string.telefon_nomer),
             value = userInfo?.phoneNumber
         )
-
-        SpaceSmall()
+        SpaceUltraSmall()
 
         if (userInfo?.schoolName != null){
             Column {
-                CustomText(
-                    text = stringResource(Res.string.maktab),
-                    fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .padding(start = 6.dp)
-                )
-
-                SpaceSmall()
 
                 PersonalInformationItemRow(
                     icon = Res.drawable.school_icon,
@@ -111,19 +99,47 @@ fun PersonalInfoItem(userInfo: UserInfo?){
                     value = userInfo.schoolName?:""
                 )
                 SpaceUltraSmall()
+
                 PersonalInformationItemRow(
                     icon = Res.drawable.class_icon,
                     title = stringResource(Res.string.sinf),
                     value = userInfo.schoolClassName?:""
                 )
                 SpaceUltraSmall()
+
                 PersonalInformationItemRow(
                     icon = Res.drawable.shift_clock,
                     title = stringResource(Res.string.smena),
                     value = userInfo.shift?:""
                 )
-                SpaceSmall()
             }
         }
+    }
+}
+
+@Preview(name = "Phone",  "spec:width=360dp,height=800dp,dpi=420")
+@Preview(name = "Small",  "spec:width=320dp,height=640dp,dpi=420")
+@Preview(name = "Tablet", "spec:width=800dp,height=1280dp,dpi=240")
+@Preview(name = "Landscape", "spec:width=800dp,height=360dp,dpi=420")
+@Composable
+private fun PreviewPersonalInformationScreen() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        PersonalInfoItem(
+            userInfo = UserInfo(
+                userId = "",
+                phoneNumber = "+998950457405",
+                fullName = "Islom o`g`li",
+                name = "Ilhom",
+                lastName = "Isomiddinov",
+                patronymic = "",
+                genderType = GenderType.MALE,
+                age = 10,
+                schoolName = "13-Maktab",
+                schoolClassName = "11-A",
+                shift = "Kunduzgi"
+            )
+        )
     }
 }

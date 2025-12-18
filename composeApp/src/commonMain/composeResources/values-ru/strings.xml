@@ -19,7 +19,7 @@
     <string name="ro_yxatdan_o_tish_parol_yaratish">Создать пароль для регистрации</string>
     <string name="parol_kiriting">Введите пароль</string>
     <string name="parolni_qayta_kiriting">Повторите ввод пароля</string>
-    <string name="farzandlaringiz">Ваши дети:</string>
+    <string name="farzandlaringiz">Ваши дети</string>
     <string name="farzandingiz_telefon_raqamini_kiriting">Введите номер телефона вашего ребёнка</string>
     <string name="farzand_qo_shish">Добавить ребёнка</string>
     <string name="kirish_uchun_parolingizni_kiriting">Введите пароль для входа</string>

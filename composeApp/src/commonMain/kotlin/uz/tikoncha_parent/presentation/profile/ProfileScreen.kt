@@ -39,8 +39,10 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
+import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent
 import uz.tikoncha_parent.presentation.task.TaskViewModel
@@ -108,6 +110,10 @@ fun ProfileUi(
                 section = ProfileSection.PERSONAL_INFORMATION
             ),
             ProfileSectionItemData(
+                painter = Res.drawable.family,
+                section = ProfileSection.CHILDREN
+            ),
+            ProfileSectionItemData(
                 painter = Res.drawable.global,
                 section = ProfileSection.LANGUAGE
             ),
@@ -133,7 +139,6 @@ fun ProfileUi(
     }
 
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
-    var logout by remember {  mutableStateOf(false)}
 
     if (showQrCode){
         TransparentQrScreen(
@@ -143,25 +148,6 @@ fun ProfileUi(
             }
         )
     }
-
-    CustomDialog(
-        title = stringResource(Res.string.chiqishni_xohlaysizmi),
-        message = stringResource(Res.string.chiqishni_tasdiqlang),
-        buttonText = stringResource(Res.string.tasdiqlash),
-        show = logout,
-        showCloseButton = true,
-        onDismiss = { logout = false },
-        onButtonClick = {
-            AppSettings.hasUserLogin = false
-            AppSettings.userInfo = null
-            AppSettings.children = emptyList()
-            AppSettings.selectedChild = null
-            AppSettings.selectedChildId = ""
-            AppSettings.policyId = ""
-            AppSettings.subscriptionLimitList = emptyList()
-            navigator?.replaceAll(LoginScreen())
-        }
-    )
 
     Column(
         modifier = Modifier
@@ -221,12 +207,27 @@ fun ProfileUi(
                         .weight(1f)
                 )
             }
+            SpaceLarge()
 
+            CustomOutlinedButton(
+                text = stringResource(Res.string.farzand_qo_shish),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
+                endingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.add_square),
+                        contentDescription = "",
+                        tint = PrimaryColor
+                    )
+                },
+                onClick = { navigator?.push(AddChildScreen())},
+                textColor = PrimaryColor,
+                borderColor = PrimaryColor
+            )
             SpaceLarge()
 
             sections.forEach { data ->
-
-                SpaceSmall()
 
                 ProfileSectionItem(
                     icon = painterResource(data.painter),
@@ -235,6 +236,10 @@ fun ProfileUi(
 
                             ProfileSection.PERSONAL_INFORMATION -> {
                                 navigator?.push(PersonalInformationScreen())
+                            }
+
+                            ProfileSection.CHILDREN -> {
+                                navigator?.push(ChildrenScreen())
                             }
 
                             ProfileSection.LANGUAGE -> {
@@ -257,44 +262,25 @@ fun ProfileUi(
                     section = data.section
                 )
             }
-
             SpaceLarge()
-            SpaceLarge()
-
-            CustomOutlinedButton(
-                text = stringResource(Res.string.qr_kod),
-                onClick = {
-                    showQrCode = true
-                },
-                textColor = PrimaryColor,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.scan),
-                        contentDescription = ""
-                    )
-                },
-                modifier = Modifier.width(130.dp)
-            )
-
-            Spacer(Modifier.weight(1f))
-            CustomOutlinedButton(
-                text = stringResource(Res.string.hisobdan_chiqish),
-                borderColor = OtpErrorColor,
-                onClick = {
-                    logout = true
-                },
-                textColor = OtpErrorColor,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.logout),
-                        contentDescription = "",
-                        tint = OtpErrorColor,
-                        modifier = Modifier.size(LargeIconSize)
-                    )
-                },
-                modifier = Modifier.fillMaxWidth().width(ButtonHeight)
-            )
-            SpaceMedium()
+//            SpaceLarge()
+//
+//            CustomOutlinedButton(
+//                text = stringResource(Res.string.qr_kod),
+//                onClick = {
+//                    showQrCode = true
+//                },
+//                textColor = PrimaryColor,
+//                leadingIcon = {
+//                    Icon(
+//                        painter = painterResource(Res.drawable.scan),
+//                        contentDescription = ""
+//                    )
+//                },
+//                modifier = Modifier.width(130.dp)
+//            )
+//
+//            SpaceMedium()
         }
     }
 }

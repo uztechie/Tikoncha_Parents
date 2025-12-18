@@ -338,11 +338,11 @@ fun NewHomeUi(
                         .fillMaxWidth()
                         .height(130.dp)
                         .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(TaskScreen())
-                        },
+                        }
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                 ) {
                     Column(
                         modifier = Modifier
@@ -377,11 +377,11 @@ fun NewHomeUi(
                         .fillMaxWidth()
                         .height(130.dp)
                         .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable{
                             navigator?.push(PolicyListScreen())
-                        },
+                        }
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                 ) {
                     Column(
                         modifier = Modifier

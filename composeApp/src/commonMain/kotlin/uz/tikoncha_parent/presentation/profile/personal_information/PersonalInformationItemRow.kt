@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.profile.personal_information
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,12 +10,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.PrimaryColor
@@ -46,7 +49,7 @@ fun PersonalInformationItemRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(ShapeCornerRadius))
             .background(MaterialTheme.extendedColor.backgroundColor)
-            .padding(horizontal = ContainerPadding, vertical = 8.dp),
+            .padding(horizontal = ContainerPadding, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -61,26 +64,24 @@ fun PersonalInformationItemRow(
         SpaceSmall()
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
 
-            CustomText(
+            Text(
                 text = title,
                 fontSize = UltraSmallTextSize,
                 color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.SemiBold,
-                style = TextStyle()
+                style = TextStyle(),
             )
 
-            SpaceUltraSmall()
-
-            CustomText(
+            Text(
                 text = value?:"",
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
-                style = TextStyle()
+                style = TextStyle(),
+                color = MaterialTheme.extendedColor.textColor
             )
         }
     }
