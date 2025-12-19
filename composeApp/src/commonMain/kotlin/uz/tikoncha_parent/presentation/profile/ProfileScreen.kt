@@ -149,25 +149,6 @@ fun ProfileUi(
         )
     }
 
-    CustomDialog(
-        painter = painterResource(Res.drawable.logout),
-        title = stringResource(Res.string.chiqishni_xohlaysizmi),
-        message = stringResource(Res.string.chiqishni_tasdiqlang),
-        buttonText = stringResource(Res.string.tasdiqlash),
-        show = logout,
-        showCloseButton = true,
-        onDismiss = { logout = false },
-        onButtonClick = {
-            AppSettings.hasUserLogin = false
-            AppSettings.userInfo = null
-            AppSettings.children = emptyList()
-            AppSettings.selectedChild = null
-            AppSettings.selectedChildId = ""
-            AppSettings.policyId = ""
-            AppSettings.subscriptionLimitList = emptyList()
-            navigator?.replaceAll(LoginScreen())
-        }
-    )
 
     Column(
         modifier = Modifier

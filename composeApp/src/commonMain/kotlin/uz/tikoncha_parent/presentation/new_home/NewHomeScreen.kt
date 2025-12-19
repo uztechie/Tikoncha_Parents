@@ -195,13 +195,9 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
-                    .clickable{
-                    .clip(CircleShape)
                     .clickable {
                         navigator?.push(NotificationScreen())
                     }
-                    .clip(CircleShape)
-            ){
             ) {
                 Image(
                     painter = painterResource(Res.drawable.notification),
@@ -217,8 +213,6 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
-                    .clickable{
-                    .clip(CircleShape)
                     .clickable {
                         navigator?.push(ProfileScreen())
                     }
@@ -281,13 +275,13 @@ fun NewHomeUi(
             item {
                 Row(
                     modifier = Modifier
+                        .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
                         .height(130.dp)
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
                         )
-                        .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(StatisticScreen())
                         }
@@ -333,7 +327,6 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.bugun_sarfladi),
                             color = PrimaryColor,
-                            fontSize = LargeTextSize,
                             fontSize = NormalTextSize,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
@@ -408,15 +401,13 @@ fun NewHomeUi(
             item {
                 Row(
                     modifier = Modifier
+                        .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
                         )
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
-                        .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(TaskScreen())
                         }
@@ -435,7 +426,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.faol_vazifa, taskCount),
                             color = PrimaryColor,
-                            fontSize = LargeTextSize,
+                            fontSize = NormalTextSize,
                         )
                     }
 
@@ -452,15 +443,13 @@ fun NewHomeUi(
             item {
                 Row(
                     modifier = Modifier
+                        .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
                         )
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
-                        .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(PolicyListScreen())
                         }
@@ -479,7 +468,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.ilova_cheklangan, tableCount),
                             color = PrimaryColor,
-                            fontSize = LargeTextSize,
+                            fontSize = NormalTextSize,
                         )
                     }
 
