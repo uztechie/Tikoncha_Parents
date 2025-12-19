@@ -22,6 +22,9 @@ object AndroidDeepLinkParser {
                 val id = uri.getQueryParameter("taskId") ?: return null
                 DeepLink.Todo(id)
             }
+            "child_request" -> {
+                DeepLink.ChildRequest
+            }
             else -> null
         }
     }

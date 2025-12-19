@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package uz.tikoncha_parent.data.mapper
 
 import kotlinx.datetime.DateTimeUnit
@@ -12,6 +14,8 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import uz.tikoncha_parent.data.remote.model.AppUsageDataDto
 import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.HourMinute
@@ -19,6 +23,7 @@ import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.presentation.statistic.AppUsageUi
 import uz.tikoncha_parent.presentation.statistic.DateSelectionType
 import kotlin.text.toInt
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 private fun parseDateDdMMyyyy(s: String): LocalDate {
@@ -44,7 +49,7 @@ fun AppUsageDataDto.toAppUsageList(): List<AppUsage>{
                             appName = item.name,
                             date = date,
                             usageTime = parseTimeHHmm(timeStr),
-                            usageMillis = usageMillis
+                            usageMillis = usageMillis,
                         )
                     )
                 }
@@ -229,6 +234,18 @@ fun List<AppUsage>.toWeeklyAverage(startDate: LocalDate?): HourMinute {
 
     // HourMinute ga aylantirish
     return avgMillis.toHourMinute()
+}
+
+fun List<AppUsage>.toTodayAverage(): HourMinute {
+
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    val dailyUsageTime = this
+        .filter { it.date == today }   // it.date: LocalDate
+        .sumOf { it.usageMillis }
+        .toHourMinute()
+
+    return dailyUsageTime
 }
 
 fun List<AppUsage>.toDailyAverage(startDate: LocalDate?): HourMinute{

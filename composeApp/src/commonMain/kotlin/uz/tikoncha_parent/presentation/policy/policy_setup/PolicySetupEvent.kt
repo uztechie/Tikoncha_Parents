@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.policy_setup
 
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
@@ -9,6 +10,7 @@ sealed interface PolicySetupEvent {
 
     data class SetLimitRule(val list: List<LimitRuleUi>) :PolicySetupEvent
     data class SetTimeRule(val list: List<TimeRuleUi>) : PolicySetupEvent
+    data class SetLocationRule(val locationRule: LocationRule?) : PolicySetupEvent
 
 
 

@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.mapToDailyUsagePeriods
 import uz.tikoncha_parent.data.mapper.mapToWeeklyUsagePeriods
 import uz.tikoncha_parent.data.mapper.toDailyAverage
 import uz.tikoncha_parent.data.mapper.toDailyUsageMinutesForChart
+import uz.tikoncha_parent.data.mapper.toTodayAverage
 import uz.tikoncha_parent.data.mapper.toUsageUi
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
@@ -155,6 +157,7 @@ class StatisticViewModel(
                             appUsageList = usageList,
                             dailyPeriods = usageList.mapToDailyUsagePeriods(),
                             weeklyPeriods = usageList.mapToWeeklyUsagePeriods(),
+                            todayUsage = usageList.toTodayAverage()
 
                             )
                     }

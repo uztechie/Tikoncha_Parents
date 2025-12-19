@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.shared
 
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.Policy
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -12,6 +13,7 @@ data class PolicySharedState(
 
     val limitList: List<LimitRuleUi> = emptyList(),
     val timeList: List<TimeRuleUi> = emptyList(),
+    val locationRule: LocationRule? = null,
     val selectedApps: List<AppSelectionUi> = emptyList(),
     val selectedChild: UserInfo? = null,
     val policyTitle: String = "",

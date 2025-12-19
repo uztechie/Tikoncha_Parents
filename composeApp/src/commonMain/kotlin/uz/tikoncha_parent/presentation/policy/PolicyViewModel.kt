@@ -26,17 +26,6 @@ class PolicyViewModel(
     private val _state = MutableStateFlow<PolicyState>(PolicyState())
     val state = _state.asStateFlow()
 
-    init {
-
-        _state.update {
-            it.copy(
-                childrenList = AppSettings.children,
-                selectedChild = AppSettings.selectedChild
-            )
-        }
-        getSubscriptionLimit()
-        getPolicies()
-    }
 
 
     fun onEvent(event: PolicyEvent){
@@ -51,6 +40,16 @@ class PolicyViewModel(
                 getPolicies()
             }
 
+            PolicyEvent.GetPolicies -> {
+                _state.update {
+                    it.copy(
+                        childrenList = AppSettings.children,
+                        selectedChild = AppSettings.selectedChild
+                    )
+                }
+                getSubscriptionLimit()
+                getPolicies()
+            }
         }
     }
 

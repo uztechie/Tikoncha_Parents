@@ -304,5 +304,15 @@
 </string>
     <string name="sizda_vaqt_oraligi_qoshish">Sizda vaqt oralig'ini qo'shish uchun limit tugadi. Ko'proq vaqt oralig'larni yaratish uchun PLUS obunani sotib oling.</string>
     <string name="sizda_foydalanish_chegarasini_qoshish">Sizda foydalanish chegarasini qo'shish uchun limit tugadi. Ko'proq foydalanish chegaralarini yaratish uchun PLUS obunani sotib oling.</string>
+    <string name="belgilangan_hududdan_tashqarida">Belgilangan hududdan tashqarida</string>
+    <string name="belgilangan_hudud_ichida">Belgilangan hudud ichida</string>
+    <string name="chegaralash_ishlatish_marta">Belgilangan ilovani kuniga yoki soatiga ma’lum marta ishlashiga chegaralash</string>
+    <string name="bloklash_wifi_tarmogida">Belgilangan Wi-Fi tarmog‘iga ulanganda bloklash</string>
+    <string name="bloklash_hudud_boyicha">Belgilangan ma’lum hudud ichida bloklash</string>
+    <string name="chegaralash_kun_soat_va_daqiqa">Foydalanishni kunning belgilangan ma’lum soatlariga yoki soatiga ma’lum daqiqaga chegaralash</string>
+    <string name="bloklash_hafta_kunlari_soatlari">Hafta kunlarining belgilangan ma’lum soatlarida bloklash</string>
+    <string name="s">s</string>
+    <string name="d">d</string>
+
 
 </resources>

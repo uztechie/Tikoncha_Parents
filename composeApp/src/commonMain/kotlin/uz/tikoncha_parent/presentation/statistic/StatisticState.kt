@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.statistic
 
+import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.data.remote.model.GetRuleItem
 import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.HourMinute
@@ -14,6 +15,8 @@ data class StatisticState(
     val dailyPeriods: List<UsagePeriod> = emptyList(),
     val appUsageList: List<AppUsage> = emptyList(),
     val weeklyPeriods: List<UsagePeriod> = emptyList(),
+
+    val todayUsage: HourMinute = HourMinute(0,0),
 
 
 

@@ -31,6 +31,7 @@ import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
+import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
@@ -132,7 +133,7 @@ fun RuleTypeSelectionUi(
                     if (state.subscriptionLimit.locationRule < 1){
                         showSubscriptionLimitDialog = true
                     }else{
-
+                        navigator?.push(LocationRuleScreen())
                     }
                 }
                else -> {}
@@ -146,16 +147,16 @@ fun RuleTypeSelectionUi(
             type = RuleType.TIME,
             icon = painterResource(Res.drawable.clock),
             title = stringResource(Res.string.vaqt),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
+            subtitle = stringResource(Res.string.bloklash_hafta_kunlari_soatlari),
             enabled = state.timeList.isEmpty(),
             hasItems = state.timeList.isNotEmpty(),
             soon = false
         ),
         RuleTypeUi(
             type = RuleType.USAGE_LIMIT,
-            icon = painterResource(Res.drawable.clock),
+            icon = painterResource(Res.drawable.time_limit),
             title = stringResource(Res.string.foydalanish_chegarasi),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
+            subtitle = stringResource(Res.string.chegaralash_kun_soat_va_daqiqa),
             enabled = state.limitList.isEmpty(),
             hasItems = state.limitList.isNotEmpty(),
             soon = false
@@ -164,16 +165,16 @@ fun RuleTypeSelectionUi(
             type = RuleType.LOCATION,
             icon = painterResource(Res.drawable.permission_location),
             title = stringResource(Res.string.joylashuv),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
-            enabled = false,
-            hasItems = false,
-            soon = true
+            subtitle = stringResource(Res.string.bloklash_hudud_boyicha),
+            enabled = state.locationRule == null,
+            hasItems = state.locationRule != null,
+            soon = false
         ),
         RuleTypeUi(
             type = RuleType.WIFI,
             icon = painterResource(Res.drawable.wi_fi),
             title = stringResource(Res.string.wi_fi),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
+            subtitle = stringResource(Res.string.bloklash_wifi_tarmogida),
             enabled = false,
             hasItems = false,
             soon = true
@@ -182,7 +183,7 @@ fun RuleTypeSelectionUi(
             type = RuleType.LAUNCH_COUNT,
             icon = painterResource(Res.drawable.icon_of),
             title = stringResource(Res.string.ishga_tushirishlar_soni),
-            subtitle = stringResource(Res.string.ish_vaqti_dam_olish_kuni),
+            subtitle = stringResource(Res.string.chegaralash_ishlatish_marta),
             enabled = false,
             hasItems = false,
             soon = true
@@ -277,7 +278,7 @@ fun RuleTypeSelectionUi(
                                         if (state.subscriptionLimit.locationRule < 1){
                                             showSubscriptionLimitDialog = true
                                         }else{
-
+                                            navigator?.push(LocationRuleScreen())
                                         }
                                     }
                                     RuleType.WIFI -> {}

@@ -278,7 +278,8 @@ private fun Pre() {
                 timeRule = emptyList(),
                 isActive = false,
                 packages = emptyList(),
-                sites = emptyList()
+                sites = emptyList(),
+                locationRule = null
             ),
             onEdit = {},
             onClick = {}

@@ -89,6 +89,10 @@ class PolicyListScreen : Screen {
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
 
+        LaunchedEffect(Unit){
+            event(PolicyEvent.GetPolicies)
+        }
+
         LaunchedEffect(state.selectedChild){
             yield()
             sharedAppEvent(AppWebEvent.ClearData)

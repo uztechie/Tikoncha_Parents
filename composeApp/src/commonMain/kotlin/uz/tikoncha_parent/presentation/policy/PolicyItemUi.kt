@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy
 
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
@@ -19,4 +20,5 @@ data class PolicyItemUi(
     val sites: List<String>,
     val timeRule: List<TimeRuleUi>,
     val limitRule: List<LimitRuleUi>,
+    val locationRule: LocationRule?
 )

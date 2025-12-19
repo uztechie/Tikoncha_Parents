@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.shared
 
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.Policy
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
@@ -11,6 +12,7 @@ sealed interface PolicySharedEvent {
 
     data class SetLimitRule(val list: List<LimitRuleUi>) : PolicySharedEvent
     data class SetTimeRule(val list: List<TimeRuleUi>) : PolicySharedEvent
+    data class SetLocationRule(val locationRule: LocationRule?) : PolicySharedEvent
     data class SetSelectedChild(val child: UserInfo) : PolicySharedEvent
 
     data class SetPolicy(val policyItemUi: PolicyItemUi): PolicySharedEvent

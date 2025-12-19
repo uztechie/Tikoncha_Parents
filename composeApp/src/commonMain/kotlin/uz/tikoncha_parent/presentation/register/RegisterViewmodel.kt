@@ -33,10 +33,10 @@ class RegisterViewmodel(
                     )
                 }
             }
-            is RegisterEvent.OnFullNameInsert -> {
+            is RegisterEvent.OnLastNameInsert -> {
                 _state.update {
                     it.copy(
-                        fullName = event.fullName
+                        lastName = event.fullName
                     )
                 }
             }
@@ -89,8 +89,8 @@ class RegisterViewmodel(
             val request = RegisterUserRequest(
                 user_id = AppSettings.userId,
                 first_name = _state.value.name?:"",
-                last_name = _state.value.name?:"",
-                patronymic = _state.value.name?:"",
+                last_name = _state.value.lastName?:"",
+                patronymic = _state.value.middleName?:"",
                 gender = GenderType.getGenderByIndex(_state.value.genderIndex).key,
                 age = 0,
                 passport_id = _state.value.idNumber

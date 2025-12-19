@@ -85,15 +85,14 @@ class LimitRuleListScreen : Screen {
         )
     }
 }
+
 @Composable
 fun LimitRuleListUi(
     navigator: Navigator?,
     state: LimitRuleState,
     event: (LimitRuleEvent) -> Unit,
     sharedState: PolicySharedState
-)
-{
-
+) {
 
 
     var showLimitDialog by remember { mutableStateOf(false) }
@@ -103,7 +102,7 @@ fun LimitRuleListUi(
         title = stringResource(Res.string.limit_tugadi),
         message = stringResource(Res.string.sizda_foydalanish_chegarasini_qoshish),
         show = showLimitDialog,
-        onDismiss = {showLimitDialog = false},
+        onDismiss = { showLimitDialog = false },
         buttonText = stringResource(Res.string.obuna_bolish),
         onButtonClick = {
             showLimitDialog = false
@@ -155,9 +154,11 @@ fun LimitRuleListUi(
                             interactionSource = null,
                             indication = null,
                             onClick = {
-                                event(LimitRuleEvent.SetUsageLimitData(
-                                    it
-                                ))
+                                event(
+                                    LimitRuleEvent.SetUsageLimitData(
+                                        it
+                                    )
+                                )
                                 event(LimitRuleEvent.ShowSetupDialog(true))
                             }
                         ),
@@ -170,7 +171,7 @@ fun LimitRuleListUi(
             }
         }
 
-        if (sharedState.canUpdate){
+        if (sharedState.canUpdate) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -231,15 +232,14 @@ fun LimitRuleListUi(
                         .fillMaxWidth()
                         .height(ButtonHeight),
                     onClick = {
-                    navigator?.popUntil {
-                        it is PolicySetupScreen
-                    }
+                        navigator?.popUntil {
+                            it is PolicySetupScreen
+                        }
                     }
                 )
             }
         }
     }
-
 
 
 }

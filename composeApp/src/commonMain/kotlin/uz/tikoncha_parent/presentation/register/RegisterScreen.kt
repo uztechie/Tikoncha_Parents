@@ -75,7 +75,7 @@ fun Register(
     event: (RegisterEvent) -> Unit
 ) {
 
-    val isOtpCodeValid = state.name != "" && state.fullName != "" && state.middleName != "" && state.idNumber != ""
+    val isOtpCodeValid = state.name != "" && state.lastName != "" && state.middleName != "" && state.idNumber != ""
 
     val registerLoading = state.registerResponseState is ResponseState.Loading
     val registerErrorText = state.registerResponseState.errorText()
@@ -151,8 +151,8 @@ fun Register(
         SpaceMedium()
 
         CustomTextField(
-            value = state.fullName,
-            onValueChange = { event(RegisterEvent.OnFullNameInsert(it)) },
+            value = state.lastName,
+            onValueChange = { event(RegisterEvent.OnLastNameInsert(it)) },
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.familiyangizni_kiriting),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),

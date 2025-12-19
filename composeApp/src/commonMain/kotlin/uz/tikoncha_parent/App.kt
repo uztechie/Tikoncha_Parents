@@ -22,10 +22,13 @@ import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
 import uz.tikoncha_parent.domain.model.DeepLink
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.model.ChatType
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
 import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
@@ -92,14 +95,12 @@ fun App() {
 
 
 
-                    val initialScreen = remember(pendingLinks) {
-                        deepLinkToInitialScreenOrLauncher(pendingLinks.firstOrNull())
-                    }
-
-
                     val initialStack: List<Screen> = remember(pendingLinks) {
                         initialStackFor(pendingLinks.firstOrNull()) ?: emptyList()
                     }
+
+                    Logger.d("Appppp", "pendingLinks=$pendingLinks")
+                    Logger.d("Appppp", "initialStack=$initialStack")
 
                     if (initialStack.isNotEmpty()) {
                         val first = initialStack.first()
@@ -132,7 +133,7 @@ fun App() {
 
 private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
     is DeepLink.Chat -> listOf(
-        StatisticScreen(),
+        NewHomeScreen(),
         ChatScreen(),
         ChatMessageScreen(
             chatId = link.chatId,
@@ -141,18 +142,11 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
             chatType = ChatType.NONE
         )
     )
-    is DeepLink.News -> listOf(StatisticScreen(), NotificationScreen())
-    is DeepLink.Todo -> listOf(StatisticScreen(), TaskScreen())
+    is DeepLink.News -> listOf(NewHomeScreen(), NotificationScreen())
+    is DeepLink.Todo -> listOf(NewHomeScreen(), TaskScreen())
+    DeepLink.ChildRequest -> listOf(NewHomeScreen(), ParentRequestScreen())
     else -> null
 }
-
-fun deepLinkToInitialScreenOrLauncher(link: DeepLink?): Screen =
-    when (link) {
-        is DeepLink.Chat -> ChatScreen()
-        is DeepLink.News -> NotificationScreen()
-        is DeepLink.Todo -> TaskScreen()
-        else -> SplashScreen()
-    }
 
 fun initMapKit() {
     val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"

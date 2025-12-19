@@ -37,7 +37,8 @@ fun SubscriptionLimitDto.toSubscriptionLimit(): SubscriptionLimit{
         policyCount = policy.policy_count ?: Int.MAX_VALUE,
         timeRule = policy.time_rule ?: Int.MAX_VALUE,
         limitRule = policy.limit_rule ?: Int.MAX_VALUE,
-        locationRule = policy.location_rule ?: Int.MAX_VALUE,
+//        locationRule = policy.location_rule ?: Int.MAX_VALUE,
+        locationRule = 1,
         wifiRule = policy.wifi_rule ?: Int.MAX_VALUE,
         appLaunchCountRule = policy.app_launch_count_rule ?: Int.MAX_VALUE,
         appCount = policy.app_count ?: Int.MAX_VALUE

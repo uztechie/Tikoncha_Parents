@@ -37,7 +37,6 @@ fun ChildrenLocationItemDto.toPayload(
     val subType = child_user_id?.let(subMap::get)
 
     val languageCode = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
-
     val dateMillis = DateTimeUtil.toMillisUtc(updated_at)
     val date = DateTimeUtil.formatDateTimeMonthlyForMap(dateMillis, languageCode)
 

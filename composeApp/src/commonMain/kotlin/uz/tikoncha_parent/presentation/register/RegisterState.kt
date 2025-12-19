@@ -4,7 +4,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class RegisterState(
     val name: String = "",
-    val fullName: String = "",
+    val lastName: String = "",
     val middleName: String = "",
     val idNumber: String = "",
     val genderIndex: Int = 0,

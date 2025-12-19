@@ -8,7 +8,7 @@ data class LocationRule(
     val geoType: GeoType,
     val centerLat:Double? = null,
     val centerLng:Double? = null,
-    val radiusMeters:Double? = null,
+    val radiusMeters:Int? = null,
     val polygon: List<LocationData>? = null,
-    val isIncluded: Boolean = true
+    val reverse: Boolean
 )

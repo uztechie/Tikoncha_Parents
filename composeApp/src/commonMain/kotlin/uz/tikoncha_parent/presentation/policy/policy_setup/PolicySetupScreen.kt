@@ -67,6 +67,7 @@ import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebState
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
+import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
@@ -113,9 +114,10 @@ class PolicySetupScreen(
 
 
         Logger.d("PolicySetupScreen", "Content: ${sharedState.timeList}")
-        LaunchedEffect(sharedState.timeList, sharedState.limitList, sharedAppState.selectedPkgs, sharedState.policyTitle){
+        LaunchedEffect(sharedState.timeList, sharedState.limitList, sharedAppState.selectedPkgs, sharedState.policyTitle, sharedState.locationRule){
             event(PolicySetupEvent.SetLimitRule(sharedState.limitList))
             event(PolicySetupEvent.SetTimeRule(sharedState.timeList))
+            event(PolicySetupEvent.SetLocationRule(sharedState.locationRule))
             event(PolicySetupEvent.SetSelectedApps(sharedAppState.selectedPkgs.toList()))
             event(PolicySetupEvent.SetTitle(sharedState.policyTitle))
             sharedState.selectedPolicy?.let {
@@ -438,6 +440,31 @@ fun PolicySetupUi(
                 SpaceLarge()
             }
 
+            if (state.locationRule != null) {
+
+                val subTitle = if (state.locationRule.reverse){
+                    stringResource(Res.string.belgilangan_hududdan_tashqarida)
+                }
+                else{
+                    stringResource(Res.string.belgilangan_hudud_ichida)
+                }
+
+
+                PolicySetupRuleItem(
+                    title = stringResource(Res.string.joylashuv),
+                    subTitle = subTitle,
+                    onRemoveClick = {
+                        sharedEvent(PolicySharedEvent.SetLocationRule(null))
+                    },
+                    onItemClick = {
+                        navigator?.push(LocationRuleScreen())
+                    },
+                    canRemove = sharedState.canUpdate
+
+                )
+                SpaceLarge()
+            }
+
             if (sharedState.canUpdate) {
                 SpaceMedium()
                 CustomOutlinedButton(
@@ -652,7 +679,7 @@ fun PolicySetupUi(
 
         if (sharedState.canUpdate) {
             CustomButton(
-                enabled = (state.limitList.isNotEmpty() || state.timeList.isNotEmpty()) && selectedApps.isNotEmpty(),
+                enabled = (state.limitList.isNotEmpty() || state.timeList.isNotEmpty() || state.locationRule != null) && selectedApps.isNotEmpty(),
                 text = stringResource(Res.string.saqlash),
                 onClick = {
                     event(PolicySetupEvent.SavePolicy)

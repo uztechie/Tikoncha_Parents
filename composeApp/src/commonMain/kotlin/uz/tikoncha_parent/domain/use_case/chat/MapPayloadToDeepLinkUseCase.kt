@@ -1,8 +1,10 @@
 package uz.tikoncha_parent.domain.use_case.chat
 
 import uz.tikoncha_parent.domain.model.DeepLink
+import uz.tikoncha_parent.domain.model.DeepLink.*
 import uz.tikoncha_parent.domain.model.FcmPayload
 import uz.tikoncha_parent.domain.model.PayloadType
+import uz.tikoncha_parent.presentation.domain.model.Child
 
 class MapPayloadToDeepLinkUseCase {
     operator fun invoke(
@@ -15,9 +17,9 @@ class MapPayloadToDeepLinkUseCase {
 
         return when (payload.type) {
             PayloadType.CHAT -> {
-                val m = payload.body?.message ?: return DeepLink.General(title, message)
-                val id = m.chat_id ?: return DeepLink.General(title, message)
-                DeepLink.Chat(
+                val m = payload.body?.message ?: return General(title, message)
+                val id = m.chat_id ?: return General(title, message)
+                Chat(
                     chatId = id,
                     chatTitle = m.chat_title,
                     text = m.text
@@ -25,14 +27,15 @@ class MapPayloadToDeepLinkUseCase {
             }
             PayloadType.NEWS -> {
                 val id = payload.body?.news?.id
-                    ?: return DeepLink.General(title, message)
-                DeepLink.News(id)
+                    ?: return General(title, message)
+                News(id)
             }
             PayloadType.TODO -> {
-                val id = payload.body?.todo?.id ?: return DeepLink.General(title, message)
-                DeepLink.Todo(id)
+                val id = payload.body?.todo?.id ?: return General(title, message)
+                Todo(id)
             }
-            PayloadType.GENERAL -> DeepLink.General(title, message)
+            PayloadType.GENERAL -> General(title, message)
+            PayloadType.CHILD_REQUEST -> ChildRequest
         }
     }
 }

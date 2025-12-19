@@ -63,6 +63,7 @@ class PolicySharedModel(
                     it.copy(
                         limitList = event.policyItemUi.limitRule,
                         timeList = event.policyItemUi.timeRule,
+                        locationRule = event.policyItemUi.locationRule,
                         selectedPolicy = event.policyItemUi,
                         policyTitle = event.policyItemUi.policyName,
                         canUpdate = event.policyItemUi.policyType == PolicyType.PARENT_CHILD
@@ -93,6 +94,14 @@ class PolicySharedModel(
                     )
                 }
                 refreshSubscriptionLimit()
+            }
+
+            is PolicySharedEvent.SetLocationRule -> {
+                _state.update {
+                    it.copy(
+                        locationRule = event.locationRule
+                    )
+                }
             }
         }
     }

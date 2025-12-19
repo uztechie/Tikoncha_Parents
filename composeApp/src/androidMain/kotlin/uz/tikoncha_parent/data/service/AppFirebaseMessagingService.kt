@@ -30,31 +30,46 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
         val payload = ParseFcmPayloadUseCase()(payloadRaw)
         val title = payload?.title
         val message  = payload?.message
+        Log.d(TAG, "onMessageReceived: payload=$payload")
 
 
         FcmMessageRouter.handle(payloadRaw, title, message, uiReady = false)
         var pi: PendingIntent? = null
 
-
-        if (payload?.type == PayloadType.CHAT) {
-            val m = payload.body?.message
-            val chatId = m?.chat_id
-            val chatTitle = m?.chat_title
-            if (chatId != null) {
-                pi = NotificationIntentFactory.chatPendingIntent(this, chatId, chatTitle, null)
+        when(payload?.type){
+            PayloadType.TODO -> {}
+            PayloadType.NEWS -> {
+                val id = payload.body?.news?.id?.toLongOrNull()
+                if (id != null) {
+                    val uri = Uri.Builder().scheme("myapp").authority("news")
+                        .appendQueryParameter("newsId", id.toString())
+                        .build()
+                    val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri, this, uz.tikoncha_parent.MainActivity::class.java)
+                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    pi = PendingIntent.getActivity(this, id.hashCode(), intent, flags)
+                }
             }
-        } else if (payload?.type == PayloadType.NEWS) {
-            val id = payload.body?.news?.id?.toLongOrNull()
-            if (id != null) {
-                val uri = Uri.Builder().scheme("myapp").authority("news")
-                    .appendQueryParameter("newsId", id.toString())
+            PayloadType.CHAT -> {
+                val m = payload.body?.message
+                val chatId = m?.chat_id
+                val chatTitle = m?.chat_title
+                if (chatId != null) {
+                    pi = NotificationIntentFactory.chatPendingIntent(this, chatId, chatTitle, null)
+                }
+            }
+            PayloadType.GENERAL -> {}
+            PayloadType.CHILD_REQUEST -> {
+                val uri = Uri.Builder().scheme("myapp").authority("child_request")
                     .build()
                 val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri, this, uz.tikoncha_parent.MainActivity::class.java)
                     .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                pi = PendingIntent.getActivity(this, id.hashCode(), intent, flags)
+                pi = PendingIntent.getActivity(this, 20256, intent, flags)
             }
+            null -> {}
         }
+
 
         AndroidNotificationHelper.ensureChannel(this)
 

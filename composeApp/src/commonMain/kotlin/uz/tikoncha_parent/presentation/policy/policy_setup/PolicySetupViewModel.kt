@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.mapper.toLimitRuleDtoList
+import uz.tikoncha_parent.data.mapper.toLocationRuleDto
 import uz.tikoncha_parent.data.mapper.toTimeRuleDtoList
 import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
 import uz.tikoncha_parent.data.remote.model.UpdatePolicyRequest
@@ -44,11 +45,20 @@ class PolicySetupViewModel(
 
             }
 
+            is PolicySetupEvent.SetLocationRule -> {
+                _state.update {
+                    it.copy(
+                        locationRule = event.locationRule
+                    )
+                }
+            }
+
             PolicySetupEvent.ClearData -> {
                 _state.update {
                     it.copy(
                         limitList = emptyList(),
                         timeList = emptyList(),
+                        locationRule = null,
                         responseState = ResponseState.Idle,
                         updateState = ResponseState.Idle,
                         deleteState = ResponseState.Idle
@@ -150,7 +160,7 @@ class PolicySetupViewModel(
                 sites = emptyList(),
                 time_rule = _state.value.timeList.toTimeRuleDtoList(),
                 limit_rule = _state.value.limitList.toLimitRuleDtoList(),
-                location_rule = null,
+                location_rule = _state.value.locationRule?.toLocationRuleDto(),
                 wifi = null
             )
 
@@ -197,7 +207,7 @@ class PolicySetupViewModel(
                 sites = emptyList(),
                 time_rule = _state.value.timeList.toTimeRuleDtoList(),
                 limit_rule = _state.value.limitList.toLimitRuleDtoList(),
-                location_rule = null,
+                location_rule = _state.value.locationRule?.toLocationRuleDto(),
                 wifi = null
             )
 

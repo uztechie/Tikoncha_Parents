@@ -10,4 +10,5 @@ data class AppUsage(
     val usageMillis: Long,
     val usageTime: LocalTime,
     val allowed: Boolean = false,
+    val isToday: Boolean = false
 )

@@ -19,7 +19,7 @@ import kotlin.time.Instant
 @OptIn(ExperimentalTime::class)
 object DateTimeUtil {
 
-    private fun Int.two(): String = if (this < 10) "0$this" else toString()
+    fun Int.two(): String = if (this < 10) "0$this" else toString()
 
     fun toMillisUtc(s: String?): Long {
         if (s.isNullOrBlank()) return 0L
@@ -68,6 +68,12 @@ object DateTimeUtil {
         val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
         return "${t.hour.two()}:${t.minute.two()}"
     }
+
+    fun formatLocalTime(millis: Long): LocalTime {
+        val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
+        return LocalTime(hour = t.hour, minute = t.minute)
+    }
+
 
     private fun formatDate_ddMMyyyy(d: LocalDate): String {
         val day = d.day

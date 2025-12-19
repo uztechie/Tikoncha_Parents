@@ -12,17 +12,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -51,6 +53,9 @@ import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.common.DateTimeUtil.two
+import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
@@ -60,7 +65,10 @@ import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticState
+import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -76,9 +84,7 @@ import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceUltraSmall
-import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
-import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -88,33 +94,49 @@ class NewHomeScreen : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current?:return
+        val navigator = LocalNavigator.current ?: return
 
         val viewModel = navigator.koinNavigatorScreenModel<HomeViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        val statisticViewModel = navigator.koinNavigatorScreenModel<StatisticViewModel>()
+        val statisticState = statisticViewModel.state.collectAsStateWithLifecycle()
+        val statisticEvent = statisticViewModel::onEvent
+
+        LaunchedEffect(Unit) {
+            event(HomeEvent.GetChildren)
+        }
+
+        LaunchedEffect(state.value.selectedChild) {
+            Logger.d("selectedChild", "selectedChild=${state.value.selectedChild}")
+            state.value.selectedChild?.let { child ->
+                statisticEvent(StatisticEvent.OnChildSelected(child))
+            }
+        }
 
         Logger.d("NewHomeScreen", "Content")
 
         NewHomeUi(
             navigator = navigator,
             state = state.value,
+            statisticState = statisticState.value,
             event = event
         )
     }
 }
+
 @Composable
 fun NewHomeUi(
     navigator: Navigator?,
     state: HomeState,
-    event: (HomeEvent) -> Unit
-){
+    event: (HomeEvent) -> Unit,
+    statisticState: StatisticState
+) {
 
-    LaunchedEffect(true){
-        event(HomeEvent.GetChildren)
-    }
 
-    LaunchedEffect(Unit){
+
+    LaunchedEffect(Unit) {
         event(HomeEvent.RefreshParentRequest)
     }
 
@@ -158,9 +180,9 @@ fun NewHomeUi(
             ChildSelectionButton(
                 modifier = Modifier
                     .widthIn(120.dp, 160.dp),
-                text = state.selectedChild?.name?:"",
+                text = state.selectedChild?.name ?: "",
                 label = stringResource(Res.string.farzandingizni_tanlang),
-                imageUrl = state.selectedChild?.avatarUrl?:"",
+                imageUrl = state.selectedChild?.avatarUrl ?: "",
                 onClick = {
                     showDialog = true
                 },
@@ -174,10 +196,10 @@ fun NewHomeUi(
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
                     .clip(CircleShape)
-                    .clickable{
+                    .clickable {
                         navigator?.push(NotificationScreen())
                     }
-            ){
+            ) {
                 Image(
                     painter = painterResource(Res.drawable.notification),
                     contentDescription = "",
@@ -193,10 +215,10 @@ fun NewHomeUi(
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
                     .clip(CircleShape)
-                    .clickable{
+                    .clickable {
                         navigator?.push(ProfileScreen())
                     }
-            ){
+            ) {
                 Image(
                     painter = painterResource(Res.drawable.profile),
                     contentDescription = "",
@@ -207,14 +229,17 @@ fun NewHomeUi(
             }
         }
 
-        if (count>0){
+        if (count > 0) {
             SpaceLarge()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                    .background(
+                        MaterialTheme.extendedColor.cardColor,
+                        RoundedCornerShape(CardCornerRadius)
+                    )
                     .clip(RoundedCornerShape(CardCornerRadius))
-                    .clickable{
+                    .clickable {
                         navigator?.push(ParentRequestScreen())
                     }
                     .padding(horizontal = CardCornerPadding, vertical = 8.dp),
@@ -248,15 +273,18 @@ fun NewHomeUi(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(ContainerPadding)
-        ){
+        ) {
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(CardCornerRadius)
+                        )
                         .clip(RoundedCornerShape(CardCornerRadius))
-                        .clickable{
+                        .clickable {
                             navigator?.push(StatisticScreen())
                         }
                         .padding(CardCornerPadding),
@@ -266,8 +294,34 @@ fun NewHomeUi(
                         modifier = Modifier
                             .weight(1f)
                     ) {
+
+                        val statUsageTime = buildString {
+                            append(
+                                when {
+                                    statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute == 0 -> {
+                                        "0 ${stringResource(Res.string.daq)}"
+                                    }
+
+                                    statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute == 0 -> {
+                                        "${statisticState.todayUsage.hour} ${stringResource(Res.string.soat)}"
+                                    }
+
+                                    statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute > 0 -> {
+                                        "${statisticState.todayUsage.hour} ${stringResource(Res.string.s)}" +
+                                                ", ${statisticState.todayUsage.minute} ${stringResource(Res.string.d)}"
+                                    }
+                                    statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute > 0 -> {
+                                        "${statisticState.todayUsage.minute} ${stringResource(Res.string.daq)}"
+                                    }
+                                    else -> {
+                                        "0 ${stringResource(Res.string.daq)}"
+                                    }
+                                }
+                            )
+                        }
+
                         CustomText(
-                            text = "25 daq",
+                            text = statUsageTime,
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.W500,
@@ -276,6 +330,11 @@ fun NewHomeUi(
                             text = stringResource(Res.string.bugun_telefonda_sarfladi),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            lineHeight = NormalTextSize * 1.2f
+
+                            
                         )
                     }
 
@@ -286,10 +345,13 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.5f)
-                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(
+                                    MaterialTheme.extendedColor.backgroundColor,
+                                    RoundedCornerShape(TextFieldCornerRadius)
+                                )
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
-                        ){
+                        ) {
                             Image(
                                 painter = painterResource(Res.drawable.linkedin_icon),
                                 contentDescription = "",
@@ -301,10 +363,13 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.65f)
-                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(
+                                    MaterialTheme.extendedColor.backgroundColor,
+                                    RoundedCornerShape(TextFieldCornerRadius)
+                                )
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
-                        ){
+                        ) {
                             Image(
                                 painter = painterResource(Res.drawable.whatsapp_icon),
                                 contentDescription = "",
@@ -316,10 +381,13 @@ fun NewHomeUi(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight(0.8f)
-                                .background(MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+                                .background(
+                                    MaterialTheme.extendedColor.backgroundColor,
+                                    RoundedCornerShape(TextFieldCornerRadius)
+                                )
                                 .padding(6.dp),
                             contentAlignment = Alignment.BottomCenter
-                        ){
+                        ) {
                             Image(
                                 painter = painterResource(Res.drawable.instagram_icon),
                                 contentDescription = "",
@@ -337,7 +405,10 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(CardCornerRadius)
+                        )
                         .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
@@ -355,7 +426,7 @@ fun NewHomeUi(
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = stringResource(Res.string.faol_vazifa,taskCount),
+                            text = stringResource(Res.string.faol_vazifa, taskCount),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
                         )
@@ -370,16 +441,19 @@ fun NewHomeUi(
                     )
                 }
             }
-            
+
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(CardCornerRadius)
+                        )
                         .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                         .clip(RoundedCornerShape(CardCornerRadius))
-                        .clickable{
+                        .clickable {
                             navigator?.push(PolicyListScreen())
                         },
                 ) {
@@ -394,7 +468,7 @@ fun NewHomeUi(
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = stringResource(Res.string.ilova_cheklangan,tableCount),
+                            text = stringResource(Res.string.ilova_cheklangan, tableCount),
                             color = PrimaryColor,
                             fontSize = NormalTextSize,
                         )
@@ -412,11 +486,12 @@ fun NewHomeUi(
 
             item {
                 NewHomeItem(
-                    onSettingSelected = {selectionItem ->
-                        when(selectionItem){
+                    onSettingSelected = { selectionItem ->
+                        when (selectionItem) {
                             HomeSelectionItem.XARITA -> {
                                 navigator?.push(MapScreen())
                             }
+
                             HomeSelectionItem.SIHBAT -> {
                                 navigator?.push(ChatScreen())
                             }
@@ -430,14 +505,17 @@ fun NewHomeUi(
 
 @Preview
 @Composable
-private fun Pre(){
+private fun Pre() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         NewHomeUi(
             navigator = null,
             state = HomeState(),
-            event = {}
+            event = {},
+            statisticState = StatisticState(
+                todayUsage = HourMinute(1, 22)
+            )
         )
     }
 }

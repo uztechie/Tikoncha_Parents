@@ -1,12 +1,18 @@
 package uz.tikoncha_parent.data.mapper
 
+import dev.icerock.moko.geo.LatLng
 import kotlinx.datetime.LocalTime
+import uz.tikoncha_parent.data.mapper.toPolygonDto
 import uz.tikoncha_parent.data.remote.model.AppDto
 import uz.tikoncha_parent.data.remote.model.LimitRuleDto
+import uz.tikoncha_parent.data.remote.model.LocationRuleDto
 import uz.tikoncha_parent.data.remote.model.PolicyDto
 import uz.tikoncha_parent.data.remote.model.TimeRuleDto
 import uz.tikoncha_parent.domain.model.DayHour
+import uz.tikoncha_parent.domain.model.GeoType
 import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.LocationData
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.WeekDay
@@ -15,6 +21,8 @@ import uz.tikoncha_parent.presentation.policy.app_selection.AppSelectionUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.toMinutes
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
+import kotlin.collections.get
+import kotlin.compareTo
 
 
 fun AppDto.toAppSelectionUi(): AppSelectionUi {
@@ -60,6 +68,27 @@ fun List<LimitRuleUi>.toLimitRuleDtoList(): List<LimitRuleDto>{
     return list
 }
 
+fun List<LocationData>?.toPolygonDto(): List<List<Double>>{
+    if (this.isNullOrEmpty()) return emptyList()
+    return this.map { (lat, lng) ->
+        listOf(lat, lng)
+    }
+}
+
+
+fun LocationRule?.toLocationRuleDto(): LocationRuleDto?{
+    if (this == null) return null
+    return LocationRuleDto(
+        polygon = polygon.toPolygonDto(),
+        circle_radius = radiusMeters,
+        center_latitude = centerLat,
+        center_longitude = centerLng,
+        location_include = !reverse,
+        type = geoType.name
+    )
+}
+
+
 fun LimitRuleDto.toLimitRuleUi(): LimitRuleUi {
     return LimitRuleUi(
         time = limit_amount.toHourMinute(),
@@ -89,6 +118,8 @@ fun TimeRuleDto.toTimeRuleUi(): TimeRuleUi {
 }
 
 fun PolicyDto.toPolicyListUi(): PolicyItemUi{
+
+    val location = buildLocation(location_rule)
     val policyType = PolicyType.getPolicyType(scope_type)
     return PolicyItemUi(
         policyId = rule_id,
@@ -104,8 +135,38 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi{
         timeRule = time_rule?.map { it.toTimeRuleUi() }?:emptyList(),
         limitRule = limit_rule?.map { it.toLimitRuleUi() }?:emptyList(),
         policyType = policyType,
-        isMine =  policyType == PolicyType.PARENT_CHILD
+        isMine =  policyType == PolicyType.PARENT_CHILD,
+        locationRule = location
     )
+}
+
+private fun buildLocation(dto: LocationRuleDto?): LocationRule? {
+    if (dto == null) return null
+    val geo = when (dto.type?.uppercase()) {
+        "CIRCLE" -> GeoType.CIRCLE
+        "POLYGON" -> GeoType.POLYGON
+        else -> return null
+    }
+    return when (geo) {
+        GeoType.CIRCLE -> LocationRule(
+            geoType = GeoType.CIRCLE,
+            centerLat = dto.center_latitude,
+            centerLng = dto.center_longitude,
+            radiusMeters = dto.circle_radius,
+            polygon = null,
+            reverse = !dto.location_include
+        )
+        GeoType.POLYGON -> LocationRule(
+            geoType = GeoType.POLYGON,
+            centerLat = null,
+            centerLng = null,
+            radiusMeters = null,
+            polygon = dto.polygon.mapNotNull { p ->
+                if (p.size >= 2) LocationData(p[1], p[0]) else null
+            },
+            reverse = !dto.location_include
+        )
+    }
 }
 
 fun buildTimeRanges(
