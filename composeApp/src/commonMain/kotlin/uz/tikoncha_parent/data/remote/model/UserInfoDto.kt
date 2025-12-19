@@ -19,4 +19,7 @@ data class UserInfoDto(
     val shift: String? = null,
     val passport_id: String? = null,
     val avatar_url: String? = null,
+    val last_seen: String? = null,
+    val subscription: String? = null,
+    val subscription_end_date: String? = null,
 )

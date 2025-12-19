@@ -14,12 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -76,9 +74,7 @@ import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceUltraSmall
-import uz.tikoncha_parent.ui.TextColor
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
-import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -173,10 +169,10 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
-                    .clip(CircleShape)
                     .clickable{
                         navigator?.push(NotificationScreen())
                     }
+                    .clip(CircleShape)
             ){
                 Image(
                     painter = painterResource(Res.drawable.notification),
@@ -192,7 +188,6 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
-                    .clip(CircleShape)
                     .clickable{
                         navigator?.push(ProfileScreen())
                     }
@@ -273,9 +268,9 @@ fun NewHomeUi(
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = stringResource(Res.string.bugun_telefonda_sarfladi),
+                            text = stringResource(Res.string.bugun_sarfladi),
                             color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            fontSize = LargeTextSize,
                         )
                     }
 
@@ -357,7 +352,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.faol_vazifa,taskCount),
                             color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            fontSize = LargeTextSize,
                         )
                     }
 
@@ -396,7 +391,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.ilova_cheklangan,tableCount),
                             color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            fontSize = LargeTextSize,
                         )
                     }
 

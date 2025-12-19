@@ -176,7 +176,7 @@
     <string name="server_connection_error">Server bilan bog‘lanishda xatolik!</string>
     <string name="faol">Faol</string>
     <string name="faol_emas">Faol emas</string>
-    <string name="ohirgi_faollik">Ohirgi faollik</string>
+    <string name="ohirgi_faollik">Ohirgi faollik:</string>
     <string name="qabul_qildim">Qabul qildim</string>
     <string name="azolar">A’zolar</string>
     <string name="azo">A’zo</string>
@@ -276,7 +276,7 @@
     <string name="jadvallar">Jadvallar</string>
     <string name="ilova_cheklangan">%1$d ta ilova cheklangan</string>
     <string name="faol_vazifa">%1$d ta faol vazifa</string>
-    <string name="bugun_telefonda_sarfladi">Bugun telefonda sarfladi</string>
+    <string name="bugun_sarfladi">Bugun sarfladi</string>
     <string name="chiqish">Chiqish</string>
     <string name="chiqishni_xohlaysizmi">Chiqishni xohlaysizmi?</string>
     <string name="chiqishni_tasdiqlang">Hisobdan chiqish jarayonini tasdiqlang.</string>

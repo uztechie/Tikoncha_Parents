@@ -19,6 +19,9 @@ data class UserInfo(
     val schoolClassId: String? = null,
     val shift: String? = null,
     val avatarUrl: String? = null,
+    val last_seen: String? = null,
+    val subscription: String? = null,
+    val subscription_end_date: String? = null,
 ){
     override fun toString(): String {
         return name
