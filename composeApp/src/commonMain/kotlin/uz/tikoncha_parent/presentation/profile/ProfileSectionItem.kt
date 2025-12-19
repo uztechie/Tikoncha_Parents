@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.NormalTextSize
@@ -27,6 +29,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.obuna
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
@@ -48,6 +51,7 @@ fun ProfileSectionItem(
 
     val title = when(section){
         ProfileSection.PERSONAL_INFORMATION -> stringResource(Res.string.shaxsiy_malumotlar)
+        ProfileSection.CHILDREN -> stringResource(Res.string.farzandlaringiz)
         ProfileSection.LANGUAGE -> stringResource(Res.string.til)
         ProfileSection.SETTINGS -> stringResource(Res.string.sozlamalar)
         ProfileSection.SUBSCRIPTIONS -> stringResource(Res.string.obuna)
@@ -66,7 +70,8 @@ fun ProfileSectionItem(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -94,7 +99,6 @@ fun ProfileSectionItem(
                 fontWeight = FontWeight.SemiBold
             )
         }
-        SpaceSmall()
         DividerHorizontal()
     }
 }

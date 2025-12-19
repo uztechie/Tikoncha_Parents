@@ -58,6 +58,62 @@ object DateTimeUtil {
         return ldt.toInstant(TimeZone.UTC).toEpochMilliseconds()
     }
 
+    fun toMillisForChild(s: String?): Long {
+        if (s.isNullOrBlank()) return 0L
+        val input = s.trim()
+
+        // 1) ISO: 2025-12-19T15:54:05(.123)
+        run {
+            val iso = Regex("""^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,}))?""")
+            val m = iso.find(input)
+            if (m != null) {
+                val year = m.groupValues[1].toInt()
+                val month = m.groupValues[2].toInt()
+                val day = m.groupValues[3].toInt()
+                val hour = m.groupValues[4].toInt()
+                val minute = m.groupValues[5].toInt()
+                val second = m.groupValues[6].toInt()
+
+                val frac = m.groupValues.getOrNull(7).orEmpty()
+                val ms = when {
+                    frac.isEmpty() -> 0
+                    frac.length >= 3 -> frac.substring(0, 3).toInt()
+                    else -> (frac + "000").substring(0, 3).toInt()
+                }
+
+                val ldt = LocalDateTime(year, month, day, hour, minute, second, ms * 1_000_000)
+
+                // ISO odatda UTC bo‘ladi yoki offset bilan keladi (siznikida offset yo‘q)
+                // shuning uchun bu joyni UTC qoldiramiz:
+                return ldt.toInstant(TimeZone.UTC).toEpochMilliseconds()
+            }
+        }
+
+        // 2) API format: 19.12.2025 17:38:29  (dd.MM.yyyy HH:mm:ss)
+        run {
+            val api = Regex("""^(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$""")
+            val m = api.find(input)
+            if (m != null) {
+                val day = m.groupValues[1].toInt()
+                val month = m.groupValues[2].toInt()
+                val year = m.groupValues[3].toInt()
+                val hour = m.groupValues[4].toInt()
+                val minute = m.groupValues[5].toInt()
+                val second = m.groupValues[6].toInt()
+
+                val ldt = LocalDateTime(year, month, day, hour, minute, second, 0)
+
+                // ✅ API vaqti lokal deb hisoblaymiz (Toshkent)
+                return ldt.toInstant(TimeZone.of("Asia/Tashkent")).toEpochMilliseconds()
+                // yoki: TimeZone.currentSystemDefault()
+            }
+        }
+
+        return 0L
+    }
+
+
+
     private fun formatTimeHHmm(t: LocalTime): String {
         val h = t.hour
         val m = t.minute

@@ -195,10 +195,13 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
+                    .clickable{
                     .clip(CircleShape)
                     .clickable {
                         navigator?.push(NotificationScreen())
                     }
+                    .clip(CircleShape)
+            ){
             ) {
                 Image(
                     painter = painterResource(Res.drawable.notification),
@@ -214,6 +217,7 @@ fun NewHomeUi(
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
                     .padding(12.dp)
+                    .clickable{
                     .clip(CircleShape)
                     .clickable {
                         navigator?.push(ProfileScreen())
@@ -327,14 +331,15 @@ fun NewHomeUi(
                             fontWeight = FontWeight.W500,
                         )
                         CustomText(
-                            text = stringResource(Res.string.bugun_telefonda_sarfladi),
+                            text = stringResource(Res.string.bugun_sarfladi),
                             color = PrimaryColor,
+                            fontSize = LargeTextSize,
                             fontSize = NormalTextSize,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             lineHeight = NormalTextSize * 1.2f
 
-                            
+
                         )
                     }
 
@@ -405,6 +410,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
@@ -413,7 +419,8 @@ fun NewHomeUi(
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(TaskScreen())
-                        },
+                        }
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                 ) {
                     Column(
                         modifier = Modifier
@@ -428,7 +435,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.faol_vazifa, taskCount),
                             color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            fontSize = LargeTextSize,
                         )
                     }
 
@@ -447,6 +454,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(130.dp)
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(CardCornerRadius))
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
@@ -455,7 +463,8 @@ fun NewHomeUi(
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .clickable {
                             navigator?.push(PolicyListScreen())
-                        },
+                        }
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
                 ) {
                     Column(
                         modifier = Modifier
@@ -470,7 +479,7 @@ fun NewHomeUi(
                         CustomText(
                             text = stringResource(Res.string.ilova_cheklangan, tableCount),
                             color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            fontSize = LargeTextSize,
                         )
                     }
 

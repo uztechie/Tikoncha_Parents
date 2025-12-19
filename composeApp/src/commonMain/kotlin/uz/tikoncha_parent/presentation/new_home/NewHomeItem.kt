@@ -42,10 +42,6 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun NewHomeItem(
     onSettingSelected: (HomeSelectionItem) -> Unit
 ){
-
-    val baloo2 = FontFamily(
-        Font(Res.font.baloo_2_medium)
-    )
     Column {
         HomeSelectionItem.values().forEach { selection ->
             Box(
@@ -81,7 +77,7 @@ fun NewHomeItem(
                             text = stringResource(selection.subtitle),
                             fontSize = NormalTextSize,
                             fontWeight = FontWeight.Medium,
-                            color = PrimaryColor
+                            color = PrimaryColor,
                         )
                     }
                 }

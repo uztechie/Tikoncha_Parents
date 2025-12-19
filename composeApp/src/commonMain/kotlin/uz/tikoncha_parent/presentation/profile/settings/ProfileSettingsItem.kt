@@ -126,21 +126,21 @@ enum class SettingType(
     val subtitle: StringResource,
 
     ) {
-    NOTIFICATION(
-        iconId = Res.drawable.bell_notification,
-        settingName = Res.string.bildirishnomalar,
-        subtitle = Res.string.reklama
-    ),
+//    NOTIFICATION(
+//        iconId = Res.drawable.bell_notification,
+//        settingName = Res.string.bildirishnomalar,
+//        subtitle = Res.string.reklama
+//    ),
     THEME(
         iconId = Res.drawable.star_setting,
         settingName = Res.string.tema,
         subtitle = Res.string.yorug
     ),
-    DANGEROUS_ZONE(
-        iconId = Res.drawable.warning_1,
-        settingName = Res.string.xavfli_zona,
-        subtitle = Res.string.akkauntni_o_chirish
-    ),
+//    DANGEROUS_ZONE(
+//        iconId = Res.drawable.warning_1,
+//        settingName = Res.string.xavfli_zona,
+//        subtitle = Res.string.akkauntni_o_chirish
+//    ),
 }
 
 @Preview
@@ -150,7 +150,7 @@ private fun Preview() {
         ThemeMode.DARK
     ){
         ProfileSettingsItem(
-            selectedSetting = SettingType.NOTIFICATION,
+            selectedSetting = SettingType.THEME,
             onSettingSelected = {}
         )
     }

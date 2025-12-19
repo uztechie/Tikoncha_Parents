@@ -1,26 +1,34 @@
 package uz.tikoncha_parent.presentation.common
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,31 +36,45 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
-import cafe.adriel.voyager.navigator.LocalNavigator
+import coil3.compose.AsyncImage
 import uz.tikoncha_parent.presentation.base.Loading
 import uz.tikoncha_parent.ui.CloseButtonInnerPadding
 import uz.tikoncha_parent.ui.CloseButtonSize
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.ItemHeight
 import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldIconSize
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.azolar
 import tikoncha_parents.composeapp.generated.resources.close_circle
+import tikoncha_parents.composeapp.generated.resources.faol
 import tikoncha_parents.composeapp.generated.resources.happyemoji_icon
+import tikoncha_parents.composeapp.generated.resources.ohirgi_faollik
+import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.base.coverShadow
-import uz.tikoncha_parent.presentation.task.TaskState
-import uz.tikoncha_parent.presentation.task.TaskUi
-import uz.tikoncha_parent.ui.CardCornerRadius
+import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.ui.DividerHorizontal
+import uz.tikoncha_parent.ui.LargeTextSize
+import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SuccessColor
+import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -83,24 +105,31 @@ fun <T>CustomListDialog(
 
 
 
-    if (show){
+    if (show) {
         Dialog(
             onDismissRequest = onDismiss
         ) {
-
             BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
                 contentAlignment = Alignment.Center,
+            ) {
+                val isCompact = maxWidth < 600.dp
+                val dialogWidth = if (isCompact) maxWidth else minOf(maxWidth, 520.dp)
+                val dialogMaxHeight = maxHeight * if (isCompact) 0.92f else 0.85f
 
-                ) {
-                val dialogWidth = maxWidth
-                val dialogHeight = maxHeight * 0.9f
+                val headerHeightApprox = 110.dp
+                val rowHeight = ItemHeight
+                val availableForList =
+                    (dialogMaxHeight - headerHeightApprox).coerceAtLeast(rowHeight)
+
+                val maxItemsToShow = (availableForList / rowHeight).toInt().coerceAtLeast(1)
+                val visibleCount = minOf(filteredItems.size, maxItemsToShow)
 
                 Card(
                     modifier = Modifier
-                        .width(dialogWidth)
-                        .height(dialogHeight)
+                        .fillMaxWidth()
                         .coverShadow(
                             shape = RoundedCornerShape(TextFieldCornerRadius)
                         ),
@@ -109,7 +138,7 @@ fun <T>CustomListDialog(
                     ),
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.extendedColor.backgroundColor)
@@ -117,8 +146,7 @@ fun <T>CustomListDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             CustomText(
@@ -137,71 +165,123 @@ fun <T>CustomListDialog(
                                     .size(CloseButtonSize)
                                     .padding(CloseButtonInnerPadding)
                             ) {
-                                Icon(
+                                Image(
                                     painter = painterResource(Res.drawable.close_circle),
-                                    contentDescription = ""
+                                    contentDescription = "Close",
+                                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.titleColor)
                                 )
                             }
 
                         }
-
                         SpaceMedium()
 
+                        if (loading || errorMessage.isNotEmpty()) {
+                            Loading(loading)
+                            CustomText(
+                                text = errorMessage,
+                                fontSize = NormalTextSize,
+                                modifier = Modifier
+                            )
+                        } else {
 
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState()),
+                            ) {
+                                filteredItems.take(visibleCount).forEach { item ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                onItemSelected(item)
+                                                onDismiss()
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        val userInfo =
+                                            if (item is UserInfo)
+                                                item as UserInfo
+                                        else
+                                            null
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .border(1.dp, MaterialTheme.extendedColor.primaryColor.copy(0.2f), RoundedCornerShape(TextFieldCornerRadius)),
-                            contentAlignment = Alignment.Center
-                        ){
-                            if (loading || errorMessage.isNotEmpty()){
-                                Loading(loading)
-                                CustomText(
-                                    text = errorMessage,
-                                    fontSize = NormalTextSize,
-                                    modifier = Modifier
-                                )
-                            }
-                            else{
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                )
-                                {
-                                    items(filteredItems){ item->
-                                        Row(
+                                        Box(
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(ItemHeight)
-                                                .padding(horizontal = TextFieldInnerPadding)
-                                                .clickable {
-                                                    onItemSelected(item)
-                                                    onDismiss()
-                                                },
-                                            verticalAlignment = Alignment.CenterVertically
+                                                .size(50.dp)
+                                                .clip(CircleShape)
+                                                .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape)
+                                                .background(
+                                                    MaterialTheme.extendedColor.backgroundColor,
+                                                    CircleShape
+                                                )
                                         ) {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.happyemoji_icon),
-                                                contentDescription = "Search",
-                                                tint = MaterialTheme.extendedColor.primaryColor,
+                                            AsyncImage(
+                                                model = userInfo?.avatarUrl,
+                                                contentDescription = "",
+                                                error = painterResource(Res.drawable.profile_hedgehog_img),
+                                                placeholder = painterResource(Res.drawable.profile_hedgehog_img),
                                                 modifier = Modifier
-                                                    .padding(end = TextFieldInnerPadding)
-                                                    .size(TextFieldIconSize)
+                                                    .fillMaxSize()
+                                                    .clip(CircleShape)
                                             )
+                                        }
+                                        SpaceSmall()
 
-                                            CustomText(
+
+                                        Column(
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+
+                                            Text(
                                                 text = item.toString(),
                                                 fontSize = NormalTextSize,
-                                                modifier = Modifier
+                                                fontWeight = FontWeight.W500,
+                                                color = MaterialTheme.extendedColor.textColor
                                             )
 
+                                            Text(
+                                                text = stringResource(Res.string.ohirgi_faollik),
+                                                fontSize = UltraSmallTextSize,
+                                                color = MaterialTheme.extendedColor.textColor.copy(0.5f),
+                                                lineHeight = UltraSmallTextSize * 1.0f,
+                                                maxLines = 1
+                                            )
+
+                                            Text(
+                                                text = userInfo?.last_seen.orEmpty(),
+                                                fontSize = UltraSmallTextSize,
+                                                color = MaterialTheme.extendedColor.textColor.copy(0.5f),
+                                                lineHeight = UltraSmallTextSize * 1.0f,
+                                                maxLines = 1
+                                            )
                                         }
-                                        DividerHorizontal(
-                                            modifier = Modifier
-                                                .padding(start = TextFieldInnerPadding+TextFieldIconSize+TextFieldInnerPadding, end = TextFieldInnerPadding)
+
+                                        val statusColor = if (userInfo?.subscription == "FREE") {
+                                            PrimaryColor
+                                        } else {
+                                            SuccessColor
+                                        }
+                                        val statusText = if (userInfo?.subscription == "FREE") {
+                                            ""
+                                        } else {
+                                            userInfo?.subscription
+                                        }
+                                        CustomText(
+                                            text = statusText?:"",
+                                            fontSize = SmallTextSize,
+                                            color = statusColor,
                                         )
                                     }
+                                    DividerHorizontal(
+                                        color = MaterialTheme.extendedColor.hintColor.copy(0.5f),
+                                        modifier = Modifier
+                                            .padding(
+                                                start = TextFieldInnerPadding + TextFieldIconSize + TextFieldInnerPadding,
+                                                end = TextFieldInnerPadding,
+                                                top = 5.dp,
+                                                bottom = 5.dp
+                                            )
+                                    )
                                 }
                             }
                         }

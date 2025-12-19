@@ -66,18 +66,18 @@ fun SettingsUi(
         ) {
 
             ProfileSettingsItem(
-                selectedSetting = SettingType.NOTIFICATION,
+                selectedSetting = SettingType.THEME,
                 onSettingSelected = {settings ->
                     when(settings){
-                        SettingType.NOTIFICATION -> {
-                            navigator!!.push(NotificationSettingsScreen())
-                        }
+//                        SettingType.NOTIFICATION -> {
+//                            navigator!!.push(NotificationSettingsScreen())
+//                        }
                         SettingType.THEME -> {
                             navigator!!.push(ThemeScreen())
                         }
-                        SettingType.DANGEROUS_ZONE -> {
-
-                        }
+//                        SettingType.DANGEROUS_ZONE -> {
+//
+//                        }
                     }
                 }
             )

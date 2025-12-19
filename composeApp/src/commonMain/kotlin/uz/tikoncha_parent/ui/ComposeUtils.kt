@@ -8,6 +8,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -117,12 +118,15 @@ fun SpaceUltraSmall() {
 }
 
 @Composable
-fun DividerHorizontal(modifier: Modifier = Modifier) {
+fun DividerHorizontal(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.extendedColor.hintColor.copy(alpha = 0.1f)
+) {
     HorizontalDivider(
         modifier = modifier
             .fillMaxWidth()
             .height(1.dp),
-        color = MaterialTheme.extendedColor.hintColor.copy(alpha = 0.1f)
+        color = color
     )
 }
 
