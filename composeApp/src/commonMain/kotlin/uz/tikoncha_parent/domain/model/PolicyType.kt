@@ -1,10 +1,11 @@
 package uz.tikoncha_parent.domain.model
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import kotlinx.serialization.Serializable
 
 
 @Serializable
-enum class PolicyType (val order:Int){
+enum class PolicyType (val order:Int): JavaSerializable{
     SCHOOL(3), PARENT_CHILD(2), STUDENT(1);
 
     companion object {

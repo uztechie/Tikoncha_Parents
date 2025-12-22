@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -38,9 +40,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.icerock.moko.geo.compose.BindLocationTrackerEffect
 import dev.icerock.moko.geo.compose.LocationTrackerAccuracy
 import dev.icerock.moko.geo.compose.rememberLocationTrackerFactory
+import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
+import dev.icerock.moko.permissions.location.LOCATION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -53,18 +57,22 @@ import org.koin.compose.getKoin
 import qrgenerator.qrkitpainter.event
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_left
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.dialog_info
 import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.gps_o_chirilgan
 import tikoncha_parents.composeapp.generated.resources.joylashuv_uchun_ruxsat
+import tikoncha_parents.composeapp.generated.resources.location_permission_request_message
+import tikoncha_parents.composeapp.generated.resources.ruxsat_berish
 import tikoncha_parents.composeapp.generated.resources.siz
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.xarita
 import tikoncha_parents.composeapp.generated.resources.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing
 import tikoncha_parents.composeapp.generated.resources.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering
 import tikoncha_parents.composeapp.generated.resources.yoqish
+import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.platform.KmpWebViewController
@@ -73,11 +81,13 @@ import uz.tikoncha_parent.platform.UniversalJsonWebView
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
 import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.HeaderHeight
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -141,6 +151,7 @@ class MapScreen : Screen {
         val locationEvent = locationViewModel::onEvent
 
         // -------------------- DIALOG HOLATLARI --------------------
+        var showPermissionConfirmDialog by remember { mutableStateOf(false) }
         var showGpsDialog by remember { mutableStateOf(false) }
         var showPermissionDialog by remember { mutableStateOf(false) }
 
@@ -152,12 +163,36 @@ class MapScreen : Screen {
         }
 
 
+        CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
+            show = showPermissionConfirmDialog,
+            showCloseButton = true,
+            title = stringResource(Res.string.joylashuv_uchun_ruxsat),
+            message = stringResource(Res.string.location_permission_request_message),
+            buttonText = stringResource(Res.string.ruxsat_berish),
+            buttonText2 = stringResource(Res.string.bekor_qilish),
+            onDismiss = {
+                showPermissionConfirmDialog = false
+            },
+            onButtonClick = {
+                showPermissionConfirmDialog = false
+                permissionViewModel.requestPermission()
+            }
+        )
 
+
+        LaunchedEffect(Unit){
+           val isGranted =  permissionsController.isPermissionGranted(Permission.LOCATION)
+            if (!isGranted){
+                showPermissionConfirmDialog = true
+            }
+        }
 
 
 
         // Joylashuv permission deny always bo‘lsa
         CustomDialog(
+            showCloseButton = true,
             painter = painterResource(Res.drawable.dialog_info),
             show = showPermissionDialog,
             title = stringResource(Res.string.joylashuv_uchun_ruxsat),
@@ -175,6 +210,7 @@ class MapScreen : Screen {
 
         // GPS o‘chiq bo‘lsa
         CustomDialog(
+            showCloseButton = true,
             painter = painterResource(Res.drawable.dialog_info),
             show = showGpsDialog,
             title = stringResource(Res.string.gps_o_chirilgan),
@@ -198,13 +234,9 @@ class MapScreen : Screen {
             }
         )
 
-        // Ekranga kirganimizda permission so‘raymiz
-        LaunchedEffect(Unit) {
-            permissionViewModel.requestPermission()
-        }
 
         // Permission state o‘zgarganda reaksiya
-        LaunchedEffect(permissionState) {
+        LaunchedEffect(isLocationServiceEnabled()) {
             when (permissionState) {
                 PermissionState.Granted -> {
                     // 1) GPS yoqilgan-yoqilmaganini tekshiramiz
@@ -256,20 +288,7 @@ class MapScreen : Screen {
         }
 
 
-        var pendingChildId by remember { mutableStateOf<String?>(null) }
-        var pendingNav by remember { mutableStateOf(false) } // duplicate push oldini oladi
-
-        LaunchedEffect(pendingNav, pendingChildId) {
-            if (pendingNav && !pendingChildId.isNullOrBlank()) {
-                val childId = pendingChildId!!
-                val child = AppSettings.children.find { it.userId == childId }
-                yield()
-                navigator?.push(SubscriptionPaymentScreen(child))
-                pendingNav = false
-                pendingChildId = null
-
-            }
-        }
+        var lastPushedChildId by remember { mutableStateOf<String?>(null) }
 
         // -------------------- UI --------------------
         Box(
@@ -279,23 +298,55 @@ class MapScreen : Screen {
             Logger.d("MapScreen", "jsonString=$jsonString")
 
 
+
+
             UniversalJsonWebView(
                 url = "https://tikoncha.uz/map/location/",
 //                url = "https://yandex.uz/maps/10329/andijan/?ll=72.349754%2C40.777180&z=15.64",
                 json = jsonString,
                 onIncomingJson = { incomingJson->
                     val childId = extractChildIdOrEmpty(incomingJson)
-                    Logger.d("MapScreen", "incoming json=$incomingJson, childId=$childId")
-
-                    if (childId.isNotBlank()) {
-                        pendingChildId = childId
-                        pendingNav = true
+                    if (childId.isNotBlank() && childId != lastPushedChildId) {
+                        lastPushedChildId = childId
+                        val child = AppSettings.children.find { it.userId == childId }
+                        navigator?.push(SubscriptionPaymentScreen(child))
                     }
                 },
                 onBackPressed = {
                     navigator?.pop()
                 }
             )
+
+            Box(
+                modifier = Modifier
+                    .height(HeaderHeight)
+                    .padding(horizontal = ContainerPadding),
+                contentAlignment = Alignment.Center
+            ){
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .size(NormalIconButtonSize),
+                    onClick = {
+                        navigator?.pop()
+                    },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.extendedColor.cardColor,
+                        contentColor = MaterialTheme.extendedColor.onBackgroundColor
+                    ),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_left),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(NormalIconButtonPadding)
+                    )
+                }
+
+            }
+
+
 
         }
     }

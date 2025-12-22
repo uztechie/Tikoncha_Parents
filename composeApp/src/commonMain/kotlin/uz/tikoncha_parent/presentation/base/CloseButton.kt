@@ -19,10 +19,11 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CloseButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ){
     FilledTonalIconButton(
-        modifier = Modifier
+        modifier = modifier
             .size(NormalIconButtonSize),
         onClick = onClick,
         colors = IconButtonDefaults.filledTonalIconButtonColors(

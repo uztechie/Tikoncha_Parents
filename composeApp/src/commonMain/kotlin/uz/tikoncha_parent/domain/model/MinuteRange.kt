@@ -1,5 +1,8 @@
 package uz.tikoncha_parent.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class MinuteRange(val start: Int, val end: Int) {
     init {
 //        require(start in 0..(24 * 60) && end in 0..(24 * 60) && start < end)

@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
@@ -19,7 +22,7 @@ import uz.tikoncha_parent.platform.isLocationServiceEnabled
 
 class LocationViewModel(
     val tracker: LocationTracker,
-    private val childrenLocationUseCase: ChildrenLocationUseCase
+    private val childrenLocationUseCase: ChildrenLocationUseCase? = null
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LocationState())
@@ -60,12 +63,20 @@ class LocationViewModel(
 
     private fun observeLocation() {
         viewModelScope.launch {
-            tracker.getLocationsFlow()
-                .distinctUntilChanged()
-                .collectLatest { data ->
-                    Logger.d("LocationViewModel", "location = $data")
-                    _state.update { it.copy(locationData = data) }
-                }
+            val location = tracker.getLocationsFlow()
+                .filterNotNull()
+                .first()
+
+            _state.update { it.copy(locationData = location) }
+            stop()
+
+
+//            tracker.getLocationsFlow()
+//                .distinctUntilChanged()
+//                .collectLatest { data ->
+//                    Logger.d("LocationViewModel", "location = $data")
+//                    _state.update { it.copy(locationData = data) }
+//                }
         }
     }
 

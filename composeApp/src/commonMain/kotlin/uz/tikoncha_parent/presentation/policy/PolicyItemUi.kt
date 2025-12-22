@@ -1,10 +1,13 @@
 package uz.tikoncha_parent.presentation.policy
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import kotlinx.serialization.Serializable
 import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
+@Serializable
 data class PolicyItemUi(
     val policyId: String,
     val policyName: String,
@@ -21,4 +24,4 @@ data class PolicyItemUi(
     val timeRule: List<TimeRuleUi>,
     val limitRule: List<LimitRuleUi>,
     val locationRule: LocationRule?
-)
+):JavaSerializable

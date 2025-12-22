@@ -20,9 +20,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.icerock.moko.geo.compose.BindLocationTrackerEffect
 import dev.icerock.moko.geo.compose.LocationTrackerAccuracy
 import dev.icerock.moko.geo.compose.rememberLocationTrackerFactory
+import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
+import dev.icerock.moko.permissions.location.LOCATION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -33,9 +35,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.dialog_info
 import tikoncha_parents.composeapp.generated.resources.gps_o_chirilgan
 import tikoncha_parents.composeapp.generated.resources.joylashuv_uchun_ruxsat
+import tikoncha_parents.composeapp.generated.resources.location_permission_request_message
+import tikoncha_parents.composeapp.generated.resources.ruxsat_berish
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing
 import tikoncha_parents.composeapp.generated.resources.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering
@@ -46,6 +51,7 @@ import uz.tikoncha_parent.platform.UniversalJsonWebView
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
 import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.map.LocationViewModel
 import uz.tikoncha_parent.presentation.map.OnScreenActive
 import uz.tikoncha_parent.presentation.map.PermissionViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
@@ -70,6 +76,14 @@ class LocationRuleScreen: Screen {
         )
         BindEffect(permissionsController)
 
+        val locationViewModel: LocationViewModel = viewModel {
+            LocationViewModel(
+                tracker = locationTracker,
+                childrenLocationUseCase = null
+            )
+        }
+
+
         val permissionViewModel = viewModel {
             PermissionViewModel(permissionsController)
         }
@@ -80,57 +94,56 @@ class LocationRuleScreen: Screen {
         // Tracker lifecycle-ni Compose bilan bog‘laymiz
         BindLocationTrackerEffect(locationTracker = locationTracker)
 
+        val locationState by locationViewModel.state.collectAsStateWithLifecycle()
+        val locationEvent = locationViewModel::onEvent
+
 
         var showGpsDialog by remember { mutableStateOf(false) }
+        var showPermissionConfirmDialog by remember { mutableStateOf(false) }
         var showPermissionDialog by remember { mutableStateOf(false) }
 
+        DisposableEffect(Unit) {
 
-
-
-
-        val viewModel = koinViewModel<LocationRuleViewModel>()
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
-
-        val sharedViewModel = koinViewModel<PolicySharedModel>()
-        val sharedEvent = sharedViewModel::onEvent
-        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
-
-        val isDark = rememberIsDarkTheme()
-
-
-        LaunchedEffect(Unit) {
-            locationTracker.startTracking()
-
-            val loc = locationTracker.getLocationsFlow()
-                .filterNotNull()
-                .first() // faqat 1 ta location oladi
-
-            locationTracker.stopTracking()
-
-            Logger.d("LocationRuleScreen", "location=$loc")
-            Logger.d("LocationRuleScreen", "locationRule=${sharedState.locationRule}")
-
-            event(
-                LocationRuleEvent.SetLocation(
-                    locationRule = sharedState.locationRule,
-                    editable = sharedState.canUpdate,
-                    policyName = sharedState.policyTitle,
-                    isDark = isDark,
-                    locationData = LocationData(
-                        lat = loc.latitude,
-                        lng = loc.longitude
-                    )
-                )
-            )
+            onDispose{
+                locationViewModel.stop()
+            }
         }
 
+
         val scope = rememberCoroutineScope()
+
+
+        CustomDialog(
+            painter = painterResource(Res.drawable.dialog_info),
+            show = showPermissionConfirmDialog,
+            showCloseButton = true,
+            title = stringResource(Res.string.joylashuv_uchun_ruxsat),
+            message = stringResource(Res.string.location_permission_request_message),
+            buttonText = stringResource(Res.string.ruxsat_berish),
+            buttonText2 = stringResource(Res.string.bekor_qilish),
+            onDismiss = {
+                showPermissionConfirmDialog = false
+            },
+            onButtonClick = {
+                showPermissionConfirmDialog = false
+                permissionViewModel.requestPermission()
+            }
+        )
+
+
+        LaunchedEffect(Unit){
+            val isGranted =  permissionsController.isPermissionGranted(Permission.LOCATION)
+            if (!isGranted){
+                showPermissionConfirmDialog = true
+            }
+        }
+
 
         // Joylashuv permission deny always bo‘lsa
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_info),
             show = showPermissionDialog,
+            showCloseButton = true,
             title = stringResource(Res.string.joylashuv_uchun_ruxsat),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering),
             buttonText = stringResource(Res.string.sozlamalar),
@@ -148,6 +161,7 @@ class LocationRuleScreen: Screen {
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_info),
             show = showGpsDialog,
+            showCloseButton = true,
             title = stringResource(Res.string.gps_o_chirilgan),
             message = stringResource(Res.string.xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing),
             buttonText = stringResource(Res.string.yoqish),
@@ -169,13 +183,9 @@ class LocationRuleScreen: Screen {
             }
         )
 
-        // Ekranga kirganimizda permission so‘raymiz
-        LaunchedEffect(Unit) {
-            permissionViewModel.requestPermission()
-        }
 
         // Permission state o‘zgarganda reaksiya
-        LaunchedEffect(permissionState) {
+        LaunchedEffect(isLocationServiceEnabled()) {
             when (permissionState) {
                 PermissionState.Granted -> {
                     // 1) GPS yoqilgan-yoqilmaganini tekshiramiz
@@ -184,7 +194,8 @@ class LocationRuleScreen: Screen {
                         if (!gpsEnabled) {
                             showGpsDialog = true
                         } else {
-                            
+                            // 2) GPS bor, permission bor -> Location tracker’ni BOSHLAYMIZ
+                            locationViewModel.checkGPS()
                         }
                     }
                 }
@@ -198,6 +209,42 @@ class LocationRuleScreen: Screen {
                 }
             }
         }
+
+
+
+
+
+        val viewModel = koinViewModel<LocationRuleViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val event = viewModel::onEvent
+
+        val sharedViewModel = koinViewModel<PolicySharedModel>()
+        val sharedEvent = sharedViewModel::onEvent
+        val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
+
+        val isDark = rememberIsDarkTheme()
+
+
+        LaunchedEffect(locationState.locationData) {
+            val locationData: LocationData? =
+                locationState.locationData?.let { data ->
+                    LocationData(
+                        lat = data.latitude,
+                        lng = data.longitude
+                    )
+                }
+
+            event(
+                LocationRuleEvent.SetLocation(
+                    locationRule = sharedState.locationRule,
+                    editable = sharedState.canUpdate,
+                    policyName = sharedState.policyTitle,
+                    isDark = isDark,
+                    locationData = locationData
+                )
+            )
+        }
+
 
 
         LocationRuleUi(

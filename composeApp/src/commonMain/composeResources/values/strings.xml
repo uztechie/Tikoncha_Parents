@@ -313,6 +313,9 @@
     <string name="bloklash_hafta_kunlari_soatlari">Hafta kunlarining belgilangan ma’lum soatlarida bloklash</string>
     <string name="s">s</string>
     <string name="d">d</string>
+    <string name="location_permission_request_message">Joylashuv ma’lumoti xaritada hozir qayerda ekaningizni ko‘rsatish va farzandingiz uchun kerakli hududni belgilash uchun ishlatiladi.
+Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarga uzatilmaydi.</string>
 
+    <string name="ruxsat_berish">Ruxsat berish</string>
 
 </resources>

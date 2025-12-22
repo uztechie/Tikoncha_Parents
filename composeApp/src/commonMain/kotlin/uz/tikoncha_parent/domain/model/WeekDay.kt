@@ -1,6 +1,8 @@
 package uz.tikoncha_parent.domain.model
 
 import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ch
@@ -11,7 +13,8 @@ import tikoncha_parents.composeapp.generated.resources.se
 import tikoncha_parents.composeapp.generated.resources.sh
 import tikoncha_parents.composeapp.generated.resources.ya
 
-enum class WeekDay(val num: Int) {
+@Serializable
+enum class WeekDay(val num: Int): JavaSerializable {
     MON(1), TUE(2), WED(3), THU(4), FRI(5), SAT(6), SUN(7);
 
     companion object {

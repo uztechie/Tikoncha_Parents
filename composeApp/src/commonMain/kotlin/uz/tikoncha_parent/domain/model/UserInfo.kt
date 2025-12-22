@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.domain.model
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,7 +23,7 @@ data class UserInfo(
     val last_seen: String? = null,
     val subscription: String? = null,
     val subscription_end_date: String? = null,
-){
+): JavaSerializable{
     override fun toString(): String {
         return name
     }

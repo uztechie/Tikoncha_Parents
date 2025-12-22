@@ -21,11 +21,15 @@ import uz.tikoncha_parent.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.ayol
 import tikoncha_parents.composeapp.generated.resources.calendar
 import tikoncha_parents.composeapp.generated.resources.class_icon
+import tikoncha_parents.composeapp.generated.resources.erkak
 import tikoncha_parents.composeapp.generated.resources.ism
 import tikoncha_parents.composeapp.generated.resources.jins
 import tikoncha_parents.composeapp.generated.resources.maktab
+import tikoncha_parents.composeapp.generated.resources.ona
+import tikoncha_parents.composeapp.generated.resources.ota
 import tikoncha_parents.composeapp.generated.resources.phone
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.school_icon
@@ -69,11 +73,14 @@ fun PersonalInfoItem(userInfo: UserInfo?){
         )
         SpaceUltraSmall()
 
-        val genderRes = if (userInfo?.genderType?.resId == null){
-            ""
-        }
-        else{
-            stringResource(userInfo.genderType.resId)
+        val genderRes = when (userInfo?.genderType){
+            GenderType.MALE -> {
+                stringResource(Res.string.erkak)
+            }
+            GenderType.FEMALE -> {
+                stringResource(Res.string.ayol)
+            }
+            null -> ""
         }
 
         PersonalInformationItemRow(

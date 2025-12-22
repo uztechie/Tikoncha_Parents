@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
@@ -50,10 +51,22 @@ actual fun UniversalJsonWebView(
                 WebView(context).apply {
                     webView = this
 
+                    setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
+
+                    settings.useWideViewPort = true
+                    settings.loadWithOverviewMode = true
+                    settings.setSupportZoom(true)
+                    settings.builtInZoomControls = false
+                    settings.displayZoomControls = false
+
+                    overScrollMode = WebView.OVER_SCROLL_NEVER
+                    isVerticalScrollBarEnabled = false
+                    isHorizontalScrollBarEnabled = false
 
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
@@ -90,6 +103,8 @@ actual fun UniversalJsonWebView(
                 wv.evaluateJavascript(script, null)
             }
         }
+        Log.d("WEB_LOG", "postJson json: $json")
+
     }
 }
 

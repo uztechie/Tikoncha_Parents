@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.domain.model
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -8,11 +9,10 @@ import tikoncha_parents.composeapp.generated.resources.erkak
 
 @Serializable
 enum class GenderType(
-    val resId: StringResource,
     val key: String
-) {
-    MALE(resId = Res.string.erkak, key = "male"),
-    FEMALE(resId = Res.string.ayol, key = "female");
+): JavaSerializable {
+    MALE(key = "male"),
+    FEMALE(key = "female");
 
     companion object Companion {
         fun getGenderByIndex(index:Int): GenderType{

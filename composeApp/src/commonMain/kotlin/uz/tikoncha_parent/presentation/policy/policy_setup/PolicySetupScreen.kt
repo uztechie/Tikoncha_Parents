@@ -48,6 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.common.ScreenJson
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.platform.Logger
@@ -78,11 +79,21 @@ import kotlin.compareTo
 import kotlin.toString
 
 class PolicySetupScreen(
-    val child: UserInfo?,
-    val policyItemUi: PolicyItemUi? = null
+    val childJson: String? = null,
+    val policyItemUiJson: String? = null
 ) : Screen {
+
+
+
     @Composable
     override fun Content() {
+
+        val child = remember(childJson) {
+            ScreenJson.decode<UserInfo>(childJson)
+        }
+        val policyItemUi = remember(policyItemUiJson) {
+            ScreenJson.decode<PolicyItemUi>(policyItemUiJson)
+        }
 
         val navigator = LocalNavigator.current?:return
 

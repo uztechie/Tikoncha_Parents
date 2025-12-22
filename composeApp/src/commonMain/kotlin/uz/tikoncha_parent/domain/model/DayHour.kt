@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.domain.model
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import org.jetbrains.compose.resources.StringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.kunlik
@@ -8,7 +9,7 @@ import tikoncha_parents.composeapp.generated.resources.soatlik
 
 enum class DayHour(
     val resId: StringResource
-) {
+): JavaSerializable {
     DAY(resId = Res.string.kunlik),
     HOUR(resId = Res.string.soatlik);
 

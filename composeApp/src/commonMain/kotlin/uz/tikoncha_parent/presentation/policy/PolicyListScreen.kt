@@ -47,6 +47,7 @@ import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
 import tikoncha_parents.composeapp.generated.resources.obuna_dialog_message
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.common.ScreenJson
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -193,7 +194,8 @@ fun PolicyListUi(
             if (finalTitle.isNotBlank()) {
                 sharedEvent(PolicySharedEvent.SetPolicyTitle(finalTitle))
                 showCreatePolicyDialog = false
-                navigator?.push(PolicySetupScreen(state.selectedChild))
+                val selectedChild = ScreenJson.encode(state.selectedChild)
+                navigator?.push(PolicySetupScreen(selectedChild))
             }
         }
     )
@@ -264,19 +266,23 @@ fun PolicyListUi(
                     policy = it,
                     onClick = {
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
+                        val child = ScreenJson.encode(state.selectedChild)
+                        val policyItemUi = ScreenJson.encode(it)
                         navigator?.push(
                             PolicySetupScreen(
-                                child = state.selectedChild,
-                                policyItemUi = it
+                                childJson = child,
+                                policyItemUiJson = policyItemUi
                             )
                         )
                     },
                     onEdit = {
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
+                        val child = ScreenJson.encode(state.selectedChild)
+                        val policyItemUi = ScreenJson.encode(it)
                         navigator?.push(
                             PolicySetupScreen(
-                                child = state.selectedChild,
-                                policyItemUi = it
+                                childJson = child,
+                                policyItemUiJson = policyItemUi
                             )
                         )
                     }
