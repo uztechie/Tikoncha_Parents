@@ -64,7 +64,7 @@ fun NewHomeItem(
                         CustomText(
                             text = stringResource(selection.title),
                             fontSize = 30.sp,
-                            fontWeight = FontWeight.W500,
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.extendedColor.titleColor,
                         )
                         CustomText(

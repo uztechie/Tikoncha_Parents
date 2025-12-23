@@ -317,7 +317,7 @@ fun NewHomeUi(
                             text = statUsageTime,
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
-                            fontWeight = FontWeight.W500,
+                            fontWeight = FontWeight.Bold,
                         )
                         CustomText(
                             text = stringResource(Res.string.bugun_sarfladi),
@@ -416,7 +416,7 @@ fun NewHomeUi(
                             text = stringResource(Res.string.topshiriqlar),
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
-                            fontWeight = FontWeight.W500,
+                            fontWeight = FontWeight.Bold,
                         )
                         CustomText(
                             text = stringResource(Res.string.faol_vazifa, taskCount),
@@ -458,7 +458,7 @@ fun NewHomeUi(
                             text = stringResource(Res.string.jadvallar),
                             color = MaterialTheme.extendedColor.titleColor,
                             fontSize = 30.sp,
-                            fontWeight = FontWeight.W500,
+                            fontWeight = FontWeight.Bold,
                         )
                         CustomText(
                             text = stringResource(Res.string.ilova_cheklangan, tableCount),
