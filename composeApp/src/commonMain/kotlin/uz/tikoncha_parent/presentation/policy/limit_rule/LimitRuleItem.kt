@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.ui.*

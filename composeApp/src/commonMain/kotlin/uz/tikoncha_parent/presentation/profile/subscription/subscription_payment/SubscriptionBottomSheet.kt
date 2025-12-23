@@ -34,7 +34,7 @@ import org.jetbrains.compose.resources.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.domain.model.SubscriptionType
@@ -46,7 +46,6 @@ import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OnPrimaryColor
-import uz.tikoncha_parent.ui.PriceSubscriptionColor
 import uz.tikoncha_parent.ui.PrimaryAlphaColor
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium

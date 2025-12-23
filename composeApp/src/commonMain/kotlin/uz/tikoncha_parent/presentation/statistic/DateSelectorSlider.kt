@@ -40,7 +40,7 @@ import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_left
 import tikoncha_parents.composeapp.generated.resources.date_selection_arrow_right
 import tikoncha_parents.composeapp.generated.resources.haftalik
 import tikoncha_parents.composeapp.generated.resources.kunlik
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor

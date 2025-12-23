@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.notification
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.DisableButtonColor
 import uz.tikoncha_parent.ui.LargeIconButtonSize
 import uz.tikoncha_parent.ui.PrimaryColor

@@ -29,7 +29,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.message_read
 import tikoncha_parents.composeapp.generated.resources.message_sent
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.ui.ChatMessageCornerRadius
 import uz.tikoncha_parent.ui.ChatTextSize

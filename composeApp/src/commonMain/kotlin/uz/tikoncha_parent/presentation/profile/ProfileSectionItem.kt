@@ -36,8 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import tikoncha_parents.composeapp.generated.resources.tangachalar
 import tikoncha_parents.composeapp.generated.resources.til
-import uz.saidburxon.newedu.presentation.base.CustomText
-import uz.tikoncha_parent.ui.PrimaryAlphaColor
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor

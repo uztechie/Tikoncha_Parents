@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,10 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.common.Util.computeTimeProgress
-import uz.tikoncha_parent.common.Util.formatDateDdMmYyyy
 import uz.tikoncha_parent.common.Util.formatTimeHHmm
-import uz.tikoncha_parent.presentation.task.CustomLinearProgress
 import uz.tikoncha_parent.presentation.task.ImportanceType
 import uz.tikoncha_parent.presentation.task.Task
 import uz.tikoncha_parent.ui.*
@@ -33,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.DateTimeUtil.formatDateTimeMonthlyForChat
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs

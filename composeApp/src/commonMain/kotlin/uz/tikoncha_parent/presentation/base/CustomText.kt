@@ -1,4 +1,4 @@
-package uz.saidburxon.newedu.presentation.base
+package uz.tikoncha_parent.presentation.base
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +20,10 @@ import uz.tikoncha_parent.ui.NormalTextSize
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.baloo_2_medium
+import tikoncha_parents.composeapp.generated.resources.comfortaa
+import tikoncha_parents.composeapp.generated.resources.nunito_bold
+import tikoncha_parents.composeapp.generated.resources.nunito_italic
+import tikoncha_parents.composeapp.generated.resources.nunito_normal
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -31,17 +35,21 @@ fun CustomText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,
-    fontSize:TextUnit = TextUnit.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
     softWrap: Boolean = true,
-    lineHeight:TextUnit = TextUnit.Unspecified,
+    lineHeight: TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-    fontFamily: FontFamily = FontFamily(Font(Res.font.baloo_2_medium))
+    fontFamily: FontFamily = FontFamily(
+        Font(
+            resource = Res.font.comfortaa
+        )
+    )
 ) {
     Text(
         overflow = overflow,
-       text = text,
+        text = text,
         modifier = modifier,
         style = style,
         color = color,
@@ -67,15 +75,19 @@ fun CustomText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     fontWeight: FontWeight = FontWeight.Normal,
-    fontSize:TextUnit = NormalTextSize,
+    fontSize: TextUnit = NormalTextSize,
     softWrap: Boolean = true,
-    lineHeight:TextUnit = fontSize * 1.4f,
+    lineHeight: TextUnit = fontSize * 1.4f,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle = FontStyle.Normal,
     textAlign: TextAlign = TextAlign.Start,
     textDecoration: TextDecoration = TextDecoration.None,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-    fontFamily: FontFamily = FontFamily(Font(Res.font.baloo_2_medium))
+    fontFamily: FontFamily = FontFamily(
+        Font(
+            resource = Res.font.comfortaa
+        )
+    )
 ) {
     Text(
         overflow = overflow,
@@ -96,7 +108,6 @@ fun CustomText(
         fontFamily = fontFamily
     )
 }
-
 
 
 @Preview

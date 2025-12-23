@@ -55,7 +55,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.model.ChatMessageItem
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.chat.*
 import uz.tikoncha_parent.presentation.base.CustomMultiLineTextField
 import uz.tikoncha_parent.presentation.chat_details.ChatDetailsScreen

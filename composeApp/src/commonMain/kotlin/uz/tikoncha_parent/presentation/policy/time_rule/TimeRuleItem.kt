@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.har_kuni
 import tikoncha_parents.composeapp.generated.resources.kun_davomida
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.ui.LargeTextSize

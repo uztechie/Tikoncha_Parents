@@ -35,7 +35,7 @@ import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.locked
 import tikoncha_parents.composeapp.generated.resources.time_icon
 import tikoncha_parents.composeapp.generated.resources.unlocked
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable

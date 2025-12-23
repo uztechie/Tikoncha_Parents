@@ -33,7 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.search_normal
 import tikoncha_parents.composeapp.generated.resources.ulandi
 import tikoncha_parents.composeapp.generated.resources.wi_fi
 import tikoncha_parents.composeapp.generated.resources.wi_fi_tarmoqlarni_tanlang
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.policy.RoundedCheckbox

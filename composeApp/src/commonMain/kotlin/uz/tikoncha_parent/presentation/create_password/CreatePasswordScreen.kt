@@ -47,7 +47,7 @@ import tikoncha_parents.composeapp.generated.resources.password_eye_open
 import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_parol_yaratish
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
 import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 

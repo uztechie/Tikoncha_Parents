@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.abs

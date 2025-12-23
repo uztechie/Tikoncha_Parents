@@ -34,7 +34,7 @@ import tikoncha_parents.composeapp.generated.resources.arrow_left
 import tikoncha_parents.composeapp.generated.resources.azo
 import tikoncha_parents.composeapp.generated.resources.azolar
 import tikoncha_parents.composeapp.generated.resources.chat_icon
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HeaderHeight
 import uz.tikoncha_parent.ui.NormalIconButtonPadding

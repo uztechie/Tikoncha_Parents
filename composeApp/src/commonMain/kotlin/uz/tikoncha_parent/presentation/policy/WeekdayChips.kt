@@ -12,16 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.ch
-import tikoncha_parents.composeapp.generated.resources.du
 import tikoncha_parents.composeapp.generated.resources.har_kuni
-import tikoncha_parents.composeapp.generated.resources.ju
 import tikoncha_parents.composeapp.generated.resources.kunlar
-import tikoncha_parents.composeapp.generated.resources.pa
-import tikoncha_parents.composeapp.generated.resources.se
-import tikoncha_parents.composeapp.generated.resources.sh
-import tikoncha_parents.composeapp.generated.resources.ya
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CustomChipFilter

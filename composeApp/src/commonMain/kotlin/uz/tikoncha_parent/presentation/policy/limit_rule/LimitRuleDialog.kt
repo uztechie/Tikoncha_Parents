@@ -39,7 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.soatbay
 import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.presentation.base.CloseButton

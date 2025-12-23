@@ -39,7 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.sesh
 import tikoncha_parents.composeapp.generated.resources.shan
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.yak
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.ceil
 

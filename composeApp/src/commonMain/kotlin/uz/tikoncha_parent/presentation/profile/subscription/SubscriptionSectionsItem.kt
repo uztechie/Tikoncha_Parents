@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.*
 import org.jetbrains.compose.resources.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.*
 

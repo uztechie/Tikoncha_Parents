@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.*
 
 
@@ -53,7 +54,7 @@ fun CustomButton(
         CustomText(
             color = contentColor,
             text = text,
-            fontWeight =fontWeight,
+            fontWeight = fontWeight,
             fontSize = fontSize
         )
 

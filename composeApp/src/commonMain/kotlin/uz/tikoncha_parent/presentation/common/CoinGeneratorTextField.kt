@@ -30,7 +30,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.DisableButtonColor
 import uz.tikoncha_parent.ui.DisableButtonContentColor
 import uz.tikoncha_parent.ui.HintTextColor
@@ -39,7 +38,7 @@ import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.CoinsCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme

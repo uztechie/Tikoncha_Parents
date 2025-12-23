@@ -23,7 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.chat_icon
 import tikoncha_parents.composeapp.generated.resources.faol
 import tikoncha_parents.composeapp.generated.resources.ohirgi_faollik
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.model.ChatMemberUi
 import uz.tikoncha_parent.ui.LargeIconButtonSize
 import uz.tikoncha_parent.ui.NormalTextSize

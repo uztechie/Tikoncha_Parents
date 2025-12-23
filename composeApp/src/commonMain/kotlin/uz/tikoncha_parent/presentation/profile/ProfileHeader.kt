@@ -21,8 +21,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.ProfileImageSize
 import uz.tikoncha_parent.ui.ShapeCornerRadius
 import uz.tikoncha_parent.ui.SmallIconButtonSize
@@ -32,7 +30,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
-import uz.saidburxon.newedu.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 

@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.UltraSmallTextSize
 

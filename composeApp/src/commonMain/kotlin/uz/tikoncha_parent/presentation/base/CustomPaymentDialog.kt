@@ -6,9 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -41,7 +39,6 @@ import tikoncha_parents.composeapp.generated.resources.endi_siz_ushbu_obunaga_eg
 import tikoncha_parents.composeapp.generated.resources.maxsus_imkoniyatlar_va_qollab_quvvatlashdan_foydalaning
 import tikoncha_parents.composeapp.generated.resources.tabriklaymiz
 import tikoncha_parents.composeapp.generated.resources.tikoncha_plus_dialog
-import uz.saidburxon.newedu.presentation.base.CustomText
 
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ColorWhite
