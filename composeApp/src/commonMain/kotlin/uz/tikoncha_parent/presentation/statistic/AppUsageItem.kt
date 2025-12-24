@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,9 +17,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.domain.model.HourMinute
@@ -36,18 +42,25 @@ import tikoncha_parents.composeapp.generated.resources.locked
 import tikoncha_parents.composeapp.generated.resources.time_icon
 import tikoncha_parents.composeapp.generated.resources.unlocked
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun AppUsageItem(
     appUsageUi: AppUsageUi,
-    onLockClick: (appUsageUi: AppUsageUi) -> Unit
 ) {
 
-
     val loader: AppIconLoader = koinInject()
-    val icon = remember(appUsageUi.packageName) { loader.load(appUsageUi.packageName) }
+    val iconKey = remember(appUsageUi.packageName, appUsageUi.icon) {
+        appUsageUi.icon.takeIf { it.isNotBlank() } ?: appUsageUi.packageName
+    }
 
+    var iconBitmap by remember(iconKey) { mutableStateOf<ImageBitmap?>(null) }
+
+    LaunchedEffect(iconKey) {
+        iconBitmap = loader.load(iconKey) // ideal: suspend + cache
+    }
 
     Row(
         modifier = Modifier
@@ -63,39 +76,17 @@ fun AppUsageItem(
             modifier = Modifier
                 .size(AppIconSize)
         ) {
-
-//            if (bitMapIcon == null) {
-//                Icon(
-//                    painter = painterResource(Res.drawable.ic_launcher_foreground),
-//                    contentDescription = "",
-//                    tint = PrimaryColor
-//                )
-//            } else {
-//                Image(
-//                    painter = BitmapPainter(bitMapIcon.asImageBitmap()),
-//                    contentDescription = "",
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(AppIconInnerPadding),
-//                    contentScale = ContentScale.Crop
-//                )
-//            }
-
-            if (icon == null){
-                Icon(
-                    painter = painterResource(Res.drawable.ic_launcher_foreground),
-                    contentDescription = "",
-                    tint = PrimaryColor
-                )
-            }
-            else{
+            iconBitmap?.let { bmp ->
                 Image(
-                    bitmap = icon,
-                    contentDescription = "",
+                    bitmap = bmp,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize().padding(AppIconInnerPadding)
                 )
-            }
-
-
+            } ?: Icon(
+                painter = painterResource(Res.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                tint = PrimaryColor
+            )
         }
 
         Column(
@@ -153,41 +144,17 @@ fun AppUsageItem(
                 )
             }
         }
-
-        FilledTonalIconButton(
-            onClick = {
-                onLockClick(appUsageUi)
-            },
-            shape = RoundedCornerShape(ButtonCornerRadius),
-            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.extendedColor.backgroundColor),
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(AppIconSize)
-                .border(
-                    shape = RoundedCornerShape(ButtonCornerRadius),
-                    width = 1.dp,
-                    color = if (appUsageUi.allowed) MaterialTheme.extendedColor.primaryColor else MaterialTheme.colorScheme.error
-                )
-        ) {
-
-            Icon(
-                painter = if (appUsageUi.allowed) painterResource(Res.drawable.unlocked) else painterResource(
-                    Res.drawable.locked
-                ),
-                contentDescription = "",
-                tint = if (appUsageUi.allowed) PrimaryColor else MaterialTheme.colorScheme.error
-            )
-
-        }
     }
-
 }
 
 @Preview
 @Composable
 private fun PreviewAppUsageItem() {
-    AppUsageItem(
-        appUsageUi = AppUsageUi("", "Instagram", "", HourMinute(), false),
-        onLockClick = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        AppUsageItem(
+            appUsageUi = AppUsageUi("", "Instagram", "", HourMinute(), false),
+        )
+    }
 }
