@@ -83,6 +83,10 @@ class ProfileScreen : Screen {
         }
         val activeTasksCount = taskState.allChildrenActiveTaskCount
 
+        LaunchedEffect(Unit){
+            event(ProfileEvent.LoadAvatarFromServer)
+        }
+
         ProfileUi(
             navigator = navigator,
             event = event,
@@ -134,8 +138,10 @@ fun ProfileUi(
 
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val launchPicker = rememberImagePicker { picked ->
+        val bitmap = decodeImageBitmapOrNull(picked.bytes)
+        imageBitmap = bitmap
+        event(ProfileEvent.OnAvatarPreviewSelected(bitmap))
         event(ProfileEvent.OnAvatarPhotoSelected(picked.toUploadPart("avatar.jpg")))
-        imageBitmap = decodeImageBitmapOrNull(picked.bytes)
     }
 
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
@@ -173,9 +179,7 @@ fun ProfileUi(
             ProfileHeader(
                 fullName = state.userInfo?.name?:"",
                 fathersName = "",
-                image = imageBitmap,
                 onSelectImageButtonClick = {
-//                    event(ProfileEvent.OnChangeProfileImageClicked(null))
                     launchPicker()
                 },
                 state = state

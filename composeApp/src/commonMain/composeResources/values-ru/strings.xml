@@ -233,5 +233,9 @@
     <string name="ohirgi_faollik">был(а):</string>
     <string name="location_permission_request_message">Данные о местоположении используются для отображения вашего текущего положения на карте и задания зоны для вашего ребёнка.
 Эта информация используется только для этих функций и не передаётся третьим лицам.</string>
-
+    <string name="no_internet_connection">Пожалуйста, подключите ваш телефон к интернету!</string>
+    <string name="aloqa_uzildi">Соединение прервано</string>
+    <string name="internet_aloqa_uzildi">
+        Соединение с интернетом временно прервано. Пожалуйста, включите сеть и попробуйте снова.
+    </string>
 </resources>

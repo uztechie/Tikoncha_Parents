@@ -1,6 +1,8 @@
 package uz.tikoncha_parent.domain.use_case
 
+import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.no_internet_connection
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.RegisterUserRequest
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
@@ -23,7 +25,14 @@ class RegisterUseCase(
                     resId = Res.string.server_connection_error
                 )
             }
-        } catch (e: Exception) {
+        }
+        catch (e: IOException){
+            Resource.Error(
+                resId = Res.string.no_internet_connection,
+                cause = e
+            )
+        }
+        catch (e: Exception) {
             e.printStackTrace()
             Resource.Error(
                 resId = Res.string.server_connection_error,
