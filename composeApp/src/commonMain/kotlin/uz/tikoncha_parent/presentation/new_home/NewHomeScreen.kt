@@ -189,10 +189,10 @@ fun NewHomeUi(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(12.dp)
                     .clickable {
                         navigator?.push(NotificationScreen())
                     }
+                    .padding(12.dp)
             ) {
                 Image(
                     painter = painterResource(Res.drawable.notification),
@@ -207,10 +207,10 @@ fun NewHomeUi(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(12.dp)
                     .clickable {
                         navigator?.push(ProfileScreen())
                     }
+                    .padding(12.dp)
             ) {
                 Image(
                     painter = painterResource(Res.drawable.profile),

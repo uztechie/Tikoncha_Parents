@@ -135,7 +135,6 @@ fun PersonalInformationUi(
                     onSelectImageButtonClick = {
                         launchPicker()
                     },
-                    image = null,
                     state = state
                 )
 

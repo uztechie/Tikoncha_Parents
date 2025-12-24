@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -142,6 +143,7 @@ fun Register(
                 Image(
                     painter = painterResource(Res.drawable.parent),
                     contentDescription = "Parent",
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
             },
@@ -160,6 +162,7 @@ fun Register(
                 Image(
                     painter = painterResource(Res.drawable.parent),
                     contentDescription = "Parent",
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
             },
@@ -178,6 +181,7 @@ fun Register(
                 Image(
                     painter = painterResource(Res.drawable.parent),
                     contentDescription = "Parent",
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
             },
@@ -195,6 +199,7 @@ fun Register(
                 Image(
                     painter = painterResource(Res.drawable.id_card),
                     contentDescription = "Parent",
+                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
             },

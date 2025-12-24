@@ -22,7 +22,6 @@ class ProfileViewModel(
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
 ): ViewModel() {
-    val BASE_URL = "https://api.tikoncha.uz"
     var userInfoJob: Job? = null
     var childrenJob: Job? = null
     var avatarJob: Job? = null
@@ -56,6 +55,14 @@ class ProfileViewModel(
             is ProfileEvent.OnChangeProfilePhotoClicked -> {
 
             }
+
+            is ProfileEvent.OnAvatarPreviewSelected -> {
+                _state.update {
+                    it.copy(
+                        localAvatar = event.bitmap
+                    )
+                }
+            }
         }
     }
 
@@ -66,7 +73,7 @@ class ProfileViewModel(
         avatarJob = viewModelScope.launch {
             when (val res = uploadAvatarToServerUseCase(part)) {
                 is Resource.Success -> {
-                    val url = "${BASE_URL}${res.data.avatar_url}"
+                    val url = res.data.avatar_url ?:""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }
@@ -80,7 +87,7 @@ class ProfileViewModel(
         avatarJob = viewModelScope.launch {
             when (val res = loadAvatarFromServerUseCase()) {
                 is Resource.Success -> {
-                    val url = "${BASE_URL}${res.data.avatar_url}"
+                    val url = res.data.avatar_url?:""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }

@@ -46,6 +46,23 @@ fun CustomDialog(
     isRow: Boolean = false
 ) {
 
+    val dialogIcon = if (message == stringResource(Res.string.no_internet_connection)) {
+        painterResource(Res.drawable.dialog_internet)
+    } else {
+        painter
+    }
+
+    val dialogTitle = if (message == stringResource(Res.string.no_internet_connection)) {
+        stringResource(Res.string.aloqa_uzildi)
+    } else {
+        title
+    }
+
+    val dialogMessage = if (message == stringResource(Res.string.no_internet_connection)) {
+        stringResource(Res.string.internet_aloqa_uzildi)
+    } else {
+        message
+    }
 
     if (show) {
         Dialog(
@@ -71,7 +88,7 @@ fun CustomDialog(
 
                     SpaceLarge()
                     Image(
-                        painter = painter,
+                        painter = dialogIcon,
                         contentDescription = "",
                         modifier = Modifier
                             .size(60.dp)
@@ -79,7 +96,7 @@ fun CustomDialog(
                     )
                     SpaceLarge()
                     CustomText(
-                        text = title,
+                        text = dialogTitle,
                         fontSize = NormalTextSize,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
@@ -90,7 +107,7 @@ fun CustomDialog(
                     SpaceLarge()
 
                     CustomText(
-                        text = message,
+                        text = dialogMessage,
                         fontSize = NormalTextSize,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
