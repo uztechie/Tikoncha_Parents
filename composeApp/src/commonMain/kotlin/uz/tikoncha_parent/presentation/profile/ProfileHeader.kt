@@ -33,7 +33,6 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.tikoncha_parent.presentation.base.CustomText
-import uz.saidburxon.newedu.presentation.base.CustomText
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode

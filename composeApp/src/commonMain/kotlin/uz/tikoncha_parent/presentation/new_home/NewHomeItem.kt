@@ -37,7 +37,7 @@ fun NewHomeItem(
     onSettingSelected: (HomeSelectionItem) -> Unit
 ){
     Column {
-        HomeSelectionItem.values().forEach { selection ->
+        HomeSelectionItem.entries.forEach { selection ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

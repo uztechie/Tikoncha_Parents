@@ -39,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.sesh
 import tikoncha_parents.composeapp.generated.resources.shan
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.yak
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.ceil
@@ -49,9 +50,18 @@ fun UsageBarChart(
     modifier: Modifier = Modifier,
     barColor: Color = PrimaryColor
 ) {
-    val max: Float = data.values.maxOrNull()?.toFloat()?:0f
-    val maxHour = ceil(max/60).toInt()
-    val durationLabels = getDurationLabels(maxHour)
+    val maxMinutes: Float = data.values.maxOrNull()?.toFloat()?:0f
+    val maxHour = ceil(maxMinutes/60).toInt()
+    val isWeekly = data.size == 7
+    val topHour = if (isWeekly) weeklyTopHourCapped(maxHour) else maxHour
+
+    Logger.d("UsageBarChart", "maxMinutes=$maxMinutes, maxHour=$maxHour, topHour=$topHour, isWeekly=$isWeekly")
+
+    val durationLabels = listOf(
+        topHour.toString(),
+        (topHour / 2).toString(),
+        "0"
+    )
 
     val daysOfWeek = listOf(
         stringResource(Res.string.dush),
@@ -136,7 +146,16 @@ fun UsageBarChart(
     }
 }
 
+private const val WEEKLY_MAX_HOUR = 300
+private val weeklySteps = listOf(
+    1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24,
+    30, 36, 48, 60, 72, 96, 120, 144, 168, 240, 300
+)
 
+private fun weeklyTopHourCapped(maxHour: Int): Int {
+    val capped = maxHour.coerceAtMost(WEEKLY_MAX_HOUR)
+    return weeklySteps.firstOrNull { it >= capped } ?: WEEKLY_MAX_HOUR
+}
 
 fun getDurationLabels(hours:Int): List<String> {
     return when {
@@ -165,14 +184,12 @@ fun AnimatedUsageBarChartCanvas(
 ) {
     val sortedKeys = data.keys.sorted()
     val maxValueInMinutes = data.values.maxOrNull()?.takeIf { it > 0 } ?: 1.0
+    val rawMaxHours = ceil(maxValueInMinutes / 60.0).toInt()
 
-    // Define available hour steps (must be sorted ascending)
-    val hourSteps = listOf(1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24)
+    val isWeekly = data.size == 7
+    val topHour = if (isWeekly) weeklyTopHourCapped(rawMaxHours) else rawMaxHours.coerceAtLeast(1)
+    val maxValueAdjusted = topHour * 60.0 // minutes
 
-    // Convert max value to hours and round up
-    val maxValueInHours = ceil(maxValueInMinutes / 60).toInt()
-    val targetHour = hourSteps.firstOrNull { it >= maxValueInHours } ?: 24
-    val maxValueAdjusted = targetHour * 60.0 // in minutes
 
     val animatedProgress = remember { Animatable(0f) }
 
@@ -215,7 +232,12 @@ fun AnimatedUsageBarChartCanvas(
 
         sortedKeys.forEachIndexed { index, key ->
             val value = data[key] ?: 0.0
-            val percent = (value / maxValueAdjusted).toFloat()
+            val safeValue = if (isWeekly) value.coerceAtMost(maxValueAdjusted) else value
+
+            val percent = (safeValue / maxValueAdjusted)
+                .toFloat()
+                .coerceIn(0f, 1f)
+
             val barHeight = canvasHeight * percent * animatedProgress.value
 
             val left = index * (barWidth + spacing)
