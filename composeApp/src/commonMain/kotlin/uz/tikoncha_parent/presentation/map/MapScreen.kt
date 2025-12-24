@@ -75,7 +75,6 @@ import tikoncha_parents.composeapp.generated.resources.yoqish
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
-import uz.tikoncha_parent.platform.KmpWebViewController
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.UniversalJsonWebView
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
@@ -280,12 +279,6 @@ class MapScreen : Screen {
             jsonString = Json.encodeToString(payload)
         }
 
-        var webController by remember { mutableStateOf<KmpWebViewController?>(null) }
-
-        LaunchedEffect(jsonString) {
-            // Har safar parent/children location o‘zgarsa json qayta yuboriladi
-            webController?.postJson(jsonString)
-        }
 
 
         var lastPushedChildId by remember { mutableStateOf<String?>(null) }
