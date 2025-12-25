@@ -297,9 +297,6 @@ fun StatisticUi(
                 state.appUsageUiList.forEach { item ->
                     AppUsageItem(
                         appUsageUi = item,
-                        onLockClick = {
-
-                        }
                     )
                     SpaceUltraSmall()
                     DividerHorizontal()
