@@ -53,7 +53,7 @@ fun CustomSelectionButton(
     tint: Color = SliderPageColor
 ) {
 
-    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.primaryColor
+    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.textColor
     val newText = text.ifEmpty { label }
 
     Row(

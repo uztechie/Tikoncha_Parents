@@ -35,7 +35,7 @@ val DarkBackgroundColor = Color(0xFF130D00)
 val ShadowColorDark = DarkBackgroundColor
 val ShadowColorLight = Color(0XFF8F8F8F)
 
-val BorderColor = Color(0xFFE7E7E7)
+val BorderColor = Color(0xFFD2D1D1)
 //val BorderColor = Color(0xFFE7E7E7)
 val OtpErrorColor = Color(0xFFFF9090)
 val ChatMessageColor = Color(0xFF8AD194)
