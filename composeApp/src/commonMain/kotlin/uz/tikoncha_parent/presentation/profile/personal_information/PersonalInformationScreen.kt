@@ -96,13 +96,7 @@ fun PersonalInformationUi(
         showCloseButton = true,
         onDismiss = { logout = false },
         onButtonClick = {
-            AppSettings.hasUserLogin = false
-            AppSettings.userInfo = null
-            AppSettings.children = emptyList()
-            AppSettings.selectedChild = null
-            AppSettings.selectedChildId = ""
-            AppSettings.policyId = ""
-            AppSettings.subscriptionLimitList = emptyList()
+            AppSettings.clearSession()
             navigator?.replaceAll(LoginScreen())
         }
     )

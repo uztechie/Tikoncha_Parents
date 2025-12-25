@@ -133,17 +133,23 @@ class HomeViewModel(
                 }
 
                 is Resource.Success -> {
+                    Logger.d("HomeViewModel", "AppSettings.selectedChild=${AppSettings.selectedChild}")
+                    val children = response.data.map { it.toUserInfo() }
+
+                    // ✅ AppSettings + selectedChild sync
+                    AppSettings.syncSelectedChildWith(children)
+
                     _state.update {
                         it.copy(
                             childrenResponseState = ResponseState.Success(),
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() },
+                            childrenList = AppSettings.children,
                             selectedChild = AppSettings.selectedChild
                         )
                     }
-                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
-                    if (AppSettings.selectedChild == null){
-                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
-                    }
+
+                    Logger.d("HomeViewModel", "AppSettings.selectedChild=${AppSettings.selectedChild}")
+                    Logger.d("HomeViewModel", "AppSettings.children=${AppSettings.children}")
+
 
                 }
             }

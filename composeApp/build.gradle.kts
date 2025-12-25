@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -64,6 +65,8 @@ kotlin {
             //firebase
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.5.1"))
             implementation("com.google.firebase:firebase-messaging-ktx")
+
+            implementation(libs.androidx.appcompat)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -98,6 +101,7 @@ kotlin {
             implementation(libs.remember.settings)
 
 
+
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation("network.chaintech:qr-kit:3.1.2")
 
@@ -108,9 +112,9 @@ kotlin {
 
 
             //location
-            api("dev.icerock.moko:permissions:0.19.1")
-            api("dev.icerock.moko:permissions-compose:0.19.1")
-            api("dev.icerock.moko:permissions-location:0.19.1")
+            api("dev.icerock.moko:permissions:0.20.1")
+            api("dev.icerock.moko:permissions-compose:0.20.1")
+            api("dev.icerock.moko:permissions-location:0.20.1")
 
             // Lokatsiya trakeri
             api("dev.icerock.moko:geo:0.8.0")
@@ -128,7 +132,7 @@ kotlin {
             implementation("io.coil-kt.coil3:coil-compose:3.3.0")
             implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
 
-            implementation("org.jetbrains.kotlinx:atomicfu:0.29.0")
+//            implementation("org.jetbrains.kotlinx:atomicfu:0.29.0")
 
 
 
