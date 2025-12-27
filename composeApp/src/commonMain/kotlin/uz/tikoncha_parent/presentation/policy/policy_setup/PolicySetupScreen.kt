@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -34,7 +35,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -117,7 +120,7 @@ class PolicySetupScreen(
 
 
         Logger.d("PolicySetupScreen", "Content: ${sharedState.timeList}")
-        LaunchedEffect(sharedState.timeList, sharedState.limitList, sharedAppState.selectedPkgs, sharedState.policyTitle, sharedState.locationRule){
+        LaunchedEffect(sharedState.timeList, sharedState.limitList, sharedAppState.selectedPkgs, sharedState.policyTitle, sharedState.locationRule, sharedState.initialDraftSnapshot){
             event(PolicySetupEvent.SetLimitRule(sharedState.limitList))
             event(PolicySetupEvent.SetTimeRule(sharedState.timeList))
             event(PolicySetupEvent.SetLocationRule(sharedState.locationRule))
@@ -126,6 +129,27 @@ class PolicySetupScreen(
             sharedState.selectedPolicy?.let {
                 event(PolicySetupEvent.SetPolicy(it))
             }
+
+            val snapshot =  PolicyDraftSnapshot(
+                title = sharedState.policyTitle,
+                timeList = sharedState.timeList,
+                limitList = sharedState.limitList,
+                locationRule = sharedState.locationRule,
+                packages = sharedAppState.selectedPkgs.toList()
+            )
+
+            sharedEvent(PolicySharedEvent.SetPolicyDraftSnapshot(
+                snapshot = snapshot
+            ))
+
+            sharedState.initialDraftSnapshot?.let{ initialSnapshot->
+                event(PolicySetupEvent.SetPolicyDraftSnapshot(
+                    initialSnapshot = initialSnapshot,
+                    updatedSnapshot = snapshot
+                ))
+            }
+
+
         }
 
 
@@ -155,6 +179,11 @@ fun PolicySetupUi(
 ) {
 
 
+    DisposableEffect(Unit) {
+        onDispose {
+            sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
+        }
+    }
 
     var showDialogEdit by remember { mutableStateOf(false) }
     var showCloseConfirmDialog by remember { mutableStateOf(false) }
@@ -203,16 +232,16 @@ fun PolicySetupUi(
 
     Logger.d("PolicySetupScreen", "createError=$createErrorText  show=$showErrorDialog")
 
-    cafe.adriel.voyager.navigator.internal.BackHandler(enabled = true) {
-        if (
-            (state.timeList.isNotEmpty() || state.limitList.isNotEmpty() || state.selectedPackages.isNotEmpty())
-            && sharedState.canUpdate
-        ) {
+    BackHandler(enabled = true) {
+        if (state.hasChanges && sharedState.canUpdate) {
             showCloseConfirmDialog = true
         } else {
             navigator?.pop()
         }
     }
+
+
+
 
     CustomDialogTextField(
         enabled = sharedState.policyTitle.isNotEmpty(),

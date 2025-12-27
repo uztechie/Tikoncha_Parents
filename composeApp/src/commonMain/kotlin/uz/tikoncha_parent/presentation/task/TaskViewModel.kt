@@ -32,7 +32,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 
-class TaskViewModel (
+class TaskViewModel(
     private val todoUseCase: TodoUseCase,
     private val childrenUseCase: ChildrenUseCase,
     private val todoListUseCase: TodoListUseCase,
@@ -115,7 +115,7 @@ class TaskViewModel (
             TaskEvent.LoadParentCoins -> {
                 viewModelScope.launch {
                     val request = coinsUseCase()
-                    when(request){
+                    when (request) {
                         is Resource.Success -> {
                             _state.update {
                                 it.copy(
@@ -123,6 +123,7 @@ class TaskViewModel (
                                 )
                             }
                         }
+
                         is Resource.Error -> {
                             _state.update {
                                 it.copy(
@@ -130,7 +131,8 @@ class TaskViewModel (
                                 )
                             }
                         }
-                        is Resource.Loading -> { }
+
+                        is Resource.Loading -> {}
                     }
                 }
             }
@@ -154,11 +156,10 @@ class TaskViewModel (
 
             TaskEvent.OnConfirmClicked -> {
                 val editingId = state.value.editingTaskId
-                if (state.value.isEditing && !editingId.isNullOrEmpty()){
+                if (state.value.isEditing && !editingId.isNullOrEmpty()) {
                     val editedTask = buildEditedTaskFromState()
                     updateTodo(editedTask)
-                }
-                else {
+                } else {
                     requestTodo()
                 }
             }
@@ -178,7 +179,7 @@ class TaskViewModel (
             }
 
             is TaskEvent.OnCompletedTask -> {
-               updateTodo(task = event.task.copy(isCompleted = true))
+                updateTodo(task = event.task.copy(isCompleted = true))
             }
 
             is TaskEvent.ShowMineAll -> {
@@ -219,7 +220,7 @@ class TaskViewModel (
         }
     }
 
-    private fun requestTodo(){
+    private fun requestTodo() {
         requestTodoJob?.cancel()
         requestTodoJob = viewModelScope.launch {
             _state.update {
@@ -228,13 +229,17 @@ class TaskViewModel (
                 )
             }
 
-            val  selectedChildUserId = state.value.selectedChild?.userId
+            val selectedChildUserId = state.value.selectedChild?.userId
 
             val request = TodoRequest(
                 title = _state.value.title,
                 description = _state.value.desc,
                 importance = _state.value.importance.toServerType(),
-                due_date = DateTimeUtil.formatToIsoString(localDate = _state.value.date, localTime = _state.value.time, timeZone = TimeZone.UTC),
+                due_date = DateTimeUtil.formatToIsoString(
+                    localDate = _state.value.date,
+                    localTime = _state.value.time,
+                    timeZone = TimeZone.UTC
+                ),
                 created_at = DateTimeUtil.getCurrentIsoDateTime(timeZone = TimeZone.UTC),
                 target_user_id = selectedChildUserId,
                 id = Uuid.random().toString(),
@@ -244,7 +249,7 @@ class TaskViewModel (
 
             val result = todoUseCase(request)
 
-            when(result){
+            when (result) {
 
                 is Resource.Loading -> {}
 
@@ -266,9 +271,9 @@ class TaskViewModel (
                     val childId = selectedChildUserId.orEmpty()
                     val availableCoins = state.value.availableCoins
 
-                    if (gift > 0 && gift <= availableCoins && childId.isNotEmpty()){
+                    if (gift > 0 && gift <= availableCoins && childId.isNotEmpty()) {
                         val giftCoins = coinsUseCase()
-                        when(giftCoins){
+                        when (giftCoins) {
                             is Resource.Success -> {
                                 _state.update {
                                     it.copy(
@@ -276,6 +281,7 @@ class TaskViewModel (
                                     )
                                 }
                             }
+
                             is Resource.Error -> {}
                             is Resource.Loading -> {}
                         }
@@ -298,7 +304,7 @@ class TaskViewModel (
         }
     }
 
-    private fun updateTodo(task: Task){
+    private fun updateTodo(task: Task) {
         updateTodoJob?.cancel()
         updateTodoJob = viewModelScope.launch {
             _state.update {
@@ -313,15 +319,21 @@ class TaskViewModel (
                 title = task.title,
                 description = task.description,
                 importance = task.importance.toServerType(),
-                due_date = DateTimeUtil.formatToIsoString(millis = task.dateTime, timeZone = TimeZone.UTC),
-                created_at = DateTimeUtil.formatToIsoString(millis = task.createdAt, timeZone = TimeZone.UTC),
+                due_date = DateTimeUtil.formatToIsoString(
+                    millis = task.dateTime,
+                    timeZone = TimeZone.UTC
+                ),
+                created_at = DateTimeUtil.formatToIsoString(
+                    millis = task.createdAt,
+                    timeZone = TimeZone.UTC
+                ),
                 target_user_id = task.targetUserId,
                 is_completed = task.isCompleted
             )
 
             val result = updateTodoUseCase(request)
 
-            when(result){
+            when (result) {
 
                 is Resource.Loading -> {
 
@@ -373,13 +385,13 @@ class TaskViewModel (
     }
 
 
-    private fun loadTasks(){
+    private fun loadTasks() {
         listJob?.cancel()
         listJob = viewModelScope.launch {
 
             val selectedId = state.value.selectedChild?.userId
 
-            if (selectedId == null){
+            if (selectedId == null) {
                 _state.update {
                     it.copy(
                         listResponseState = ResponseState.Loading,
@@ -391,25 +403,29 @@ class TaskViewModel (
 
             val result = todoListUseCase.invoke(selectedId)
 
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                           listResponseState = ResponseState.Error(
-                               res = result.resId,
-                               message = result.message
-                           ),
+                            listResponseState = ResponseState.Error(
+                                res = result.resId,
+                                message = result.message
+                            ),
                             allTaskList = emptyList()
                         )
                     }
                 }
+
                 is Resource.Success -> {
 
                     _state.update {
                         it.copy(
                             listResponseState = ResponseState.Success(),
-                            allTaskList = result.data
+                            allTaskList = result.data,
+                            activeTaskCount = result.data.count {
+                                it.is_completed
+                            }
                         )
                     }
                     manageTaskList()
@@ -420,30 +436,38 @@ class TaskViewModel (
     }
 
 
-    fun manageTaskList(){
+    fun manageTaskList() {
         val allList = state.value.allTaskList
 
         _state.update {
             it.copy(
-                childrenTaskList = allList.filter { it.author_id != AppSettings.userId && !it.is_completed }.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
-                parentTaskList = allList.filter { it.author_id == AppSettings.userId && !it.is_completed}.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                childrenTaskList = allList.filter { it.author_id != AppSettings.userId && !it.is_completed }
+                    .map { it.toTask() }
+                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                parentTaskList = allList.filter { it.author_id == AppSettings.userId && !it.is_completed }
+                    .map { it.toTask() }
+                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
             )
         }
     }
 
-    private fun manageCompletedTaskList(){
+    private fun manageCompletedTaskList() {
         val allList = state.value.allTaskList
 
         _state.update {
             it.copy(
-                childrenCompletedTaskList = allList.filter { it.author_id != AppSettings.userId && it.is_completed }.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
-                parentCompletedTaskList = allList.filter { it.author_id == AppSettings.userId && it.is_completed}.map { it.toTask() }.sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                childrenCompletedTaskList = allList.filter { it.author_id != AppSettings.userId && it.is_completed }
+                    .map { it.toTask() }
+                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                parentCompletedTaskList = allList.filter { it.author_id == AppSettings.userId && it.is_completed }
+                    .map { it.toTask() }
+                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
             )
         }
         recomputeSelectedCompleted()
     }
 
-    private fun recomputeSelectedCompleted(){
+    private fun recomputeSelectedCompleted() {
         val gender = state.value.genderIndex
         val selected = if (gender == 0)
             state.value.childrenCompletedTaskList
@@ -457,10 +481,10 @@ class TaskViewModel (
         }
     }
 
-    private fun loadAllChildrenActiveTasks(){
+    private fun loadAllChildrenActiveTasks() {
         viewModelScope.launch {
             val childrenRes = childrenUseCase.invoke()
-            when(childrenRes) {
+            when (childrenRes) {
                 is Resource.Success -> {
                     val children = childrenRes.data.map { it.toUserInfo() }
                     var total = 0
@@ -482,6 +506,7 @@ class TaskViewModel (
                         )
                     }
                 }
+
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
@@ -489,6 +514,7 @@ class TaskViewModel (
                         )
                     }
                 }
+
                 is Resource.Loading -> {}
             }
         }

@@ -130,6 +130,21 @@ class PolicySetupViewModel(
                 }
 
             }
+
+            is PolicySetupEvent.SetPolicyDraftSnapshot -> {
+                _state.update { innerState->
+                    val hasChanges: Boolean = event.initialSnapshot.title != event.updatedSnapshot.title
+                            || event.initialSnapshot.timeList != event.updatedSnapshot.timeList
+                            || event.initialSnapshot.limitList != event.updatedSnapshot.limitList
+                            || event.initialSnapshot.locationRule != event.updatedSnapshot.locationRule
+                            || event.initialSnapshot.packages != event.updatedSnapshot.packages
+
+                    innerState.copy(
+                        policyDraftSnapshot = event.updatedSnapshot,
+                        hasChanges = hasChanges
+                    )
+                }
+            }
         }
 
     }

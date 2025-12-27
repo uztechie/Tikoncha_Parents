@@ -10,5 +10,6 @@ data class PolicyState(
     val selectedChild: UserInfo? = null,
     val policyResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val policies: List<PolicyItemUi> = emptyList(),
+    val blockedAppCount:Int = 0,
     val subscriptionLimit: SubscriptionLimit = SubscriptionLimit()
 )

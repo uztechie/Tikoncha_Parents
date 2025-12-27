@@ -11,6 +11,7 @@ import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicyDraftSnapshot
 
 class PolicySharedModel(
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase
@@ -48,11 +49,14 @@ class PolicySharedModel(
             PolicySharedEvent.ClearData -> {
                 _state.update {
                     it.copy(
+                        canUpdateInitialDraftSnapshot = true,
+                        initialDraftSnapshot = null,
                         limitList = emptyList(),
                         timeList = emptyList(),
                         selectedPolicy = null,
                         policyTitle = "",
                         canUpdate = true,
+                        locationRule = null
 //                        subscriptionLimitEntity = null
                     )
                 }
@@ -100,6 +104,27 @@ class PolicySharedModel(
                 _state.update {
                     it.copy(
                         locationRule = event.locationRule
+                    )
+                }
+            }
+
+            is PolicySharedEvent.SetPolicyDraftSnapshot -> {
+                _state.update { innerState->
+                    if (innerState.canUpdateInitialDraftSnapshot){
+                        innerState.copy(
+                            initialDraftSnapshot = event.snapshot
+                        )
+                    }
+                    else{
+                        innerState
+                    }
+                }
+            }
+
+            PolicySharedEvent.StopPolicyDraftSnapshotUpdate -> {
+                _state.update {
+                    it.copy(
+                        canUpdateInitialDraftSnapshot = false
                     )
                 }
             }

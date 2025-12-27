@@ -2,14 +2,16 @@ package uz.tikoncha_parent.presentation.policy
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import qrgenerator.qrkitpainter.event
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
+import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
@@ -27,17 +29,18 @@ class PolicyViewModel(
     val state = _state.asStateFlow()
 
 
-
-    fun onEvent(event: PolicyEvent){
-        when(event){
+    fun onEvent(event: PolicyEvent) {
+        when (event) {
             is PolicyEvent.SetSelectedChild -> {
                 _state.value = _state.value.copy(
                     selectedChild = event.child,
-                    subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == event.child.userId }?: SubscriptionLimit()
+                    subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == event.child.userId }
+                        ?: SubscriptionLimit()
                 )
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
                 getPolicies()
+                Logger.d(TAG, "selectedChild=${AppSettings.selectedChild}")
             }
 
             PolicyEvent.GetPolicies -> {
@@ -54,17 +57,18 @@ class PolicyViewModel(
     }
 
 
-    private fun getSubscriptionLimit(){
+    private fun getSubscriptionLimit() {
         viewModelScope.launch {
             val result = subscriptionLimitUseCase.invoke()
             refreshSubscriptionLimit()
         }
     }
 
-    private fun refreshSubscriptionLimit(){
+    private fun refreshSubscriptionLimit() {
         _state.update {
             it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }
+                    ?: SubscriptionLimit()
             )
         }
         Logger.d(TAG, " subscriptionLimit=${_state.value.subscriptionLimit}")
@@ -73,7 +77,7 @@ class PolicyViewModel(
 
 
     private var policyJob: Job? = null
-    private fun getPolicies(){
+    private fun getPolicies() {
         policyJob?.cancel()
         policyJob = viewModelScope.launch {
             _state.update {
@@ -82,9 +86,10 @@ class PolicyViewModel(
                 )
             }
 
-            val result = getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId?:"")
+            val result =
+                getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
 
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -93,14 +98,26 @@ class PolicyViewModel(
                         )
                     }
                 }
+
                 is Resource.Success -> {
 
-                    _state.update {
-                        it.copy(
+                    _state.update { innerState ->
+                        val policies = result.data
+                            .map { it.toPolicyListUi() }
+                            .sortedByDescending { it.policyType.order }
+
+                        val blockedAppCount = policies
+                            .filter {
+                                it.policyType == PolicyType.PARENT_CHILD
+                            }
+                            .flatMap { it.packages }
+                            .toSet()
+                            .size
+
+                        innerState.copy(
                             policyResponseState = ResponseState.Success(),
-                            policies = result.data
-                                .map { it.toPolicyListUi() }
-                                .sortedByDescending { it.policyType.order }
+                            policies = policies,
+                            blockedAppCount = blockedAppCount
                         )
                     }
                 }

@@ -219,7 +219,7 @@ val sharedModule = module {
     viewModel { ChildConfirmViewModel() }
     viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get()) }
-    factory { HomeViewModel(get(), get(), get(), get()) }
+    factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { ChatViewModel(
         get(),
         get(),

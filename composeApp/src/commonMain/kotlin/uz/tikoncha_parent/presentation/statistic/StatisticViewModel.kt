@@ -43,6 +43,7 @@ class StatisticViewModel(
 ) : ScreenModel
 {
 
+    private val TAG = "HomeViewModel"
 
     private val _state = MutableStateFlow(StatisticState())
     val state = _state.asStateFlow()
@@ -65,12 +66,19 @@ class StatisticViewModel(
         when (event) {
 
             is StatisticEvent.OnChildSelected -> {
+
+                Logger.d(TAG, "Statistics-OnChildSelected AppSettings.selectedChild=${AppSettings.selectedChild}")
+                Logger.d(TAG, "Statistics-OnChildSelected event.child=${event.child}")
+
                 _state.update {
                     it.copy(selectedChild = event.child)
                 }
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
                 loadAppUsages()
+
+                Logger.d(TAG, "Statistics-OnChildSelected after AppSettings.selectedChild=${AppSettings.selectedChild}")
+                Logger.d(TAG, "Statistics-OnChildSelected after event.child=${event.child}")
             }
 
             is StatisticEvent.GetUsageList -> {

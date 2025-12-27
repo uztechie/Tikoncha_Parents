@@ -4,6 +4,7 @@ import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
+import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
@@ -18,5 +19,10 @@ data class PolicySetupState(
     val packagesString: String = "",
     val title: String = "",
     val selectedPackages: List<String> = emptyList(),
-    val selectedPolicyItemUi: PolicyItemUi? = null
-)
+    val selectedPolicyItemUi: PolicyItemUi? = null,
+
+
+    val policyDraftSnapshot: PolicyDraftSnapshot? = null,
+    val hasChanges: Boolean = false
+){
+}

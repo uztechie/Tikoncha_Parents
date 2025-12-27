@@ -230,7 +230,7 @@
     <string name="diqqat" >Diqqat!</string>
     <string name="siz_tanlagan_vaqt_oraligida">Siz tanlagan Vaqt oralig‘ida Ishlatish Limiti ish bermaydi! Ya’ni vaqt jadvalining ustuvorligi yuqori.</string>
     <string name="limit_tugadi" >Limit tugadi!</string>
-    <string name="ta_ilova_sizda_o_rnatilmagan">%1$d ta ilova sizda o\‘rnatilmagan</string>
+    <string name="ta_ilova_sizda_o_rnatilmagan">%1$d ta ilova sizda o‘rnatilmagan</string>
     <string name="cheklovlar">Cheklovlar</string>
     <string name="ta_ilovaga">%1$d ta ilovaga</string>
     <string name="ta_vebsaytga">%1$d ta vebsaytga</string>
@@ -238,8 +238,8 @@
     <string name="jadval_nomini_kiriting">Jadval nomini kiriting</string>
     <string name="misol_o_quv_markaz">misol: O‘quv markaz</string>
     <string name="jadval_muvaffaqiyatli_tahrirlandi">Jadval muvaffaqiyatli tahrirlandi!</string>
-    <string name="jadval_muvaffaqiyatli_o_chirildi">Jadval muvaffaqiyatli o\‘chirildi!</string>
-    <string name="siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz">Siz rostdan ham ushbu jadvalni o\‘chirmoqchimisiz?</string>
+    <string name="jadval_muvaffaqiyatli_o_chirildi">Jadval muvaffaqiyatli o‘chirildi!</string>
+    <string name="siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz">Siz rostdan ham ushbu jadvalni o‘chirmoqchimisiz?</string>
     <string name="ochirish">O‘chirish</string>
     <string name="jadvalni_saqlamasdan_chiqishga_rozimisiz">Jadvalni saqlamasdan chiqishga rozimisiz?</string>
     <string name="roziman">roziman</string>

@@ -9,4 +9,6 @@ sealed interface HomeEvent {
 
     data object GetChildren: HomeEvent
     data object RefreshParentRequest: HomeEvent
+
+    data object SyncSelectedChildFromSettings : HomeEvent
 }

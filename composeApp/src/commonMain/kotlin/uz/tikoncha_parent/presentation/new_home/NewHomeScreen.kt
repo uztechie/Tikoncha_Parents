@@ -59,6 +59,7 @@ import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
+import uz.tikoncha_parent.presentation.policy.PolicyState
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
@@ -99,12 +100,17 @@ class NewHomeScreen : Screen {
         val statisticState = statisticViewModel.state.collectAsStateWithLifecycle()
         val statisticEvent = statisticViewModel::onEvent
 
+
         LaunchedEffect(Unit) {
+            event(HomeEvent.SyncSelectedChildFromSettings)
             event(HomeEvent.GetChildren)
         }
 
+
+
         LaunchedEffect(state.value.selectedChild) {
-            Logger.d("selectedChild", "selectedChild=${state.value.selectedChild}")
+            Logger.d("HomeViewModel", "homeScreen " +
+                    "selectedChild=${state.value.selectedChild}")
             state.value.selectedChild?.let { child ->
                 statisticEvent(StatisticEvent.OnChildSelected(child))
             }
@@ -142,8 +148,8 @@ fun NewHomeUi(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    val tableCount = 42
-    val taskCount = 4
+    val tableCount = state.blockedAppCount
+    val taskCount = state.activeTaskCount
 
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
     val childrenErrorText = state.childrenResponseState.errorText()

@@ -2,6 +2,7 @@
 
 package uz.tikoncha_parent.presentation.new_home
 
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -11,12 +12,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.mapper.toPolicyListUi
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
+import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
@@ -31,8 +36,11 @@ class HomeViewModel(
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
     private val parentRequestUseCase: ParentRequestsUseCase,
+    private val todoListUseCase: TodoListUseCase,
+    private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
 ) : ScreenModel {
 
+    private val TAG = "HomeViewModel"
     private val hasLoaded = MutableStateFlow(false)
 
     private val _state = MutableStateFlow(HomeState())
@@ -47,11 +55,6 @@ class HomeViewModel(
 
     init {
         loadOnce()
-        _state.update {
-            it.copy(
-                selectedChild = AppSettings.selectedChild,
-            )
-        }
     }
 
     fun loadOnce(){
@@ -70,6 +73,8 @@ class HomeViewModel(
                 }
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
+                loadTasks()
+                loadPolicies()
             }
 
 
@@ -79,6 +84,13 @@ class HomeViewModel(
 
             HomeEvent.RefreshParentRequest -> {
                 loadParentRequestsCount()
+            }
+
+            HomeEvent.SyncSelectedChildFromSettings -> {
+                Logger.d(TAG,"SyncSelectedChildFromSettings = ${AppSettings.selectedChild} ")
+                _state.update { it.copy(selectedChild = AppSettings.selectedChild) }
+                loadTasks()
+                loadPolicies()
             }
         }
     }
@@ -109,7 +121,7 @@ class HomeViewModel(
 
 
     private fun loadChildren() {
-        Logger.d("loadChildren", " loadChildren current=${AppSettings.selectedChild}")
+        Logger.d(TAG, " loadChildren current=${AppSettings.selectedChild}")
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {
             _state.update {
@@ -133,7 +145,7 @@ class HomeViewModel(
                 }
 
                 is Resource.Success -> {
-                    Logger.d("HomeViewModel", "AppSettings.selectedChild=${AppSettings.selectedChild}")
+                    Logger.d(TAG, "AppSettings.selectedChild=${AppSettings.selectedChild}")
                     val children = response.data.map { it.toUserInfo() }
 
                     // ✅ AppSettings + selectedChild sync
@@ -147,8 +159,8 @@ class HomeViewModel(
                         )
                     }
 
-                    Logger.d("HomeViewModel", "AppSettings.selectedChild=${AppSettings.selectedChild}")
-                    Logger.d("HomeViewModel", "AppSettings.children=${AppSettings.children}")
+                    Logger.d(TAG, "AppSettings.selectedChild=${AppSettings.selectedChild}")
+                    Logger.d(TAG, "AppSettings.children=${AppSettings.children}")
 
 
                 }
@@ -169,6 +181,67 @@ class HomeViewModel(
                     _state.update {
                         it.copy(
                             parentRequestCount = count?:0
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadTasks() {
+        screenModelScope.launch {
+
+            val selectedId = state.value.selectedChild?.userId?:return@launch
+
+
+            val result = todoListUseCase.invoke(selectedId)
+
+            when (result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {}
+
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            activeTaskCount = result.data.count {
+                                !it.is_completed
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadPolicies() {
+        screenModelScope.launch {
+
+            val selectedChildId = _state.value.selectedChild?.userId ?: return@launch
+
+            val result =
+                getPoliciesFromServerUseCase.invoke(selectedChildId)
+
+            when (result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {}
+
+                is Resource.Success -> {
+
+                    _state.update { innerState ->
+                        val policies = result.data
+                            .map { it.toPolicyListUi() }
+                            .sortedByDescending { it.policyType.order }
+
+                        val blockedAppCount = policies
+                            .filter {
+                                it.policyType == PolicyType.PARENT_CHILD
+                            }
+                            .flatMap { it.packages }
+                            .toSet()
+                            .size
+
+                        innerState.copy(
+                            blockedAppCount = blockedAppCount
                         )
                     }
                 }

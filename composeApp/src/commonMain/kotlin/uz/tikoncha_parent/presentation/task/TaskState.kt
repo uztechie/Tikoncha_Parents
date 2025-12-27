@@ -39,6 +39,7 @@ data class TaskState(
     val childrenTaskList: List<Task> = emptyList(),
     val parentTaskList: List<Task> = emptyList(),
     val allTaskList: List<TodoDto> = emptyList(),
+    val activeTaskCount: Int = 0,
 
 
     val parentCompletedTaskList: List<Task> = emptyList(),

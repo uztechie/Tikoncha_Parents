@@ -4,6 +4,7 @@ import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.policy.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
 sealed interface PolicySetupEvent {
@@ -26,6 +27,7 @@ sealed interface PolicySetupEvent {
     data class SetPolicy(val policyItemUi: PolicyItemUi): PolicySetupEvent
     data class SetTitle(val title: String): PolicySetupEvent
     data class SetSelectedChild(val child: UserInfo?): PolicySetupEvent
+    data class SetPolicyDraftSnapshot(val initialSnapshot: PolicyDraftSnapshot, val updatedSnapshot: PolicyDraftSnapshot): PolicySetupEvent
 
 
 
