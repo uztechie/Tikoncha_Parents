@@ -244,7 +244,7 @@ class TaskViewModel(
                 target_user_id = selectedChildUserId,
                 id = Uuid.random().toString(),
                 is_completed = _state.value.completed,
-                coins = _state.value.coin
+                coin = _state.value.coin
             )
 
             val result = todoUseCase(request)
