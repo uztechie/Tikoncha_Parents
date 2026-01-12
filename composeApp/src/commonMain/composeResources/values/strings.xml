@@ -323,5 +323,9 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="internet_aloqa_uzildi">
         Internet bilan aloqa uzildi. Iltimos, tarmoqni yoqib qayta urinib ko‘ring.
     </string>
+    <string name="payment_type_text">To'lov %1$s orqali amalga oshiriladi.</string>
+
+
+    <string name="tolov_amalga_oshmadi">To'lov amalga oshmadi!</string>
 
 </resources>

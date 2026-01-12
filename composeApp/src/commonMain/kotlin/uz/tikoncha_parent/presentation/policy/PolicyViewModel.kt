@@ -22,7 +22,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class PolicyViewModel(
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase
-) : ViewModel() {
+) : ScreenModel {
 
     private val TAG = "PolicyViewModel"
     private val _state = MutableStateFlow<PolicyState>(PolicyState())
@@ -58,7 +58,7 @@ class PolicyViewModel(
 
 
     private fun getSubscriptionLimit() {
-        viewModelScope.launch {
+        screenModelScope.launch {
             val result = subscriptionLimitUseCase.invoke()
             refreshSubscriptionLimit()
         }
@@ -79,7 +79,7 @@ class PolicyViewModel(
     private var policyJob: Job? = null
     private fun getPolicies() {
         policyJob?.cancel()
-        policyJob = viewModelScope.launch {
+        policyJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     policyResponseState = ResponseState.Loading

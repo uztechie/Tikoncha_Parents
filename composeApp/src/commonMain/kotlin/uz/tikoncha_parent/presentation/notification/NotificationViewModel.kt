@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +18,7 @@ import uz.tikoncha_parent.domain.use_case.NewsUseCase
 class NotificationViewModel (
     private val repository: NewsRepository,
     private val getNewsUseCase: NewsUseCase
-): ViewModel() {
+): ScreenModel {
 
     private var newsJob: Job? = null
 
@@ -24,7 +26,7 @@ class NotificationViewModel (
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        screenModelScope.launch {
             NotificationRefreshEventBus.refresh.collect { load() }
         }
     }
@@ -33,7 +35,7 @@ class NotificationViewModel (
         _state.update { it.copy(loading = true, error = null) }
         newsJob?.cancel()
 
-        newsJob = viewModelScope.launch {
+        newsJob = screenModelScope.launch {
             when (val result = getNewsUseCase()) {
                 is Resource.Loading -> Unit
                 is Resource.Error -> {
@@ -74,7 +76,7 @@ class NotificationViewModel (
             )
         }
 
-        viewModelScope.launch {
+        screenModelScope.launch {
             runCatching { repository.markNewsRead(id) }
                 .onSuccess {
                     NotificationUnreadEventBus.tryEmit(
@@ -106,7 +108,7 @@ class NotificationViewModel (
 
         }
 
-        viewModelScope.launch {
+        screenModelScope.launch {
             runCatching { repository.markAllNewsRead() }
                 .onSuccess {
                     NotificationUnreadEventBus.tryEmit(

@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
@@ -92,7 +93,7 @@ class PolicySetupScreen(
 
         val navigator = LocalNavigator.current?:return
 
-        val viewModel = koinViewModel<PolicySetupViewModel>()
+        val viewModel = koinScreenModel<PolicySetupViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

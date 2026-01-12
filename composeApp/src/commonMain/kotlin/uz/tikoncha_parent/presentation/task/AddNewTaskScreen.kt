@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.common.Util
@@ -77,7 +78,7 @@ class AddNewTaskScreen(
     @Composable
     override fun Content() {
 
-        val viewModel = koinViewModel<TaskViewModel>()
+        val viewModel = koinScreenModel<TaskViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

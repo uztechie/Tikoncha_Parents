@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
@@ -48,6 +49,7 @@ import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_parol_y
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -56,7 +58,7 @@ class CreatePasswordScreen : Screen {
     @Composable
     override fun Content() {
 
-        val viewModel = koinViewModel<CreatePasswordViewmodel>()
+        val viewModel = koinScreenModel<CreatePasswordViewmodel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

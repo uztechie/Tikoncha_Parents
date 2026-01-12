@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.new_home.logout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +17,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class ParentRequestViewModel(
     private val parentRequestsUseCase: ParentRequestsUseCase,
     private val updateResponseUseCase: UpdateParentRequestStatusUseCase
-) : ViewModel() {
+) : ScreenModel {
 
     private val _state = MutableStateFlow(ParentRequestState())
     val state = _state.asStateFlow()
@@ -63,7 +65,7 @@ class ParentRequestViewModel(
 
     fun loadParentRequests(){
         parentRequestJob?.cancel()
-        parentRequestJob = viewModelScope.launch {
+        parentRequestJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     listResponseState = ResponseState.Loading,
@@ -99,7 +101,7 @@ class ParentRequestViewModel(
     fun updateParentRequest(status: String,isSelect: Boolean){
         val selected = _state.value.selectedRequest
         updateRequestJob?.cancel()
-        updateRequestJob = viewModelScope.launch {
+        updateRequestJob = screenModelScope.launch {
             if (isSelect){
                 _state.update {
                     it.copy(

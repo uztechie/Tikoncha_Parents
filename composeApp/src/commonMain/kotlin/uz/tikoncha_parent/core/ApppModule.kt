@@ -43,7 +43,7 @@ import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import uz.tikoncha_parent.presentation.chat.ChatViewModel
-import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordViewmodel
+import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
@@ -93,11 +93,13 @@ import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
+import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
+import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.new_home.HomeViewModel
@@ -122,6 +124,12 @@ val sharedModule = module {
     single {
         TikonchaClient(get()).client
     }
+
+
+    single {
+        PlatformPurchaseService()
+    }
+
     //api service
     single { LoginApiService(get()) }
     single { TodoApiService(get()) }
@@ -203,24 +211,25 @@ val sharedModule = module {
     single { GetCoinPackagesUseCase(get() ) }
     single { ParentRequestsUseCase(get() ) }
     single { UpdateParentRequestStatusUseCase(get() ) }
+    single { PurchaseIApPremiumUseCase(get() ) }
 
 
 
 
 
 
-    viewModel { LoginViewmodel(get()) }
-    viewModel { OtpViewmodel(get() , get()) }
-    viewModel { RegisterViewmodel(get()) }
-    viewModel { ProfileViewModel(get(), get(), get(), get()) }
-    viewModel { CreatePasswordViewmodel() }
-    viewModel { ChildViewmodel(get()) }
-    viewModel { LoginPasswordViewmodel() }
-    viewModel { ChildConfirmViewModel() }
-    viewModel { TaskViewModel(get (), get(), get(), get(), get()) }
+    factory { LoginViewmodel(get()) }
+    factory { OtpViewmodel(get() , get()) }
+    factory { RegisterViewmodel(get()) }
+    factory { ProfileViewModel(get(), get(), get(), get()) }
+    factory { CreatePasswordViewmodel() }
+    factory { ChildViewmodel(get()) }
+    factory { LoginPasswordViewmodel() }
+    factory { ChildConfirmViewModel() }
+    factory { TaskViewModel(get (), get(), get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { ChatViewModel(
+    factory { ChatViewModel(
         get(),
         get(),
         get(),
@@ -229,21 +238,21 @@ val sharedModule = module {
         get(),
         get()
     ) }
-    viewModel { MonitorViewModel(get(), get()) }
-    viewModel { NotificationViewModel(get(), get()) }
-    viewModel { PolicyViewModel(get(), get()) }
-    viewModel { TimeRuleViewModel() }
-    viewModel { LimitRuleViewModel() }
-    viewModel { MyCoinsViewModel(get(), get(), get()) }
+    factory { MonitorViewModel(get(), get()) }
+    factory { NotificationViewModel(get(), get()) }
+    factory { PolicyViewModel(get(), get()) }
+    factory { TimeRuleViewModel() }
+    factory { LimitRuleViewModel() }
+    factory { MyCoinsViewModel(get(), get(), get()) }
 
-    viewModel { PolicySetupViewModel(get(), get(), get()) }
+    factory { PolicySetupViewModel(get(), get(), get()) }
     single { PolicySharedModel(get()) }
     factory { AppWebViewModel(get()) }
 
-    viewModel { PaymentViewModel(get(), get(), get(), get()) }
-    viewModel { SubscriptionPaymentViewModel(get(), get()) }
-    viewModel { ParentRequestViewModel(get(), get()) }
-    viewModel { LocationRuleViewModel() }
+    factory { PaymentViewModel(get(), get(), get(), get(), get()) }
+    factory { SubscriptionPaymentViewModel(get(), get()) }
+    factory { ParentRequestViewModel(get(), get()) }
+    factory { LocationRuleViewModel() }
 
 
 }

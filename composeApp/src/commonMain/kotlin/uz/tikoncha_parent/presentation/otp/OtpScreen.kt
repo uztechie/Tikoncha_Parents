@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.yourpackage.utils.formatTwoDigits
@@ -57,7 +58,7 @@ class OtpScreen(
     @Composable
     override fun Content() {
 
-        val viewModel = koinViewModel<OtpViewmodel>()
+        val viewModel = koinScreenModel<OtpViewmodel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
@@ -65,7 +66,7 @@ class OtpScreen(
             event(OtpEvent.SetPhone(phoneNumber))
         }
 
-        val logViewModel = koinViewModel<LoginViewmodel>()
+        val logViewModel = koinScreenModel<LoginViewmodel>()
         val logState = logViewModel.state.collectAsStateWithLifecycle()
         val logEvent = logViewModel::onEvent
 

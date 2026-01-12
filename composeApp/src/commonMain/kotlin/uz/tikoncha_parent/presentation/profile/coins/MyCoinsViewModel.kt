@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.profile.coins
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ class MyCoinsViewModel(
     private val useCase: MyCoinsUseCase,
     private val getCoinPackagesUseCase: GetCoinPackagesUseCase,
     private val childrenUseCase: ChildrenUseCase,
-): ViewModel() {
+): ScreenModel {
 
     private val _state = MutableStateFlow(MyCoinsState())
     val state = _state.asStateFlow()
@@ -55,7 +56,7 @@ class MyCoinsViewModel(
                 error = null
             )
         }
-        viewModelScope.launch {
+        screenModelScope.launch {
             val response = useCase()
             when(response){
                 is Resource.Success -> {
@@ -80,7 +81,7 @@ class MyCoinsViewModel(
     }
 
     fun loadCoinsPackages(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             _state.update {
                 it.copy(
                     isLoading = true,
@@ -120,7 +121,7 @@ class MyCoinsViewModel(
 
     private fun loadChildren() {
         childrenJob?.cancel()
-        childrenJob = viewModelScope.launch {
+        childrenJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     childrenResponseState = ResponseState.Loading

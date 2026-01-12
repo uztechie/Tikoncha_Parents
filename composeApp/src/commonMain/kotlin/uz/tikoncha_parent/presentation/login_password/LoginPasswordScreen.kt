@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.LogoHeader
@@ -48,7 +49,7 @@ class LoginPasswordScreen :Screen {
     @Composable
     override fun Content() {
 
-        val viewModel = koinViewModel<LoginPasswordViewmodel>()
+        val viewModel = koinScreenModel<LoginPasswordViewmodel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

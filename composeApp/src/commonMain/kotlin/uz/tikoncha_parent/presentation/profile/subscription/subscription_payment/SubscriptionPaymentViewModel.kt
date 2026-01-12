@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.profile.subscription.subscription_paymen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +20,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class SubscriptionPaymentViewModel(
     private val subscriptionPlanUseCase: SubscriptionPlanUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase
-) : ViewModel() {
+) : ScreenModel {
 
     private val _state = MutableStateFlow(
         SubscriptionPaymentState()
@@ -63,7 +65,7 @@ class SubscriptionPaymentViewModel(
 
 
     private fun requestSubscriptionPlans() {
-        viewModelScope.launch {
+        screenModelScope.launch {
             _state.update {
                 it.copy(
                     subscriptionPlanState = ResponseState.Loading
@@ -96,7 +98,7 @@ class SubscriptionPaymentViewModel(
 
     private fun getCurrentLimit(){
         limitJob?.cancel()
-        limitJob = viewModelScope.launch {
+        limitJob = screenModelScope.launch {
             subscriptionLimitUseCase.invoke()
             _state.update { innerState->
                 val limit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }?: SubscriptionLimit()

@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.policy.policy_setup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +25,7 @@ class PolicySetupViewModel(
     private val createPolicyUseCase: CreatePolicyUseCase,
     private val updatePolicyUseCase: UpdatePolicyUseCase,
     private val deletePolicyUseCase: DeletePolicyUseCase,
-): ViewModel() {
+): ScreenModel {
 
 
     private val TAG = "PolicySetupViewModel"
@@ -154,7 +156,7 @@ class PolicySetupViewModel(
 
 
     private fun requestCreatePolicy(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             _state.update {
                 it.copy(
                     responseState = ResponseState.Loading
@@ -205,7 +207,7 @@ class PolicySetupViewModel(
     }
 
     private fun requestUpdatePolicy(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             _state.update {
                 it.copy(
                     updateState = ResponseState.Loading
@@ -252,7 +254,7 @@ class PolicySetupViewModel(
     }
 
     private fun requestDeletePolicy(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             _state.update {
                 it.copy(
                     deleteState = ResponseState.Loading

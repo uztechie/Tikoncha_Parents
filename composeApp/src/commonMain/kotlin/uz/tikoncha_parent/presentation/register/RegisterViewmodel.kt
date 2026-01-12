@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class RegisterViewmodel(
     private val registerUseCase: RegisterUseCase
-): ViewModel() {
+): ScreenModel {
 
     private var registerJob: Job? = null
 
@@ -79,7 +81,7 @@ class RegisterViewmodel(
 
     private fun requestRegistration(){
         registerJob?.cancel()
-        registerJob = viewModelScope.launch {
+        registerJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     registerResponseState = ResponseState.Loading

@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.monitoring
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +20,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class MonitorViewModel(
     private val sendMessageApiUseCase: SendMessageApiUseCase,
     private val chatListFromServerUseCase: GetChatListFromServerUseCase
-): ViewModel() {
+): ScreenModel {
 
 
 
@@ -55,7 +57,7 @@ class MonitorViewModel(
 
     private fun sendMessage(){
         sendMessageJob?.cancel()
-        sendMessageJob = viewModelScope.launch {
+        sendMessageJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     sendMessageResponseState = ResponseState.Loading
@@ -93,7 +95,7 @@ class MonitorViewModel(
     }
     private fun loadChatList(){
         chatListJob?.cancel()
-        chatListJob = viewModelScope.launch {
+        chatListJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     chatListResponseState = ResponseState.Loading

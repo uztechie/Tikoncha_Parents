@@ -58,7 +58,7 @@ class LimitRuleListScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<LimitRuleViewModel>()
+        val viewModel = koinScreenModel<LimitRuleViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::event
 

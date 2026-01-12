@@ -1,11 +1,12 @@
 package uz.saidburxon.newedu.presentation.feature.login_password
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class LoginPasswordViewmodel (): ViewModel() {
+class LoginPasswordViewmodel (): ScreenModel {
 
     private val _state = MutableStateFlow(LoginPasswordState())
     val state = _state.asStateFlow()

@@ -7,13 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36EBCCD5259130251974763E /* IosIapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EBC863B33B47C3D1C660AC /* IosIapManager.swift */; };
 		5700FBF946BF6947404585EE /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E9CBB832E69DF3C8FA0018 /* Pods_iosApp.framework */; };
+		CEFC06872F0D2E0E0059981F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFC06862F0D2E0E0059981F /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		36EBC863B33B47C3D1C660AC /* IosIapManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IosIapManager.swift; sourceTree = "<group>"; };
 		ABB1C4AC9F4026AE6A1D69D7 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B9DA97B12DC1472C00A4DA20 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE6AC6142EA0A31300E837E4 /* FirebaseMessaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseMessaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEFC06862F0D2E0E0059981F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D0E9CBB832E69DF3C8FA0018 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7582CD476A6AF8D9B8DD7E9 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,6 +54,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5700FBF946BF6947404585EE /* Pods_iosApp.framework in Frameworks */,
+				CEFC06872F0D2E0E0059981F /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +69,7 @@
 				B9DA97B22DC1472C00A4DA20 /* Products */,
 				C7EDE4BEAE4B4D9D54162C6A /* Pods */,
 				F08F362D40AA06B694136E1F /* Frameworks */,
+				36EBC863B33B47C3D1C660AC /* IosIapManager.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,6 +93,7 @@
 		F08F362D40AA06B694136E1F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CEFC06862F0D2E0E0059981F /* StoreKit.framework */,
 				CE6AC6142EA0A31300E837E4 /* FirebaseMessaging.framework */,
 				D0E9CBB832E69DF3C8FA0018 /* Pods_iosApp.framework */,
 			);
@@ -273,6 +280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36EBCCD5259130251974763E /* IosIapManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,7 +416,7 @@
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 82NTGPNSYL;
 				ENABLE_PREVIEWS = YES;
@@ -432,7 +440,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "www.newedu.tikoncha-parent.uz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -452,7 +460,7 @@
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 82NTGPNSYL;
 				ENABLE_PREVIEWS = YES;
@@ -476,7 +484,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "www.newedu.tikoncha-parent.uz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

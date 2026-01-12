@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.otp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class OtpViewmodel(
     private val verifyOtpUseCase: VerifyOtpUseCase,
     private val sendOtpUseCase: SendOtpUseCase
-) : ViewModel() {
+) : ScreenModel {
 
     private val _state = MutableStateFlow(OtpState())
     val state = _state.asStateFlow()
@@ -94,7 +96,7 @@ class OtpViewmodel(
         val otp = _state.value.otpCode
 
         verifyOtpJob?.cancel()
-        verifyOtpJob = viewModelScope.launch() {
+        verifyOtpJob = screenModelScope.launch() {
             _state.update {
                 it.copy(
                     responseState = ResponseState.Loading,
@@ -127,10 +129,16 @@ class OtpViewmodel(
                     AppSettings.hasUserLogin = response.data.user_info != null
                     AppSettings.userId = response.data.user_id ?: ""
                     AppSettings.userInfo = response.data.user_info?.toUserInfo()
+                    AppSettings.isTestAccount = state.value.phoneNumber.startsWith("+99811")
 
                     Logger.d(
-                        "TAG",
-                        "verifyOtp: userLogin = ${response.data.user_info != null}   hasUserLogin=${AppSettings.hasUserLogin}  refreshToken=${AppSettings.refreshToken}"
+                        "OtpViewModel",
+                        "verifyOtp: userLogin = ${response.data.user_info != null} phone=${state.value.phoneNumber}  hasUserLogin=${AppSettings.hasUserLogin}  refreshToken=${AppSettings.refreshToken}"
+                    )
+
+                    Logger.d(
+                        "OtpViewModel",
+                        "userInfo = ${AppSettings.userInfo}"
                     )
 
                     _state.update {
@@ -157,7 +165,7 @@ class OtpViewmodel(
 //    }
     private fun startTimer() {
         timerJob?.cancel()
-        timerJob = viewModelScope.launch {
+        timerJob = screenModelScope.launch {
             _state.update { it.copy(timeLife = 60) }
             while (_state.value.timeLife > 0) {
                 delay(1000)
@@ -170,7 +178,7 @@ class OtpViewmodel(
         val phone = state.value.phoneNumber
         if (phone.isNullOrBlank()) return
 
-        viewModelScope.launch {
+        screenModelScope.launch {
             // optional: responseState = Loading qilish mumkin
             val request = SendOtpRequest(phone = phone)
             when (val res = sendOtpUseCase(request)) {

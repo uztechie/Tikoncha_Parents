@@ -8,6 +8,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.platform.Logger
 
 object AppSettings {
 
@@ -35,9 +36,12 @@ object AppSettings {
     private const val KEY_USER_INFO = "userInfo"
     private const val KEY_CHILDREN = "children"
     private const val KEY_SELECTED_CHILD = "selectedChild"
+    private const val TEST_ACCOUNT = "TEST_ACCOUNT"
 
     private const val KEY_SUBSCRIPTION_LIMIT_LIST = "SubscriptionLimit"
     private const val KEY_SELECT_SUBSCRIPTION_LIMIT = "selectSubscriptionLimit"
+
+    private const val KEY_USER_SUBSCRIPTION_MAP = "userSubscriptionMap"
 
     // ------------ primitives ------------
 
@@ -81,6 +85,7 @@ object AppSettings {
         get() = settings.get(KEY_IS_FIRST_LAUNCH) ?: true
         set(value) = settings.set(KEY_IS_FIRST_LAUNCH, value)
 
+
     // ------------ JSON helpers ------------
 
     private fun <T> getJsonOrNull(key: String, serializer: KSerializer<T>): T? {
@@ -108,11 +113,23 @@ object AppSettings {
         settings.putString(key, raw)
     }
 
+    private val userSubscriptionMapSerializer =
+        kotlinx.serialization.builtins.MapSerializer(
+            kotlinx.serialization.serializer<String>(),
+            kotlinx.serialization.serializer<Boolean>()
+        )
+
+
     // ------------ UserInfo ------------
 
     var userInfo: UserInfo?
         get() = getJsonOrNull(KEY_USER_INFO, UserInfo.serializer())
         set(value) = putJson(KEY_USER_INFO, UserInfo.serializer(), value)
+
+    var isTestAccount: Boolean
+        get() = settings.get(TEST_ACCOUNT) ?: false
+        set(value) = settings.set(TEST_ACCOUNT, value)
+
 
     // ------------ Children list ------------
 
@@ -140,6 +157,25 @@ object AppSettings {
         get() = getJsonOrDefault(KEY_SELECT_SUBSCRIPTION_LIMIT, SubscriptionLimit.serializer(), SubscriptionLimit())
         set(value) = putJson(KEY_SELECT_SUBSCRIPTION_LIMIT, SubscriptionLimit.serializer(), value)
 
+    var userSubscriptionMap: Map<String, Boolean>
+        get() = getJsonOrDefault(
+            KEY_USER_SUBSCRIPTION_MAP,
+            userSubscriptionMapSerializer,
+            emptyMap()
+        )
+        set(value) = putJson(
+            KEY_USER_SUBSCRIPTION_MAP,
+            userSubscriptionMapSerializer,
+            value
+        )
+    fun setUserSubscription(phone: String, isSubscribed: Boolean) {
+        if (phone.isBlank()) return
+
+        val updated = userSubscriptionMap.toMutableMap()
+        updated[phone] = isSubscribed
+        userSubscriptionMap = updated
+    }
+
     // ------------ Utilities ------------
 
     /**
@@ -165,6 +201,8 @@ object AppSettings {
         settings.remove(KEY_SELECT_SUBSCRIPTION_LIMIT)
         // fcmToken ni odatda saqlab qolsa ham bo‘ladi; xohlasang remove qil:
         // settings.remove(KEY_FCM_TOKEN)
+
+        Logger.d("AppSettings", "accessToken=$accessToken, userInfo=$userInfo, limits=$subscriptionLimitList")
     }
 
     /**

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.add_child.AddChildRegisterScreen
@@ -43,6 +44,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -55,7 +57,7 @@ class RegisterScreen : Screen {
     @Composable
     override fun Content() {
 
-        val viewModel = koinViewModel<RegisterViewmodel>()
+        val viewModel = koinScreenModel<RegisterViewmodel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
@@ -239,7 +241,9 @@ fun Register(
             fontWeight = FontWeight.W600,
             fontSize = NormalTextSize
         )
-        SpaceLarge()
+        SpaceSmall()
+        LegalLinksRow()
+        SpaceSmall()
     }
 }
 

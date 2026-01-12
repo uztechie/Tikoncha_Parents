@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import dev.icerock.moko.geo.compose.BindLocationTrackerEffect
 import dev.icerock.moko.geo.compose.LocationTrackerAccuracy
@@ -69,12 +71,14 @@ class LocationRuleScreen: Screen {
             permissionsFactory.createPermissionsController()
         }
 
+
         val locationTracker = rememberLocationTrackerFactory(
             accuracy = LocationTrackerAccuracy.Best
         ).createLocationTracker(
             permissionsController = permissionsController
         )
-        BindEffect(permissionsController)
+
+
 
         val locationViewModel: LocationViewModel = viewModel {
             LocationViewModel(
@@ -83,23 +87,26 @@ class LocationRuleScreen: Screen {
             )
         }
 
+        val scope = rememberCoroutineScope()
+        BindEffect(permissionsController)
+
 
         val permissionViewModel = viewModel {
             PermissionViewModel(permissionsController)
         }
-        val permissionState by permissionViewModel.state.collectAsStateWithLifecycle()
+        val permissionState by permissionViewModel.state.collectAsState()
 
         var cameFromSettings by remember { mutableStateOf(false) }
 
         // Tracker lifecycle-ni Compose bilan bog‘laymiz
-        BindLocationTrackerEffect(locationTracker = locationTracker)
+        BindLocationTrackerEffect(locationTracker = locationViewModel.tracker)
 
-        val locationState by locationViewModel.state.collectAsStateWithLifecycle()
+        val locationState by locationViewModel.state.collectAsState()
         val locationEvent = locationViewModel::onEvent
 
-
-        var showGpsDialog by remember { mutableStateOf(false) }
+        // -------------------- DIALOG HOLATLARI --------------------
         var showPermissionConfirmDialog by remember { mutableStateOf(false) }
+        var showGpsDialog by remember { mutableStateOf(false) }
         var showPermissionDialog by remember { mutableStateOf(false) }
 
         DisposableEffect(Unit) {
@@ -108,9 +115,6 @@ class LocationRuleScreen: Screen {
                 locationViewModel.stop()
             }
         }
-
-
-        val scope = rememberCoroutineScope()
 
 
         CustomDialog(
@@ -130,13 +134,6 @@ class LocationRuleScreen: Screen {
             }
         )
 
-
-        LaunchedEffect(Unit){
-            val isGranted =  permissionsController.isPermissionGranted(Permission.LOCATION)
-            if (!isGranted){
-                showPermissionConfirmDialog = true
-            }
-        }
 
 
         // Joylashuv permission deny always bo‘lsa
@@ -184,29 +181,34 @@ class LocationRuleScreen: Screen {
         )
 
 
-        // Permission state o‘zgarganda reaksiya
-        LaunchedEffect(isLocationServiceEnabled()) {
+        LaunchedEffect(permissionState, cameFromSettings) {
+            Logger.d("LocationViewmodel", "permissionState=$permissionState")
             when (permissionState) {
                 PermissionState.Granted -> {
-                    // 1) GPS yoqilgan-yoqilmaganini tekshiramiz
-                    scope.launch(Dispatchers.Default) {
-                        val gpsEnabled = isLocationServiceEnabled()
-                        if (!gpsEnabled) {
-                            showGpsDialog = true
-                        } else {
-                            // 2) GPS bor, permission bor -> Location tracker’ni BOSHLAYMIZ
-                            locationViewModel.checkGPS()
-                        }
+                    val gpsEnabled = kotlinx.coroutines.withContext(Dispatchers.Default) {
+                        isLocationServiceEnabled()
+                    }
+                    if (!gpsEnabled) {
+                        showGpsDialog = true
+                    } else {
+                        showGpsDialog = false
+                        locationViewModel.checkGPS()
+                    }
+                }
+
+                PermissionState.Denied, PermissionState.NotGranted, PermissionState.NotDetermined -> {
+                    if (!showPermissionConfirmDialog) {
+                        showPermissionConfirmDialog = true
                     }
                 }
 
                 PermissionState.DeniedAlways -> {
-                    showPermissionDialog = true
+                    if (!showPermissionDialog) {
+                        showPermissionDialog = true
+                    }
                 }
 
-                else -> {
-                    // boshqa holatlar uchun hozircha hech narsa qilmadik
-                }
+                else -> Unit
             }
         }
 
@@ -214,7 +216,7 @@ class LocationRuleScreen: Screen {
 
 
 
-        val viewModel = koinViewModel<LocationRuleViewModel>()
+        val viewModel = koinScreenModel<LocationRuleViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

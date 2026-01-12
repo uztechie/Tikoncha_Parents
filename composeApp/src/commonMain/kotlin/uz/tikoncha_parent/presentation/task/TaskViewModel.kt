@@ -4,6 +4,8 @@ package uz.tikoncha_parent.presentation.task
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +40,7 @@ class TaskViewModel(
     private val todoListUseCase: TodoListUseCase,
     private val updateTodoUseCase: UpdateTodoUseCase,
     private val coinsUseCase: MyCoinsUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
     private var requestTodoJob: Job? = null
     private var updateTodoJob: Job? = null
@@ -113,7 +115,7 @@ class TaskViewModel(
             }
 
             TaskEvent.LoadParentCoins -> {
-                viewModelScope.launch {
+                screenModelScope.launch {
                     val request = coinsUseCase()
                     when (request) {
                         is Resource.Success -> {
@@ -222,7 +224,7 @@ class TaskViewModel(
 
     private fun requestTodo() {
         requestTodoJob?.cancel()
-        requestTodoJob = viewModelScope.launch {
+        requestTodoJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     taskResponseState = ResponseState.Loading,
@@ -306,7 +308,7 @@ class TaskViewModel(
 
     private fun updateTodo(task: Task) {
         updateTodoJob?.cancel()
-        updateTodoJob = viewModelScope.launch {
+        updateTodoJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     taskResponseState = ResponseState.Loading
@@ -387,7 +389,7 @@ class TaskViewModel(
 
     private fun loadTasks() {
         listJob?.cancel()
-        listJob = viewModelScope.launch {
+        listJob = screenModelScope.launch {
 
             val selectedId = state.value.selectedChild?.userId
 
@@ -482,7 +484,7 @@ class TaskViewModel(
     }
 
     private fun loadAllChildrenActiveTasks() {
-        viewModelScope.launch {
+        screenModelScope.launch {
             val childrenRes = childrenUseCase.invoke()
             when (childrenRes) {
                 is Resource.Success -> {

@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +16,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class LoginViewmodel(
     private val sendOtpUseCase: SendOtpUseCase
-): ViewModel() {
+): ScreenModel {
 
     private var sendOptJob: Job? = null
 
@@ -59,7 +61,7 @@ class LoginViewmodel(
 
         val phone = _state.value.fullNumber
         sendOptJob?.cancel()
-        sendOptJob = viewModelScope.launch{
+        sendOptJob = screenModelScope.launch{
 
 
             val request = SendOtpRequest(phone = phone)

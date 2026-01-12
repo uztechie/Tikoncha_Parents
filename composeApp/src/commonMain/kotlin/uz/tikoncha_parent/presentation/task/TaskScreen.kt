@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -59,7 +60,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 class TaskScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = koinViewModel<TaskViewModel>()
+        val viewModel = koinScreenModel<TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current?:return

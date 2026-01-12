@@ -3,6 +3,7 @@
 package uz.tikoncha_parent.presentation.policy.time_rule
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,7 +23,7 @@ import kotlin.compareTo
 import kotlin.text.set
 
 
-class TimeRuleViewModel: ViewModel() {
+class TimeRuleViewModel: ScreenModel {
 
     private val _state = MutableStateFlow(TimeRuleState())
     val state = _state.asStateFlow()

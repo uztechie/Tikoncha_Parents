@@ -22,15 +22,28 @@ actual fun UniversalJsonWebView(
     modifier: Modifier,
     onBackPressed: () -> Unit
 ) {
-
     var isPageLoaded by remember { mutableStateOf(false) }
+
+    // ✅ faqat url param o‘zgarganda load qilish uchun
+    var lastLoadedUrl by remember { mutableStateOf<String?>(null) }
+
+    // ✅ bir xil jsonni qayta-qayta yubormaslik uchun
+    var lastSentJson by remember { mutableStateOf<String?>(null) }
+
+    val latestOnIncomingJson by rememberUpdatedState(onIncomingJson)
+    val latestOnBackPressed by rememberUpdatedState(onBackPressed)
 
     val messageHandler = remember {
         IOSJsonMessageHandler(
-            onJsonFromWeb = onIncomingJson,
-            onWebBackPressed = onBackPressed
+            onJsonFromWeb = { latestOnIncomingJson(it) },
+            onWebBackPressed = { latestOnBackPressed() }
         )
     }
+
+    LaunchedEffect(json){
+        Logger.d("UniversalJsonWebView", "json=$json")
+    }
+
 
     val delegate = remember {
         object : NSObject(), WKNavigationDelegateProtocol {
@@ -40,10 +53,10 @@ actual fun UniversalJsonWebView(
         }
     }
 
+
     UIKitView(
         modifier = modifier.fillMaxSize(),
         factory = {
-            // JS bridge: AndroidJson.sendData / AndroidJson.backPressed ni iOS’da ham ishlatamiz
             val controller = WKUserContentController()
 
             val bridgeJs = """
@@ -82,38 +95,45 @@ actual fun UniversalJsonWebView(
                 userContentController = controller
             }
 
-            WKWebView(frame = platform.CoreGraphics.CGRectZero.readValue(), configuration = config).apply {
+            WKWebView(
+                frame = platform.CoreGraphics.CGRectZero.readValue(),
+                configuration = config
+            ).apply {
                 navigationDelegate = delegate
-                val nsUrl = NSURL.URLWithString(url)
-                if (nsUrl != null) {
-                    loadRequest(NSURLRequest.requestWithURL(nsUrl))
-                }
+                // ❗️loadRequestni update ichida qilamiz (stable control)
             }
         },
         update = { webView ->
-            // URL o‘zgarsa reload
-            val current = webView.URL?.absoluteString
-            if (current != url) {
+            // ✅ URL faqat parametr o‘zgarganda reload bo‘lsin
+            if (lastLoadedUrl != url) {
+                lastLoadedUrl = url
+                lastSentJson = null // yangi page -> jsonni qayta yuborishga ruxsat
                 isPageLoaded = false
+
                 val nsUrl = NSURL.URLWithString(url)
                 if (nsUrl != null) {
                     webView.loadRequest(NSURLRequest.requestWithURL(nsUrl))
                 }
             }
 
-            // Native -> Web JSON
-            if (isPageLoaded && json != null) {
+            // ✅ Native -> Web JSON (faqat page loaded + json bor + oldin yuborilmagan bo‘lsa)
+            if (isPageLoaded && json != null && lastSentJson != json) {
+                lastSentJson = json
+
+                // Agar json string bo‘lib, ichida quotes bo‘lsa ham ishlashi uchun:
+                // json shu ko‘rinishda bo‘lsin: {"a":1} yoki "text" (JS literal)
                 val script = "window.postMessage($json);"
                 webView.evaluateJavaScript(script, completionHandler = null)
             }
         },
         onRelease = { webView ->
-            // clean up (leak bo‘lmasin)
             webView.navigationDelegate = null
-            webView.configuration.userContentController.removeScriptMessageHandlerForName("AndroidJson")
+            webView.configuration.userContentController
+                .removeScriptMessageHandlerForName("AndroidJson")
         }
     )
 }
+
 
 private class IOSJsonMessageHandler(
     private val onJsonFromWeb: (String?) -> Unit,

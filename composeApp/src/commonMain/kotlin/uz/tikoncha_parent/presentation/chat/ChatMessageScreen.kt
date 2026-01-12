@@ -45,6 +45,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -73,7 +74,7 @@ class ChatMessageScreen(
 ) : Screen{
     @Composable
     override fun Content() {
-        val viewModel: ChatViewModel = koinViewModel ()
+        val viewModel: ChatViewModel = koinScreenModel ()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 

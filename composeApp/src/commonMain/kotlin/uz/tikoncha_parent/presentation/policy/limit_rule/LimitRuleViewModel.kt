@@ -3,6 +3,7 @@
 package uz.tikoncha_parent.presentation.policy.limit_rule
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +22,7 @@ import kotlin.compareTo
 import kotlin.text.set
 
 
-class LimitRuleViewModel : ViewModel() {
+class LimitRuleViewModel : ScreenModel {
 
     private val _state = MutableStateFlow(LimitRuleState())
     val state = _state.asStateFlow()

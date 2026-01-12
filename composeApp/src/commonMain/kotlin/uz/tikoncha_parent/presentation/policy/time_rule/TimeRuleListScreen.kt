@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.yield
@@ -66,7 +67,7 @@ class TimeRuleListScreen(): Screen {
 
         val navigator = LocalNavigator.current
 
-        val vieModel = koinViewModel<TimeRuleViewModel>()
+        val vieModel = koinScreenModel<TimeRuleViewModel>()
         val state by vieModel.state.collectAsStateWithLifecycle()
         val event = vieModel::event
 

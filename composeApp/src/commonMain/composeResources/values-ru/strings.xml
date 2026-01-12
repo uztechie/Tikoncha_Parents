@@ -319,5 +319,6 @@
     <string name="wi_fi">Wi-Fi</string>
     <string name="xatolik">Ошибка</string>
     <string name="yakunlash">Завершить</string>
+    <string name="payment_type_text">Оплата будет произведена через %1$s.</string>
 
 </resources>

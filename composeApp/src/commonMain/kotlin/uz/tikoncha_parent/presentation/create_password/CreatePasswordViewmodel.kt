@@ -1,11 +1,13 @@
-package uz.saidburxon.newedu.presentation.feature.create_password
+package uz.tikoncha_parent.presentation.create_password
 
-import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordEvent
+import uz.saidburxon.newedu.presentation.feature.create_password.CreatePasswordState
 
-class CreatePasswordViewmodel (): ViewModel() {
+class CreatePasswordViewmodel (): ScreenModel {
 
     private val _state = MutableStateFlow(CreatePasswordState())
     val state = _state.asStateFlow()

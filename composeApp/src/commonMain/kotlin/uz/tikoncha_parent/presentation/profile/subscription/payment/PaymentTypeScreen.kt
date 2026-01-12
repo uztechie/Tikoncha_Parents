@@ -26,6 +26,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -41,10 +42,13 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
+import uz.tikoncha_parent.platform.isIos
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
+import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -62,7 +66,7 @@ class PaymentTypeScreen(
 
         val navigator = LocalNavigator.current
         
-        val viewModel = koinViewModel<PaymentViewModel>()
+        val viewModel = koinScreenModel<PaymentViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
@@ -98,16 +102,30 @@ fun PaymentTypeScreenUi(
 
     val paymentLoading = state.paymentResponseState is ResponseState.Loading
     val paymentError = state.paymentResponseState.errorText()
-    LoadingDialog(paymentLoading)
+
+    val applePaymentLoading = state.applePaymentResponseState is ResponseState.Loading
+    val applePaymentError = state.applePaymentResponseState.errorText()
+    val applePaymentSuccess = state.applePaymentResponseState is ResponseState.Success
+    LoadingDialog(paymentLoading || applePaymentLoading)
 
 
     var showCreatePaymentErrorDialog by remember() {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(paymentError, ) {
+    var showAppleCreatePaymentErrorDialog by remember() {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(paymentError) {
         if (paymentError.isNotEmpty()) {
             showCreatePaymentErrorDialog = true
+        }
+    }
+
+    LaunchedEffect(applePaymentError) {
+        if (applePaymentError.isNotEmpty()) {
+            showAppleCreatePaymentErrorDialog = true
         }
     }
 
@@ -117,6 +135,12 @@ fun PaymentTypeScreenUi(
 
     LaunchedEffect(state.paymentStatus) {
         showPaymentCompletedDialog = state.paymentStatus == PaymentStatus.COMPLETED
+    }
+
+    LaunchedEffect(applePaymentSuccess){
+        if (applePaymentSuccess && AppSettings.isTestAccount){
+            navigator?.pop()
+        }
     }
 
 
@@ -148,6 +172,23 @@ fun PaymentTypeScreenUi(
         },
         onButtonClick = {
             showCreatePaymentErrorDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
+        }
+    )
+
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
+        show = showAppleCreatePaymentErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = applePaymentError,
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showAppleCreatePaymentErrorDialog = false
+            event(PaymentEvent.ResetPaymentResponse)
+        },
+        onButtonClick = {
+            showAppleCreatePaymentErrorDialog = false
             event(PaymentEvent.ResetPaymentResponse)
         }
     )
@@ -191,45 +232,65 @@ fun PaymentTypeScreenUi(
                     .height(72.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                if (isIos() && state.isTestAccount) {
+                    PaymentOption(
+                        modifier = Modifier.weight(1f),
+                        paymentType = PaymentType.AppStore,
+                        isSelected = state.selectedPaymentType == PaymentType.AppStore,
+                        onClick = {
+                            event(PaymentEvent.SetPaymentType(PaymentType.AppStore))
+                        }
+                    )
+                }
                 PaymentOption(
                     modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.pay_me),
-                    isSelected = false,
-                    onClick = { selectedPayment = "payme" }
+                    paymentType = PaymentType.Click,
+                    isSelected = state.selectedPaymentType == PaymentType.Click,
+                    onClick = {
+                        event(PaymentEvent.SetPaymentType(
+                            PaymentType.Click
+                        ))
+                    }
                 )
-                PaymentOption(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.click_pay),
-                    isSelected = true,
-                    onClick = { selectedPayment = "click" }
-                )
+
+                if (!isIos()) {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+
             }
 
             SpaceMedium()
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(72.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                PaymentOption(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.paynet),
-                    isSelected = false,
-                    onClick = { selectedPayment = "paynet" }
-                )
-                PaymentOption(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.uzum),
-                    isSelected = false,
-                    onClick = { selectedPayment = "uzum" }
-                )
-            }
-            SpaceMedium()
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(72.dp),
+//                horizontalArrangement = Arrangement.spacedBy(12.dp)
+//            ) {
+//                PaymentOption(
+//                    modifier = Modifier.weight(1f),
+//                    painter = painterResource(Res.drawable.paynet),
+//                    isSelected = false,
+//                    onClick = { selectedPayment = "paynet" }
+//                )
+//                PaymentOption(
+//                    modifier = Modifier.weight(1f),
+//                    painter = painterResource(Res.drawable.uzum),
+//                    isSelected = false,
+//                    onClick = { selectedPayment = "uzum" }
+//                )
+//            }
+//            SpaceMedium()
 
+            val paymentType = when(state.selectedPaymentType){
+                PaymentType.Click -> "Click"
+                PaymentType.AppStore -> "App Store"
+                null -> ""
+            }
             CustomText(
-                text = stringResource(Res.string.tolov_click_platformasi_orqali_amalga_oshiriladi),
+                text = stringResource(Res.string.payment_type_text, paymentType),
                 fontSize = NormalTextSize,
                 color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
@@ -407,20 +468,23 @@ fun PaymentTypeScreenUi(
                 }
             }
 
-            SpaceLarge()
 
+
+            SpaceLarge()
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 text = stringResource(Res.string.sotib_olish),
-                enabled = state.paymentStatus != PaymentStatus.PENDING,
+                enabled = state.paymentStatus != PaymentStatus.PENDING && state.selectedPaymentType != null,
                 fontSize = NormalLargeTextSize,
                 onClick = {
                     event(PaymentEvent.Pay)
                 }
             )
             SpaceLarge()
+            LegalLinksRow()
+            SpaceUltraSmall()
         }
     }
 }
@@ -432,7 +496,10 @@ private fun Preview() {
         PaymentTypeScreenUi(
             navigator = null,
             state = PaymentState(
-                amount = 10000
+                amount = 199000,
+                subscriptionDuration = SubscriptionDuration.ANNUAL,
+                isTestAccount = true,
+                selectedPaymentType = PaymentType.AppStore
             ),
             event = {}
         )

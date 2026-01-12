@@ -92,6 +92,7 @@ import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.ThemePrefs
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberIsDarkTheme
 
 class MapScreen : Screen {
 
@@ -100,13 +101,6 @@ class MapScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        // -------------------- THEME --------------------
-        val themeMode by rememberSaveable { mutableStateOf(ThemePrefs.load()) }
-        val darkTheme = when (themeMode) {
-            ThemeMode.DARK -> true
-            ThemeMode.LIGHT -> false
-            ThemeMode.SYSTEM -> isSystemInDarkTheme()
-        }
 
         // -------------------- PERMISSION + TRACKER --------------------
         val permissionsFactory = rememberPermissionsControllerFactory()
@@ -180,12 +174,7 @@ class MapScreen : Screen {
         )
 
 
-        LaunchedEffect(Unit){
-           val isGranted =  permissionsController.isPermissionGranted(Permission.LOCATION)
-            if (!isGranted){
-                showPermissionConfirmDialog = true
-            }
-        }
+
 
 
 
@@ -234,37 +223,44 @@ class MapScreen : Screen {
         )
 
 
-        // Permission state o‘zgarganda reaksiya
-        LaunchedEffect(isLocationServiceEnabled()) {
+        LaunchedEffect(permissionState, cameFromSettings) {
+            Logger.d("LocationViewmodel", "permissionState=$permissionState")
             when (permissionState) {
                 PermissionState.Granted -> {
-                    // 1) GPS yoqilgan-yoqilmaganini tekshiramiz
-                    scope.launch(Dispatchers.Default) {
-                        val gpsEnabled = isLocationServiceEnabled()
-                        if (!gpsEnabled) {
-                            showGpsDialog = true
-                        } else {
-                            // 2) GPS bor, permission bor -> Location tracker’ni BOSHLAYMIZ
-                            locationViewModel.checkGPS()
-                        }
+                    val gpsEnabled = kotlinx.coroutines.withContext(Dispatchers.Default) {
+                        isLocationServiceEnabled()
+                    }
+                    if (!gpsEnabled) {
+                        showGpsDialog = true
+                    } else {
+                        showGpsDialog = false
+                        locationViewModel.checkGPS()
+                    }
+                }
+
+                PermissionState.Denied, PermissionState.NotGranted, PermissionState.NotDetermined -> {
+                    if (!showPermissionConfirmDialog) {
+                        showPermissionConfirmDialog = true
                     }
                 }
 
                 PermissionState.DeniedAlways -> {
-                    showPermissionDialog = true
+                    if (!showPermissionDialog) {
+                        showPermissionDialog = true
+                    }
                 }
 
-                else -> {
-                    // boshqa holatlar uchun hozircha hech narsa qilmadik
-                }
+                else -> Unit
             }
         }
+
 
         // -------------------- JSON PAYLOAD --------------------
         val parentLat = locationState.locationData?.latitude
         val parentLng = locationState.locationData?.longitude
 
         val payload = ParentLocationPayload(
+            is_dark = rememberIsDarkTheme(),
             name = stringResource(Res.string.siz),
             lat = parentLat,
             lng = parentLng,

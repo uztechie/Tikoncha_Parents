@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -30,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -49,7 +51,7 @@ class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
-        val viewModel = koinViewModel<SubscriptionPaymentViewModel>()
+        val viewModel = koinScreenModel<SubscriptionPaymentViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
@@ -279,8 +281,10 @@ fun SubscriptionPaymentUi(
         }
     }
     if (showButtonSheetState && state.subscriptionUi != null) {
+        val hasUserSubscription = AppSettings.userSubscriptionMap.get(state.selectedChild?.phoneNumber)
+        Logger.d("SubscriptionPaymentScreen", "currentPlan=${state.currentPlan}, isTestAccount=${AppSettings.isTestAccount} hasUserSubscription=${hasUserSubscription}")
         SubscriptionBottomSheet(
-            hasSubscription = state.currentPlan == SubscriptionType.PLUS,
+            hasSubscription = state.currentPlan == SubscriptionType.PLUS || (AppSettings.isTestAccount && hasUserSubscription == true),
             visible = showButtonSheetState,
             subscription = state.subscriptionUi,
             onDismiss = {

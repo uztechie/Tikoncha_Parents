@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
@@ -56,7 +57,7 @@ class ProfileScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<ProfileViewModel>()
+        val viewModel = koinScreenModel<ProfileViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
@@ -76,7 +77,7 @@ class ProfileScreen : Screen {
         val ui by coinsViewModel.state.collectAsStateWithLifecycle()
         val aiTokens = ui.coins
 
-        val taskViewModel = koinViewModel<TaskViewModel>()
+        val taskViewModel = koinScreenModel<TaskViewModel>()
         val taskState by taskViewModel.state.collectAsStateWithLifecycle()
         LaunchedEffect(Unit){
             taskViewModel.onEvent(TaskEvent.LoadAllChildrenActiveTasks)

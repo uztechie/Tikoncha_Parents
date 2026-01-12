@@ -11,6 +11,7 @@ import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 
 @Serializable
 data class ParentLocationPayload(
+    val is_dark: Boolean,
     val name: String,
     val lat: Double?,
     val lng: Double?,

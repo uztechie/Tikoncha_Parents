@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
@@ -12,16 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.*
 import uz.tikoncha_parent.ui.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.pay_me
+import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PaymentOption(
     modifier: Modifier = Modifier,
-    painter: Painter = painterResource(Res.drawable.pay_me),
+    paymentType: PaymentType,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -32,7 +35,7 @@ fun PaymentOption(
         modifier = modifier
             .height(72.dp)
             .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
-            .background(BackgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -45,11 +48,21 @@ fun PaymentOption(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier.size(60.dp),
-            )
+            if (paymentType.icon != null){
+                Image(
+                    painter = painterResource(paymentType.icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(60.dp),
+                )
+            }
+            else{
+                CustomText(
+                    text = paymentType.title?:"",
+                    color = MaterialTheme.extendedColor.onBackgroundColor,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+
             RadioButton(
                 selected = isSelected,
                 onClick = null,
@@ -66,8 +79,12 @@ fun PaymentOption(
 @Composable
 @Preview
 private fun Preview() {
-    PaymentOption(
-        onClick = {},
-        isSelected = true
-    )
+    TikonchaParentTheme(mode = ThemeMode.DARK){
+        PaymentOption(
+            onClick = {},
+            paymentType = PaymentType.AppStore,
+            isSelected = false
+        )
+    }
+
 }

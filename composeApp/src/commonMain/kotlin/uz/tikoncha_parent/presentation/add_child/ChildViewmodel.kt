@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.add_child
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +16,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ChildViewmodel(
     private val addChildUseCase: AddChildUseCase
-): ViewModel() {
+): ScreenModel {
 
     private var addChildJob: Job? = null
 
@@ -70,7 +72,7 @@ class ChildViewmodel(
         }
 
         addChildJob?.cancel()
-        addChildJob = viewModelScope.launch{
+        addChildJob = screenModelScope.launch{
 
 
             val request = AddChildRequest(

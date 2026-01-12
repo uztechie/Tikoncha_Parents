@@ -4,6 +4,8 @@ package uz.tikoncha_parent.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,7 @@ class ChatViewModel(
     private val readMessageUseCase: MarkReadUseCase,
     private val chatStatusUseCase: ChatStatusUseCase,
     private val connectionManager: ChatConnectionManager,
-) : ViewModel() {
+) : ScreenModel {
 
     private val TAG = "ChatViewModel"
 
@@ -63,7 +65,7 @@ class ChatViewModel(
 
 
     private fun observeChatEvents(){
-        viewModelScope.launch {
+        screenModelScope.launch {
             observeChatEventsUseCase().collectLatest {event->
                 when(event){
                     is ChatWsEvent.MessageCreated -> {
@@ -177,7 +179,7 @@ class ChatViewModel(
 
     private fun sendMessage(){
         sendMessageJob?.cancel()
-        sendMessageJob = viewModelScope.launch {
+        sendMessageJob = screenModelScope.launch {
             val message = state.value.message.trim()
             val result = sendMessageUseCase.invoke(
                 chatId = state.value.chatId,
@@ -207,7 +209,7 @@ class ChatViewModel(
         }
 
         chatListJob?.cancel()
-        chatListJob = viewModelScope.launch {
+        chatListJob = screenModelScope.launch {
             val result = getChatListFromServerUseCase.invoke()
             when(result){
                 is Resource.Loading -> {}
@@ -241,7 +243,7 @@ class ChatViewModel(
         }
 
         chatMessagesJob?.cancel()
-        chatMessagesJob = viewModelScope.launch {
+        chatMessagesJob = screenModelScope.launch {
             val chatId = state.value.chatId
             val result = getChatMessagesFromServerUseCase.invoke(chatId)
             when(result){
@@ -273,7 +275,7 @@ class ChatViewModel(
 
 
         chatStatusJob?.cancel()
-        chatStatusJob = viewModelScope.launch {
+        chatStatusJob = screenModelScope.launch {
 
             while (isActive){
                 val chatId = state.value.chatId
@@ -307,7 +309,7 @@ class ChatViewModel(
     private fun markMessageAsRead(){
         Logger.d(TAG, "markMessageAsRead: ${state.value.lastMessage}")
         readMessageJob?.cancel()
-        readMessageJob = viewModelScope.launch {
+        readMessageJob = screenModelScope.launch {
             var lastMessage = state.value.lastMessage
             if (lastMessage == null){
 

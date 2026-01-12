@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.stack.popUntil
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
 import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
@@ -61,7 +63,7 @@ class   PersonalInformationScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<ProfileViewModel>()
+        val viewModel = koinScreenModel<ProfileViewModel>()
 
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent

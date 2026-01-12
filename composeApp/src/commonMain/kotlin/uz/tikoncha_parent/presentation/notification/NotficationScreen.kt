@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -43,12 +44,15 @@ class NotificationScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<NotificationViewModel>()
+        val viewModel = koinScreenModel<NotificationViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit){viewModel.load()}
 
         NotificationUi(
             items = state.value.items,
-            navigator = navigator!!,
+            navigator = navigator,
+            viewModel = viewModel
         )
     }
 }
@@ -58,7 +62,7 @@ fun NotificationUi(
     items: List<NewsDto>,
     language: String = "uz",
     navigator: Navigator?,
-    viewModel: NotificationViewModel = koinViewModel()
+    viewModel: NotificationViewModel
 ) {
     val rootNavigator = navigator?.parent
     val navigator = rootNavigator ?: LocalNavigator.currentOrThrow
@@ -71,7 +75,7 @@ fun NotificationUi(
         items.map { it.toUi(language) }
     }
 
-    LaunchedEffect(Unit){viewModel.load()}
+
 
     Column(
         modifier = Modifier
@@ -133,6 +137,7 @@ private fun Preview(){
 
     NotificationUi(
         items = listOf(),
-        navigator = null
+        navigator = null,
+        viewModel = koinViewModel()
     )
 }

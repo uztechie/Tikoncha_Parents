@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +17,14 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
+import uz.tikoncha_parent.platform.Logger
 
 class ProfileViewModel(
     private val userInfoUseCase: UserInfoUseCase,
     private val childrenUseCase: ChildrenUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
-): ViewModel() {
+): ScreenModel {
     var userInfoJob: Job? = null
     var childrenJob: Job? = null
     var avatarJob: Job? = null
@@ -30,6 +33,7 @@ class ProfileViewModel(
     val state = _state.asStateFlow()
 
     init {
+        Logger.d("ProfileViewModel"," AppSettings.userInfo=${AppSettings.userInfo}")
         _state.update {
             it.copy(
                 userInfo = AppSettings.userInfo,
@@ -70,7 +74,7 @@ class ProfileViewModel(
     private fun uploadAvatar(part: UploadPart){
         avatarJob?.cancel()
 
-        avatarJob = viewModelScope.launch {
+        avatarJob = screenModelScope.launch {
             when (val res = uploadAvatarToServerUseCase(part)) {
                 is Resource.Success -> {
                     val url = res.data.avatar_url ?:""
@@ -84,7 +88,7 @@ class ProfileViewModel(
     private fun getAvatar(){
         avatarJob?.cancel()
 
-        avatarJob = viewModelScope.launch {
+        avatarJob = screenModelScope.launch {
             when (val res = loadAvatarFromServerUseCase()) {
                 is Resource.Success -> {
                     val url = res.data.avatar_url?:""
@@ -98,7 +102,7 @@ class ProfileViewModel(
 
     private fun userInfoJob(){
         userInfoJob?.cancel()
-        userInfoJob = viewModelScope.launch {
+        userInfoJob = screenModelScope.launch {
             val result = userInfoUseCase()
             when(result){
                 is Resource.Loading -> {}
@@ -109,7 +113,8 @@ class ProfileViewModel(
                     AppSettings.userInfo = result.data.toUserInfo()
                     _state.update {
                         it.copy(
-                            children = AppSettings.children
+                            children = AppSettings.children,
+                            userInfo = result.data.toUserInfo()
                         )
                     }
                 }
@@ -119,7 +124,7 @@ class ProfileViewModel(
 
     private fun getChildren(){
         childrenJob?.cancel()
-        childrenJob = viewModelScope.launch {
+        childrenJob = screenModelScope.launch {
             val result = childrenUseCase()
             when(result){
                 is Resource.Loading -> {}

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.stringResource
@@ -40,7 +41,7 @@ class   ChildrenScreen : Screen {
 
         val navigator = LocalNavigator.current
 
-        val viewModel = koinViewModel<ProfileViewModel>()
+        val viewModel = koinScreenModel<ProfileViewModel>()
 
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent

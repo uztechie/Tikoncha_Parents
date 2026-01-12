@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -36,18 +37,28 @@ class NotificationVerifyScreen(
 
     @Composable
     override fun Content() {
-        NotificationVerifyUi(newsId = newsId)
+        val viewModel = koinScreenModel<NotificationViewModel>()
+        val uiState by viewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(newsId) {
+            viewModel.load()
+        }
+
+        NotificationVerifyUi(
+            newsId = newsId,
+            uiState = uiState
+        )
     }
 }
 @Composable
 fun NotificationVerifyUi(
     newsId: Long,
+    uiState: NotificationUiState
 ) {
 
     val navigator: Navigator? = LocalNavigator.current
-    val viewModel: NotificationViewModel = koinViewModel()
 
-    val uiState by viewModel.state.collectAsStateWithLifecycle()
+
 
 
     val language = remember {
@@ -58,9 +69,7 @@ fun NotificationVerifyUi(
         uiState.items.firstOrNull { it.id == newsId }?.toUi(language)
     }
 
-    LaunchedEffect(newsId) {
-        if (ui == null) viewModel.load()
-    }
+
 
     Column(
         modifier = Modifier
