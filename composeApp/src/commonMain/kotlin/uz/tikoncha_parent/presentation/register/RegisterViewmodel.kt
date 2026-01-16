@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.register
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -38,7 +36,7 @@ class RegisterViewmodel(
             is RegisterEvent.OnLastNameInsert -> {
                 _state.update {
                     it.copy(
-                        lastName = event.fullName
+                        lastName = event.lastName
                     )
                 }
             }

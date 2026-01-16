@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.stack.popUntil
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import uz.tikoncha_parent.data.mapper.toUploadPart
@@ -39,7 +38,6 @@ import uz.tikoncha_parent.ui.SpaceLarge
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.chiqishni_tasdiqlang
 import tikoncha_parents.composeapp.generated.resources.chiqishni_xohlaysizmi
@@ -126,8 +124,9 @@ fun PersonalInformationUi(
 
             item {
                 ProfileHeader(
-                    fullName = state.userInfo?.name ?: "",
-                    fathersName = "",
+                    firstName = state.userInfo?.name ?: "",
+                    lastName = state.userInfo?.lastName ?: "",
+                    fathersName = state.userInfo?.patronymic ?: "",
                     onSelectImageButtonClick = {
                         launchPicker()
                     },

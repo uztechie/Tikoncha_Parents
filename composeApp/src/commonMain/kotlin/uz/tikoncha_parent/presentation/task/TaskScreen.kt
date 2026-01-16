@@ -45,7 +45,6 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
@@ -240,7 +239,7 @@ fun TaskUi(
                     verticalArrangement = Arrangement.Center
                 ) {
                     CustomText(
-                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
+                        text = stringResource(Res.string.hozir_vazifalar_yo_q),
                         fontSize = SmallTextSize,
                         color = MaterialTheme.extendedColor.hintColor,
                         fontWeight = FontWeight.W500
@@ -359,7 +358,7 @@ fun TaskUi(
                     verticalArrangement = Arrangement.Center
                 ) {
                     CustomText(
-                        text = stringResource(Res.string.xozir_vazifalar_yo_q),
+                        text = stringResource(Res.string.hozir_vazifalar_yo_q),
                         fontSize = SmallTextSize,
                         color = MaterialTheme.extendedColor.hintColor,
                         fontWeight = FontWeight.W500

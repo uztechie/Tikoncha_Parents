@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.presentation.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -17,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,7 +23,6 @@ import coil3.compose.AsyncImage
 import uz.tikoncha_parent.ui.ProfileImageSize
 import uz.tikoncha_parent.ui.ShapeCornerRadius
 import uz.tikoncha_parent.ui.SmallIconButtonSize
-import uz.tikoncha_parent.ui.SpaceUltraSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -35,13 +31,15 @@ import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.ui.LargeTextSize
+import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileHeader(
-    fullName: String,
+    lastName: String,
+    firstName: String,
     fathersName: String,
     state: ProfileState,
     onSelectImageButtonClick: () -> Unit
@@ -101,19 +99,31 @@ fun ProfileHeader(
             }
         }
 
-        SpaceUltraSmall()
+        SpaceSmall()
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomText(
+                    text = lastName,
+                    fontSize = LargeTextSize,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1
+                )
+                SpaceSmall()
 
-            CustomText(
-                text = fullName,
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1
-            )
+                CustomText(
+                    text = firstName,
+                    fontSize = LargeTextSize,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1
+                )
+            }
 
             CustomText(
                 text = fathersName,
@@ -132,7 +142,8 @@ private fun Pre() {
         ThemeMode.DARK
     ){
         ProfileHeader(
-            fullName = "Ahmadjonov Husniddin",
+            lastName = "Ahmadjonov",
+            firstName = "Husniddin",
             fathersName = "Nazirjon o'g'li",
             onSelectImageButtonClick = {},
             state = ProfileState()

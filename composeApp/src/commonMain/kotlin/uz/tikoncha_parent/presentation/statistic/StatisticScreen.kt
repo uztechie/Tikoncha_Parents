@@ -84,16 +84,8 @@ fun StatisticUi(
     event: (StatisticEvent) -> Unit
 ) {
 
-    val bottomRoundedShape = RoundedCornerShape(
-        topStart = 0.dp,
-        topEnd = 0.dp,
-        bottomStart = ShapeCornerRadius,
-        bottomEnd = ShapeCornerRadius
-    )
-
     val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
     val appUsageErrorText = state.appUsageResponseState.errorText()
-    val appUsageSuccess = state.appUsageResponseState is ResponseState.Success
 
     var showDialog by remember { mutableStateOf(false) }
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
@@ -102,9 +94,6 @@ fun StatisticUi(
     LoadingDialog(appUsageLoading)
 
     var showAppUsageErrorDialog by remember {
-        mutableStateOf(false)
-    }
-    var showCreateRuleDialog by remember {
         mutableStateOf(false)
     }
 
@@ -165,16 +154,13 @@ fun StatisticUi(
                 delay(500)
                 isRefreshing = false
             }
-
-
         }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.extendedColor.backgroundColor)
-        )
-        {
+        ) {
             CustomHeader(
                 title = stringResource(Res.string.statistika),
                 showBackButton = true,
@@ -203,7 +189,6 @@ fun StatisticUi(
                     )
                     .verticalScroll(rememberScrollState())
             ) {
-
                 SpaceMedium()
                 SegmentedToggle(
                     options = listOf(
@@ -219,21 +204,7 @@ fun StatisticUi(
                             if (it == 0) DateSelectionType.WEEK else DateSelectionType.DAY
                     }
                 )
-
                 SpaceMedium()
-
-                DateSelectorSlider(
-                    type = selectionType,
-                    periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
-                    onDateSelected = {
-                        event(StatisticEvent.GetUsageList(it, selectionType))
-                    },
-                    onLastItemSelected = {
-                        event(StatisticEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
-                    }
-                )
-
-                SpaceUltraSmall()
 
                 val averageTime = if (selectionType == DateSelectionType.DAY) {
                     val formatTime = state.averageUsageTime
@@ -263,27 +234,25 @@ fun StatisticUi(
 
                     "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
                 }
-
-                CustomText(
-                    text = averageTime,
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = UltraSmallTextSize,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                DateSelectorSlider(
+                    type = selectionType,
+                    averageTimeText = averageTime,
+                    periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
+                    onDateSelected = {
+                        event(StatisticEvent.GetUsageList(it, selectionType))
+                    },
+                    onLastItemSelected = {
+                        event(StatisticEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
+                    }
                 )
-
                 SpaceLarge()
 
-
+                val data = if (selectionType == DateSelectionType.WEEK) normalizeWeeklyKeys(state.weeklyChartData) else state.dailyChartData
                 UsageBarChart(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    data = state.dailyChartData
+                    data = data,
+                    isWeekly = selectionType == DateSelectionType.WEEK,
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
                 )
-
                 SpaceMedium()
 
                 CustomText(
@@ -291,7 +260,6 @@ fun StatisticUi(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = NormalLargeTextSize
                 )
-
                 SpaceSmall()
 
                 state.appUsageUiList.forEach { item ->
@@ -304,7 +272,6 @@ fun StatisticUi(
             }
         }
     }
-
 }
 
 @Preview

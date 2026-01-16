@@ -33,7 +33,7 @@
     <string name="vazifalar">Vazifalar</string>
     <string name="sizdan_vazifalar">Sizdan vazifalar</string>
     <string name="barchasini_ko_rish">Barchasini ko‘rish</string>
-    <string name="xozir_vazifalar_yo_q">Xozir vazifalar yo‘q</string>
+    <string name="hozir_vazifalar_yo_q">Hozir vazifalar yo‘q</string>
     <string name="farzandingiz_vazifalari">Farzandingiz vazifalari</string>
     <string name="vazifa_qo_shish">Vazifa qo‘shish</string>
     <string name="kuzatuv">Kuzatuv</string>
@@ -324,8 +324,6 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
         Internet bilan aloqa uzildi. Iltimos, tarmoqni yoqib qayta urinib ko‘ring.
     </string>
     <string name="payment_type_text">To'lov %1$s orqali amalga oshiriladi.</string>
-
-
     <string name="tolov_amalga_oshmadi">To'lov amalga oshmadi!</string>
-
+    <string name="tez_kunda">Tez kunda</string>
 </resources>

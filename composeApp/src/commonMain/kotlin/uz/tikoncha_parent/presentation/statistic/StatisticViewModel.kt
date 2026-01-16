@@ -209,6 +209,7 @@ class StatisticViewModel(
                 it.copy(
                     appUsageUiList = uiList,
                     dailyChartData = chartData,
+                    weeklyChartData = weeklyChartData,
                     averageUsageTime = avg
                 )
             }

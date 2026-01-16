@@ -24,6 +24,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
@@ -32,6 +33,7 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupUi
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
@@ -39,6 +41,8 @@ import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class RuleTypeSelectionScreen() : Screen {
@@ -295,5 +299,16 @@ fun RuleTypeSelectionUi(
                 }
             )
         }
+    }
+}
+
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        RuleTypeSelectionUi(
+            navigator = null,
+        )
     }
 }

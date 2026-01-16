@@ -36,4 +36,6 @@ data class StatisticState(
 
     val childrenList: List<UserInfo> = emptyList(),
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
+
+    val showBlur: Boolean = false
 )

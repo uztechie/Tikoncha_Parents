@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -33,16 +32,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
-import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent
@@ -178,8 +173,9 @@ fun ProfileUi(
         ) {
             SpaceSmall()
             ProfileHeader(
-                fullName = state.userInfo?.name?:"",
-                fathersName = "",
+                firstName = state.userInfo?.name?:"",
+                lastName = state.userInfo?.lastName?:"",
+                fathersName = state.userInfo?.patronymic?:"",
                 onSelectImageButtonClick = {
                     launchPicker()
                 },

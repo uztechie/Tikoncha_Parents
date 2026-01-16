@@ -33,7 +33,7 @@
     <string name="vazifalar">Задачи</string>
     <string name="sizdan_vazifalar">Ваши задачи</string>
     <string name="barchasini_ko_rish">Посмотреть все</string>
-    <string name="xozir_vazifalar_yo_q">Сейчас нет заданий</string>
+    <string name="hozir_vazifalar_yo_q">Сейчас нет заданий</string>
     <string name="farzandingiz_vazifalari">Задачи вашего ребёнка</string>
     <string name="vazifa_qo_shish">Добавить задачу</string>
     <string name="kuzatuv">Наблюдение</string>
@@ -136,7 +136,7 @@
     <string name="pro">ПРО</string>
     <string name="ta">шт.</string>
     <string name="kamera">Камера</string>
-    <string name="joylashuv">Joylashuv</string>
+    <string name="joylashuv">Местоположение</string>
     <string name="monitoring">Мониторинг</string>
     <string name="admin_ilova">Админ Приложение</string>
     <string name="ishlash_vaqti">Время работы</string>
@@ -172,7 +172,7 @@
     <string name="tugashi">Конец</string>
     <string name="bloklash_shartlari">Условия блокировки</string>
     <string name="qachon_va_qayerda">Выберите, когда и где вы не хотите, чтобы вас беспокоили</string>
-    <string name="vaqt">Vaqt</string>
+    <string name="vaqt">Время</string>
     <string name="ish_vaqti_dam_olish_kuni">рабочее время, выходные</string>
     <string name="wi_fi_tarmoqlarni_tanlang">Выберите сети Wi-Fi</string>
     <string name="ulandi">Подключен</string>
@@ -320,5 +320,5 @@
     <string name="xatolik">Ошибка</string>
     <string name="yakunlash">Завершить</string>
     <string name="payment_type_text">Оплата будет произведена через %1$s.</string>
-
+    <string name="tez_kunda">Скоро</string>
 </resources>

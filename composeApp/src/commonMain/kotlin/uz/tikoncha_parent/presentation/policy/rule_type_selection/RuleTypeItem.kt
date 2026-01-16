@@ -16,12 +16,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.location
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.SoonBox
+import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleType
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -114,7 +122,24 @@ fun RuleTypeItem(
             )
 
         }
+    }
+}
 
-
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        RuleTypeItem(
+            ruleTypeUi = RuleTypeUi(
+                type = RuleType.LOCATION,
+                icon = painterResource(Res.drawable.location),
+                title = "Lokatsiya",
+                subtitle = "",
+                enabled = true,
+                hasItems = true,
+                soon = true,
+            ),
+            onClick = {}
+        )
     }
 }

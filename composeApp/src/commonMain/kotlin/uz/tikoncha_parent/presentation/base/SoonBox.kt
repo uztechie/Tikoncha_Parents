@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.tez_kunda
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.UltraSmallTextSize
 
@@ -22,7 +25,7 @@ fun SoonBox(
             .padding(horizontal = 10.dp, vertical = 5.dp)
     ){
         CustomText(
-            text = "Tez kunda",
+            text = stringResource(Res.string.tez_kunda),
             fontSize = UltraSmallTextSize,
             color = Color.White,
             modifier = Modifier,
