@@ -27,6 +27,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 val ButtonHeight = 50.dp
 val DialogButtonHeight = 40.dp
+val SmallButtonHeight = 30.dp
 
 val LinearProgressIndicatorHeight = 10.dp
 

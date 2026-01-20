@@ -10,6 +10,8 @@ import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.saidburxon.newedu.data.model.SendOtpResponse
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
 import uz.saidburxon.newedu.data.model.VerifyOtpResponse
+import uz.tikoncha_parent.data.remote.model.UserInfoDto
+import uz.tikoncha_parent.domain.model.UserInfo
 
 class LoginRepositoryImpl(private val api: LoginApiService): LoginRepository {
     override suspend fun sendOtp(request: SendOtpRequest): SendOtpResponse {
@@ -32,5 +34,7 @@ class LoginRepositoryImpl(private val api: LoginApiService): LoginRepository {
         return api.userInfo()
     }
 
-
+    override suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse {
+        return api.childInfoEdit(body)
+    }
 }

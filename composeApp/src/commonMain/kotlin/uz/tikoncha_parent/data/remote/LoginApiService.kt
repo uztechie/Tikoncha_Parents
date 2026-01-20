@@ -13,6 +13,8 @@ import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.saidburxon.newedu.data.model.SendOtpResponse
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
 import uz.saidburxon.newedu.data.model.VerifyOtpResponse
+import uz.tikoncha_parent.data.remote.model.UserInfoDto
+import uz.tikoncha_parent.domain.model.UserInfo
 
 class LoginApiService(private val client: HttpClient) {
 
@@ -64,5 +66,12 @@ class LoginApiService(private val client: HttpClient) {
         )
 
 
-
+    suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse =
+        client.safeRequest(
+            method = HttpMethod.Patch,
+            url = "/users/student-info",
+            block = {
+                setBody(body)
+            }
+        )
 }

@@ -122,7 +122,7 @@ class ProfileViewModel(
         }
     }
 
-    private fun getChildren(){
+    fun getChildren(){
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {
             val result = childrenUseCase()

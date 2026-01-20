@@ -321,4 +321,7 @@
     <string name="yakunlash">Завершить</string>
     <string name="payment_type_text">Оплата будет произведена через %1$s.</string>
     <string name="tez_kunda">Скоро</string>
+    <string name="tahrirlash">Редактировать</string>
+    <string name="farzand_malumotini_tahrirlash">Редактировать данные ребёнка</string>
+    <string name="maydonlar_toliq_toldirilmagan">Поля заполнены не полностью</string>
 </resources>

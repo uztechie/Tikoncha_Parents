@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -80,10 +82,8 @@ fun TaskUi(
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
-
     val taskLoading = state.taskResponseState is ResponseState.Loading
     val taskErrorText = state.taskResponseState.errorText()
-    val taskSuccess = state.taskResponseState is ResponseState.Success
 
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
@@ -99,301 +99,267 @@ fun TaskUi(
         }
     )
 
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
-    )
-    {
-
-        CustomHeader(
-            showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            },
-            title = stringResource(Res.string.vazifalar),
-            trailingIcon = {
-
-                SpaceMedium()
-
-                FilledTonalIconButton(
-                    modifier = Modifier.size(LargeIconButtonSize),
-                    onClick = {
-                        navigator?.push(CompletedTaskScreen())
-                    },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor,
-                        contentColor = MaterialTheme.colorScheme.onBackground
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.task_square2),
-                        contentDescription = "",
-                        tint = PrimaryColor,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(LargeIconButtonPadding)
-                    )
-                }
-            }
-        )
-
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = ContainerPadding)
+            modifier = Modifier.fillMaxSize()
         ) {
-
-//            Row(
-//                modifier = Modifier
-//                    .wrapContentSize()
-//                    .border(
-//                        1.dp,
-//                        BorderColor,
-//                        RoundedCornerShape(TextFieldCornerRadius)
-//                    )
-//                    .padding(vertical = 8.dp, horizontal = 12.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//
-//                Image(
-//                    painter = painterResource(Res.drawable.calendar_search),
-//                    contentDescription = "",
-//                )
-//
-//                SpaceSmall()
-//
-//                CustomText(
-//                    text = reformattedToday(today),
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.Bold,
-//                )
-//            }
-//
-            SpaceSmall()
-
-            CustomText(
-                text = stringResource(Res.string.farzandingiz_vazifalari),
-                fontSize = NormalTextSize,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontWeight = FontWeight.W500
-            )
-
-            SpaceMedium()
-            ChildSelectionButton(
-                text = state.selectedChild?.name ?: "",
-                label = stringResource(Res.string.farzandlaringiz),
-                onClick = {showDialog = true},
-                imageUrl = state.selectedChild?.avatarUrl?:"",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight)
-            )
-
-            SpaceMedium()
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                CustomText(
-                    text = stringResource(Res.string.sizdan_vazifalar),
-                    fontWeight = FontWeight.W600,
-                    fontSize = NormalTextSize
-                )
-
-                if (state.parentTaskList.isNotEmpty()) {
-                    SpaceSmall()
-                    CustomText(
-                        text = if (!state.showMineAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
-                            Res.string.qisqartirish
-                        ),
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W600,
-                        fontSize = NormalTextSize,
-                        modifier = Modifier
-                            .clickable {
-                                event(TaskEvent.ShowMineAll)
-                            }
-                    )
-                }
-            }
-
-            SpaceSmall()
-
-            if (state.parentTaskList.isEmpty()) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(2f)
-                        .background(
-                            MaterialTheme.extendedColor.cardColor,
-                            RoundedCornerShape(TextFieldCornerRadius)
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CustomText(
-                        text = stringResource(Res.string.hozir_vazifalar_yo_q),
-                        fontSize = SmallTextSize,
-                        color = MaterialTheme.extendedColor.hintColor,
-                        fontWeight = FontWeight.W500
-                    )
-                }
-
-            } else {
-
-                if (state.showMineAll) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        state.parentTaskList.forEach { task ->
-                            TaskItemUi(
-                                task = task,
-                                onDoneButtonClick = {
-                                    event(TaskEvent.OnCompletedTask(task))
-                                },
-                                onEditIconClick = {
-                                    println("onEditIconClick = $task")
-                                    navigator?.push(AddNewTaskScreen(task))
-                                },
-                                onDetailsIconClick = {}
-                            )
-                        }
-                    }
-                } else {
-                    TaskItemUi(
-                        task = state.parentTaskList.first(),
-                        onDoneButtonClick = { task ->
-                            event(TaskEvent.OnCompletedTask(task))
-                        },
-                        onEditIconClick = {
-                            navigator?.push(AddNewTaskScreen(state.parentTaskList.first()))
-                        },
-                        onDetailsIconClick = { }
-                    )
-                }
-            }
-
-
-            SpaceMedium()
-
-            TextButton(
-                onClick = {
-                    navigator?.push(AddNewTaskScreen())
+            CustomHeader(
+                showBackButton = true,
+                onBackClick = {
+                    navigator?.pop()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(TextFieldCornerRadius))
-                    .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
-                    .height(ButtonHeight)
-            ) {
-                Row {
-
-                    CustomText(
-                        text = stringResource(Res.string.vazifa_qo_shish),
-                        fontSize = 16.sp,
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W500
-                    )
-
+                title = stringResource(Res.string.vazifalar),
+                trailingIcon = {
                     SpaceMedium()
-
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                        tint = PrimaryColor
-                    )
+                    FilledTonalIconButton(
+                        modifier = Modifier.size(LargeIconButtonSize),
+                        onClick = {
+                            navigator?.push(CompletedTaskScreen())
+                        },
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.extendedColor.cardColor,
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.task_square2),
+                            contentDescription = "",
+                            tint = PrimaryColor,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(LargeIconButtonPadding)
+                        )
+                    }
                 }
-            }
-
-            SpaceMedium()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            )
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = ContainerPadding)
             ) {
+                SpaceSmall()
                 CustomText(
                     text = stringResource(Res.string.farzandingiz_vazifalari),
                     fontSize = NormalTextSize,
-                    fontWeight = FontWeight.W600,
+                    color = MaterialTheme.extendedColor.hintColor,
+                    fontWeight = FontWeight.W500
                 )
+                SpaceMedium()
 
-                if (state.childrenTaskList.isNotEmpty()) {
-                    SpaceSmall()
-                    CustomText(
-                        text = if (!state.showChildrenAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
-                            Res.string.qisqartirish
-                        ),
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.W600,
-                        fontSize = NormalTextSize,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .clickable {
-                                event(TaskEvent.ShowChildrenAll)
-                            }
-                    )
-                }
-            }
-
-            SpaceSmall()
-
-            if (state.childrenTaskList.isEmpty()) {
-                Column(
+                ChildSelectionButton(
+                    text = state.selectedChild?.name ?: "",
+                    label = stringResource(Res.string.farzandlaringiz),
+                    onClick = {showDialog = true},
+                    imageUrl = state.selectedChild?.avatarUrl?:"",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f)
-                        .background(
-                            MaterialTheme.extendedColor.cardColor,
-                            RoundedCornerShape(TextFieldCornerRadius)
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .height(TextFieldHeight)
+                )
+                SpaceMedium()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     CustomText(
-                        text = stringResource(Res.string.hozir_vazifalar_yo_q),
-                        fontSize = SmallTextSize,
-                        color = MaterialTheme.extendedColor.hintColor,
-                        fontWeight = FontWeight.W500
+                        text = stringResource(Res.string.sizdan_vazifalar),
+                        fontWeight = FontWeight.W600,
+                        fontSize = NormalTextSize
                     )
+
+                    if (state.parentTaskList.isNotEmpty()) {
+                        SpaceSmall()
+                        CustomText(
+                            text = if (!state.showMineAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
+                                Res.string.qisqartirish
+                            ),
+                            color = PrimaryColor,
+                            fontWeight = FontWeight.W600,
+                            fontSize = NormalTextSize,
+                            modifier = Modifier
+                                .clickable {
+                                    event(TaskEvent.ShowMineAll)
+                                }
+                        )
+                    }
                 }
+                SpaceSmall()
 
-            } else {
-
-                if (state.showChildrenAll) {
+                if (state.parentTaskList.isEmpty()) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(2f)
+                            .background(
+                                MaterialTheme.extendedColor.cardColor,
+                                RoundedCornerShape(TextFieldCornerRadius)
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        state.childrenTaskList.forEach { task ->
-                            TaskItemUi(
-                                task = task,
-                                onDoneButtonClick = {},
-                                onEditIconClick = {},
-                                onDetailsIconClick = {}
-                            )
+                        CustomText(
+                            text = stringResource(Res.string.hozir_vazifalar_yo_q),
+                            fontSize = SmallTextSize,
+                            color = MaterialTheme.extendedColor.hintColor,
+                            fontWeight = FontWeight.W500
+                        )
+                    }
+
+                } else {
+                    if (state.showMineAll) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            state.parentTaskList.forEach { task ->
+                                TaskItemUi(
+                                    task = task,
+                                    onDoneButtonClick = {
+                                        event(TaskEvent.OnCompletedTask(task))
+                                    },
+                                    onEditIconClick = {
+                                        println("onEditIconClick = $task")
+                                        navigator?.push(AddNewTaskScreen(task))
+                                    },
+                                    onDetailsIconClick = {}
+                                )
+                            }
                         }
+                    } else {
+                        TaskItemUi(
+                            task = state.parentTaskList.first(),
+                            onDoneButtonClick = { task ->
+                                event(TaskEvent.OnCompletedTask(task))
+                            },
+                            onEditIconClick = {
+                                navigator?.push(AddNewTaskScreen(state.parentTaskList.first()))
+                            },
+                            onDetailsIconClick = { }
+                        )
+                    }
+                }
+                SpaceMedium()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    CustomText(
+                        text = stringResource(Res.string.farzandingiz_vazifalari),
+                        fontSize = NormalTextSize,
+                        fontWeight = FontWeight.W600,
+                    )
+
+                    if (state.childrenTaskList.isNotEmpty()) {
+                        SpaceSmall()
+                        CustomText(
+                            text = if (!state.showChildrenAll) stringResource(Res.string.barchasini_ko_rish) else stringResource(
+                                Res.string.qisqartirish
+                            ),
+                            color = PrimaryColor,
+                            fontWeight = FontWeight.W600,
+                            fontSize = NormalTextSize,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .clickable {
+                                    event(TaskEvent.ShowChildrenAll)
+                                }
+                        )
+                    }
+                }
+                SpaceSmall()
+
+                if (state.childrenTaskList.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(2f)
+                            .background(
+                                MaterialTheme.extendedColor.cardColor,
+                                RoundedCornerShape(TextFieldCornerRadius)
+                            ),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CustomText(
+                            text = stringResource(Res.string.hozir_vazifalar_yo_q),
+                            fontSize = SmallTextSize,
+                            color = MaterialTheme.extendedColor.hintColor,
+                            fontWeight = FontWeight.W500
+                        )
                     }
                 } else {
-                    TaskItemUi(
-                        task = state.childrenTaskList.first(),
-                        onEditIconClick = { },
-                        onDoneButtonClick = { },
-                        onDetailsIconClick = { }
-                    )
+                    if (state.showChildrenAll) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            state.childrenTaskList.forEach { task ->
+                                TaskItemUi(
+                                    task = task,
+                                    onDoneButtonClick = {},
+                                    onEditIconClick = {},
+                                    onDetailsIconClick = {}
+                                )
+                            }
+                        }
+                    } else {
+                        TaskItemUi(
+                            task = state.childrenTaskList.first(),
+                            onEditIconClick = { },
+                            onDoneButtonClick = { },
+                            onDetailsIconClick = { }
+                        )
+                    }
                 }
-
+                Spacer(modifier = Modifier.weight(1f))
+                SpaceLarge()
             }
-            Spacer(modifier = Modifier.weight(1f))
-            SpaceLarge()
+        }
+        SpaceMedium()
+
+        TextButton(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .bottomShadow(
+                    shape = RoundedCornerShape(
+                        topStart = ButtonCornerRadius,
+                        topEnd = ButtonCornerRadius
+                    ),
+                    color = MaterialTheme.extendedColor.backgroundColor
+                )
+                .background(MaterialTheme.extendedColor.backgroundColor)
+                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
+                .clip(RoundedCornerShape(TextFieldCornerRadius))
+                .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
+                .height(ButtonHeight),
+            onClick = {
+                navigator?.push(AddNewTaskScreen())
+            }
+        ) {
+            CustomText(
+                text = stringResource(Res.string.vazifa_qo_shish),
+                fontSize = 16.sp,
+                color = PrimaryColor,
+                fontWeight = FontWeight.W500
+            )
+            SpaceMedium()
+
+            Icon(
+                painter = painterResource(Res.drawable.add_square),
+                contentDescription = "",
+                tint = PrimaryColor
+            )
         }
     }
 }

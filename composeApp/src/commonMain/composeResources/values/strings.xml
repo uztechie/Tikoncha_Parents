@@ -326,4 +326,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="payment_type_text">To'lov %1$s orqali amalga oshiriladi.</string>
     <string name="tolov_amalga_oshmadi">To'lov amalga oshmadi!</string>
     <string name="tez_kunda">Tez kunda</string>
+    <string name="tahrirlash">Tahrirlash</string>
+    <string name="farzand_malumotini_tahrirlash">Farzandingiz ma’lumotini tahrirlash</string>
+    <string name="maydonlar_toliq_toldirilmagan">Maydonlar to‘liq to‘ldirilmagan</string>
 </resources>

@@ -62,6 +62,7 @@ import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.CoinPackageRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
@@ -71,6 +72,7 @@ import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
@@ -113,6 +115,7 @@ import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewMode
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
+import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 
@@ -212,6 +215,7 @@ val sharedModule = module {
     single { ParentRequestsUseCase(get() ) }
     single { UpdateParentRequestStatusUseCase(get() ) }
     single { PurchaseIApPremiumUseCase(get() ) }
+    single { ChildInfoEditUseCase(get() ) }
 
 
 
@@ -253,6 +257,12 @@ val sharedModule = module {
     factory { SubscriptionPaymentViewModel(get(), get()) }
     factory { ParentRequestViewModel(get(), get()) }
     factory { LocationRuleViewModel() }
+    factory { (child: UserInfo) ->
+        ChildInfoEditViewModel(
+            childInfoEditUseCase = get(),
+            child = child
+        )
+    }
 
 
 }

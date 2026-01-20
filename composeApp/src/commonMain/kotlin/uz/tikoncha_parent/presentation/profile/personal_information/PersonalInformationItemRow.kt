@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
+import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -72,7 +73,7 @@ fun PersonalInformationItemRow(
 
             Text(
                 text = value?:"",
-                fontSize = SmallTextSize,
+                fontSize = NormalTextSize,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
                 style = TextStyle(),
