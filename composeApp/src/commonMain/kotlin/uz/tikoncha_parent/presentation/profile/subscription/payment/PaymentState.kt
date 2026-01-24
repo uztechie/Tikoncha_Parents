@@ -16,5 +16,12 @@ data class PaymentState(
     val paymentStatus: PaymentStatus = PaymentStatus.START,
     val paymentStatusError: String = "",
     val isTestAccount: Boolean = false,
-    val planId: String = ""
-)
+    val planId: String = "",
+
+    val promoCodeResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val promoActivated: Boolean = false,
+    val promoCode: String = "",
+    val discountAmount: Int = 0,
+    val discountSaving: Int = 0,
+    val discountPercentage: Int = 0,
+    )

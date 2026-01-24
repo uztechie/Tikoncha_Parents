@@ -10,4 +10,8 @@ sealed interface PaymentEvent {
     data class SetSubscriptionDuration(val duration: SubscriptionDuration): PaymentEvent
     data class SetPlanId(val planId: String): PaymentEvent
 
+    data class OnPromoCode(val promoCode: String): PaymentEvent
+    data object ValidatePromoCode: PaymentEvent
+    data object ClearPromoCodeResponse: PaymentEvent
+
 }

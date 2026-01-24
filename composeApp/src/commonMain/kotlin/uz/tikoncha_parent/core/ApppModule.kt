@@ -95,6 +95,7 @@ import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
+import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
@@ -204,6 +205,7 @@ val sharedModule = module {
     single { UpdatePolicyUseCase(get()) }
     single { DeletePolicyUseCase(get()) }
     single { SubscriptionPaymentUseCase(get()) }
+    single { PromoCodeValidationUseCase(get()) }
     single { PaymentStatusUseCase(get()) }
     single { SubscriptionLimitUseCase(get()) }
     single { SubscriptionPlanUseCase(get()) }
@@ -253,7 +255,7 @@ val sharedModule = module {
     single { PolicySharedModel(get()) }
     factory { AppWebViewModel(get()) }
 
-    factory { PaymentViewModel(get(), get(), get(), get(), get()) }
+    factory { PaymentViewModel(get(), get(), get(), get(), get(), get()) }
     factory { SubscriptionPaymentViewModel(get(), get()) }
     factory { ParentRequestViewModel(get(), get()) }
     factory { LocationRuleViewModel() }

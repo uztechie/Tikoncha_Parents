@@ -69,32 +69,7 @@ fun ChildSelectionButton(
     fontWeight: FontWeight = FontWeight.Normal,
     background: Color = MaterialTheme.extendedColor.cardColor,
 ) {
-    // 1) Bitta anim progress (t)
-    val infinite = rememberInfiniteTransition(label = "child_btn_glow")
-    val t by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "t"
-    )
 
-    // 2) spread + alpha bitta progressdan
-    val animatedSpreadDp = lerp(1.dp, 2.dp, t)
-    val animatedAlpha = lerp1(0.55f, 0.95f, t)
-
-    val glowColors = remember {
-        listOf(
-            Color(0xFFc3955b), // primary gold
-            Color(0xFFE7C089), // light gold
-            Color(0xFFFFE0B2), // warm cream
-            Color(0xFFD4A373), // amber
-            Color(0xFFE7C089), // light gold
-            Color(0xFFc3955b), // primary gold
-        )
-    }
 
     val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.primaryColor
     val newText = text.ifEmpty { label }
@@ -102,7 +77,6 @@ fun ChildSelectionButton(
     BoxWithConstraints(
         modifier = modifier.fillMaxWidth()
     ) {
-        val density = LocalDensity.current
         val isCompact = maxWidth < 360.dp
 
         val buttonHeight =
@@ -110,28 +84,22 @@ fun ChildSelectionButton(
         val avatarSize = if (isCompact) 28.dp else 30.dp
         val paddingH = if (isCompact) 10.dp else 12.dp
 
-        val radiusPx = with(density) { (maxWidth * 1.25f).toPx() }
 
-        val brush = rememberRotatingLinearGradient(
-            colors = glowColors,
-            radiusPx = radiusPx,
-            durationMs = 3000
-        )
 
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .height(buttonHeight)
-                .dropShadow(
-                    shape = shape,
-                    shadow = Shadow(
-                        radius = 10.dp,
-                        spread = animatedSpreadDp,
-                        brush = brush,
-                        offset = DpOffset(0.dp, 0.dp),
-                        alpha = animatedAlpha
-                    )
-                )
+//                .dropShadow(
+//                    shape = shape,
+//                    shadow = Shadow(
+//                        radius = 10.dp,
+//                        spread = animatedSpreadDp,
+//                        brush = brush,
+//                        offset = DpOffset(0.dp, 0.dp),
+//                        alpha = animatedAlpha
+//                    )
+//                )
                 .clip(shape)
                 .background(background, shape)
                 .clickable(

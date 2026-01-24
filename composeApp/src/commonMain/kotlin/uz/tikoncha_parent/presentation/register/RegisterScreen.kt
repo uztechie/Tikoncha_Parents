@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -78,7 +80,7 @@ fun Register(
     event: (RegisterEvent) -> Unit
 ) {
 
-    val isOtpCodeValid = state.name != "" && state.lastName != "" && state.middleName != "" && state.idNumber != ""
+    val isOtpCodeValid = state.name != "" && state.lastName != "" && state.middleName != ""
 
     val registerLoading = state.registerResponseState is ResponseState.Loading
     val registerErrorText = state.registerResponseState.errorText()
@@ -116,8 +118,10 @@ fun Register(
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
             .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState())
             .imePadding()
-    ) {
+    )
+    {
         LogoHeader()
         CustomText(
             text = stringResource(Res.string.xush_kelibsiz),
@@ -178,7 +182,7 @@ fun Register(
             onValueChange = { event(RegisterEvent.OnMiddleNameInsert(it)) },
             modifier = Modifier.height(TextFieldHeight),
             label = stringResource(Res.string.otangizni_ismini_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
             leadingIcon = {
                 Image(
                     painter = painterResource(Res.drawable.parent),
@@ -192,23 +196,6 @@ fun Register(
 
         SpaceMedium()
 
-        CustomTextField(
-            value = state.idNumber,
-            onValueChange = { event(RegisterEvent.OnIdNumberInsert(it)) },
-            modifier = Modifier.height(TextFieldHeight),
-            label = stringResource(Res.string.passport_id_raqamingiz),
-            leadingIcon = {
-                Image(
-                    painter = painterResource(Res.drawable.id_card),
-                    contentDescription = "Parent",
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                    modifier = Modifier.size(NormalIconSize)
-                )
-            },
-            fontWeight = FontWeight.W500
-        )
-
-        SpaceMedium()
 
         SegmentedToggle(
             options = listOf(

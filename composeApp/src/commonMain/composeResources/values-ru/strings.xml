@@ -324,4 +324,13 @@
     <string name="tahrirlash">Редактировать</string>
     <string name="farzand_malumotini_tahrirlash">Редактировать данные ребёнка</string>
     <string name="maydonlar_toliq_toldirilmagan">Поля заполнены не полностью</string>
+
+    <string name="yopish">Закрыть</string>
+    <string name="qo_llash">Применить</string>
+    <string name="promokod_tasdiqlandi">Промокод подтверждён</string>
+    <string name="tekshirilmoqda">Проверяется</string>
+    <string name="promokodni_ishlatish">Использовать промокод</string>
+    <string name="promokodni_kiriting">Введите промокод</string>
+    <string name="tolov_turini_tanlang">Выберите способ оплаты</string>
+
 </resources>

@@ -329,4 +329,12 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="tahrirlash">Tahrirlash</string>
     <string name="farzand_malumotini_tahrirlash">Farzandingiz ma’lumotini tahrirlash</string>
     <string name="maydonlar_toliq_toldirilmagan">Maydonlar to‘liq to‘ldirilmagan</string>
+
+    <string name="yopish">Yopish</string>
+    <string name="qo_llash">Qo'llash</string>
+    <string name="promokod_tasdiqlandi">Promokod tasdiqlandi</string>
+    <string name="tekshirilmoqda">Tekshirilmoqda</string>
+    <string name="promokodni_ishlatish">Promokodni ishlatish</string>
+    <string name="promokodni_kiriting">Promokodni kiriting</string>
+    <string name="tolov_turini_tanlang">To'lov turini tanlang</string>
 </resources>

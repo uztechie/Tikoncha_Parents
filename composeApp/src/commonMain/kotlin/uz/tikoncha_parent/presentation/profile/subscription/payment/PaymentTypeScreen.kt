@@ -2,14 +2,19 @@ package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +55,7 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -109,6 +115,10 @@ fun PaymentTypeScreenUi(
     LoadingDialog(paymentLoading || applePaymentLoading)
 
 
+    var showPromoCodeDialog by remember() {
+        mutableStateOf(false)
+    }
+
     var showCreatePaymentErrorDialog by remember() {
         mutableStateOf(false)
     }
@@ -143,6 +153,14 @@ fun PaymentTypeScreenUi(
         }
     }
 
+    PromoCodeDialog(
+        show = showPromoCodeDialog,
+        state = state,
+        event = event,
+        onDismiss = {
+            showPromoCodeDialog = false
+        }
+    )
 
     CustomPaymentDialog(
         show = showPaymentCompletedDialog,
@@ -216,10 +234,9 @@ fun PaymentTypeScreenUi(
                 .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            SpaceMedium()
 
             CustomText(
-                text = stringResource(Res.string.tolov),
+                text = stringResource(Res.string.tolov_turini_tanlang),
                 fontSize = UltraLargeTextSize,
                 fontWeight = FontWeight.W600
             )
@@ -405,6 +422,158 @@ fun PaymentTypeScreenUi(
                 }
             }
 
+
+            SpaceLarge()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .tripleShadow(RoundedCornerShape(CardCornerRadius))
+                    .background(
+                        MaterialTheme.extendedColor.backgroundColor,
+                        RoundedCornerShape(CardCornerRadius)
+                    )
+            ) {
+
+
+                val promoCodeLabel = when (state.promoActivated) {
+                    true -> {
+                        stringResource(Res.string.promokod_tasdiqlandi)
+                    }
+
+                    false -> {
+                        stringResource(Res.string.promokodni_ishlatish)
+                    }
+                }
+                val promoCodeLabelColor =  when (state.promoActivated) {
+                    true -> {
+                        MaterialTheme.extendedColor.primaryColor
+                    }
+
+                    false -> {
+                        MaterialTheme.extendedColor.textColor
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp)
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(CardCornerRadius)
+                        )
+                        .padding(horizontal = 15.dp, vertical = 10.dp)
+                        .clickable(
+                            interactionSource = null,
+                            indication = null,
+                            onClick = {
+                                if (!state.promoActivated){
+                                    showPromoCodeDialog = true
+                                }
+                            }
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Box(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .background(
+                                MaterialTheme.extendedColor.backgroundColor,
+                                CircleShape
+                            )
+                            .padding(5.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ConfirmationNumber,
+                            contentDescription = "",
+                            tint = MaterialTheme.extendedColor.primaryColor,
+                            modifier = Modifier
+                                .fillMaxSize()
+
+                        )
+
+                    }
+                    SpaceSmall()
+
+                    CustomText(
+                        text = promoCodeLabel,
+                        modifier = Modifier
+                            .weight(1f),
+                        fontWeight = FontWeight.SemiBold,
+                        color = promoCodeLabelColor
+                    )
+                    SpaceMedium()
+
+                    if (!state.promoActivated) {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .background(
+                                    MaterialTheme.extendedColor.backgroundColor,
+                                    CircleShape
+                                )
+                                .padding(5.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                                contentDescription = "",
+                                tint = MaterialTheme.extendedColor.textColor,
+                                modifier = Modifier
+                                    .fillMaxSize()
+
+                            )
+
+                        }
+                    }
+                }
+                if (state.promoActivated) {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 10.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CustomText(
+                                text = "${stringResource(Res.string.chegirma)}:",
+                                fontSize = SmallTextSize
+                            )
+                            Spacer(Modifier.weight(1f))
+                            CustomText(
+                                text = "${state.discountPercentage}%",
+                                fontSize = NormalTextSize,
+                                fontWeight = FontWeight.Bold,
+                                color = PrimaryColor
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CustomText(
+                                text = "${stringResource(Res.string.foyda)}:",
+                                fontSize = SmallTextSize
+                            )
+                            Spacer(Modifier.weight(1f))
+                            CustomText(
+                                text = "${state.discountSaving.toCurrency()} ${stringResource(Res.string.som)}",
+                                fontSize = NormalTextSize,
+                                fontWeight = FontWeight.Bold,
+                                color = PrimaryColor
+                            )
+                        }
+                    }
+
+
+                }
+
+
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
@@ -457,7 +626,7 @@ fun PaymentTypeScreenUi(
                             )
                             Spacer(Modifier.weight(1f))
                             CustomText(
-                                text =  "${state.amount.toCurrency()} UZS",
+                                text =  "${state.amount.toCurrency()} ${stringResource(Res.string.som)}",
                                 fontSize = NormalTextSize,
                                 color = PrimaryColor,
                                 fontWeight = FontWeight.W600

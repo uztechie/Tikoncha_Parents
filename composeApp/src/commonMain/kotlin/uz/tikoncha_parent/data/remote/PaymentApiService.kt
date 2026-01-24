@@ -8,6 +8,8 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
+import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
+import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
 
 class PaymentApiService(private val client: HttpClient) {
 
@@ -40,6 +42,15 @@ class PaymentApiService(private val client: HttpClient) {
             url = "/subscriptions/purchase-intent",
             block = {
                 setBody(subscriptionPaymentRequest)
+            }
+        )
+
+    suspend fun promoCodeValidation(promoCodeValidationRequest: PromoCodeValidationRequest): PromoCodeValidationResponse =
+        client.safeRequest(
+            method = HttpMethod.Companion.Post,
+            url = "/payments/promocode/validate",
+            block = {
+                setBody(promoCodeValidationRequest)
             }
         )
 

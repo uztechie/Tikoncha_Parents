@@ -6,6 +6,8 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
+import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
+import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 
 class PaymentRepositoryImpl(private val api: PaymentApiService): PaymentRepository {
@@ -23,6 +25,10 @@ class PaymentRepositoryImpl(private val api: PaymentApiService): PaymentReposito
 
     override suspend fun paymentStatus(merchantTransId: String): PaymentStatusResponse {
         return api.paymentStatus(merchantTransId)
+    }
+
+    override suspend fun promoCodeValidation(promoCodeValidationRequest: PromoCodeValidationRequest): PromoCodeValidationResponse {
+        return api.promoCodeValidation(promoCodeValidationRequest)
     }
 
 

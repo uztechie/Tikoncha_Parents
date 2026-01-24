@@ -4,27 +4,37 @@ package uz.tikoncha_parent.presentation.add_child
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +43,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -46,6 +57,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.common.Util.format6DigitCode
+import uz.tikoncha_parent.platform.copyPlainText
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -90,6 +103,16 @@ fun AddChildUi(
     val errorText = state.responseState.errorText()
     val isSuccess = state.responseState is ResponseState.Success
 
+    val scope = rememberCoroutineScope ()
+    val clipboard = LocalClipboard.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+
+    val formatted = remember(state.confirmCode) { format6DigitCode(state.confirmCode) }
+
+
     LoadingDialog(isLoading)
     LaunchedEffect(errorText) {
         showDialog = errorText.isNotEmpty()
@@ -113,7 +136,7 @@ fun AddChildUi(
     LaunchedEffect(isSuccess) {
         if (isSuccess){
             event(ChildEvent.Reset)
-            navigator?.push(ChildConfirmCodeScreen(confirmCode = state.confirmCode))
+//            navigator?.push(ChildConfirmCodeScreen(confirmCode = state.confirmCode))
         }
     }
 
@@ -194,6 +217,52 @@ fun AddChildUi(
 
 
             SpaceLarge()
+            SpaceLarge()
+
+
+            if (state.confirmCode.isNotEmpty()){
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+                        .height(TextFieldHeight),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.password_check),
+                        contentDescription = null,
+                        tint = MaterialTheme.extendedColor.hintColor,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clickable {
+                                scope.launch {
+                                    copyPlainText(clipboard, formatted)
+                                }
+                            }
+                    )
+                    SpaceSmall()
+
+                    CustomText(
+                        text = formatted,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp
+                    )
+
+                }
+
+
+                SpaceSmall()
+
+                CustomText(
+                    text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
+                    fontSize = NormalTextSize,
+                    color = MaterialTheme.extendedColor.hintColor,
+                    fontWeight = FontWeight.W500
+                )
+
+            }
+
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -201,7 +270,8 @@ fun AddChildUi(
             CustomButton(
                 onClick = {
                     event(ChildEvent.OnAddClicked)
-                    event(ChildEvent.Clear)
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
                 },
                 modifier = Modifier
                     .padding(top = 5.dp)

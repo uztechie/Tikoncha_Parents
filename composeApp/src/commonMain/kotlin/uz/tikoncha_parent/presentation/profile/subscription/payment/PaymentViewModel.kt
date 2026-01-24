@@ -14,12 +14,14 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tolov_amalga_oshmadi
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
+import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.PurchaseResult
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
+import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
@@ -30,6 +32,7 @@ class PaymentViewModel(
     private val paymentUseCase: SubscriptionPaymentUseCase,
     private val paymentStatusUseCase: PaymentStatusUseCase,
     private val purchaseIApPremiumUseCase: PurchaseIApPremiumUseCase,
+    private val promoCodeValidationUseCase: PromoCodeValidationUseCase,
     private val paymentService: PaymentService
 ): ScreenModel {
 
@@ -100,6 +103,28 @@ class PaymentViewModel(
                     )
                 }
             }
+
+            is PaymentEvent.OnPromoCode -> {
+                if (event.promoCode.length == 10)
+                    return
+                _state.update {
+                    it.copy(
+                        promoCode = event.promoCode
+                    )
+                }
+            }
+
+            PaymentEvent.ValidatePromoCode -> {
+                validatePromoCode()
+            }
+            PaymentEvent.ClearPromoCodeResponse -> {
+                _state.update {
+                    it.copy(
+                        promoCodeResponseState = ResponseState.Idle
+                    )
+                }
+            }
+
         }
     }
 
@@ -164,7 +189,8 @@ class PaymentViewModel(
             val request = SubscriptionPaymentRequest(
                 plan_id = _state.value.planId,
                 plan_duration = _state.value.subscriptionDuration.name,
-                child_user_id = AppSettings.selectedChild?.userId?:""
+                child_user_id = AppSettings.selectedChild?.userId?:"",
+                promocode_code = _state.value.promoCode
             )
             val result = paymentUseCase.invoke(request)
             when(result){
@@ -273,6 +299,50 @@ class PaymentViewModel(
 
         )
     }
+
+
+    private var promoCodeJob: Job? = null
+    private fun validatePromoCode(){
+        promoCodeJob?.cancel()
+        promoCodeJob = screenModelScope.launch {
+            _state.update {
+                it.copy(
+                    promoCodeResponseState = ResponseState.Loading
+                )
+            }
+            val request = PromoCodeValidationRequest(
+                code = _state.value.promoCode,
+                amount = _state.value.amount
+            )
+            val result = promoCodeValidationUseCase.invoke(request)
+            when(result){
+                is Resource.Loading<*> -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            promoCodeResponseState = ResponseState.Error(
+                                message = result.message
+                            ),
+                            promoActivated = false
+                        )
+                    }
+                }
+                is Resource.Success-> {
+                    _state.update {
+                        it.copy(
+                            promoActivated = true,
+                            promoCodeResponseState = ResponseState.Success(),
+                            amount = result.data.discounted_amount,
+                            discountAmount = result.data.discounted_amount,
+                            discountPercentage = result.data.discount_percentage,
+                            discountSaving = result.data.savings
+                        )
+                    }
+                }
+            }
+        }
+    }
+
 
 }
 

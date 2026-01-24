@@ -23,6 +23,8 @@ import uz.tikoncha_parent.ui.OnPrimaryColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -32,7 +34,7 @@ fun CustomLoadingButton(
     fontSize:TextUnit = SmallTextSize,
     modifier: Modifier = Modifier,
     color: Color = PrimaryColor,
-    textColor: Color = OnPrimaryColor,
+    textColor: Color = Color.White,
     enabled:Boolean = true,
     onClick:()->Unit,
     shape: Shape = RoundedCornerShape(ButtonCornerRadius),
@@ -41,7 +43,25 @@ fun CustomLoadingButton(
 
 
 
-    val contentColor = if (enabled) textColor else textColor
+    val isEnabled = enabled && !loading
+
+    val disabledBg = MaterialTheme.extendedColor.disabledBgColor
+    val disabledContent = MaterialTheme.extendedColor.disabledContentColor
+
+    val loadingDisabledBg = color.copy(alpha = 0.55f)
+    val loadingDisabledContent = Color.White.copy(alpha = 0.8f)
+
+    val containerColor = when{
+        isEnabled -> color
+        loading -> loadingDisabledBg
+        else -> disabledBg
+    }
+
+    val contentColor = when{
+        isEnabled -> textColor
+        loading -> loadingDisabledContent
+        else -> disabledContent
+    }
 
 
     Button(
@@ -49,10 +69,10 @@ fun CustomLoadingButton(
         modifier = modifier
             .height(ButtonHeight),
         colors = ButtonDefaults.buttonColors(
-            containerColor = color,
+            containerColor = containerColor,
             contentColor = contentColor,
-            disabledContainerColor = MaterialTheme.extendedColor.buttonColor,
-            disabledContentColor = DisableButtonContentColor
+            disabledContentColor = contentColor,
+            disabledContainerColor = containerColor,
         ),
         shape = shape,
         enabled = enabled,
@@ -60,8 +80,8 @@ fun CustomLoadingButton(
     ) {
         if (loading){
             CircularProgressIndicator(
-                modifier = Modifier.size(25.dp),
                 color = contentColor,
+                modifier = Modifier.size(25.dp),
                 strokeWidth = 3.dp,
             )
             SpaceMedium()
@@ -75,16 +95,21 @@ fun CustomLoadingButton(
         )
 
     }
+
+
 }
 
 @Preview
 @Composable
 private fun Preview() {
-    CustomLoadingButton(
-        text = "Salom",
-        onClick = {},
-        loading = true,
-        enabled = false
-    )
+    TikonchaParentTheme(mode = ThemeMode.LIGHT){
+        CustomLoadingButton(
+            text = "Salom",
+            onClick = {},
+            loading = true,
+            enabled = false
+        )
+    }
+
 
 }

@@ -121,18 +121,6 @@ fun ChildConfirmCodeRegisterUi(
 
             SpaceLarge()
             SpaceLarge()
-
-            Image(
-                painter = painterResource(Res.drawable.qr_screen),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .aspectRatio(1f)
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            SpaceLarge()
             SpaceLarge()
 
 
