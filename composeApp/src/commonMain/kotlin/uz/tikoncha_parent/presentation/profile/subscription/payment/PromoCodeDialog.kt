@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.presentation.profile.subscription.payment
 
+import CenteredBasicInput
+import PromoCodeInput
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +17,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -23,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -53,7 +59,10 @@ import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -120,48 +129,33 @@ fun PromoCodeDialog(
 
             SpaceLarge()
 
-            TextField(
-                value = state.promoCode,
-                onValueChange = {
-                    event(PaymentEvent.OnPromoCode(it))
-                },
+
+            PromoCodeInput(
+                promoCode = state.promoCode,
+                onPromoCodeChange = { event(PaymentEvent.OnPromoCode(it)) },
+                isError = errorMessage.isNotEmpty(),
+                errorMessage = errorMessage,
+                focusRequester = focusRequester,
+
+                containerColor = MaterialTheme.extendedColor.cardColor,
+                textColor = MaterialTheme.extendedColor.textColor,
+                cursorColor = MaterialTheme.extendedColor.textColor,
+                errorContainerColor = OtpErrorColor.copy(alpha = 0.15f),
+                errorTextColor = OtpErrorColor,
+
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                singleLine = true,
-                isError = errorMessage.isNotEmpty(),
-                textStyle = LocalTextStyle.current.copy(
-                    textAlign = TextAlign.Center,
-                    fontSize = NormalTextSize,
-                ),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
-                shape = RoundedCornerShape(TextFieldCornerRadius),
-
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.extendedColor.cardColor,
-                    unfocusedContainerColor = MaterialTheme.extendedColor.cardColor,
-                    errorContainerColor = OtpErrorColor.copy(alpha = 0.15f),
-
-                    focusedTextColor = MaterialTheme.extendedColor.textColor,
-                    unfocusedTextColor = MaterialTheme.extendedColor.textColor,
-                    errorTextColor = OtpErrorColor,
-
-
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
-
-                    cursorColor = MaterialTheme.extendedColor.textColor,
-                    errorCursorColor = OtpErrorColor
-                )
-
+                    .height(TextFieldHeight)
             )
+
+
             SpaceUltraSmall()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(end = TextFieldCornerRadius)
-            ) {
+            )
+            {
                 if (errorMessage.isNotEmpty()) {
                     CustomText(
                         modifier = Modifier
@@ -261,13 +255,16 @@ fun PromoCodeDialog(
 @Preview
 @Composable
 private fun Pre() {
-    PromoCodeDialog(
-        show =  true,
-        state = PaymentState(
-            promoCode = "fd",
-            promoCodeResponseState = ResponseState.Success()
-        ),
-        event = {},
-        onDismiss = {}
-    )
+    TikonchaParentTheme(mode = ThemeMode.LIGHT){
+        PromoCodeDialog(
+            show =  true,
+            state = PaymentState(
+                promoCode = "fd",
+                promoCodeResponseState = ResponseState.Success()
+            ),
+            event = {},
+            onDismiss = {}
+        )
+    }
+
 }

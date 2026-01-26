@@ -67,7 +67,7 @@ fun PaymentOption(
                 selected = isSelected,
                 onClick = null,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = TextColor
+                    selectedColor = PrimaryColor
                 )
             )
         }
