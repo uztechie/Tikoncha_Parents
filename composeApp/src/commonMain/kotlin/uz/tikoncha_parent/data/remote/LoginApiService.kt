@@ -47,6 +47,15 @@ class LoginApiService(private val client: HttpClient) {
             }
         )
 
+    suspend fun userInfoEdit(request: RegisterUserRequest): RegisterUserResponse =
+        client.safeRequest(
+            method = HttpMethod.Put,
+            url = "users/parent-info",
+            block = {
+                setBody(request)
+            }
+        )
+
     suspend fun refreshToken(): RefreshTokenResponse =
         client.safeRequest(
             method = HttpMethod.Post,

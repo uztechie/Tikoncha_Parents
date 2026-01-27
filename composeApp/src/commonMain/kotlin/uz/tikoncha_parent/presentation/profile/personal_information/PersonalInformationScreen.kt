@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.tasdiqlash
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
+import uz.tikoncha_parent.presentation.profile.user_edit.UserEditScreen
 import uz.tikoncha_parent.ui.LargeIconSize
 import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -62,9 +65,12 @@ class   PersonalInformationScreen : Screen {
         val navigator = LocalNavigator.current
 
         val viewModel = koinScreenModel<ProfileViewModel>()
-
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
+
+        LaunchedEffect(state.value.userInfo){
+            event(ProfileEvent.Refresh)
+        }
 
         PersonalInformationUi(
             state = state.value,
@@ -79,7 +85,6 @@ fun PersonalInformationUi(
     event: (ProfileEvent) -> Unit
 ){
     val navigator = LocalNavigator.current
-
     var logout by remember {  mutableStateOf(false)}
 
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
@@ -137,7 +142,14 @@ fun PersonalInformationUi(
             }
 
             item {
-                PersonalInfoItem(state.userInfo)
+                PersonalInfoItem(
+                   userInfo =  state.userInfo,
+                    onEdit = {
+                        state.userInfo?.let { user ->
+                            navigator?.push(UserEditScreen(user))
+                        }
+                    }
+                )
             }
         }
         Spacer(Modifier.weight(1f))
@@ -158,7 +170,7 @@ fun PersonalInformationUi(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .width(ButtonHeight)
+                .height(ButtonHeight)
                 .padding(horizontal = ContainerPadding)
         )
         SpaceMedium()

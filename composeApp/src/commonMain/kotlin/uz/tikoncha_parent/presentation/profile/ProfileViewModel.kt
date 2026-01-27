@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.profile
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -66,6 +64,12 @@ class ProfileViewModel(
                         localAvatar = event.bitmap
                     )
                 }
+            }
+
+            ProfileEvent.Refresh -> {
+                userInfoJob()
+                getChildren()
+                getAvatar()
             }
         }
     }

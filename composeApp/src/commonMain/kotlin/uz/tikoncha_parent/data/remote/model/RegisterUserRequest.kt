@@ -8,7 +8,7 @@ data class RegisterUserRequest(
     val first_name: String,
     val last_name: String,
     val patronymic: String,
-    val age: Int,
+    val age: Int? = null,
     val gender: String,
     val passport_id: String
 )

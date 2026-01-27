@@ -34,6 +34,10 @@ class LoginRepositoryImpl(private val api: LoginApiService): LoginRepository {
         return api.userInfo()
     }
 
+    override suspend fun userInfoEdit(request: RegisterUserRequest): RegisterUserResponse {
+        return api.userInfoEdit(request)
+    }
+
     override suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse {
         return api.childInfoEdit(body)
     }

@@ -23,6 +23,7 @@ interface LoginRepository {
 
     suspend fun refreshToken(): RefreshTokenResponse
     suspend fun userInfo(): UserInfoResponse
+    suspend fun userInfoEdit(request: RegisterUserRequest): RegisterUserResponse
 
     suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse
 }
