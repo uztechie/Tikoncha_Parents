@@ -121,21 +121,16 @@ enum class SettingType(
     val subtitle: StringResource,
 
     ) {
-//    NOTIFICATION(
-//        iconId = Res.drawable.bell_notification,
-//        settingName = Res.string.bildirishnomalar,
-//        subtitle = Res.string.reklama
-//    ),
     THEME(
         iconId = Res.drawable.star_setting,
         settingName = Res.string.tema,
         subtitle = Res.string.yorug
     ),
-//    DANGEROUS_ZONE(
-//        iconId = Res.drawable.warning_1,
-//        settingName = Res.string.xavfli_zona,
-//        subtitle = Res.string.akkauntni_o_chirish
-//    ),
+    LOGOUT(
+        iconId = Res.drawable.logout,
+        settingName = Res.string.akkauntdan_chiqish,
+        subtitle = Res.string.akkauntdan_chiqish
+    ),
 }
 
 @Preview

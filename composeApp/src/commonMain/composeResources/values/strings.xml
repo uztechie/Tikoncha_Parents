@@ -338,4 +338,14 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="promokodni_kiriting">Promokodni kiriting</string>
     <string name="tolov_turini_tanlang">To'lov turini tanlang</string>
     <string name="malumotlarni_tahrirlash">Ma’lumotlarni tahrirlash</string>
+    <string name="veb_sayt_tez_kunda_izoh">Veb-saytlarni boshqarish funksiyasi yaqin vaqt ichida qo‘shiladi</string>
+    <string name="standart_obuna_jadval_cheklovi">
+        Standart obuna orqali siz bitta jadval yaratishingiz mumkin. Ko‘proq imkoniyatlardan foydalanish uchun Plus obunani faollashtiring.
+    </string>
+    <string name="akkauntdan_chiqish">Akkauntdan chiqish</string>
+    <string name="akkauntdan_chiqmoqchimisiz">Akkauntdan chiqmoqchimisiz?</string>
+    <string name="qayta_kirish_telefon_tasdiq">Chiqsangiz, qayta kirish uchun telefon raqam bilan tasdiqlashingiz kerak bo‘ladi.</string>
+    <string name="nimalar_saqlanib_qoladi">Nimalar saqlanib qoladi?</string>
+    <string name="profil_va_sozlamalar_saqlanadi">Profil va sozlamalaringiz serverda saqlanadi.</string>
+    <string name="qayta_kirsangiz_tiklanadi">Keyin qayta kirsangiz hamma narsa tiklanadi.</string>
 </resources>

@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -37,12 +39,15 @@ import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.saqlash
+import tikoncha_parents.composeapp.generated.resources.tez_kunda
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
+import tikoncha_parents.composeapp.generated.resources.veb_sayt_tez_kunda_izoh
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
@@ -53,9 +58,11 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DividerHorizontal
+import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -200,23 +207,6 @@ fun AppWebSelectionUi(
             LazyColumn(
                 contentPadding = PaddingValues(vertical = ContainerPadding),
                 modifier = Modifier
-//                    .bottomShadow(
-//                        shape = RoundedCornerShape(
-//                            topStart = ButtonCornerRadius,
-//                            topEnd = ButtonCornerRadius
-//                        ),
-//                        color = MaterialTheme.extendedColor.backgroundColor
-//                    )
-//                    .bottomShadow(
-//                        shape = RoundedCornerShape(
-//                            topStart = ButtonCornerRadius,
-//                            topEnd = ButtonCornerRadius
-//                        ),
-//                        color = MaterialTheme.extendedColor.backgroundColor,
-//                        lowerOffset = -5.dp,
-//                        radius = 10.dp
-//
-//                    )
                     .weight(1f)
             ) {
                 when(state.appWebSelectionIndex){
@@ -245,20 +235,23 @@ fun AppWebSelectionUi(
 
                     1 -> {
                         item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ){
-//                                LottiePlayer(
-//                                    size = 300.dp,
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(ContainerPadding),
-//                                    filePath = "json/coming_soon.json",
-//                                    iterations = 1,
-//                                    speed = 0.5f
-//                                )
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CustomText(
+                                    text = stringResource(Res.string.tez_kunda),
+                                    fontSize = LargeTextSize,
+                                    color = MaterialTheme.extendedColor.hintColor
+                                )
+                                SpaceSmall()
+
+                                CustomText(
+                                    text = stringResource(Res.string.veb_sayt_tez_kunda_izoh),
+                                    color = MaterialTheme.extendedColor.hintColor,
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
 

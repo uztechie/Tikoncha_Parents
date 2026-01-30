@@ -62,8 +62,6 @@ class   PersonalInformationScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current
-
         val viewModel = koinScreenModel<ProfileViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
@@ -85,26 +83,12 @@ fun PersonalInformationUi(
     event: (ProfileEvent) -> Unit
 ){
     val navigator = LocalNavigator.current
-    var logout by remember {  mutableStateOf(false)}
 
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val launchPicker = rememberImagePicker { picked ->
         event(ProfileEvent.OnAvatarPhotoSelected(picked.toUploadPart("avatar.jpg")))
         imageBitmap = decodeImageBitmapOrNull(picked.bytes)
     }
-
-    CustomDialog(
-        title = stringResource(Res.string.chiqishni_xohlaysizmi),
-        message = stringResource(Res.string.chiqishni_tasdiqlang),
-        buttonText = stringResource(Res.string.tasdiqlash),
-        show = logout,
-        showCloseButton = true,
-        onDismiss = { logout = false },
-        onButtonClick = {
-            AppSettings.clearSession()
-            navigator?.replaceAll(LoginScreen())
-        }
-    )
 
 
     Column(
@@ -124,9 +108,7 @@ fun PersonalInformationUi(
             modifier = Modifier
                 .fillMaxWidth(),
             contentPadding = PaddingValues(ContainerPadding)
-        )
-        {
-
+        ) {
             item {
                 ProfileHeader(
                     firstName = state.userInfo?.name ?: "",
@@ -152,27 +134,6 @@ fun PersonalInformationUi(
                 )
             }
         }
-        Spacer(Modifier.weight(1f))
-        CustomOutlinedButton(
-            text = stringResource(Res.string.hisobdan_chiqish),
-            borderColor = OtpErrorColor,
-            onClick = {
-                logout = true
-            },
-            textColor = OtpErrorColor,
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(Res.drawable.logout),
-                    contentDescription = "",
-                    tint = OtpErrorColor,
-                    modifier = Modifier.size(LargeIconSize)
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ButtonHeight)
-                .padding(horizontal = ContainerPadding)
-        )
         SpaceMedium()
     }
 }

@@ -26,6 +26,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.profile.logout.LogoutScreen
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -55,7 +56,7 @@ fun SettingsUi(
             title = stringResource(Res.string.sozlamalar),
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                navigator?.pop()
             }
         )
 
@@ -69,15 +70,12 @@ fun SettingsUi(
                 selectedSetting = SettingType.THEME,
                 onSettingSelected = {settings ->
                     when(settings){
-//                        SettingType.NOTIFICATION -> {
-//                            navigator!!.push(NotificationSettingsScreen())
-//                        }
                         SettingType.THEME -> {
-                            navigator!!.push(ThemeScreen())
+                            navigator?.push(ThemeScreen())
                         }
-//                        SettingType.DANGEROUS_ZONE -> {
-//
-//                        }
+                        SettingType.LOGOUT -> {
+                            navigator?.push(LogoutScreen())
+                        }
                     }
                 }
             )

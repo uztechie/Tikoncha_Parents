@@ -333,4 +333,14 @@
     <string name="promokodni_kiriting">Введите промокод</string>
     <string name="tolov_turini_tanlang">Выберите способ оплаты</string>
     <string name="malumotlarni_tahrirlash">Редактировать данные</string>
+    <string name="veb_saytlarni_boshqarish_tez_kunda">Функция управления веб-сайтами будет добавлена в ближайшее время</string>
+    <string name="standart_obuna_jadval_cheklovi">
+        По стандартной подписке вы можете создать только одну таблицу. Чтобы получить больше возможностей, активируйте подписку Plus
+    </string>
+    <string name="akkauntdan_chiqish">Выйти из аккаунта</string>
+    <string name="akkauntdan_chiqmoqchimisiz">Вы хотите выйти из аккаунта?</string>
+    <string name="qayta_kirish_telefon_tasdiq">После выхода для повторного входа потребуется подтверждение по номеру телефона.</string>
+    <string name="nimalar_saqlanib_qoladi">Что сохранится?</string>
+    <string name="profil_va_sozlamalar_saqlanadi">Ваш профиль и настройки сохраняются на сервере.</string>
+    <string name="qayta_kirsangiz_tiklanadi">После повторного входа всё будет восстановлено.</string>
 </resources>

@@ -123,7 +123,7 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi{
     val policyType = PolicyType.getPolicyType(scope_type)
     return PolicyItemUi(
         policyId = rule_id,
-        policyName = rule_name?:"",
+        policyName = rule_name ?: policy_name,
         appCount = packages?.size?:0,
         webCount = sites?.size?:0,
         hasTimeRule = !time_rule.isNullOrEmpty(),

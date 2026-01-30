@@ -47,6 +47,7 @@ import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.shartlar_kiritish
 import tikoncha_parents.composeapp.generated.resources.obuna_dialog_message
 import tikoncha_parents.composeapp.generated.resources.sotib_olish
+import tikoncha_parents.composeapp.generated.resources.standart_obuna_jadval_cheklovi
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.common.ScreenJson
 import uz.tikoncha_parent.platform.Logger
@@ -128,13 +129,8 @@ fun PolicyListUi(
     sharedState: PolicySharedState,
     sharedAppEvent: (AppWebEvent) -> Unit
 ){
-
-
     val loading = state.policyResponseState is ResponseState.Loading
     val errorText = state.policyResponseState.errorText()
-
-
-
     var showChildrenDialog by remember { mutableStateOf(false) }
 
     LoadingDialog(loading)
@@ -208,7 +204,7 @@ fun PolicyListUi(
         showCloseButton = true,
         painter = painterResource(Res.drawable.dialog_subscription),
         title = stringResource(Res.string.obuna_bolish),
-        message = stringResource(Res.string.obuna_dialog_message),
+        message = stringResource(Res.string.standart_obuna_jadval_cheklovi),
         show = showLimitDialog,
         buttonText = stringResource(Res.string.obuna_bolish),
         onDismiss = {showLimitDialog = false},
@@ -229,10 +225,8 @@ fun PolicyListUi(
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
 
-        var title = stringResource(Res.string.jadval)
-
         CustomHeader(
-            title = title,
+            title = stringResource(Res.string.jadval),
             showBackButton = true,
             onBackClick = {
                 sharedAppEvent(AppWebEvent.ClearAppList)
