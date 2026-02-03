@@ -414,6 +414,7 @@ fun PolicySetupUi(
                     title = stringResource(Res.string.vaqt),
                     subTitle = subTitle,
                     onRemoveClick = {
+                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
                         sharedEvent(PolicySharedEvent.SetTimeRule(emptyList()))
                     },
                     onItemClick = {
@@ -462,6 +463,7 @@ fun PolicySetupUi(
                     title = stringResource(Res.string.foydalanish_chegarasi),
                     subTitle = subTitle,
                     onRemoveClick = {
+                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
                         sharedEvent(PolicySharedEvent.SetLimitRule(emptyList()))
                     },
                     onItemClick = {
@@ -487,6 +489,7 @@ fun PolicySetupUi(
                     title = stringResource(Res.string.joylashuv),
                     subTitle = subTitle,
                     onRemoveClick = {
+                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
                         sharedEvent(PolicySharedEvent.SetLocationRule(null))
                     },
                     onItemClick = {

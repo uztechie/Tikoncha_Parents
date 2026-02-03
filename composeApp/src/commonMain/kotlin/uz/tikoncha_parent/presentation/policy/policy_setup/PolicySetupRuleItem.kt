@@ -47,6 +47,7 @@ fun PolicySetupRuleItem(
     ) {
         Column(
             modifier = Modifier
+                .weight(1f)
         ) {
             CustomText(
                 text = title,
@@ -65,7 +66,7 @@ fun PolicySetupRuleItem(
             }
         }
 
-        Spacer(Modifier.weight(1f))
+        SpaceSmall()
         if (canRemove){
             SpaceSmall()
             CloseButton {

@@ -266,6 +266,7 @@ fun PolicyListUi(
                     modifier = Modifier,
                     policy = it,
                     onClick = {
+                        sharedEvent(PolicySharedEvent.ClearData)
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
                         val child = ScreenJson.encode(state.selectedChild)
                         val policyItemUi = ScreenJson.encode(it)
@@ -277,6 +278,7 @@ fun PolicyListUi(
                         )
                     },
                     onEdit = {
+                        sharedEvent(PolicySharedEvent.ClearData)
                         sharedEvent(PolicySharedEvent.SetPolicy(it))
                         val child = ScreenJson.encode(state.selectedChild)
                         val policyItemUi = ScreenJson.encode(it)
