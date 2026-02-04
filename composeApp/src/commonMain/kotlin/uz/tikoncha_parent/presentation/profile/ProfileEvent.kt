@@ -8,4 +8,5 @@ sealed interface ProfileEvent {
     data class OnAvatarPhotoSelected(val part: UploadPart): ProfileEvent
     data class OnAvatarPreviewSelected(val bitmap: ImageBitmap?) : ProfileEvent
     object LoadAvatarFromServer: ProfileEvent
+    data object Refresh : ProfileEvent
 }

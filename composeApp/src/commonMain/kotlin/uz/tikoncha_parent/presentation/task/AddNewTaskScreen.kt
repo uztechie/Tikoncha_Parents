@@ -366,7 +366,7 @@ fun AddNewTask(
                         event(TaskEvent.OnImportanceChange(ImportanceType.MEDIUM))
                     },
                     text = stringResource(Res.string.o_rtacha),
-                    color = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) PrimaryColor else Color.Transparent,
+                    color = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) MediumButtonColor else Color.Transparent,
                     textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(

@@ -79,6 +79,7 @@ import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.UpdateParentRequestStatusUseCase
+import uz.tikoncha_parent.domain.use_case.UserInfoEditUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
@@ -119,6 +120,7 @@ import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
 import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
+import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
 
 val sharedModule = module {
     single {
@@ -218,6 +220,7 @@ val sharedModule = module {
     single { UpdateParentRequestStatusUseCase(get() ) }
     single { PurchaseIApPremiumUseCase(get() ) }
     single { ChildInfoEditUseCase(get() ) }
+    single { UserInfoEditUseCase(get()) }
 
 
 
@@ -265,6 +268,11 @@ val sharedModule = module {
             child = child
         )
     }
-
+    factory { (userInfo: UserInfo) ->
+        UserInfoEditViewModel(
+            userInfoEditUseCase = get(),
+            userInfo = userInfo
+        )
+    }
 
 }

@@ -72,12 +72,14 @@ fun PersonalInfoItem(
         )
         SpaceUltraSmall()
 
-        PersonalInformationItemRow(
-            icon = Res.drawable.calendar,
-            title = stringResource(Res.string.yosh),
-            value = "${userInfo?.age}"
-        )
-        SpaceUltraSmall()
+        if (userInfo?.age != 0){
+            PersonalInformationItemRow(
+                icon = Res.drawable.calendar,
+                title = stringResource(Res.string.yosh),
+                value = "${userInfo?.age}"
+            )
+            SpaceUltraSmall()
+        }
 
         val genderRes = when (userInfo?.genderType){
             GenderType.MALE -> {

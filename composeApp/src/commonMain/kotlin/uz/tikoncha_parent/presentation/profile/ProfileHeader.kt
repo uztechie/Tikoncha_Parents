@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -102,34 +103,14 @@ fun ProfileHeader(
         SpaceSmall()
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CustomText(
-                    text = lastName,
-                    fontSize = LargeTextSize,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
-                )
-                SpaceSmall()
-
-                CustomText(
-                    text = firstName,
-                    fontSize = LargeTextSize,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
-                )
-            }
-
             CustomText(
-                text = fathersName,
+                text = "$lastName  $firstName  $fathersName",
                 fontSize = LargeTextSize,
                 fontWeight = FontWeight.SemiBold,
-                maxLines = 1
             )
         }
     }

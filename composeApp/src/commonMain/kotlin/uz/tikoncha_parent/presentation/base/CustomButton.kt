@@ -13,11 +13,14 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.*
 
 
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -30,6 +33,8 @@ fun CustomButton(
     textColor: Color = OnPrimaryColor,
     enabled:Boolean = true,
     onClick:()->Unit,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    endingIcon: (@Composable () -> Unit)? = null,
     shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
     disabledContainerColor: Color = MaterialTheme.extendedColor.disabledBgColor
 ) {
@@ -51,6 +56,11 @@ fun CustomButton(
         enabled = enabled,
         contentPadding = PaddingValues(horizontal = 5.dp)
     ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            SpaceSmall()
+        }
+
         CustomText(
             color = contentColor,
             text = text,
@@ -58,5 +68,22 @@ fun CustomButton(
             fontSize = fontSize
         )
 
+        if (endingIcon != null) {
+            SpaceSmall()
+            endingIcon()
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        CustomButton(
+            text = "OK",
+            onClick = {}
+        )
     }
 }
