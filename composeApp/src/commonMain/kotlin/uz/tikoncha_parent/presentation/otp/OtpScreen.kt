@@ -175,8 +175,7 @@ fun OtpUi(
             onBorderColor = borderColor,
             onOtpUpdate = {
                 event(OtpEvent.OnOtpUpdate(it))
-            },
-            fontWeight = FontWeight.W600
+            }
         )
         SpaceMedium()
         if (finishedTime) {

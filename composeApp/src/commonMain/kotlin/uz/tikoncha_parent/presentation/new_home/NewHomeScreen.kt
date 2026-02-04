@@ -506,7 +506,7 @@ fun NewHomeUi(
 @Composable
 private fun Pre() {
     TikonchaParentTheme(
-        ThemeMode.DARK
+        ThemeMode.LIGHT
     ) {
         NewHomeUi(
             navigator = null,

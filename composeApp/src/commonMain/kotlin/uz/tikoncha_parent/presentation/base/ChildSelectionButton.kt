@@ -66,12 +66,12 @@ fun ChildSelectionButton(
     onClick: () -> Unit,
     shape: Shape = CircleShape,
     fonSize: TextUnit = NormalTextSize,
-    fontWeight: FontWeight = FontWeight.Normal,
+    fontWeight: FontWeight = FontWeight.SemiBold,
     background: Color = MaterialTheme.extendedColor.cardColor,
 ) {
 
 
-    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.primaryColor
+    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.textColor
     val newText = text.ifEmpty { label }
 
     BoxWithConstraints(
