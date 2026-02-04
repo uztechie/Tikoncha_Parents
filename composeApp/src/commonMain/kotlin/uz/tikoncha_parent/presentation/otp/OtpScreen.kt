@@ -244,7 +244,7 @@ fun OtpUi(
 @Composable
 private fun Preview() {
     TikonchaParentTheme(
-        ThemeMode.LIGHT
+        ThemeMode.DARK
     ){
         OtpUi(
             navigator = null,

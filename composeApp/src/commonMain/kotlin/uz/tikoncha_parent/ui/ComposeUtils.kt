@@ -69,6 +69,7 @@ val NormalTextSizeSp = 16.sp
 val ContainerPadding = 15.dp
 
 val HeaderHeight = 60.dp
+val HomeItemHeight = 130.dp
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
 val ChatTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
 val UltraLargeTextSize:TextUnit @Composable get() =  20.sp //.responsiveSp()
@@ -90,6 +91,7 @@ val AppIconSize: Dp = 45.dp
 val AppIconInnerPadding: Dp = 10.dp
 val AppItemHeight: Dp = 60.dp
 val SmallIconSize: Dp = 18.dp
+val HomeIconSize: Dp = 90.dp
 val NormalIconSize: Dp = 22.dp
 val LargeIconSize: Dp = 28.dp
 

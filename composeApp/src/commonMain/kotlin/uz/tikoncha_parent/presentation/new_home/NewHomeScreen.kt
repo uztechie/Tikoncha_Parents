@@ -71,6 +71,8 @@ import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.HomeIconSize
+import uz.tikoncha_parent.ui.HomeItemHeight
 import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
@@ -278,7 +280,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
-                        .height(130.dp)
+                        .height(HomeItemHeight)
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
@@ -327,11 +329,11 @@ fun NewHomeUi(
                         )
                         CustomText(
                             text = stringResource(Res.string.bugun_sarfladi),
-                            color = PrimaryColor,
+                            color = MaterialTheme.extendedColor.titleColor,
                             fontSize = NormalTextSize,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            lineHeight = NormalTextSize * 1.2f
+                            lineHeight = SmallTextSize * 1.2f
 
 
                         )
@@ -404,7 +406,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
-                        .height(130.dp)
+                        .height(HomeItemHeight)
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
@@ -412,7 +414,8 @@ fun NewHomeUi(
                         .clickable {
                             navigator?.push(TaskScreen())
                         }
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
@@ -426,17 +429,15 @@ fun NewHomeUi(
                         )
                         CustomText(
                             text = stringResource(Res.string.faol_vazifa, taskCount),
-                            color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            color = MaterialTheme.extendedColor.titleColor,
+                            fontSize = SmallTextSize,
                         )
                     }
 
                     Image(
                         painter = painterResource(Res.drawable.home_task),
                         contentDescription = "",
-                        modifier = Modifier
-                            .size(60.dp)
-                            .align(Alignment.Bottom)
+                        modifier = Modifier.size(HomeIconSize)
                     )
                 }
             }
@@ -446,7 +447,7 @@ fun NewHomeUi(
                     modifier = Modifier
                         .clip(RoundedCornerShape(CardCornerRadius))
                         .fillMaxWidth()
-                        .height(130.dp)
+                        .height(HomeItemHeight)
                         .background(
                             MaterialTheme.extendedColor.cardColor,
                             RoundedCornerShape(CardCornerRadius)
@@ -454,7 +455,8 @@ fun NewHomeUi(
                         .clickable {
                             navigator?.push(PolicyListScreen())
                         }
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding)
+                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
@@ -468,17 +470,15 @@ fun NewHomeUi(
                         )
                         CustomText(
                             text = stringResource(Res.string.ilova_cheklangan, tableCount),
-                            color = PrimaryColor,
-                            fontSize = NormalTextSize,
+                            color = MaterialTheme.extendedColor.titleColor,
+                            fontSize = SmallTextSize,
                         )
                     }
 
                     Image(
                         painter = painterResource(Res.drawable.home_table),
                         contentDescription = "",
-                        modifier = Modifier
-                            .size(60.dp)
-                            .align(Alignment.Bottom)
+                        modifier = Modifier.size(HomeIconSize)
                     )
                 }
             }

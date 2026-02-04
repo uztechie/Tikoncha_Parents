@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,10 +25,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.CardCornerRadius
+import uz.tikoncha_parent.ui.HomeIconSize
+import uz.tikoncha_parent.ui.HomeItemHeight
 import uz.tikoncha_parent.ui.LargeIconSize
 import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.UltraLargeIconButtonSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -43,24 +48,21 @@ fun NewHomeItem(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(CardCornerRadius))
                     .clickable { onSettingSelected(selection) }
+                    .height(HomeItemHeight)
                     .background(
                         color = MaterialTheme.extendedColor.cardColor,
                         shape = RoundedCornerShape(CardCornerRadius)
                     )
-                    .padding(horizontal = 20.dp, vertical = 8.dp)
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        painter = painterResource(selection.iconId),
-                        contentDescription = "",
-                        colorFilter = ColorFilter.tint(PrimaryColor),
-                        modifier = Modifier.size(LargeIconSize)
-                    )
-                    SpaceMedium()
-                    Column {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         CustomText(
                             text = stringResource(selection.title),
                             fontSize = 30.sp,
@@ -69,11 +71,17 @@ fun NewHomeItem(
                         )
                         CustomText(
                             text = stringResource(selection.subtitle),
-                            fontSize = NormalTextSize,
+                            fontSize = SmallTextSize,
                             fontWeight = FontWeight.Medium,
-                            color = PrimaryColor,
+                            color = MaterialTheme.extendedColor.titleColor,
                         )
                     }
+                    SpaceMedium()
+                    Image(
+                        painter = painterResource(selection.iconId),
+                        contentDescription = "",
+                        modifier = Modifier.size(HomeIconSize)
+                    )
                 }
             }
             SpaceMedium()

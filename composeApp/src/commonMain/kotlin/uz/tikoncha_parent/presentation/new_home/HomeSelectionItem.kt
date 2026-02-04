@@ -10,7 +10,7 @@ enum class HomeSelectionItem (
     val subtitle: StringResource,
 ){
     XARITA(
-        iconId = Res.drawable.map,
+        iconId = Res.drawable.home_map,
         title = Res.string.xarita,
         subtitle = Res.string.farzandlaringiz_qayerdaligi,
     ),
