@@ -7,7 +7,10 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
+import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
+import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toAppUsageList
 import uz.tikoncha_parent.domain.model.AppUsage
@@ -59,10 +62,15 @@ class AppUsagesUseCase(
                     resId = Res.string.server_connection_error
                 )
             }
+        } catch (e: IOException) {
+            Resource.Error(
+                resId = Res.string.iltimos_internetga_ulang,
+                cause = e
+            )
         } catch (e: Exception) {
             e.printStackTrace()
             Resource.Error(
-                resId = Res.string.server_connection_error,
+                resId = Res.string.kutilmagan_xatolik_qayta_urining,
                 cause = e
             )
         }

@@ -32,11 +32,14 @@ import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.dialog_subscription
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilgandan_keyin_korinish
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
 import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.jadval
@@ -50,7 +53,9 @@ import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.standart_obuna_jadval_cheklovi
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.common.ScreenJson
+import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomDialogTextField
@@ -58,6 +63,8 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.new_home.HomeState
+import uz.tikoncha_parent.presentation.new_home.NewHomeUi
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
 import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
@@ -65,11 +72,15 @@ import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
+import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.HintTextColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 
@@ -218,6 +229,7 @@ fun PolicyListUi(
         }
     )
 
+    val enabled: Boolean = state.selectedChild != null
 
     Column(
         modifier = Modifier
@@ -247,6 +259,13 @@ fun PolicyListUi(
                 )
             }
         )
+
+        if (state.selectedChild == null){
+            AppEmptyList(
+                title = stringResource(Res.string.farzand_qoshilmagan),
+                message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
+            )
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -288,6 +307,7 @@ fun PolicyListUi(
         }
 
         CustomOutlinedButton(
+            enabled = enabled,
             onClick = {
                 val count = sharedState.subscriptionLimit.policyCount
                 Logger.d("PolicyList", "subscriptionLimit=${sharedState.subscriptionLimit}")
@@ -307,12 +327,26 @@ fun PolicyListUi(
                 Icon(
                     painter = painterResource(Res.drawable.add_square),
                     contentDescription = "",
-                    tint = PrimaryColor
+                    tint = if (enabled) PrimaryColor else HintTextColor
                 )
             }
         )
         SpaceSmall()
     }
+}
 
-
+@Preview
+@Composable
+private fun Pre() {
+    TikonchaParentTheme(
+        ThemeMode.LIGHT
+    ) {
+        PolicyListUi(
+            navigator = null,
+            state = PolicyState(),
+            sharedState = PolicySharedState(),
+            sharedAppEvent = {},
+            event = {},
+        )
+    }
 }

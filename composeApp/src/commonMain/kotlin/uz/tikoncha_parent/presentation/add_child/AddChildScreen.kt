@@ -141,13 +141,14 @@ fun AddChildUi(
     }
 
 
+    val confirmCode by remember(state.confirmCode) { mutableStateOf(state.confirmCode.isEmpty()) }
 
     var enableButton by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(state.number){
-        enableButton = state.number.length>=9
+        enableButton = state.number.length >= 9
     }
 
     Column(
@@ -208,7 +209,9 @@ fun AddChildUi(
                     ChildPhoneInputField(
                         phoneNumber = state.number,
                         onPhoneNumberChange = { newNumber ->
-                          event(ChildEvent.OnNumberInsert(newNumber))
+                            if (confirmCode) {
+                                event(ChildEvent.OnNumberInsert(newNumber))
+                            }
                         },
                         isAccepted = state.accept
                     )
@@ -266,23 +269,24 @@ fun AddChildUi(
 
             Spacer(modifier = Modifier.weight(1f))
 
-
-            CustomButton(
-                onClick = {
-                    event(ChildEvent.OnAddClicked)
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                },
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                enabled = enableButton,
-                text = stringResource(Res.string.qoshish),
-                fontWeight = FontWeight.W500,
-                fontSize = NormalTextSize
-            )
-            SpaceLarge()
+            if (confirmCode) {
+                CustomButton(
+                    onClick = {
+                        event(ChildEvent.OnAddClicked)
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    },
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                    enabled = enableButton,
+                    text = stringResource(Res.string.qoshish),
+                    fontWeight = FontWeight.W500,
+                    fontSize = NormalTextSize
+                )
+                SpaceLarge()
+            }
         }
     }
 }

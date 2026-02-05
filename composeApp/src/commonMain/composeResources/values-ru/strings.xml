@@ -233,7 +233,7 @@
     <string name="ohirgi_faollik">был(а):</string>
     <string name="location_permission_request_message">Данные о местоположении используются для отображения вашего текущего положения на карте и задания зоны для вашего ребёнка.
 Эта информация используется только для этих функций и не передаётся третьим лицам.</string>
-    <string name="no_internet_connection">Пожалуйста, подключите ваш телефон к интернету!</string>
+    <string name="iltimos_internetga_ulang">Пожалуйста, подключите ваш телефон к интернету!</string>
     <string name="aloqa_uzildi">Соединение прервано</string>
     <string name="internet_aloqa_uzildi">
         Соединение с интернетом временно прервано. Пожалуйста, включите сеть и попробуйте снова.
@@ -343,4 +343,10 @@
     <string name="nimalar_saqlanib_qoladi">Что сохранится?</string>
     <string name="profil_va_sozlamalar_saqlanadi">Ваш профиль и настройки сохраняются на сервере.</string>
     <string name="qayta_kirsangiz_tiklanadi">После повторного входа всё будет восстановлено.</string>
+    <string name="farzand_qoshilmagan">Ребёнок не добавлен</string>
+    <string name="farzand_qoshilgandan_keyin_korinish">
+        Расписание, чаты и отчёты будут доступны после добавления ребёнка.
+    </string>
+    <string name="no_internet_connection">Пожалуйста, подключите ваш телефон к интернету!</string>
+    <string name="kutilmagan_xatolik_qayta_urining">Произошла непредвиденная ошибка. Пожалуйста, попробуйте снова.</string>
 </resources>
