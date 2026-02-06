@@ -26,9 +26,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilgandan_keyin_korinish
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.suhbat
 import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.model.ChatType
@@ -127,6 +130,13 @@ fun ChatUi(
             },
             title = stringResource(Res.string.suhbat),
         )
+
+        if (state.chatList.isEmpty()){
+            AppEmptyList(
+                title = stringResource(Res.string.farzand_qoshilmagan),
+                message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
+            )
+        }
 
         Column(
             modifier = Modifier.padding(horizontal = ContainerPadding)
