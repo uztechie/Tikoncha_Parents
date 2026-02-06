@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
 import uz.tikoncha_parent.platform.AppEnvironment
 import uz.tikoncha_parent.presentation.splash.SplashScreen
 
@@ -55,6 +56,8 @@ fun App() {
         SideEffect { PlatformThemeBridge.onModeChanged(mode) }
     }
 
+    val restartKey by AppRestartBus.key.collectAsState()
+
     FcmEventListenerEffect(
         onApp = { app ->
             // AppRuleEntity ga map qilib saqlash va hokazo
@@ -80,6 +83,15 @@ fun App() {
             LocalBarsConfig provides barsConfig
         )
         {
+
+
+            val disposeBehavior = remember {
+                NavigatorDisposeBehavior(
+                    disposeNestedNavigators = true, // ✅ nested navigatorlar ham dispose bo‘lsin
+                    disposeSteps = true
+                )
+            }
+
             TikonchaParentTheme(
                 mode = mode
             ) {
@@ -102,29 +114,33 @@ fun App() {
                     Logger.d("Appppp", "pendingLinks=$pendingLinks")
                     Logger.d("Appppp", "initialStack=$initialStack")
 
-                    if (initialStack.isNotEmpty()) {
-                        val first = initialStack.first()
-                        val rest  = initialStack.drop(1)
-                        Navigator(first) { nav ->
-                            CurrentScreen()
-                            DeepLinkEffect(nav)
 
-                            // Stack’ni to‘liq tiklash
-                            LaunchedEffect(rest) {
-                                rest.forEach { screen -> nav.push(screen) }
-                            }
+                    key(restartKey){
+                        if (initialStack.isNotEmpty()) {
+                            val first = initialStack.first()
+                            val rest  = initialStack.drop(1)
+                            Navigator(first, disposeBehavior) { nav ->
+                                CurrentScreen()
+                                DeepLinkEffect(nav)
 
-                            // Pending’larni navbatdan o‘tkazish
-                            LaunchedEffect(pendingLinks) {
-                                pendingLinks.drop(1).forEach { link -> navigateByDeepLink(nav, link) }
+                                // Stack’ni to‘liq tiklash
+                                LaunchedEffect(rest) {
+                                    rest.forEach { screen -> nav.push(screen) }
+                                }
+
+                                // Pending’larni navbatdan o‘tkazish
+                                LaunchedEffect(pendingLinks) {
+                                    pendingLinks.drop(1).forEach { link -> navigateByDeepLink(nav, link) }
+                                }
                             }
-                        }
-                    } else {
-                        Navigator(SplashScreen()) { nav ->
-                            CurrentScreen()
-                            DeepLinkEffect(nav)
+                        } else {
+                            Navigator(SplashScreen(), disposeBehavior) { nav ->
+                                CurrentScreen()
+                                DeepLinkEffect(nav)
+                            }
                         }
                     }
+
                 }
             }
         }

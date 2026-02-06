@@ -17,4 +17,5 @@ sealed interface StatisticEvent {
     data class OnChildSelected(val child: UserInfo): StatisticEvent
 
     data object GetChildren: StatisticEvent
+    data object ClearAll: StatisticEvent
 }

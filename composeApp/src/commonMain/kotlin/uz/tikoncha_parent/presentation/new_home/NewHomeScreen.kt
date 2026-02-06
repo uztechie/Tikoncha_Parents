@@ -41,6 +41,9 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.core.component.getScopeName
+import org.koin.core.qualifier.Qualifier
+import org.koin.core.qualifier.QualifierValue
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.*
@@ -93,6 +96,7 @@ class NewHomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
+
 
         val viewModel = navigator.koinNavigatorScreenModel<HomeViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()

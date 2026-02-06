@@ -31,6 +31,7 @@ import tikoncha_parents.composeapp.generated.resources.suhbat
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -137,14 +138,25 @@ fun ChatUi(
                     ChatListItem(
                         chatUi = item,
                         onClick = {
-                            navigator?.push(
-                                ChatMessageScreen(
-                                    chatId = item.chatId,
-                                    chatAvatar = item.avatar,
-                                    chatTitle = item.title,
-                                    chatType = item.type
+
+                            if(item.type == ChatType.BOT){
+                                navigator?.push(
+                                    ChatMessageAiScreen(
+                                        chatId = item.chatId,
+                                        chatTitle = item.title,
+                                    )
                                 )
-                            )
+                            }
+                            else{
+                                navigator?.push(
+                                    ChatMessageScreen(
+                                        chatId = item.chatId,
+                                        chatAvatar = item.avatar,
+                                        chatTitle = item.title,
+                                        chatType = item.type
+                                    )
+                                )
+                            }
                         }
                     )
                     DividerHorizontal()

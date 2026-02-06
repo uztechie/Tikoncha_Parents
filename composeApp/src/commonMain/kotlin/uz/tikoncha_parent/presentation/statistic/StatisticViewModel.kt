@@ -43,7 +43,7 @@ class StatisticViewModel(
 ) : ScreenModel
 {
 
-    private val TAG = "HomeViewModel"
+    private val TAG = "StatisticViewModel"
 
     private val _state = MutableStateFlow(StatisticState())
     val state = _state.asStateFlow()
@@ -56,7 +56,7 @@ class StatisticViewModel(
     private var computeAllJob: Job? = null
 
     init {
-
+        Logger.d(TAG, "INIT")
     }
 
 
@@ -119,6 +119,10 @@ class StatisticViewModel(
 
             StatisticEvent.GetChildren -> {
                 loadChildren()
+            }
+
+            StatisticEvent.ClearAll -> {
+
             }
         }
     }
