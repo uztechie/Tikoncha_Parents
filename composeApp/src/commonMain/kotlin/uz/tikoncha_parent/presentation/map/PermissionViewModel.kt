@@ -27,8 +27,6 @@ class PermissionViewModel(
     }
 
     fun requestPermission() = viewModelScope.launch {
-        _state.value = PermissionState.NotDetermined
-        delay(200)
         _state.value = try {
             controller.providePermission(Permission.LOCATION)
             PermissionState.Granted
