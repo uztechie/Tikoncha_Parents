@@ -50,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -84,6 +85,9 @@ fun TaskUi(
     var showDialog by remember { mutableStateOf(false) }
     val taskLoading = state.taskResponseState is ResponseState.Loading
     val taskErrorText = state.taskResponseState.errorText()
+
+    val enabled: Boolean = if (state.selectedChild != null) true else false
+    val enabledColor = if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
 
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
@@ -327,7 +331,8 @@ fun TaskUi(
         }
         SpaceMedium()
 
-        TextButton(
+        CustomOutlinedButton(
+            enabled = enabled,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
@@ -340,27 +345,19 @@ fun TaskUi(
                 )
                 .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
-                .clip(RoundedCornerShape(TextFieldCornerRadius))
-                .border(1.dp, PrimaryColor, RoundedCornerShape(TextFieldCornerRadius))
                 .height(ButtonHeight),
             onClick = {
                 navigator?.push(AddNewTaskScreen())
+            },
+            text = stringResource(Res.string.vazifa_qo_shish),
+            endingIcon = {
+                Icon(
+                    painter = painterResource(Res.drawable.add_square),
+                    contentDescription = "",
+                    tint = enabledColor
+                )
             }
-        ) {
-            CustomText(
-                text = stringResource(Res.string.vazifa_qo_shish),
-                fontSize = 16.sp,
-                color = PrimaryColor,
-                fontWeight = FontWeight.W500
-            )
-            SpaceMedium()
-
-            Icon(
-                painter = painterResource(Res.drawable.add_square),
-                contentDescription = "",
-                tint = PrimaryColor
-            )
-        }
+        )
     }
 }
 

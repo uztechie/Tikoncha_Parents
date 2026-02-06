@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +56,9 @@ import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.chat.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.map.MapScreen
@@ -71,9 +74,11 @@ import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.DialogButtonHeight
 import uz.tikoncha_parent.ui.HomeIconSize
 import uz.tikoncha_parent.ui.HomeItemHeight
 import uz.tikoncha_parent.ui.LargeTextSize
@@ -84,6 +89,7 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
+import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -271,6 +277,25 @@ fun NewHomeUi(
                     }
                 }
             }
+        }
+        if (state.childrenList.isEmpty()) {
+            SpaceMedium()
+            CustomOutlinedButton(
+                text = stringResource(Res.string.farzand_qo_shish),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(DialogButtonHeight),
+                endingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.add_square),
+                        contentDescription = "",
+                        tint = PrimaryColor
+                    )
+                },
+                onClick = { navigator?.push(AddChildScreen()) },
+                textColor = PrimaryColor,
+                borderColor = PrimaryColor
+            )
         }
 
         SpaceLarge()
