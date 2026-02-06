@@ -46,19 +46,19 @@ fun CustomDialog(
     isRow: Boolean = false
 ) {
 
-    val dialogIcon = if (message == stringResource(Res.string.no_internet_connection)) {
+    val dialogIcon = if (message == stringResource(Res.string.iltimos_internetga_ulang)) {
         painterResource(Res.drawable.dialog_internet)
     } else {
         painter
     }
 
-    val dialogTitle = if (message == stringResource(Res.string.no_internet_connection)) {
+    val dialogTitle = if (message == stringResource(Res.string.iltimos_internetga_ulang)) {
         stringResource(Res.string.aloqa_uzildi)
     } else {
         title
     }
 
-    val dialogMessage = if (message == stringResource(Res.string.no_internet_connection)) {
+    val dialogMessage = if (message == stringResource(Res.string.iltimos_internetga_ulang)) {
         stringResource(Res.string.internet_aloqa_uzildi)
     } else {
         message

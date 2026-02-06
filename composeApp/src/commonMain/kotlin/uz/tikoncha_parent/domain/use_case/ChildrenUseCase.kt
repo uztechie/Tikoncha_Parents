@@ -2,12 +2,12 @@ package uz.tikoncha_parent.domain.use_case
 
 import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.no_internet_connection
+import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
+import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.platform.Logger
 
 
 class ChildrenUseCase(
@@ -25,20 +25,17 @@ class ChildrenUseCase(
                     resId = Res.string.server_connection_error
                 )
             }
-        }
-        catch (e: IOException){
+        } catch (e: IOException) {
             Resource.Error(
-                resId = Res.string.no_internet_connection,
+                resId = Res.string.iltimos_internetga_ulang,
                 cause = e
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             Resource.Error(
-                resId = Res.string.server_connection_error,
+                resId = Res.string.kutilmagan_xatolik_qayta_urining,
                 cause = e
             )
         }
-
     }
 }

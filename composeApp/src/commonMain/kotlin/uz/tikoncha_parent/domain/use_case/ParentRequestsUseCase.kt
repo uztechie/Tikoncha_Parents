@@ -2,7 +2,8 @@ package uz.tikoncha_parent.domain.use_case
 
 import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.no_internet_connection
+import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
+import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toLogoutUi
 import uz.tikoncha_parent.domain.model.Resource
@@ -25,17 +26,15 @@ class ParentRequestsUseCase(
                 val data = response.data?.items?.map { it.toLogoutUi() }
                 Resource.Success(data)
             }
-        }
-        catch (e: IOException){
+        } catch (e: IOException) {
             Resource.Error(
-                resId = Res.string.no_internet_connection,
+                resId = Res.string.iltimos_internetga_ulang,
                 cause = e
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Resource.Error(
                 message = e.message ?: "Unknown error",
-                resId = Res.string.server_connection_error
+                resId = Res.string.kutilmagan_xatolik_qayta_urining
             )
         }
     }

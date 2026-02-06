@@ -1,6 +1,9 @@
 package uz.tikoncha_parent.domain.use_case.payment
 
+import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
+import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toSubscriptionPlanUi
 import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
@@ -24,13 +27,17 @@ class SubscriptionPlanUseCase(
                     resId = Res.string.server_connection_error
                 )
             }
+        } catch (e: IOException) {
+            Resource.Error(
+                resId = Res.string.iltimos_internetga_ulang,
+                cause = e
+            )
         } catch (e: Exception) {
             e.printStackTrace()
             Resource.Error(
-                resId = Res.string.server_connection_error,
+                resId = Res.string.kutilmagan_xatolik_qayta_urining,
                 cause = e
             )
         }
-
     }
 }
