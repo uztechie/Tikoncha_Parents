@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -181,6 +182,22 @@ android {
         versionName = "1.0.7"
     }
     setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
+    val props = Properties().apply {
+        val f = rootProject.file("local.properties")
+        if (f.exists()) load(f.inputStream())
+    }
+
+    signingConfigs {
+        create("release") {
+            val storeFilePath = props.getProperty("RELEASE_STORE_FILE")
+            storeFile = rootProject.file(storeFilePath)
+
+            storePassword = props.getProperty("RELEASE_STORE_PASSWORD")
+            keyAlias = props.getProperty("RELEASE_KEY_ALIAS")
+            keyPassword = props.getProperty("RELEASE_KEY_PASSWORD")
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -189,6 +206,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -199,5 +217,22 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+}
+
+tasks.register<Copy>("copyReleaseArtifacts") {
+    group = "release"
+    description = "Copy signed APK and AAB to root /release folder"
+
+    val rootReleaseDir = rootProject.layout.projectDirectory.dir("release")
+
+    from("${layout.buildDirectory}/outputs/apk/release") {
+        include("*.apk")
+    }
+
+    from("${layout.buildDirectory}/outputs/bundle/release") {
+        include("*.aab")
+    }
+
+    into(rootReleaseDir)
 }
 

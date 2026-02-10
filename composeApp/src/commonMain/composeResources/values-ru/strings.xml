@@ -158,6 +158,8 @@
     <string name="qisqartirish">Сокращение</string>
     <string name="vazifa_tahrirlandi">Задание отредактировано</string>
     <string name="ekranni_kuzatish">Наблюдение за экраном</string>
+    <string name="tolov_amalga_oshmadi">Не удалось выполнить платёж</string>
+    <string name="veb_sayt_tez_kunda_izoh">Функция управления веб-сайтами скоро появится</string>
     <string name="internetdagi_tarix">История интернета</string>
     <string name="notification">Уведомление</string>
     <string name="sizda_mavjud_tangachalar">Имеющиеся у вас монеты</string>
