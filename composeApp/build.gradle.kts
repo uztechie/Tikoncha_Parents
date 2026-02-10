@@ -180,6 +180,7 @@ android {
         versionCode = 7
         versionName = "1.0.7"
     }
+    setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
