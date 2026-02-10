@@ -34,7 +34,8 @@ class LocationRuleViewModel(
                         lng = event.locationData?.lng,
                         editable = event.editable,
                         policy_name = event.policyName,
-                        location_rule = event.locationRule
+                        location_rule = event.locationRule,
+                        parent = true
                     )
 
                     _state.update {

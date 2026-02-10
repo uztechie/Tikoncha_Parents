@@ -78,35 +78,36 @@ class ChatMessageAiScreen(
                 modifier = Modifier
                     .fillMaxSize(),
                 onBackPressed = {
+                    Logger.d("CHATAI", "backpressed")
                     navigator?.pop()
                 }
             )
 
-            Box(
-                modifier = Modifier
-                    .padding(start = ContainerPadding, top = 21.dp, bottom = ContainerPadding)
-            ) {
-                FilledTonalIconButton(
-                    modifier = Modifier
-                        .size(NormalIconButtonSize),
-                    onClick = {
-                        navigator?.pop()
-                    },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor,
-                        contentColor = MaterialTheme.extendedColor.textColor
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow_left),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(NormalIconButtonPadding)
-                    )
-                }
-            }
+//            Box(
+//                modifier = Modifier
+//                    .padding(start = ContainerPadding, top = 21.dp, bottom = ContainerPadding)
+//            ) {
+//                FilledTonalIconButton(
+//                    modifier = Modifier
+//                        .size(NormalIconButtonSize),
+//                    onClick = {
+//                        navigator?.pop()
+//                    },
+//                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+//                        containerColor = MaterialTheme.extendedColor.cardColor,
+//                        contentColor = MaterialTheme.extendedColor.textColor
+//                    ),
+//                    shape = RoundedCornerShape(10.dp)
+//                ) {
+//                    Icon(
+//                        painter = painterResource(Res.drawable.arrow_left),
+//                        contentDescription = "",
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(NormalIconButtonPadding)
+//                    )
+//                }
+//            }
 
         }
 

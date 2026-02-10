@@ -1,13 +1,13 @@
 package uz.tikoncha_parent.platform
 
+import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.viewinterop.UIKitView
+import androidx.compose.ui.interop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.cinterop.readValue
-import platform.CoreGraphics.CGRectZero
-import platform.Foundation.NSError
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
 import platform.WebKit.*
@@ -23,7 +23,11 @@ actual fun UniversalJsonWebView(
     onBackPressed: () -> Unit
 ) {
     var isPageLoaded by remember { mutableStateOf(false) }
+
+    // ✅ faqat url param o‘zgarganda load qilish uchun
     var lastLoadedUrl by remember { mutableStateOf<String?>(null) }
+
+    // ✅ bir xil jsonni qayta-qayta yubormaslik uchun
     var lastSentJson by remember { mutableStateOf<String?>(null) }
 
     val latestOnIncomingJson by rememberUpdatedState(onIncomingJson)
@@ -36,113 +40,99 @@ actual fun UniversalJsonWebView(
         )
     }
 
+    LaunchedEffect(json) {
+        Logger.d("UniversalJsonWebView", "json=$json")
+    }
+
+
     val delegate = remember {
         object : NSObject(), WKNavigationDelegateProtocol {
-
             override fun webView(webView: WKWebView, didFinishNavigation: WKNavigation?) {
-                Logger.d("UniversalJsonWebView", "✅ didFinishNavigation")
                 isPageLoaded = true
-
-                webView.evaluateJavaScript("document.readyState") { r, e ->
-                    Logger.d(
-                        "UniversalJsonWebView",
-                        "readyState=$r err=${e?.localizedDescription}"
-                    )
-                }
-            }
-
-            @ObjCSignatureOverride
-            override fun webView(
-                webView: WKWebView,
-                didFailProvisionalNavigation: WKNavigation?,
-                withError: NSError
-            ) {
-                Logger.e(
-                    "UniversalJsonWebView",
-                    "❌ didFailProvisionalNavigation: ${withError.domain}(${withError.code}) ${withError.localizedDescription}"
-                )
-                isPageLoaded = false
-            }
-
-            @ObjCSignatureOverride
-            override fun webView(
-                webView: WKWebView,
-                didFailNavigation: WKNavigation?,
-                withError: NSError
-            ) {
-                Logger.e(
-                    "UniversalJsonWebView",
-                    "❌ didFailNavigation: ${withError.domain}(${withError.code}) ${withError.localizedDescription}"
-                )
-                isPageLoaded = false
             }
         }
     }
 
+
     UIKitView(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         factory = {
             val controller = WKUserContentController()
 
             val bridgeJs = """
-                (function () {
-                    if (window.__KMP_BRIDGE__) return;
-                    window.__KMP_BRIDGE__ = true;
+(function () {
 
-                    // Android-like bridge object
-                    if (!window.AndroidJson) {
-                        window.AndroidJson = {
-                            sendData: function (payload) {
-                                try {
-                                    window.webkit.messageHandlers.AndroidJson.postMessage({
-                                        type: "sendData",
-                                        payload: payload
-                                    });
-                                } catch (e) {}
-                            },
-                            backPressed: function () {
-                                try {
-                                    window.webkit.messageHandlers.AndroidJson.postMessage({
-                                        type: "backPressed"
-                                    });
-                                } catch (e) {}
-                            }
-                        };
-                    }
+    // faqat bir marta o‘rnatsin
+    if (window.__KMP_BRIDGE_INSTALLED__) return;
+    window.__KMP_BRIDGE_INSTALLED__ = true;
 
-                    // ---- JS error + promise forwarding (for debug) ----
-                    window.addEventListener('error', function(e){
-                        try {
-                            window.webkit.messageHandlers.AndroidJson.postMessage({
-                                type: 'log',
-                                payload: 'JSERR: ' + (e.message || e)
-                            });
-                        } catch(_) {}
-                    });
+    // ===== AndroidJson bridge =====
+    window.AndroidJson = window.AndroidJson || {
+        sendData: function (payload) {
+            try {
+                window.webkit.messageHandlers.AndroidJson.postMessage({
+                    type: "sendData",
+                    payload: payload
+                });
+            } catch (e) {}
+        },
+        backPressed: function () {
+            try {
+                window.webkit.messageHandlers.AndroidJson.postMessage({
+                    type: "backPressed"
+                });
+            } catch (e) {}
+        }
+    };
 
-                    window.addEventListener('unhandledrejection', function(e){
-                        try {
-                            var msg = (e && e.reason) ? (e.reason.message || String(e.reason)) : 'unknown';
-                            window.webkit.messageHandlers.AndroidJson.postMessage({
-                                type: 'log',
-                                payload: 'PROMISE: ' + msg
-                            });
-                        } catch(_) {}
-                    });
+    // ===== CONSOLE.LOG FORWARD =====
+    try {
+        function send(level, args) {
+            var msg = Array.prototype.map.call(args, function (a) {
+                if (typeof a === "string") return a;
+                try { return JSON.stringify(a); }
+                catch(e) { return String(a); }
+            }).join(" ");
 
-                    // Optional: forward console.error too
-                    var oldErr = console.error;
-                    console.error = function(){
-                        try {
-                            window.webkit.messageHandlers.AndroidJson.postMessage({
-                                type: 'log',
-                                payload: 'ERR: ' + Array.prototype.join.call(arguments, ' ')
-                            });
-                        } catch(_) {}
-                        try { oldErr.apply(console, arguments); } catch(_) {}
-                    };
-                })();
-            """.trimIndent()
+            window.webkit.messageHandlers.AndroidJson.postMessage({
+                type: "console",
+                level: level,
+                payload: msg
+            });
+        }
+
+        var _log = console.log;
+        console.log = function () {
+            send("log", arguments);
+            try { _log.apply(console, arguments); } catch(e) {}
+        };
+
+        var _warn = console.warn;
+        console.warn = function () {
+            send("warn", arguments);
+            try { _warn.apply(console, arguments); } catch(e) {}
+        };
+
+        var _error = console.error;
+        console.error = function () {
+            send("error", arguments);
+            try { _error.apply(console, arguments); } catch(e) {}
+        };
+
+        window.addEventListener("error", function (e) {
+            send("js_error", [e.message || e]);
+        });
+
+        window.addEventListener("unhandledrejection", function (e) {
+            var reason = e && e.reason ? (e.reason.message || String(e.reason)) : "unknown";
+            send("promise_rejection", [reason]);
+        });
+
+    } catch (e) {}
+
+})();
+""".trimIndent()
+
 
             controller.addUserScript(
                 WKUserScript(
@@ -155,26 +145,45 @@ actual fun UniversalJsonWebView(
 
             val config = WKWebViewConfiguration().apply {
                 userContentController = controller
-
-                // ✅ chat/auth uchun muhim: cookie + localStorage persistent bo‘lsin
-                websiteDataStore = WKWebsiteDataStore.defaultDataStore()
-
-                // ✅ JS enable (iOS 14+)
-                defaultWebpagePreferences.allowsContentJavaScript = true
-                preferences.javaScriptCanOpenWindowsAutomatically = true
             }
 
             WKWebView(
-                frame = CGRectZero.readValue(),
+                frame = platform.CoreGraphics.CGRectZero.readValue(),
                 configuration = config
             ).apply {
                 navigationDelegate = delegate
-
-                // (ixtiyoriy) WAF/browser-detection muammosi bo‘lsa sinab ko‘ring:
-                // customUserAgent =
-                //   "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+                // ❗️loadRequestni update ichida qilamiz (stable control)
             }
         },
+
+//        update =
+//            { webView ->
+//            // ✅ URL faqat parametr o‘zgarganda reload bo‘lsin
+//            if (lastLoadedUrl != url) {
+//                lastLoadedUrl = url
+//                lastSentJson = null // yangi page -> jsonni qayta yuborishga ruxsat
+//                isPageLoaded = false
+//
+//                val nsUrl = NSURL.URLWithString(url)
+//                if (nsUrl != null) {
+//                    webView.loadRequest(NSURLRequest.requestWithURL(nsUrl))
+//                }
+//            }
+//
+//            // ✅ Native -> Web JSON (faqat page loaded + json bor + oldin yuborilmagan bo‘lsa)
+//            if (isPageLoaded && json != null && lastSentJson != json) {
+//                lastSentJson = json
+//
+//                // Agar json string bo‘lib, ichida quotes bo‘lsa ham ishlashi uchun:
+//                val escaped = escapeJsString(json)
+//                // json shu ko‘rinishda bo‘lsin: {"a":1} yoki "text" (JS literal)
+//                val script = "window.postMessage($escaped, '*');"
+//                Logger.d("UniversalJsonWebView", "isPageLoaded=$isPageLoaded, json=$json")
+//                Logger.d("UniversalJsonWebView", "isPageLoaded=$isPageLoaded, escaped=$escaped")
+//
+//                webView.evaluateJavaScript(script, completionHandler = null)
+//            }
+//        },
         update = { webView ->
             // URL faqat o‘zgarganda load
             if (lastLoadedUrl != url) {
@@ -242,17 +251,24 @@ actual fun UniversalJsonWebView(
     )
 }
 
+
 private class IOSJsonMessageHandler(
     private val onJsonFromWeb: (String?) -> Unit,
-    private val onWebBackPressed: () -> Unit
-) : NSObject(), WKScriptMessageHandlerProtocol {
+    private val onWebBackPressed: () -> Unit,
+
+    ) : NSObject(), WKScriptMessageHandlerProtocol {
 
     override fun userContentController(
         userContentController: WKUserContentController,
         didReceiveScriptMessage: WKScriptMessage
     ) {
+        // message.body odatda JS object bo‘ladi:
+        // { type: "sendData", payload: "..." } yoki { type: "backPressed" }
         val body = didReceiveScriptMessage.body
+
+        // Eng sodda parsing: NSDictionary bo‘lishi mumkin
         val dict = body as? Map<*, *> ?: run {
+            // agar string kelib qolsa ham qabul qilamiz
             onJsonFromWeb(body?.toString())
             return
         }
@@ -260,8 +276,15 @@ private class IOSJsonMessageHandler(
         when (dict["type"]?.toString()) {
             "sendData" -> onJsonFromWeb(dict["payload"]?.toString())
             "backPressed" -> onWebBackPressed()
-            "log" -> Logger.e("WEB", dict["payload"]?.toString() ?: "")
-            else -> Unit
+            "console" -> {
+                val level = dict["level"]?.toString() ?: "log"
+                val msg = dict["payload"]?.toString() ?: ""
+                Logger.d("WEB_CONSOLE_$level", msg)
+            }
+
+            else -> {
+                // noma’lum message — xohlasangiz log qilasiz
+            }
         }
     }
 }

@@ -11,5 +11,6 @@ data class LocationRuleUi(
     val lng: Double?,
     val editable: Boolean,
     val policy_name: String,
-    val location_rule: LocationRule?
+    val location_rule: LocationRule?,
+    val parent: Boolean
 )

@@ -21,6 +21,42 @@ object DateTimeUtil {
 
     fun Int.two(): String = if (this < 10) "0$this" else toString()
 
+    fun toMillis(s: String?): Long {
+        if (s.isNullOrBlank()) return 0L
+        val input = s.trim()
+
+        // Capture date, time, and optional fractional seconds (any length)
+        val re = Regex(
+            pattern = """^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,}))?""",
+            option = RegexOption.IGNORE_CASE
+        )
+
+        val m = re.find(input) ?: return 0L
+
+        val year   = m.groupValues[1].toInt()
+        val month  = m.groupValues[2].toInt()
+        val day    = m.groupValues[3].toInt()
+        val hour   = m.groupValues[4].toInt()
+        val minute = m.groupValues[5].toInt()
+        val second = m.groupValues[6].toInt()
+
+        val frac = m.groupValues.getOrNull(7).orEmpty()
+        // milliseconds = first 3 digits (truncate) or pad with zeros if shorter
+        val ms = when {
+            frac.isEmpty()      -> 0
+            frac.length >= 3    -> frac.substring(0, 3).toInt()
+            else                -> (frac + "000").substring(0, 3).toInt()
+        }
+
+        val ldt = LocalDateTime(
+            year, month, day,
+            hour, minute, second,
+            ms * 1_000_000 // nanos
+        )
+
+        // Interpret the naive timestamp as UTC (no offset in the string)
+        return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+    }
     fun toMillisUtc(s: String?): Long {
         if (s.isNullOrBlank()) return 0L
         val input = s.trim()
