@@ -182,7 +182,7 @@
     <string name="azo">A’zo</string>
     <string name="ekranni_kuzatish">Ekranni kuzatish</string>
     <string name="internetdagi_tarix">Internetdagi tarix</string>
-    <string name="notification">Notification</string>
+    <string name="notification">Bildirishnomalar</string>
     <string name="sizda_mavjud_tangachalar">Sizda mavjud tangachalar</string>
     <string name="tangachalar_sovg_a_qiling">Vazifani bajargani uchun farzandingizga tangachalar sovg‘a qiling.</string>
     <string name="jadval">Jadval</string>
@@ -349,8 +349,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="profil_va_sozlamalar_saqlanadi">Profil va sozlamalaringiz serverda saqlanadi.</string>
     <string name="qayta_kirsangiz_tiklanadi">Keyin qayta kirsangiz hamma narsa tiklanadi.</string>
     <string name="farzand_qoshilmagan">Farzand qo‘shilmagan</string>
-    <string name="farzand_qoshilgandan_keyin_korinish">
-        Jadval, chatlar va hisobotlar farzand qo‘shilgandan keyin ko‘rinadi.
-    </string>
+    <string name="farzand_qoshilgandan_keyin_korinish">Jadval, chatlar va hisobotlar farzand qo‘shilgandan keyin ko‘rinadi.</string>
     <string name="kutilmagan_xatolik_qayta_urining">Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko‘ring.</string>
+    <string name="hozircha_farzand_qoshilmagan">Sizda hozircha farzand qo‘shilmagan.</string>
 </resources>

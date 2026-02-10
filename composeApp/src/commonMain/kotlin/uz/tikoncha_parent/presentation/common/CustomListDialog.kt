@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImage
@@ -55,6 +56,7 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.base.coverShadow
 import uz.tikoncha_parent.ui.DividerHorizontal
+import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceSmall
@@ -71,6 +73,8 @@ fun <T>CustomListDialog(
     items:List<T>,
     show:Boolean = true,
     loading: Boolean = false,
+    noChild: Boolean = false,
+    emptyText: String = "",
     errorMessage: String = "",
     onItemSelected:(T) -> Unit,
     onDismiss:() -> Unit
@@ -166,6 +170,13 @@ fun <T>CustomListDialog(
                                 text = errorMessage,
                                 fontSize = NormalTextSize,
                                 modifier = Modifier
+                            )
+                        } else if (noChild) {
+                            CustomText(
+                                text = emptyText,
+                                fontSize = NormalTextSize,
+                                color = MaterialTheme.extendedColor.hintColor,
+                                textAlign = TextAlign.Center
                             )
                         } else {
 
@@ -289,6 +300,7 @@ private fun Preview() {
             show = true,
             loading = false,
             errorMessage = "",
+            emptyText = "Farzand qo'shilmagan",
             onItemSelected = {},
             onDismiss = {}
         )
