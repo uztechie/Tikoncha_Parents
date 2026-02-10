@@ -344,9 +344,8 @@
     <string name="profil_va_sozlamalar_saqlanadi">Ваш профиль и настройки сохраняются на сервере.</string>
     <string name="qayta_kirsangiz_tiklanadi">После повторного входа всё будет восстановлено.</string>
     <string name="farzand_qoshilmagan">Ребёнок не добавлен</string>
-    <string name="farzand_qoshilgandan_keyin_korinish">
-        Расписание, чаты и отчёты будут доступны после добавления ребёнка.
-    </string>
+    <string name="farzand_qoshilgandan_keyin_korinish">Расписание, чаты и отчёты будут доступны после добавления ребёнка.</string>
     <string name="no_internet_connection">Пожалуйста, подключите ваш телефон к интернету!</string>
     <string name="kutilmagan_xatolik_qayta_urining">Произошла непредвиденная ошибка. Пожалуйста, попробуйте снова.</string>
+    <string name="hozircha_farzand_qoshilmagan">У вас пока не добавлен ребёнок.</string>
 </resources>

@@ -42,9 +42,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.core.component.getScopeName
-import org.koin.core.qualifier.Qualifier
-import org.koin.core.qualifier.QualifierValue
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.*
@@ -65,7 +62,6 @@ import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.PolicyListScreen
-import uz.tikoncha_parent.presentation.policy.PolicyState
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
@@ -74,7 +70,6 @@ import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
-import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -160,6 +155,8 @@ fun NewHomeUi(
     var showDialog by remember {
         mutableStateOf(false)
     }
+    val noChild = if (state.childrenList.isEmpty()) true else false
+
     val tableCount = state.blockedAppCount
     val taskCount = state.activeTaskCount
 
@@ -171,6 +168,8 @@ fun NewHomeUi(
         items = state.childrenList,
         show = showDialog,
         loading = childrenLoading,
+        noChild = noChild,
+        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
         errorMessage = childrenErrorText,
         onItemSelected = {
             event(HomeEvent.OnChildSelected(it))
