@@ -327,6 +327,9 @@ fun TaskUi(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 SpaceLarge()
+                SpaceLarge()
+                SpaceLarge()
+                SpaceLarge()
             }
         }
         SpaceMedium()

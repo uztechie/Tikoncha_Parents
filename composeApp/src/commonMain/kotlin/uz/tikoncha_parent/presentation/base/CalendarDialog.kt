@@ -3,7 +3,7 @@ package uz.saidburxon.newedu.presentation.feature.assignment
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.*
 import kotlinx.datetime.*
 import kotlinx.datetime.LocalDate
 import uz.tikoncha_parent.common.Util
-import uz.tikoncha_parent.common.Util.getMonthName
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
@@ -26,11 +25,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.platform.formatMonthYear
+import uz.tikoncha_parent.platform.getWeekDays
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.coverShadow
+import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
+import uz.tikoncha_parent.presentation.profile.language.LocalLanguageController
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.*
 
 @Composable
 fun CalendarDialog(
@@ -52,6 +56,9 @@ fun CalendarDialog(
         mutableStateOf(selectedDate ?: Util.getCurrentDate().withDayOfMonth(1))
     }
     var tempSelectedDate by remember { mutableStateOf(selectedDate) }
+
+    val language = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
+    val daysOfWeek = remember(language) { getWeekDays(language) }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -81,7 +88,7 @@ fun CalendarDialog(
                     }
 
                     CustomText(
-                        text = getMonthName(currentMonth) + " ${currentMonth.year}",
+                        text = currentMonth.formatMonthYear(language),
                         fontSize = LargeTextSize,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -97,7 +104,6 @@ fun CalendarDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                val daysOfWeek = listOf("D", "S", "Ch", "P", "J", "Sh", "Y")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

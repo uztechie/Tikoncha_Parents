@@ -56,15 +56,6 @@ object Util {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
     }
 
-    fun getMonthName(date: LocalDate): String {
-        val uzbekMonths = listOf(
-            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
-            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-        )
-        return uzbekMonths[date.month.number - 1]
-    }
-
-
     fun format6DigitCode(raw: String): String {
         val digits = raw.filter { it.isDigit() }.take(6)
         return if (digits.length <= 3) digits else "${digits.take(3)}-${digits.drop(3)}"
@@ -189,5 +180,10 @@ object Util {
         }
         val formatted = sb.reverse().toString()
         return if (isNegative) "-$formatted" else formatted
+    }
+
+    fun <T> List<T>.shiftToMonday(): List<T>{
+        if (isEmpty()) return this
+        return drop(1) + first()
     }
 }
