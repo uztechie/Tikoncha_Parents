@@ -4,8 +4,8 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
-import uz.tikoncha_parent.presentation.chat.ChatScreen
+import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
+import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
@@ -56,7 +56,7 @@ fun navigateByDeepLink(navigator: Navigator, link: DeepLink) {
             listOf(
                 StatisticScreen(),
                 ChatScreen(),
-                ChatMessageScreen(
+                ChatRoomScreen(
                     chatId = link.chatId,
                     chatAvatar = "",
                     chatTitle = link.chatTitle ?: "",

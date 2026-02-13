@@ -56,7 +56,7 @@ import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
-import uz.tikoncha_parent.presentation.chat.ChatScreen
+import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen

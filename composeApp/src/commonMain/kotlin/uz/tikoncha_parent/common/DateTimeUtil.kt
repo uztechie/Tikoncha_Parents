@@ -5,6 +5,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.number
@@ -174,28 +175,6 @@ object DateTimeUtil {
         return "${day.two()}.${mon.two()}.$yr"
     }
 
-    fun formatDateForChatUserStatus(
-        localDate: LocalDate?,
-        bugun: String,
-        kecha: String,
-        timeZone: TimeZone = TimeZone.currentSystemDefault()
-    ): String {
-        if (localDate == null) return ""
-
-        val today = Clock.System.todayIn(timeZone)
-        val yesterday = today.minus(1, DateTimeUnit.DAY)
-
-        return when (localDate) {
-            today -> bugun
-            yesterday -> kecha
-            else -> {
-                val d = localDate.day.toString().padStart(2, '0')
-                val m = localDate.month.ordinal.toString().padStart(2, '0')
-                val y = localDate.year.toString()
-                "$d.$m.$y"
-            }
-        }
-    }
 
     fun formatDayMonthLocalized(
         localDate: LocalDate?,
@@ -260,18 +239,7 @@ object DateTimeUtil {
         }
     }
 
-    fun formatDateTimeForChat(
-        longDate: Long,
-        zone: TimeZone = TimeZone.currentSystemDefault()
-    ): String {
-        if (longDate == 0L) return ""
-        val instant = Instant.fromEpochMilliseconds(longDate)
 
-        val date = instant.toLocalDateTime(zone).date
-        val today = Clock.System.now().toLocalDateTime(zone).date
-
-        return if (date == today) formatTime(longDate) else formatDate_ddMMyyyy(date)
-    }
 
 
     fun formatDateTimeMonthlyForMap(
@@ -319,6 +287,42 @@ object DateTimeUtil {
             formatTime(longDate)
         else
             formatDayMonth(longDate, lang, zone)
+    }
+
+    fun Month.localized(lang: LanguageType): String {
+        return when (lang) {
+            LanguageType.UZ -> when (this) {
+                Month.JANUARY -> "Yanvar"
+                Month.FEBRUARY -> "Fevral"
+                Month.MARCH -> "Mart"
+                Month.APRIL -> "Aprel"
+                Month.MAY -> "May"
+                Month.JUNE -> "Iyun"
+                Month.JULY -> "Iyul"
+                Month.AUGUST -> "Avgust"
+                Month.SEPTEMBER -> "Sentabr"
+                Month.OCTOBER -> "Oktabr"
+                Month.NOVEMBER -> "Noyabr"
+                Month.DECEMBER -> "Dekabr"
+            }
+
+            LanguageType.RU -> when (this) {
+                Month.JANUARY -> "Января"
+                Month.FEBRUARY -> "Февраля"
+                Month.MARCH -> "Марта"
+                Month.APRIL -> "Апреля"
+                Month.MAY -> "Мая"
+                Month.JUNE -> "Июня"
+                Month.JULY -> "Июля"
+                Month.AUGUST -> "Августа"
+                Month.SEPTEMBER -> "Сентября"
+                Month.OCTOBER -> "Октября"
+                Month.NOVEMBER -> "Ноября"
+                Month.DECEMBER -> "Декабря"
+            }
+
+            else -> this.name.lowercase().replaceFirstChar { it.uppercase() }
+        }
     }
 
 
@@ -522,6 +526,11 @@ object DateTimeUtil {
 
     fun LocalDateTime.toUiTime(): String =
         "${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}"
+
+
+    fun nowMillis(): Long {
+        return Clock.System.now().toEpochMilliseconds()
+    }
 
 
 }

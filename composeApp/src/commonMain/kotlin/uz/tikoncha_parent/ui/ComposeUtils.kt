@@ -38,6 +38,7 @@ val SmallIconButtonSize = 30.dp
 val UltraSmallIconButtonSize = 25.dp
 val LargeIconButtonPadding = 12.dp
 val NormalIconButtonPadding = 8.dp
+val ChatHeaderAvatarSize = 44.dp
 val SmallIconButtonPadding = 5.dp
 
 val ButtonCornerRadius = 16.dp
@@ -81,6 +82,8 @@ val UltraSmallTextSize:TextUnit @Composable get() =  10.sp //.responsiveSp()
 val NormalLargeTextSize:TextUnit @Composable get() =  18.sp //.responsiveSp()
 
 val CloseButtonSize: Dp = 30.dp
+
+val ChatTextFieldCornerRadius = 24.dp
 val CloseButtonInnerPadding: Dp = 5.dp
 
 val ItemHeight: Dp = 50.dp

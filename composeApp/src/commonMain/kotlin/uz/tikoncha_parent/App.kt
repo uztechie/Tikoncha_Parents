@@ -24,9 +24,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import ru.sulgik.mapkit.MapKit
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.chat.ChatMessageScreen
-import uz.tikoncha_parent.presentation.chat.ChatScreen
-import uz.tikoncha_parent.presentation.statistic.StatisticScreen
+import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
+import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
@@ -151,7 +150,7 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
     is DeepLink.Chat -> listOf(
         NewHomeScreen(),
         ChatScreen(),
-        ChatMessageScreen(
+        ChatRoomScreen(
             chatId = link.chatId,
             chatAvatar = "",
             chatTitle = link.chatTitle ?: "",

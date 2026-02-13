@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.presentation.model
 
+import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
+
 data class ChatMessageUi(
     val id: String,
     val isMine: Boolean,
@@ -9,4 +11,7 @@ data class ChatMessageUi(
     val createdAt: Long,
     val time: String,
     val isRead: Boolean = false,
+    val progress: Int = 0,
+    val clientMsgId: String? = null,
+    val status: DeliveryStatus = DeliveryStatus.SENT
 )

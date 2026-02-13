@@ -1,23 +1,25 @@
 package uz.tikoncha_parent.presentation.push
 
-//import kotlinx.atomicfu.locks.SynchronizedObject
-//import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import uz.tikoncha_parent.domain.model.DeepLink
 
 object PendingDeepLinks {
-//    private val lock = SynchronizedObject()
-//    private val buf = ArrayDeque<DeepLink>()
 
-    fun enqueue(link: DeepLink) = {}
+    // Simple thread-safe-ish buffer via atomic StateFlow updates
+    private val _buf = MutableStateFlow<List<DeepLink>>(emptyList())
 
-    fun drain(): List<DeepLink> = emptyList()
+    fun enqueue(link: DeepLink) {
+        _buf.update { it + link }
+    }
 
-//    fun enqueue(link: DeepLink) = synchronized(lock) {
-//        buf.addLast(link)
-//    }
-
-//    fun drain(): List<DeepLink> = synchronized(lock) {
-//        if (buf.isEmpty()) emptyList()
-//        else buildList { addAll(buf); buf.clear() }
-//    }
+    /**
+     * Drain once (take snapshot + clear)
+     */
+    fun drain(): List<DeepLink> {
+        val current = _buf.value
+        if (current.isEmpty()) return emptyList()
+        _buf.value = emptyList()
+        return current
+    }
 }

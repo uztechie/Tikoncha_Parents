@@ -6,6 +6,8 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.ChatDto
 import uz.tikoncha_parent.data.remote.model.ChatMemberDto
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
+import uz.tikoncha_parent.presentation.chat.ChatDateTimeUtil
+import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.presentation.model.ChatType
@@ -14,11 +16,10 @@ import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 
 
 fun ChatDto.toChatUi(): ChatUi {
-    val lanCode = LanguagePrefs.loadOrDefault().languageCode
-    val lang = LanguageType.getLangType(lanCode)
     val date = last_message?.created_at
-    val millis = DateTimeUtil.toMillisUtc(date)
-    val dateTime = DateTimeUtil.formatDateTimeMonthlyForChat(millis, lang)
+    val millis = DateTimeUtil.toMillis(date)
+    val lang = LanguagePrefs.loadOrDefault()
+    val dateTime = ChatDateTimeUtil.formatChatDate(millis = millis, langType = lang)
 
     val type = when(type){
         "BOT" -> ChatType.BOT
@@ -42,17 +43,30 @@ fun ChatDto.toChatUi(): ChatUi {
     )
 }
 
-fun ChatMessageDto.toChatMessageUi(): ChatMessageUi {
-    val dateMillis = DateTimeUtil.toMillisUtc(created_at)
+fun ChatMessageDto.toChatMessageUi(): ChatMessageUi{
+    val dateMillis = DateTimeUtil.toMillis(created_at)
+
+    val mine = is_mine ?: false
+    val read = is_read ?: false
+
+    val status = when {
+        mine && read -> DeliveryStatus.READ
+        mine && !read -> DeliveryStatus.SENT
+        else -> DeliveryStatus.SENT
+    }
+
+
     return ChatMessageUi(
         id = id,
         isMine = is_mine?:false,
         message = text,
         createdAt = dateMillis,
-        time = DateTimeUtil.formatTime(dateMillis),
+        time = ChatDateTimeUtil.millisToHHmm(dateMillis),
         isRead = is_read?:false,
         senderName = sender_name,
-        senderAvatar = sender_avatar.prepareAvatar()
+        senderAvatar = sender_avatar.prepareAvatar(),
+        clientMsgId = client_msg_id,
+        status = status
     )
 }
 
@@ -66,3 +80,25 @@ fun ChatMemberDto.toChatMemberUi(): ChatMemberUi{
 
     )
 }
+
+fun buildOptimisticTextMessage(
+    text: String,
+    clientMsgId: String,
+    nowMillis: Long = DateTimeUtil.nowMillis()
+): ChatMessageUi {
+    return ChatMessageUi(
+        id = "", // hali yo‘q
+        isMine = true,
+        message = text,
+        createdAt = nowMillis,
+        time = ChatDateTimeUtil.millisToHHmm(nowMillis), // local tavsiya
+        isRead = false,
+        senderName = "",
+        senderAvatar = "",
+        clientMsgId = clientMsgId,
+        status = DeliveryStatus.SENDING
+    )
+}
+
+fun ChatMessageUi.stableKey(): String =
+    if (id.isNotBlank()) "id:$id" else "tmp:$clientMsgId"

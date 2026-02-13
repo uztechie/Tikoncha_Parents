@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat
+package uz.tikoncha_parent.presentation.chat.chat_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilgandan_keyin_korinish
@@ -34,9 +33,9 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.chat.ChatMessageAiScreen
+import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.model.ChatType
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -69,43 +68,34 @@ fun ChatUi(
     event: (ChatEvent) -> Unit,
 ) {
 
-    LaunchedEffect(true) {
-        ChatUnreadEventBus.tryEmit(
-            ChatUnreadEventBus.ChatUnreadEvent.MessageReceived(state.lastMessage?.id?:"")
-        )
-    }
+//    LaunchedEffect(true) {
+//        ChatUnreadEventBus.tryEmit(
+//            ChatUnreadEventBus.ChatUnreadEvent.MessageReceived(state.lastMessage?.id?:"")
+//        )
+//    }
 
     DisposableEffect(Unit) {
-       event(ChatEvent.Open("ChatScreen"))
+        event(ChatEvent.OnScreenOpened("ChatScreen"))
         onDispose {
-            event(ChatEvent.Close("ChatScreen"))
+            event(ChatEvent.OnScreenClosed("ChatScreen"))
         }
-    }
-
-
-    LaunchedEffect(Unit) {
-        event(ChatEvent.GetChatList)
     }
 
     var showDialog by remember {
         mutableStateOf(false)
     }
 
-    val chatListLoading = state.chatListResponseState is ResponseState.Loading
-    val chatListErrorText = state.chatListResponseState.errorText()
-    val chatListSuccess = state.chatListResponseState is ResponseState.Success
 
-
-
-    LaunchedEffect(chatListErrorText) {
-        showDialog = chatListErrorText.isNotEmpty()
+    LaunchedEffect(state.error) {
+        showDialog = !state.error.isNullOrEmpty()
     }
+
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = chatListErrorText,
+        message = state.error?:"",
         buttonText = stringResource(Res.string.ok),
         showCloseButton = false,
         onDismiss = {
@@ -131,7 +121,7 @@ fun ChatUi(
             title = stringResource(Res.string.suhbat),
         )
 
-        if (state.chatList.isEmpty()){
+        if (state.chats.isEmpty()){
             AppEmptyList(
                 title = stringResource(Res.string.farzand_qoshilmagan),
                 message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
@@ -144,22 +134,21 @@ fun ChatUi(
         {
             LazyColumn {
 
-                items(state.chatList){ item->
+                items(state.chats){ item->
                     ChatListItem(
                         chatUi = item,
                         onClick = {
 
-                            if(item.type == ChatType.BOT){
+                            if (item.type == ChatType.BOT) {
                                 navigator?.push(
                                     ChatMessageAiScreen(
                                         chatId = item.chatId,
                                         chatTitle = item.title,
                                     )
                                 )
-                            }
-                            else{
+                            } else {
                                 navigator?.push(
-                                    ChatMessageScreen(
+                                    ChatRoomScreen(
                                         chatId = item.chatId,
                                         chatAvatar = item.avatar,
                                         chatTitle = item.title,

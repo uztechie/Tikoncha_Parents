@@ -40,9 +40,7 @@ import uz.tikoncha_parent.presentation.login.LoginViewmodel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
 import uz.tikoncha_parent.presentation.task.TaskViewModel
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import uz.tikoncha_parent.presentation.chat.ChatViewModel
 import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 import uz.tikoncha_parent.data.remote.ChatApiService
@@ -92,6 +90,7 @@ import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
+import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
@@ -105,6 +104,8 @@ import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
+import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
+import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.new_home.HomeViewModel
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestViewModel
@@ -189,6 +190,7 @@ val sharedModule = module {
     single { ChildrenLocationUseCase(get()) }
 
     single { ChatStatusUseCase(get()) }
+    single { ObserveChatStatusUseCase(get()) }
     single { ChatUnreadCountUseCase(get()) }
     single { ConnectChatWebSocketUseCase(get()) }
     single { DisconnectChatWebSocketUseCase(get()) }
@@ -238,15 +240,26 @@ val sharedModule = module {
     factory { TaskViewModel(get (), get(), get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { ChatViewModel(
-        get(),
-        get(),
-        get(),
-        get(),
-        get(),
-        get(),
-        get()
-    ) }
+
+    factory {
+        ChatViewModel(
+            get(),
+            get(),
+            get()
+        )
+    }
+
+    factory {
+        ChatRoomViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+
     factory { MonitorViewModel(get(), get()) }
     factory { NotificationViewModel(get(), get()) }
     factory { PolicyViewModel(get(), get()) }

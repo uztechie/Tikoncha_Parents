@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         // Cold startda Intent’dan deep link kelsa — queue ga tashlaymiz
 
         AndroidDeepLinkParser.parse(intent)?.let { link ->
+            Log.d(TAG, "enqueue link=$link")
             PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
             DeepLinkBus.open(link)       // UI tayyor bo‘lsa darhol ochadi
         }
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onNewIntent: ")
         // App ochiq bo'lsa bus orqali darhol navigate
         AndroidDeepLinkParser.parse(intent)?.let { link ->
+            Log.d(TAG, "new intent enqueue link=$link")
             PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
             DeepLinkBus.open(link)       // UI tayyor bo‘lsa darhol ochadi
         }

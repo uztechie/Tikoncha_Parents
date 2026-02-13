@@ -1,22 +1,24 @@
-package uz.tikoncha_parent.presentation.chat
+package uz.tikoncha_parent.presentation.chat.item
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.chat.ChatUtil.asText
+import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
+import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ChatTextSize
-import uz.tikoncha_parent.ui.DividerColor
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -24,35 +26,31 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 @Composable
 fun MessageDateItem(
     modifier: Modifier = Modifier,
-    date: String,
+    date: ChatDateLabel,
 ) {
 
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
     ) {
-        HorizontalDivider(
+        Box(
             modifier = Modifier
-                .weight(1f),
-            color = DividerColor,
-            thickness = 1.dp
-        )
-        CustomText(
-            text = date,
-            color = MaterialTheme.extendedColor.textColor,
-            fontSize = ChatTextSize,
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-        )
-        HorizontalDivider(
-            modifier = Modifier
-                .weight(1f),
-            color = DividerColor,
-            thickness = 1.dp
-        )
+                .background(
+                    color = MaterialTheme.extendedColor.disabledBgColor,
+                    shape = RoundedCornerShape(CardCornerRadius)
+                )
+                .padding(vertical = 4.dp, horizontal = 15.dp),
+        ){
+            CustomText(
+                text = date.asText(),
+                color = MaterialTheme.extendedColor.textColor,
+                fontSize = ChatTextSize,
+                modifier = Modifier
+            )
+        }
+
 
     }
 
@@ -61,20 +59,20 @@ fun MessageDateItem(
 @Preview
 @Composable
 private fun Pre() {
+
     TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+        mode = ThemeMode.LIGHT
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             MessageDateItem(
-                date = "10.05.2025"
+                date = ChatDateLabel.Yesterday
             )
         }
     }
-
 
 
 }

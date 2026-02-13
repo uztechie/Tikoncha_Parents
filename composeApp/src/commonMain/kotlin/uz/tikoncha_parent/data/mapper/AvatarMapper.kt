@@ -15,5 +15,5 @@ fun String?.prepareAvatar(): String{
     if (this == null){
         return ""
     }
-    return "${BASE_URL_WITH_HTTPS}${this}"
+    return this
 }

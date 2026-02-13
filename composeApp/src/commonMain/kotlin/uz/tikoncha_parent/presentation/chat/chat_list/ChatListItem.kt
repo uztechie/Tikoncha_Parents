@@ -1,21 +1,29 @@
-package uz.tikoncha_parent.presentation.chat
+package uz.tikoncha_parent.presentation.chat.chat_list
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 
 import androidx.compose.ui.text.font.FontWeight
@@ -35,9 +43,16 @@ import tikoncha_parents.composeapp.generated.resources.message_read
 import tikoncha_parents.composeapp.generated.resources.message_sent
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CircularBadge
+import uz.tikoncha_parent.presentation.chat.ChatUtil
+import uz.tikoncha_parent.presentation.chat.ChatUtil.asText
+
+import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.model.ChatUi
+import uz.tikoncha_parent.ui.ChatHeaderAvatarSize
+import uz.tikoncha_parent.ui.ChatMessageColor
 import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
@@ -45,6 +60,7 @@ import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import kotlin.toString
 
 
 @Composable
@@ -68,17 +84,35 @@ fun ChatListItem(
             painterResource(Res.drawable.chat_icon)
         }
 
-        AsyncImage(
-            model = chatUi.avatar,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            error = avatar,
-            placeholder = avatar
+        if (chatUi.avatar.isNotEmpty()){
+            AsyncImage(
+                model = chatUi.avatar,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(52.dp)
+                    .border(1.dp, MaterialTheme.extendedColor.hintColor, CircleShape)
+                    .clip(CircleShape),
+                error = painterResource(Res.drawable.chat_icon),
+                placeholder = painterResource(Res.drawable.chat_icon)
 
-        )
+            )
+        }
+        else{
+            Box(
+                modifier = Modifier.size(52.dp)
+                    .background(MaterialTheme.extendedColor.cardColor, CircleShape)
+                    .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
+                contentAlignment = Alignment.Center
+            ){
+                CustomText(
+                    text = ChatUtil.getInitials(
+                        fullName = chatUi.title
+                    ),
+                    color = PrimaryColor,
+                    fontWeight = FontWeight.W500
+                )
+            }
+        }
 
         Spacer(Modifier.width(12.dp))
 
@@ -111,7 +145,7 @@ fun ChatListItem(
                 )
                 SpaceMedium()
                 CustomText(
-                    text = chatUi.dateTime,
+                    text = chatUi.dateTime.asText(),
                     fontWeight = FontWeight.W500,
                     fontSize = SmallTextSize,
                 )
@@ -132,9 +166,25 @@ fun ChatListItem(
                 )
                 if (chatUi.unreadCount > 0 && !chatUi.lastMessageIsMine) {
                     SpaceMedium()
-                    CircularBadge(
-                        count = chatUi.unreadCount,
-                    )
+                    BadgedBox(
+                        modifier = Modifier
+                            .height(24.dp),
+                        badge = {}
+                    ) {
+                        Badge(
+                            containerColor = PrimaryColor,
+                            modifier = Modifier
+                        ) {
+                            Text(
+                                text = chatUi.unreadCount.toString(),
+                                fontWeight = FontWeight.W500,
+                                color = Color.White,
+                                fontSize = SmallTextSize,
+                                modifier = Modifier
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
                 }
                 else if (chatUi.lastMessageIsMine){
                     SpaceMedium()
@@ -172,7 +222,7 @@ private fun Preview() {
                 lastMessage = "Barcha savollaringizga javob beraman",
                 unreadCount =10,
                 chatId = "",
-                dateTime = "20.10.2025",
+                dateTime = ChatDateLabel.Yesterday,
                 type = ChatType.BOT,
                 lastMessageIsMine = false,
                 lastMessageIsRead = true,

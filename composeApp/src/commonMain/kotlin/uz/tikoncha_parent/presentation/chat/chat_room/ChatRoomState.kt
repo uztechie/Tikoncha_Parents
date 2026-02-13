@@ -1,0 +1,38 @@
+package uz.tikoncha_parent.presentation.chat.chat_room
+
+import uz.tikoncha_parent.domain.model.ChatMessageItem
+import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
+import uz.tikoncha_parent.presentation.model.ChatMessageUi
+import uz.tikoncha_parent.presentation.model.ChatType
+
+
+data class ChatRoomState(
+    val chatId: String = "",
+    val chatTitle: String = "",
+    val chatAvatar: String = "",
+    val chatType: ChatType = ChatType.NONE,
+
+    val text: String = "",
+
+    // ✅ server DESC
+    val allMessages: List<ChatMessageUi> = emptyList(),
+    val messages: List<ChatMessageItem> = emptyList(),
+    val lastMessage: ChatMessageUi? = null,
+
+    val isInitialLoading: Boolean = false,
+    val isPagingLoading: Boolean = false,
+    val canLoadMore: Boolean = true,
+
+    // ✅ sinceId cursor (current oldest message id)
+    val sinceId: String? = null,
+
+    val error: String? = null,
+
+    // header info (sizda bor)
+    val chatMembersCount: Int = 0,
+    val isUserOnline: Boolean = false,
+    val lastTimeOnline: ChatDateLabel = ChatDateLabel.Unknown,
+
+    // ✅ har update -> bottom scroll
+    val scrollToBottomTick: Long = 0L
+)
