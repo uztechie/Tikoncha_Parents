@@ -21,8 +21,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilgandan_keyin_korinish
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
@@ -76,6 +80,13 @@ fun ChildrenUi(
                 navigator?.pop()
             }
         )
+
+        if (state.children.isEmpty()){
+            AppEmptyList(
+                title = stringResource(Res.string.farzand_qoshilmagan),
+                message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
+            )
+        }
 
         LazyColumn(
             modifier = Modifier

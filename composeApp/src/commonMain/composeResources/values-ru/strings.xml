@@ -350,4 +350,8 @@
     <string name="no_internet_connection">Пожалуйста, подключите ваш телефон к интернету!</string>
     <string name="kutilmagan_xatolik_qayta_urining">Произошла непредвиденная ошибка. Пожалуйста, попробуйте снова.</string>
     <string name="hozircha_farzand_qoshilmagan">У вас пока не добавлен ребёнок.</string>
+    <string name="diqqat2">ВНИМАНИЕ!</string>
+    <string name="davom_etishdan_oldin_ilova_turini_tanlang">Перед продолжением выберите тип приложения.</string>
+    <string name="farzand_malumotlari_keyin_korinadi">Данные вашего ребёнка будут доступны после добавления ребёнка.</string>
+
 </resources>

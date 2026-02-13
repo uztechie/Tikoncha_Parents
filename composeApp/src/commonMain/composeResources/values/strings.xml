@@ -94,7 +94,7 @@
     <string name="maktab">Maktab</string>
     <string name="sozlamalar">Sozlamalar</string>
     <string name="bildirishnomalar">Bildirishnomalar</string>
-    <string name="tema">Tema</string>
+    <string name="tema">Mavzu</string>
     <string name="tasdiqlash">Tasdiqlash</string>
     <string name="tolov">To‘lov</string>
     <string name="obuna_pro">Obuna Pro</string>
@@ -352,4 +352,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzand_qoshilgandan_keyin_korinish">Jadval, chatlar va hisobotlar farzand qo‘shilgandan keyin ko‘rinadi.</string>
     <string name="kutilmagan_xatolik_qayta_urining">Kutilmagan xatolik yuz berdi. Iltimos, qayta urinib ko‘ring.</string>
     <string name="hozircha_farzand_qoshilmagan">Sizda hozircha farzand qo‘shilmagan.</string>
+    <string name="diqqat2">DIQQAT!</string>
+    <string name="davom_etishdan_oldin_ilova_turini_tanlang">Davom etishdan oldin ilova turini tanlang.</string>
+    <string name="farzand_malumotlari_keyin_korinadi">Farzandingiz ma’lumotlari farzand qo‘shilgandan keyin ko‘rinadi.</string>
+    
 </resources>

@@ -142,7 +142,7 @@ fun PromoCodeInput(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isError: Boolean = false,
-    maxLength:Int = 10,
+    maxLength:Int = 20,
     errorMessage: String = "",
     placeholder: String = "PROMO",
     focusRequester: FocusRequester = remember { FocusRequester() },
