@@ -55,7 +55,7 @@ fun CalendarDialog(
     var currentMonth by remember {
         mutableStateOf(selectedDate ?: Util.getCurrentDate().withDayOfMonth(1))
     }
-    var tempSelectedDate by remember { mutableStateOf(selectedDate) }
+    var tempSelectedDate by remember { mutableStateOf(selectedDate ?: Util.getCurrentDate()) }
 
     val language = LanguageType.getLangType(LanguagePrefs.loadOrDefault().languageCode)
     val daysOfWeek = remember(language) { getWeekDays(language) }
@@ -123,9 +123,10 @@ fun CalendarDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                val firstDayOfMonth = currentMonth
+                val firstDayOfMonth = currentMonth.withDayOfMonth(1)
                 val lastDay = currentMonth.lengthOfMonth()
-                val startDayOfWeek = firstDayOfMonth.withDayOfMonth(1).dayOfWeek.isoDayNumber % 7
+                val firstDayISo = firstDayOfMonth.dayOfWeek.isoDayNumber
+                val startDayOfWeek = (firstDayISo - 1) % 7
                 val totalCells = lastDay + startDayOfWeek
                 val rows = (totalCells + 6) / 7
 

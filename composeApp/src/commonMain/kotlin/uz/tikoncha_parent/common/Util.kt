@@ -186,4 +186,23 @@ object Util {
         if (isEmpty()) return this
         return drop(1) + first()
     }
+
+    fun maskPhone(phone: String): String{
+        val digits = phone.filter { it.isDigit() }
+
+        val normalized = when {
+            digits.length == 9 -> "998$digits"
+            digits.length == 12 && digits.startsWith("998") -> digits
+            digits.length == 13 && phone.trim().startsWith("+") -> digits.drop(1)
+            else -> return phone
+        }
+
+        val country = "+${normalized.substring(0, 3)}" // +998
+        val operator = normalized.substring(3, 5)      // 90
+        val part1 = normalized.substring(5, 8)          // 123
+        val part2 = normalized.substring(8, 10)         // 45
+        val part3 = normalized.substring(10, 12)        // 67
+
+        return "$country $operator $part1 $part2 $part3"
+    }
 }

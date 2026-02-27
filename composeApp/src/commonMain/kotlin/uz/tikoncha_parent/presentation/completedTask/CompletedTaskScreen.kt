@@ -153,13 +153,6 @@ fun CompletedTaskUi(
                 fontWeight = FontWeight.W600,
             )
 
-            val bottomRoundedShape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = ShapeCornerRadius,
-                bottomEnd = ShapeCornerRadius
-            )
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth(),

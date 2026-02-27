@@ -13,5 +13,8 @@ data class ChatMessageUi(
     val isRead: Boolean = false,
     val progress: Int = 0,
     val clientMsgId: String? = null,
+    val replyToId: String? = null,
+    val repliedMessageOwner: String? = null,
+    val repliedMessageText: String? = null,
     val status: DeliveryStatus = DeliveryStatus.SENT
 )

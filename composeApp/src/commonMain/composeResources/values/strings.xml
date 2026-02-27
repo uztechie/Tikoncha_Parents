@@ -355,5 +355,6 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="diqqat2">DIQQAT!</string>
     <string name="davom_etishdan_oldin_ilova_turini_tanlang">Davom etishdan oldin ilova turini tanlang.</string>
     <string name="farzand_malumotlari_keyin_korinadi">Farzandingiz ma’lumotlari farzand qo‘shilgandan keyin ko‘rinadi.</string>
-    
+    <string name="otp_enter_code_with_phone">Telefon raqamingiz (%1$s)ga yuborilgan 6 xonali tasdiqlash kodini kiriting.</string>
+
 </resources>

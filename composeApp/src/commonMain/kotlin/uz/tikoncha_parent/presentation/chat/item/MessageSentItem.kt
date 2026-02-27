@@ -7,6 +7,8 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,13 +24,42 @@ import tikoncha_parents.composeapp.generated.resources.message_sent
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
+import uz.tikoncha_parent.presentation.chat.model.MessageMenuAction
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.ui.ChatMessageCornerRadius
 import uz.tikoncha_parent.ui.Failed
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import tikoncha_parents.composeapp.generated.resources.message_copy
+import tikoncha_parents.composeapp.generated.resources.message_delete
+import tikoncha_parents.composeapp.generated.resources.message_edit
+import tikoncha_parents.composeapp.generated.resources.message_reply
+import tikoncha_parents.composeapp.generated.resources.message_retry
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * ✅ Sent (right) bubble: Telegram-like time+status behavior (cached)
@@ -37,46 +68,275 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun MessageSentItem(
     modifier: Modifier = Modifier,
     chatMessageUi: ChatMessageUi,
+    menuExpanded: Boolean,
+    failedMenuExpanded: Boolean,
+    onOpenMenu: (failedMenu: Boolean) -> Unit,
+    onDismissMenu: () -> Unit,
+    onMenuAction: (MessageMenuAction) -> Unit
 ) {
     val maxBubbleWidth = LocalWindowInfo.current.containerDpSize.width * 0.78f
-
+    val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+    val offsetX = remember { Animatable(0f) }
+    val maxDrag = 260F
+    val threshold = 180f
+    val dragged = remember { mutableStateOf(false) }
+    val fired = remember { mutableStateOf(false) }
+    val viewConfig = LocalViewConfiguration.current
+    val touchSlop = viewConfig.touchSlop
+    var dragJob: Job? by remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.TopEnd
-    ){
-        Column(
-            modifier = modifier
-                .widthIn(max = maxBubbleWidth)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = ChatMessageCornerRadius,
-                        topEnd = ChatMessageCornerRadius,
-                        bottomStart = ChatMessageCornerRadius
-                    )
-                )
-                .background(MaterialTheme.extendedColor.cardColor)
-                .padding(horizontal = 15.dp, vertical = 8.dp)
-        ) {
-            SelectionContainer {
-                CustomText(
-                    text = chatMessageUi.message,
-                    color = MaterialTheme.extendedColor.textColor,
-                    modifier = Modifier
+            .fillMaxWidth()
+            .pointerInput(chatMessageUi.id + "_tap" + chatMessageUi.status) {
+                detectTapGestures(
+                    onTap = {
+                        if (!dragged.value) {
+                            onOpenMenu(chatMessageUi.status == DeliveryStatus.FAILED)
+                        }
+                    }
                 )
             }
+            .pointerInput(chatMessageUi.id + "_drag" + chatMessageUi.status) {
+                var isHorizontal: Boolean? = null
 
-            SentMeta(
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitFirstDown(requireUnconsumed = false)
+                        isHorizontal = null
+                        dragged.value = false
+                        fired.value = false
+
+                        var totalX = 0f
+                        var totalY = 0f
+
+                        do {
+                            val event = awaitPointerEvent()
+                            val drag = event.changes.firstOrNull() ?: break
+                            val dx = drag.position.x - drag.previousPosition.x
+                            val dy = drag.position.y - drag.previousPosition.y
+                            totalX += dx
+                            totalY += dy
+
+                            if (isHorizontal == null && (abs(totalX) > 10f || abs(totalY) > 10f)) {
+                                isHorizontal = abs(totalX) > abs(totalY)
+                            }
+
+                            if (isHorizontal == true) {
+                                drag.consume()
+                                dragged.value = true
+
+                                val newOffset = (offsetX.value + dx).coerceIn(-maxDrag, 0f)
+                                dragJob?.cancel()
+                                dragJob = scope.launch {
+                                    offsetX.animateTo(newOffset)
+                                }
+
+                                if (!fired.value && abs(newOffset) >= threshold) {
+                                    fired.value = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            }
+                        } while (drag.pressed)
+
+                        val shouldReply = isHorizontal == true && abs(totalX) >= threshold
+                        dragged.value = false
+                        fired.value = false
+                        dragJob?.cancel()
+                        scope.launch {
+                            offsetX.animateTo(
+                                0f,
+                                spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                )
+                            )
+                        }
+                        if (shouldReply) onMenuAction(MessageMenuAction.Reply)
+                    }
+                }
+            },
+        contentAlignment = Alignment.TopEnd
+    ) {
+        Box {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.End),
-                time = chatMessageUi.time,
-                status = chatMessageUi.status
-            )
+                    .matchParentSize()
+                    .padding(end = 18.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = modifier
+                        .widthIn(max = maxBubbleWidth)
+                        .offset{IntOffset(offsetX.value.roundToInt(),0)}
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = ChatMessageCornerRadius,
+                                topEnd = ChatMessageCornerRadius,
+                                bottomStart = ChatMessageCornerRadius
+                            )
+                        )
+                        .background(MaterialTheme.extendedColor.cardColor)
+                        .padding(horizontal = 15.dp, vertical = 8.dp)
+                ) {
+                    if (
+                        chatMessageUi.replyToId != null &&
+                        chatMessageUi.repliedMessageOwner != null &&
+                        chatMessageUi.repliedMessageText != null
+                    ) {
+                        RepliedMessageBubble(
+                            ownerName = chatMessageUi.repliedMessageOwner,
+                            text = chatMessageUi.repliedMessageText,
+                            isMine = false
+                        )
+                        Spacer(Modifier.height(5.dp))
+                    }
+
+                    CustomText(
+                        text = chatMessageUi.message,
+                        color = MaterialTheme.extendedColor.textColor,
+                        modifier = Modifier
+                    )
+
+                    SentMeta(
+                        modifier = Modifier
+                            .align(Alignment.End),
+                        time = chatMessageUi.time,
+                        status = chatMessageUi.status
+                    )
+                }
+
+                DropdownMenu(
+                    modifier = Modifier.clip(RoundedCornerShape(10.dp)),
+                    expanded = menuExpanded || failedMenuExpanded,
+                    onDismissRequest = onDismissMenu,
+                    shape = RoundedCornerShape(8.dp),
+                    containerColor = MaterialTheme.extendedColor.backgroundColor,
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
+                    offset = DpOffset(x = -10.dp, y = 0.dp)
+                ){
+                    if (menuExpanded) {
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "Javob berish",
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_reply),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Reply)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "Nusxalash",
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_copy),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Copy)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "Taxrirlash",
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_edit),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Edit)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "O’chirish",
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_delete),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Delete)
+                            }
+                        )
+                    }
+                    if (failedMenuExpanded) {
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "Qayta urunish"
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_retry),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Retry)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                CustomText(
+                                    text = "O’chirish"
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.message_delete),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.extendedColor.primaryColor,
+                                    modifier = Modifier.size(SmallIconSize)
+                                )
+                            },
+                            onClick = {
+                                onMenuAction(MessageMenuAction.Delete)
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
-
-
 }
 
 
@@ -119,9 +379,6 @@ private fun SentMeta(
             fontSize = UltraSmallTextSize,
             lineHeight = UltraSmallTextSize,
         )
-
-
-
         SpaceUltraSmall()
 
         Icon(
@@ -142,18 +399,27 @@ private fun SentMeta(
 )
 @Composable
 private fun PreviewSentMessageShortOld() {
-    MessageSentItem(
-        chatMessageUi = ChatMessageUi(
-            id = "1",
-            isMine = true,
-            message = "Salom",
-            createdAt = DateTimeUtil.nowMillis(),
-            time = "10:25",
-            status = DeliveryStatus.READ,
-            senderName = "Me",
-            senderAvatar = ""
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        MessageSentItem(
+            chatMessageUi = ChatMessageUi(
+                id = "1",
+                isMine = true,
+                message = "Salom",
+                createdAt = DateTimeUtil.nowMillis(),
+                time = "10:25",
+                status = DeliveryStatus.READ,
+                senderName = "Me",
+                senderAvatar = ""
+            ),
+            menuExpanded = false,
+            failedMenuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
-    )
+    }
 }
 
 @Preview(
@@ -164,18 +430,27 @@ private fun PreviewSentMessageShortOld() {
 )
 @Composable
 private fun PreviewSentMessageTwoLinesOld() {
-    MessageSentItem(
-        chatMessageUi = ChatMessageUi(
-            id = "2",
-            isMine = true,
-            message = "Ustoz bugun birinchi darsga bir necha soatdan so‘ng darslar",
-            createdAt = DateTimeUtil.nowMillis(),
-            time = "10:26",
-            status = DeliveryStatus.SENT,
-            senderName = "Me",
-            senderAvatar = ""
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        MessageSentItem(
+            chatMessageUi = ChatMessageUi(
+                id = "2",
+                isMine = true,
+                message = "Ustoz bugun birinchi darsga bir necha soatdan so‘ng darslar",
+                createdAt = DateTimeUtil.nowMillis(),
+                time = "10:26",
+                status = DeliveryStatus.SENT,
+                senderName = "Me",
+                senderAvatar = ""
+            ),
+            menuExpanded = false,
+            failedMenuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
-    )
+    }
 }
 
 @Preview(
@@ -186,17 +461,26 @@ private fun PreviewSentMessageTwoLinesOld() {
 )
 @Composable
 private fun PreviewSentMessageLongOld() {
-    MessageSentItem(
-        chatMessageUi = ChatMessageUi(
-            id = "3",
-            isMine = true,
-            message = "Bu juda uzun xabar bo‘lib, oxirgi qatorda soat va belgi sig‘maydi va shuning uchun Telegram’dagi kabi pastga alohida qatorda chiqishi kerak",
-            createdAt = DateTimeUtil.nowMillis(),
-            time = "10:27",
-            status = DeliveryStatus.SENDING,
-            senderName = "Me",
-            senderAvatar = ""
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        MessageSentItem(
+            chatMessageUi = ChatMessageUi(
+                id = "3",
+                isMine = true,
+                message = "Bu juda uzun xabar bo‘lib, oxirgi qatorda soat va belgi sig‘maydi va shuning uchun Telegram’dagi kabi pastga alohida qatorda chiqishi kerak",
+                createdAt = DateTimeUtil.nowMillis(),
+                time = "10:27",
+                status = DeliveryStatus.SENDING,
+                senderName = "Me",
+                senderAvatar = ""
+            ),
+            menuExpanded = false,
+            failedMenuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
-    )
+    }
 }
 

@@ -60,9 +60,11 @@ fun TimeRuleDialog(
     state: TimeRuleState,
     event: (TimeRuleEvent) -> Unit,
     onDismiss: () -> Unit
-)
-{
+) {
 
+    if (!show) {
+        return
+    }
 
     val startLabel = stringResource(Res.string.boshlanishi) to null
     val endLabel = stringResource(Res.string.tugashi) to null
@@ -91,26 +93,16 @@ fun TimeRuleDialog(
     }
 
     LaunchedEffect(show, startSelectedHour, startSelectedMinute, endSelectedHour, endSelectedMinute){
-        if (show){
-            event(TimeRuleEvent.SetTimeRule(
-                startTime = LocalTime(startSelectedHour, startSelectedMinute),
-                endTime = LocalTime(endSelectedHour, endSelectedMinute)
-            ))
+        if (show) {
+            event(
+                TimeRuleEvent.SetTimeRule(
+                    startTime = LocalTime(startSelectedHour, startSelectedMinute),
+                    endTime = LocalTime(endSelectedHour, endSelectedMinute)
+                )
+            )
         }
 
     }
-
-
-
-
-
-
-    if (!show){
-        return
-    }
-
-
-
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -191,7 +183,7 @@ fun TimeRuleDialog(
 
                 SpaceMedium()
 
-                if (!state.allDay){
+                if (!state.allDay) {
                     Column(
                         modifier = Modifier,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -253,11 +245,11 @@ fun TimeRuleDialog(
                         }
                         SpaceMedium()
 
-                        Row (
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
-                        ){
+                        ) {
                             RoundedCheckbox(
                                 checked = state.selectOutside,
                                 onCheckedChange = {
@@ -298,7 +290,10 @@ fun TimeRuleDialog(
 
                 CustomButton(
                     onClick = {
-                        event(TimeRuleEvent.SaveTime)
+                        event(TimeRuleEvent.SaveTime(
+                            startTime = LocalTime(startSelectedHour, startSelectedMinute),
+                            endTime = LocalTime(endSelectedHour, endSelectedMinute)
+                        ))
                         onDismiss()
                     },
                     enabled = state.weekDays.any { it.selected },

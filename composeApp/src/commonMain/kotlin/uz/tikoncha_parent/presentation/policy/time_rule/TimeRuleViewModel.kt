@@ -92,7 +92,20 @@ class TimeRuleViewModel: ScreenModel {
 
             }
 
-            TimeRuleEvent.SaveTime -> {
+            is TimeRuleEvent.SaveTime -> {
+                _state.update {
+                    val ranges = buildTimeRanges(
+                        startTime = it.startTime,
+                        endTime = it.endTime,
+                        outside = it.selectOutside
+                    )
+                    it.copy(
+                        startTime = event.startTime,
+                        endTime = event.endTime,
+                        timeRanges = ranges
+                    )
+                }
+
                 saveTime()
                 clearTime()
                 setItemEnabled(RuleType.TIME, true)
@@ -144,6 +157,43 @@ class TimeRuleViewModel: ScreenModel {
 
             is TimeRuleEvent.BeginCreateRule -> {
 
+            }
+
+            TimeRuleEvent.OpenCreate -> {
+                val rules = _state.value.timeList.map { it.asHasWeekDays() }
+                _state.update {
+                    it.copy(
+                        currentId = null,
+                        allDay = false,
+                        selectOutside = false,
+                        startTime = LocalTime(8, 0),
+                        endTime = LocalTime(12, 0),
+                        timeRanges = emptyList(),
+                        weekDays = buildChipsForCreate(rules),
+                        showSetupDialog = true
+                    )
+                }
+            }
+            is TimeRuleEvent.OpenEdite -> {
+                val data = event.timeData
+                val weekdays = _state.value.timeList.map { it.asHasWeekDays() }
+
+                _state.update {
+                    it.copy(
+                        currentId = data.id,
+                        allDay = data.allDay,
+                        selectOutside = data.outside,
+                        startTime = data.startTime,
+                        endTime = data.endTime,
+                        timeRanges = data.timeRange,
+                        weekDays = buildChipsForEdit(
+                            currentSelected = data.weekDays,
+                            rules = weekdays,
+                            excludeId = data.id
+                        ),
+                        showSetupDialog = true
+                    )
+                }
             }
         }
     }

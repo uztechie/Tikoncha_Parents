@@ -41,6 +41,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.common.Util.maskPhone
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.login.LoginViewmodel
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
@@ -87,6 +88,7 @@ fun OtpUi(
     event: (OtpEvent) -> Unit
 ) {
     val isOtpCodeValid = state.otpCode.length == 6 && state.otpCode.all { it.isDigit() }
+    val maskedPhone = remember(state.phoneNumber) { maskPhone(state.phoneNumber)}
 
     val formattedTime = formatTwoDigits(state.timeLife % 60)
     val finishedTime = state.timeLife <= 0
@@ -163,7 +165,7 @@ fun OtpUi(
         )
         SpaceMedium()
         CustomText(
-            text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_kodni_kiriting),
+            text = stringResource(Res.string.otp_enter_code_with_phone, maskedPhone),
             fontSize = NormalTextSize,
             fontStyle = FontStyle.Normal,
             color = MaterialTheme.extendedColor.hintColor,

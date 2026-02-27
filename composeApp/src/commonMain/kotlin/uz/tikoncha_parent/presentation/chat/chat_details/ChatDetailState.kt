@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat_details
+package uz.tikoncha_parent.presentation.chat.chat_details
 
 import uz.tikoncha_parent.presentation.model.ChatMemberUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState

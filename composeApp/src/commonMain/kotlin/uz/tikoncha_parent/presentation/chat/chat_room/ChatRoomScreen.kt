@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -46,11 +44,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_left
 import tikoncha_parents.composeapp.generated.resources.azolar
-import tikoncha_parents.composeapp.generated.resources.bugun
 import tikoncha_parents.composeapp.generated.resources.chat_icon
 import tikoncha_parents.composeapp.generated.resources.faol
 import tikoncha_parents.composeapp.generated.resources.faol_emas
-import tikoncha_parents.composeapp.generated.resources.kecha
 import tikoncha_parents.composeapp.generated.resources.ohirgi_faollik
 import tikoncha_parents.composeapp.generated.resources.xabar_yozish
 import uz.tikoncha_parent.domain.model.ChatMessageItem
@@ -63,7 +59,7 @@ import uz.tikoncha_parent.presentation.chat.item.MessageDateItem
 import uz.tikoncha_parent.presentation.chat.item.MessageReceivedItem
 import uz.tikoncha_parent.presentation.chat.item.MessageSentItem
 import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
-import uz.tikoncha_parent.presentation.chat_details.ChatDetailsScreen
+import uz.tikoncha_parent.presentation.chat.chat_details.ChatDetailsScreen
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.ui.ChatHeaderAvatarSize
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -384,7 +380,14 @@ fun ChatRoomScreenUi(
                             val msg = messageItem.chatMessageUi
 
                             if (msg.isMine) {
-                                MessageSentItem(chatMessageUi = msg)
+                                MessageSentItem(
+                                    chatMessageUi = msg,
+                                    menuExpanded = false,
+                                    failedMenuExpanded = false,
+                                    onOpenMenu = {},
+                                    onDismissMenu = {},
+                                    onMenuAction = {}
+                                )
                             } else {
                                 MessageReceivedItem(
                                     chatMessageUi = msg,

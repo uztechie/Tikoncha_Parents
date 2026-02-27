@@ -353,5 +353,6 @@
     <string name="diqqat2">ВНИМАНИЕ!</string>
     <string name="davom_etishdan_oldin_ilova_turini_tanlang">Перед продолжением выберите тип приложения.</string>
     <string name="farzand_malumotlari_keyin_korinadi">Данные вашего ребёнка будут доступны после добавления ребёнка.</string>
+    <string name="otp_enter_code_with_phone">Введите 6-значный код подтверждения, отправленный на ваш номер телефона (%1$s).</string>
 
 </resources>
