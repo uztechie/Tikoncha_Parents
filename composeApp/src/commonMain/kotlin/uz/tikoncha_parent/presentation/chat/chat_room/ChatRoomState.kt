@@ -18,6 +18,9 @@ data class ChatRoomState(
     val allMessages: List<ChatMessageUi> = emptyList(),
     val messages: List<ChatMessageItem> = emptyList(),
     val lastMessage: ChatMessageUi? = null,
+    val replyToMessage: ChatMessageUi? = null,
+    val selectedMessageForEdit: ChatMessageUi? = null,
+    val selectedMessageForDelete: ChatMessageUi? = null,
 
     val isInitialLoading: Boolean = false,
     val isPagingLoading: Boolean = false,

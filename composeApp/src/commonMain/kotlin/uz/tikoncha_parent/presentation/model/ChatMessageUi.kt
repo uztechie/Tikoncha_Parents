@@ -9,12 +9,17 @@ data class ChatMessageUi(
     val senderName: String,
     val senderAvatar: String,
     val createdAt: Long,
+    val updatedAt: Long? = null,
     val time: String,
     val isRead: Boolean = false,
+    val amplitudes: List<Float> = emptyList(),
+    val duration: Long? = null,
     val progress: Int = 0,
     val clientMsgId: String? = null,
     val replyToId: String? = null,
     val repliedMessageOwner: String? = null,
     val repliedMessageText: String? = null,
-    val status: DeliveryStatus = DeliveryStatus.SENT
+    val status: DeliveryStatus = DeliveryStatus.SENT,
+
+    val messageType: ChatMessageType = ChatMessageType.TEXT,
 )

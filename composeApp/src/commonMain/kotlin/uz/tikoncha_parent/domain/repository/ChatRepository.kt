@@ -8,6 +8,8 @@ import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
 import uz.tikoncha_parent.data.remote.model.SendMessageRequest
 import uz.tikoncha_parent.data.remote.model.SendMessageResponse
+import uz.tikoncha_parent.data.remote.model.WSSendMessage
+import uz.tikoncha_parent.domain.model.chat.DeleteMessageResponse
 
 
 interface ChatRepository {
@@ -21,6 +23,7 @@ interface ChatRepository {
 
     suspend fun chatUnreadCount(): ChatUnreadCountResponse
 
+    suspend fun deleteMessage(messageId: String): DeleteMessageResponse
 
     // WS control
     fun connect()
@@ -30,7 +33,7 @@ interface ChatRepository {
     fun observeEvents(): Flow<ChatWsEvent>
 
     // WS actions
-    suspend fun sendMessage(chatId: String, text: String, clientMsgId: String? = null)
+    suspend fun sendMessage(message: WSSendMessage)
     suspend fun editMessage(messageId: String, newText: String)
     suspend fun markRead(chatId: String, messageId: String)
     suspend fun markUnread(chatId: String, messageId: String)

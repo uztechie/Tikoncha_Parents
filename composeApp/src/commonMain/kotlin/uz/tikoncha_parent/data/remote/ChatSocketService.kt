@@ -201,16 +201,10 @@ class ChatSocketService (
         sendText(json.encodeToString(env))
     }
 
-    suspend fun sendMessage(chatId: String, text: String, clientMsgId: String? = null) {
-        val sendMessage = WSSendMessage(
-            chat_id = chatId,
-            type = "TEXT",
-            text = text,
-            client_msg_id = clientMsgId
-        )
+    suspend fun sendMessage(message: WSSendMessage) {
         val env = WSRequest(
             type = "send_message",
-            payload = sendMessage
+            payload = message
         )
         sendText(json.encodeToString(env))
     }

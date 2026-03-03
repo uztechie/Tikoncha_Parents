@@ -10,6 +10,7 @@ import uz.tikoncha_parent.data.remote.model.ChatStatusResponse
 import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
 import uz.tikoncha_parent.data.remote.model.SendMessageRequest
 import uz.tikoncha_parent.data.remote.model.SendMessageResponse
+import uz.tikoncha_parent.domain.model.chat.DeleteMessageResponse
 
 class ChatApiService (
     private val httpClient: HttpClient
@@ -57,5 +58,12 @@ class ChatApiService (
             block = {
 
             }
+        )
+
+    suspend fun deleteMessage(messageId: String): DeleteMessageResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Delete,
+            url = "/chat/messages/$messageId",
+            block = {}
         )
 }

@@ -53,11 +53,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import tikoncha_parents.composeapp.generated.resources.message_copy
-import tikoncha_parents.composeapp.generated.resources.message_delete
-import tikoncha_parents.composeapp.generated.resources.message_edit
-import tikoncha_parents.composeapp.generated.resources.message_reply
-import tikoncha_parents.composeapp.generated.resources.message_retry
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -130,7 +127,7 @@ fun MessageSentItem(
                                 val newOffset = (offsetX.value + dx).coerceIn(-maxDrag, 0f)
                                 dragJob?.cancel()
                                 dragJob = scope.launch {
-                                    offsetX.animateTo(newOffset)
+                                    offsetX.snapTo(newOffset)
                                 }
 
                                 if (!fired.value && abs(newOffset) >= threshold) {
@@ -140,7 +137,7 @@ fun MessageSentItem(
                             }
                         } while (drag.pressed)
 
-                        val shouldReply = isHorizontal == true && abs(totalX) >= threshold
+                        val shouldReply = isHorizontal == true && abs(offsetX.value) >= threshold
                         dragged.value = false
                         fired.value = false
                         dragJob?.cancel()
@@ -160,179 +157,189 @@ fun MessageSentItem(
         contentAlignment = Alignment.TopEnd
     ) {
         Box {
+
             Box(
                 modifier = Modifier
                     .matchParentSize()
                     .padding(end = 18.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = modifier
-                        .widthIn(max = maxBubbleWidth)
-                        .offset{IntOffset(offsetX.value.roundToInt(),0)}
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = ChatMessageCornerRadius,
-                                topEnd = ChatMessageCornerRadius,
-                                bottomStart = ChatMessageCornerRadius
-                            )
-                        )
-                        .background(MaterialTheme.extendedColor.cardColor)
-                        .padding(horizontal = 15.dp, vertical = 8.dp)
-                ) {
-                    if (
-                        chatMessageUi.replyToId != null &&
-                        chatMessageUi.repliedMessageOwner != null &&
-                        chatMessageUi.repliedMessageText != null
-                    ) {
-                        RepliedMessageBubble(
-                            ownerName = chatMessageUi.repliedMessageOwner,
-                            text = chatMessageUi.repliedMessageText,
-                            isMine = false
-                        )
-                        Spacer(Modifier.height(5.dp))
-                    }
+                val progress = (abs(offsetX.value) / threshold).coerceIn(0f,1f)
+                Icon(
+                    painter = painterResource(Res.drawable.message_reply),
+                    contentDescription = null,
+                    tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = progress),
+                    modifier = Modifier.size(22.dp)
+                )
+            }
 
-                    CustomText(
-                        text = chatMessageUi.message,
-                        color = MaterialTheme.extendedColor.textColor,
-                        modifier = Modifier
+            Column(
+                modifier = modifier
+                    .widthIn(max = maxBubbleWidth)
+                    .offset{IntOffset(offsetX.value.roundToInt(),0)}
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = ChatMessageCornerRadius,
+                            topEnd = ChatMessageCornerRadius,
+                            bottomStart = ChatMessageCornerRadius
+                        )
+                    )
+                    .background(MaterialTheme.extendedColor.cardColor)
+                    .padding(horizontal = 15.dp, vertical = 8.dp)
+            ) {
+                if (
+                    chatMessageUi.replyToId != null &&
+                    chatMessageUi.repliedMessageOwner != null &&
+                    chatMessageUi.repliedMessageText != null
+                ) {
+                    RepliedMessageBubble(
+                        ownerName = chatMessageUi.repliedMessageOwner,
+                        text = chatMessageUi.repliedMessageText,
+                        isMine = false
+                    )
+                    Spacer(Modifier.height(5.dp))
+                }
+
+                CustomText(
+                    text = chatMessageUi.message,
+                    color = MaterialTheme.extendedColor.textColor,
+                    modifier = Modifier
+                )
+
+                SentMeta(
+                    modifier = Modifier
+                        .align(Alignment.End),
+                    time = chatMessageUi.time,
+                    status = chatMessageUi.status
+                )
+            }
+
+            DropdownMenu(
+                modifier = Modifier.clip(RoundedCornerShape(10.dp)),
+                expanded = menuExpanded || failedMenuExpanded,
+                onDismissRequest = onDismissMenu,
+                shape = RoundedCornerShape(8.dp),
+                containerColor = MaterialTheme.extendedColor.cardColor,
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp,
+                offset = DpOffset(x = -10.dp, y = 0.dp)
+            ){
+                if (menuExpanded) {
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.javob_berish),
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_reply),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Reply)
+                        }
                     )
 
-                    SentMeta(
-                        modifier = Modifier
-                            .align(Alignment.End),
-                        time = chatMessageUi.time,
-                        status = chatMessageUi.status
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.nusxalash),
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_copy),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Copy)
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.tahrirlash),
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_edit),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Edit)
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.ochirish),
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_delete),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Delete)
+                        }
                     )
                 }
 
-                DropdownMenu(
-                    modifier = Modifier.clip(RoundedCornerShape(10.dp)),
-                    expanded = menuExpanded || failedMenuExpanded,
-                    onDismissRequest = onDismissMenu,
-                    shape = RoundedCornerShape(8.dp),
-                    containerColor = MaterialTheme.extendedColor.backgroundColor,
-                    tonalElevation = 0.dp,
-                    shadowElevation = 0.dp,
-                    offset = DpOffset(x = -10.dp, y = 0.dp)
-                ){
-                    if (menuExpanded) {
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "Javob berish",
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_reply),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Reply)
-                            }
-                        )
+                if (failedMenuExpanded) {
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.qayta_urinish)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_retry),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Retry)
+                        }
+                    )
 
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "Nusxalash",
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_copy),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Copy)
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "Taxrirlash",
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_edit),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Edit)
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "O’chirish",
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_delete),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Delete)
-                            }
-                        )
-                    }
-                    if (failedMenuExpanded) {
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "Qayta urunish"
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_retry),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Retry)
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = {
-                                CustomText(
-                                    text = "O’chirish"
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.message_delete),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.extendedColor.primaryColor,
-                                    modifier = Modifier.size(SmallIconSize)
-                                )
-                            },
-                            onClick = {
-                                onMenuAction(MessageMenuAction.Delete)
-                            }
-                        )
-                    }
+                    DropdownMenuItem(
+                        text = {
+                            CustomText(
+                                text = stringResource(Res.string.ochirish)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.message_delete),
+                                contentDescription = null,
+                                tint = MaterialTheme.extendedColor.primaryColor,
+                                modifier = Modifier.size(SmallIconSize)
+                            )
+                        },
+                        onClick = {
+                            onMenuAction(MessageMenuAction.Delete)
+                        }
+                    )
                 }
             }
         }

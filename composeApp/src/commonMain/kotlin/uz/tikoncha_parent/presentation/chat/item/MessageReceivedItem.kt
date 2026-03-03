@@ -1,22 +1,51 @@
 package uz.tikoncha_parent.presentation.chat.item
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import qrgenerator.qrkitpainter.text
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.javob_berish
+import tikoncha_parents.composeapp.generated.resources.message_copy
+import tikoncha_parents.composeapp.generated.resources.message_reply
+import tikoncha_parents.composeapp.generated.resources.nusxalash
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
+import uz.tikoncha_parent.presentation.chat.model.MessageMenuAction
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.ui.ChatMessageCornerRadius
 import uz.tikoncha_parent.ui.SmallTextSize
@@ -24,25 +53,120 @@ import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 @Composable
 fun MessageReceivedItem(
     modifier: Modifier = Modifier,
     chatMessageUi: ChatMessageUi,
     showSender: Boolean = false,
+    menuExpanded: Boolean,
+    onOpenMenu: () -> Unit,
+    onDismissMenu: () -> Unit,
+    onMenuAction: (MessageMenuAction) -> Unit
 ) {
     val maxBubbleWidth = LocalWindowInfo.current.containerDpSize.width * 0.78f
 
+    val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+    val offsetX = remember { Animatable(0f) }
+    val maxDrag = 260f
+    val threshold = 180f
+    val dragged = remember { mutableStateOf(false) }
+    val fired = remember { mutableStateOf(false) }
+    var dragJob: Job? by remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .pointerInput(chatMessageUi.id + "_drag") {
+                var isHorizontal: Boolean? = null
+
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitFirstDown(requireUnconsumed = false)
+                        isHorizontal = null
+                        dragged.value = false
+                        fired.value = false
+
+                        var totalX = 0f
+                        var totalY = 0f
+
+                        do {
+                            val event = awaitPointerEvent()
+                            val drag = event.changes.firstOrNull() ?: break
+                            val dx = drag.position.x - drag.previousPosition.x
+                            val dy = drag.position.y - drag.previousPosition.y
+                            totalX += dx
+                            totalY += dy
+
+                            if (isHorizontal == null && (abs(totalX) > 10f || abs(totalY) > 10f)) {
+                                isHorizontal = abs(totalX) > abs(totalY)
+                            }
+
+                            if (isHorizontal == true) {
+                                drag.consume()
+                                dragged.value = true
+
+                                val newOffset = (offsetX.value + dx).coerceIn(0f, maxDrag)
+                                dragJob?.cancel()
+                                dragJob = scope.launch { offsetX.snapTo(newOffset) }
+
+                                if (!fired.value && newOffset >= threshold) {
+                                    fired.value = true
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            }
+                        } while (drag.pressed)
+
+                        val shouldReply = isHorizontal == true && offsetX.value >= threshold
+                        dragged.value = false
+                        fired.value = false
+                        dragJob?.cancel()
+                        scope.launch {
+                            offsetX.animateTo(
+                                0f,
+                                spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                )
+                            )
+                        }
+                        if (shouldReply) onMenuAction(MessageMenuAction.Reply)
+                    }
+                }
+            }
+            .pointerInput(chatMessageUi.id + "_tap") {
+                detectTapGestures(
+                    onTap = {
+                        if (!dragged.value) {
+                            onOpenMenu()
+                        }
+                    }
+                )
+            },
         contentAlignment = Alignment.TopStart
     ) {
-        SelectionContainer {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .padding(start = 18.dp),
+            contentAlignment = Alignment.CenterStart
+        ){
+            val progress = (offsetX.value / threshold).coerceIn(0f, 1f)
+            Icon(
+                painter = painterResource(Res.drawable.message_reply),
+                contentDescription = null,
+                tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = progress),
+                modifier = Modifier.size(22.dp)
+            )
+        }
+        Box {
             Column(
                 modifier = modifier
                     .widthIn(max = maxBubbleWidth)
+                    .offset{ IntOffset(offsetX.value.roundToInt(), 0) }
                     .clip(
                         RoundedCornerShape(
                             topStart = ChatMessageCornerRadius,
@@ -63,6 +187,19 @@ fun MessageReceivedItem(
                     Spacer(Modifier.height(2.dp))
                 }
 
+                if (
+                    chatMessageUi.replyToId != null &&
+                    chatMessageUi.repliedMessageOwner != null &&
+                    chatMessageUi.repliedMessageText != null
+                ){
+                    RepliedMessageBubble(
+                        ownerName = chatMessageUi.repliedMessageOwner,
+                        text = chatMessageUi.repliedMessageText,
+                        isMine = false
+                    )
+                    Spacer(Modifier.height(5.dp))
+                }
+
                 CustomText(
                     text = chatMessageUi.message,
                     color = MaterialTheme.extendedColor.textColor,
@@ -70,12 +207,59 @@ fun MessageReceivedItem(
                 )
 
                 CustomText(
-                    modifier = Modifier
-                        .align(Alignment.End),
                     text = chatMessageUi.time,
+                    modifier = Modifier.align(Alignment.End),
                     color = MaterialTheme.extendedColor.hintColor,
                     fontSize = UltraSmallTextSize,
                     lineHeight = UltraSmallTextSize
+                )
+            }
+
+            DropdownMenu(
+                modifier = Modifier.clip(RoundedCornerShape(10.dp)),
+                expanded = menuExpanded,
+                onDismissRequest = onDismissMenu,
+                shape = RoundedCornerShape(8.dp),
+                containerColor = MaterialTheme.extendedColor.backgroundColor,
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp,
+                offset = DpOffset(x = -10.dp, y = 0.dp)
+            ){
+                DropdownMenuItem(
+                    text = {
+                        CustomText(
+                            text = stringResource(Res.string.javob_berish),
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.message_reply),
+                            contentDescription = null,
+                            tint = MaterialTheme.extendedColor.primaryColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    onClick = {
+                        onMenuAction(MessageMenuAction.Reply)
+                    }
+                )
+                DropdownMenuItem(
+                    text = {
+                        CustomText(
+                            text = stringResource(Res.string.nusxalash),
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.message_copy),
+                            contentDescription = null,
+                            tint = MaterialTheme.extendedColor.primaryColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    onClick = {
+                        onMenuAction(MessageMenuAction.Copy)
+                    }
                 )
             }
         }
@@ -159,7 +343,12 @@ private fun PreviewSentMessageShortOld() {
                 status = DeliveryStatus.READ,
                 senderName = "Me",
                 senderAvatar = ""
-            )
+            ),
+            showSender = true,
+            menuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
     }
 }
@@ -185,7 +374,12 @@ private fun PreviewSentMessageTwoLinesOld() {
                 status = DeliveryStatus.SENT,
                 senderName = "Me",
                 senderAvatar = ""
-            )
+            ),
+            showSender = true,
+            menuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
     }
 }
@@ -212,7 +406,11 @@ private fun PreviewSentMessageLongOld() {
                 status = DeliveryStatus.SENDING,
                 senderName = "Me",
                 senderAvatar = ""
-            )
+            ),
+            menuExpanded = false,
+            onOpenMenu = {},
+            onDismissMenu = {},
+            onMenuAction = {}
         )
     }
 }

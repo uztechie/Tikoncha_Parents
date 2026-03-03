@@ -356,5 +356,11 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="davom_etishdan_oldin_ilova_turini_tanlang">Davom etishdan oldin ilova turini tanlang.</string>
     <string name="farzand_malumotlari_keyin_korinadi">Farzandingiz ma’lumotlari farzand qo‘shilgandan keyin ko‘rinadi.</string>
     <string name="otp_enter_code_with_phone">Telefon raqamingiz (%1$s)ga yuborilgan 6 xonali tasdiqlash kodini kiriting.</string>
+    <string name="javob_berish">Javob berish</string>
+    <string name="nusxalash">Nusxalash</string>
+    <string name="qayta_urinish">Qayta urinish</string>
+    <string name="xabarni_tahrirlash">Xabarni tahrirlash</string>
+    <string name="xabarni_o_chirish">Xabarni o'chirish</string>
+    <string name="haqiqatan_ham_bu_xabarni_o_chirmoqchimisiz">Haqiqatan ham bu xabarni o‘chirmoqchimisiz?</string>
 
 </resources>

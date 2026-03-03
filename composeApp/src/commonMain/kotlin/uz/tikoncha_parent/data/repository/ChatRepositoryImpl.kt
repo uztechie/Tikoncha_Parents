@@ -10,6 +10,8 @@ import uz.tikoncha_parent.data.remote.model.ChatUnreadCountResponse
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
 import uz.tikoncha_parent.data.remote.model.SendMessageRequest
 import uz.tikoncha_parent.data.remote.model.SendMessageResponse
+import uz.tikoncha_parent.data.remote.model.WSSendMessage
+import uz.tikoncha_parent.domain.model.chat.DeleteMessageResponse
 import uz.tikoncha_parent.domain.repository.ChatRepository
 class ChatRepositoryImpl(
     private val socket: ChatSocketService,
@@ -35,6 +37,10 @@ class ChatRepositoryImpl(
         return api.chatUnreadCount()
     }
 
+    override suspend fun deleteMessage(messageId: String): DeleteMessageResponse {
+        return api.deleteMessage(messageId)
+    }
+
     override fun connect() {
         socket.connect()
     }
@@ -48,11 +54,9 @@ class ChatRepositoryImpl(
     }
 
     override suspend fun sendMessage(
-        chatId: String,
-        text: String,
-        clientMsgId: String?
+        message: WSSendMessage
     ) {
-        socket.sendMessage(chatId, text, clientMsgId)
+        socket.sendMessage(message)
     }
 
     override suspend fun editMessage(messageId: String, newText: String) {
