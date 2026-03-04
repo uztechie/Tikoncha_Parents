@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -68,6 +69,7 @@ import tikoncha_parents.composeapp.generated.resources.ohirgi_faollik
 import tikoncha_parents.composeapp.generated.resources.xabar_yozish
 import tikoncha_parents.composeapp.generated.resources.xabarni_o_chirish
 import tikoncha_parents.composeapp.generated.resources.xabarni_tahrirlash
+import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.domain.model.ChatMessageItem
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomText
@@ -80,6 +82,7 @@ import uz.tikoncha_parent.presentation.chat.item.MessageReceivedItem
 import uz.tikoncha_parent.presentation.chat.item.MessageSentItem
 import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
 import uz.tikoncha_parent.presentation.chat.chat_details.ChatDetailsScreen
+import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
 import uz.tikoncha_parent.presentation.chat.model.MessageMenuAction
 import uz.tikoncha_parent.presentation.model.ChatMessageType
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
@@ -153,6 +156,11 @@ fun ChatRoomScreenUi(
     val clipboard = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
 
+    DisposableEffect(Unit) {
+        event(ChatRoomEvent.Open("ChatRoomScreen"))
+        onDispose { event(ChatRoomEvent.Close("ChatRoomScreen")) }
+    }
+
     LaunchedEffect(state.scrollToBottomTick) {
         if (state.messages.isNotEmpty()) {
             listState.animateScrollToItem(0)
@@ -171,8 +179,6 @@ fun ChatRoomScreenUi(
         }
     }
 
-
-
     LaunchedEffect(
         shouldLoadMore,
         state.isPagingLoading,
@@ -183,7 +189,6 @@ fun ChatRoomScreenUi(
             event(ChatRoomEvent.LoadMore)
         }
     }
-
 
     val isAtBottom by remember(listState) {
         derivedStateOf {
@@ -227,23 +232,13 @@ fun ChatRoomScreenUi(
             .fillMaxSize()
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
-        val bottomShape = RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp,
-            bottomStart = ShapeCornerRadius,
-            bottomEnd = ShapeCornerRadius
-        )
 
         Box(
             Modifier
+                .zIndex(1f)
                 .fillMaxWidth()
-                .topShadow(
-                    shape = RoundedCornerShape(ShapeCornerRadius),
-                    color = MaterialTheme.extendedColor.backgroundColor
-                )
                 .background(
-                    color = MaterialTheme.extendedColor.backgroundColor,
-                    shape = bottomShape
+                    color = MaterialTheme.extendedColor.backgroundColor
                 )
 
         ) {
@@ -290,7 +285,8 @@ fun ChatRoomScreenUi(
                     )
                 } else {
                     Box(
-                        modifier = Modifier.size(ChatHeaderAvatarSize)
+                        modifier = Modifier
+                            .size(ChatHeaderAvatarSize)
                             .background(MaterialTheme.extendedColor.cardColor, CircleShape)
                             .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
                         contentAlignment = Alignment.Center
@@ -318,7 +314,8 @@ fun ChatRoomScreenUi(
                                         ChatDetailsScreen(
                                             chatId = state.chatId,
                                             chatTitle = state.chatTitle,
-                                            chatAvatar = state.chatAvatar
+                                            chatAvatar = state.chatAvatar,
+                                            chatType = state.chatType,
                                         )
                                     )
                                 }
@@ -449,13 +446,13 @@ fun ChatRoomScreenUi(
                                                     event(ChatRoomEvent.SelectedMessageForEdit(msg))
                                                 }
 
-                                                MessageMenuAction.Retry -> {
-                                                    event(ChatRoomEvent.Retry(msg))
-                                                }
-
                                                 MessageMenuAction.Delete -> {
                                                     event(ChatRoomEvent.SelectMessageForDelete(msg))
                                                     showConfirmDeleteDialog = true
+                                                }
+
+                                                MessageMenuAction.Retry -> {
+                                                    event(ChatRoomEvent.Retry(msg))
                                                 }
 
                                                 MessageMenuAction.RetryDelete -> {
@@ -492,7 +489,9 @@ fun ChatRoomScreenUi(
                                                     }
 
                                                     MessageMenuAction.Copy -> {
-
+                                                        scope.launch {
+                                                            clipboard.setText(AnnotatedString(msg.message))
+                                                        }
                                                     }
 
                                                     else -> {}
@@ -579,6 +578,7 @@ fun ChatRoomScreenUi(
                     ChatTextField(
                         value = state.text,
                         onValueChange = { event(ChatRoomEvent.OnTextChange(it)) },
+                        focusRequester = focusRequester,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = TextFieldHeight, max = TextFieldHeight * 5)
@@ -675,7 +675,7 @@ fun ReplyMessageUi(
                 painter = painterResource(Res.drawable.close),
                 contentDescription = null,
                 tint = MaterialTheme.extendedColor.primaryColor,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(12.dp)
             )
         }
     }
@@ -688,19 +688,21 @@ private fun PRe() {
         ChatRoomScreenUi(
             state = ChatRoomState(
                 chatTitle = "Ibroxim Odilov",
-//                replyToMessage = ChatMessageUi(
-//                    id = "1",
-//                    isMine = true,
-//                    message = "Salom",
-//                    messageType = ChatMessageType.TEXT,
-//                    senderName = "",
-//                    senderAvatar = "",
-//                    status = DeliveryStatus.READ,
-//                    clientMsgId = "",
-//                    time = "",
-//                    repliedMessageText = "Salom qalesan nima gaplar qayerdasan, kecha qayerda eding, hammasi ok?",
-//                    repliedMessageOwner = "Ibroxim Odilov"
-//                )
+                replyToMessage = ChatMessageUi(
+                    id = "1",
+                    isMine = true,
+                    message = "Salom",
+                    messageType = ChatMessageType.TEXT,
+                    senderName = "",
+                    senderAvatar = "",
+                    status = DeliveryStatus.READ,
+                    clientMsgId = "",
+                    time = "",
+                    repliedMessageText = "Salom qalesan nima gaplar qayerdasan, kecha qayerda eding, hammasi ok?",
+                    repliedMessageOwner = "Ibroxim Odilov",
+                    createdAt = DateTimeUtil.nowMillis(),
+                    updatedAt = DateTimeUtil.nowMillis()
+                )
             )
         ) { }
     }

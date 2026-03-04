@@ -12,6 +12,7 @@ data class ChatMessageUi(
     val updatedAt: Long? = null,
     val time: String,
     val isRead: Boolean = false,
+    val remoteUrl: String = "",
     val amplitudes: List<Float> = emptyList(),
     val duration: Long? = null,
     val progress: Int = 0,

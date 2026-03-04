@@ -36,6 +36,8 @@ data class ChatRoomState(
     val isUserOnline: Boolean = false,
     val lastTimeOnline: ChatDateLabel = ChatDateLabel.Unknown,
 
+    val isConnected: Boolean = false,
+
     // ✅ har update -> bottom scroll
     val scrollToBottomTick: Long = 0L
 )

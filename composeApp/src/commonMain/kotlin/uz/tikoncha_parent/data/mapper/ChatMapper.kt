@@ -66,7 +66,13 @@ fun ChatMessageDto.toChatMessageUi(): ChatMessageUi{
         isRead = is_read?:false,
         senderName = sender_name,
         senderAvatar = sender_avatar.prepareAvatar(),
+        remoteUrl = attachment_url ?: "",
+        messageType = ChatMessageType.getChatMessageTypeByName(type),
+        duration = meta?.duration,
         clientMsgId = client_msg_id,
+        replyToId = reply_to_id,
+        repliedMessageText = replied_message_text,
+        repliedMessageOwner = replied_message_owner,
         status = status
     )
 }
@@ -99,6 +105,7 @@ fun buildOptimisticTextMessage(
         isRead = false,
         senderName = "",
         senderAvatar = "",
+        remoteUrl = "",
         messageType = ChatMessageType.TEXT,
         amplitudes = emptyList(),
         duration = null,

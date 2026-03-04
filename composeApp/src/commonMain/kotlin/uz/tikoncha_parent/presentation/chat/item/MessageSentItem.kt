@@ -337,7 +337,7 @@ fun MessageSentItem(
                             )
                         },
                         onClick = {
-                            onMenuAction(MessageMenuAction.Delete)
+                            onMenuAction(MessageMenuAction.RetryDelete)
                         }
                     )
                 }
@@ -398,36 +398,36 @@ private fun SentMeta(
 }
 
 
-@Preview(
-    name = "Sent message – short",
-    showBackground = true,
-    backgroundColor = 0xFFF2F2F2,
-    widthDp = 360
-)
-@Composable
-private fun PreviewSentMessageShortOld() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ) {
-        MessageSentItem(
-            chatMessageUi = ChatMessageUi(
-                id = "1",
-                isMine = true,
-                message = "Salom",
-                createdAt = DateTimeUtil.nowMillis(),
-                time = "10:25",
-                status = DeliveryStatus.READ,
-                senderName = "Me",
-                senderAvatar = ""
-            ),
-            menuExpanded = false,
-            failedMenuExpanded = false,
-            onOpenMenu = {},
-            onDismissMenu = {},
-            onMenuAction = {}
-        )
-    }
-}
+//@Preview(
+//    name = "Sent message – short",
+//    showBackground = true,
+//    backgroundColor = 0xFFF2F2F2,
+//    widthDp = 360
+//)
+//@Composable
+//private fun PreviewSentMessageShortOld() {
+//    TikonchaParentTheme(
+//        ThemeMode.DARK
+//    ) {
+//        MessageSentItem(
+//            chatMessageUi = ChatMessageUi(
+//                id = "1",
+//                isMine = true,
+//                message = "Salom",
+//                createdAt = DateTimeUtil.nowMillis(),
+//                time = "10:25",
+//                status = DeliveryStatus.READ,
+//                senderName = "Me",
+//                senderAvatar = ""
+//            ),
+//            menuExpanded = false,
+//            failedMenuExpanded = false,
+//            onOpenMenu = {},
+//            onDismissMenu = {},
+//            onMenuAction = {}
+//        )
+//    }
+//}
 
 @Preview(
     name = "Sent message – 2 lines",
@@ -442,17 +442,20 @@ private fun PreviewSentMessageTwoLinesOld() {
     ) {
         MessageSentItem(
             chatMessageUi = ChatMessageUi(
-                id = "2",
+                id = "3",
                 isMine = true,
                 message = "Ustoz bugun birinchi darsga bir necha soatdan so‘ng darslar",
                 createdAt = DateTimeUtil.nowMillis(),
                 time = "10:26",
                 status = DeliveryStatus.SENT,
                 senderName = "Me",
-                senderAvatar = ""
+                senderAvatar = "",
+                replyToId = "4",
+                repliedMessageOwner = "Men",
+                repliedMessageText = "Salom qandaysan"
             ),
             menuExpanded = false,
-            failedMenuExpanded = false,
+            failedMenuExpanded = true,
             onOpenMenu = {},
             onDismissMenu = {},
             onMenuAction = {}
@@ -460,34 +463,34 @@ private fun PreviewSentMessageTwoLinesOld() {
     }
 }
 
-@Preview(
-    name = "Sent message – long (meta below)",
-    showBackground = true,
-    backgroundColor = 0xFFF2F2F2,
-    widthDp = 360
-)
-@Composable
-private fun PreviewSentMessageLongOld() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ) {
-        MessageSentItem(
-            chatMessageUi = ChatMessageUi(
-                id = "3",
-                isMine = true,
-                message = "Bu juda uzun xabar bo‘lib, oxirgi qatorda soat va belgi sig‘maydi va shuning uchun Telegram’dagi kabi pastga alohida qatorda chiqishi kerak",
-                createdAt = DateTimeUtil.nowMillis(),
-                time = "10:27",
-                status = DeliveryStatus.SENDING,
-                senderName = "Me",
-                senderAvatar = ""
-            ),
-            menuExpanded = false,
-            failedMenuExpanded = false,
-            onOpenMenu = {},
-            onDismissMenu = {},
-            onMenuAction = {}
-        )
-    }
-}
+//@Preview(
+//    name = "Sent message – long (meta below)",
+//    showBackground = true,
+//    backgroundColor = 0xFFF2F2F2,
+//    widthDp = 360
+//)
+//@Composable
+//private fun PreviewSentMessageLongOld() {
+//    TikonchaParentTheme(
+//        ThemeMode.DARK
+//    ) {
+//        MessageSentItem(
+//            chatMessageUi = ChatMessageUi(
+//                id = "3",
+//                isMine = true,
+//                message = "Bu juda uzun xabar bo‘lib, oxirgi qatorda soat va belgi sig‘maydi va shuning uchun Telegram’dagi kabi pastga alohida qatorda chiqishi kerak",
+//                createdAt = DateTimeUtil.nowMillis(),
+//                time = "10:27",
+//                status = DeliveryStatus.SENDING,
+//                senderName = "Me",
+//                senderAvatar = ""
+//            ),
+//            menuExpanded = false,
+//            failedMenuExpanded = false,
+//            onOpenMenu = {},
+//            onDismissMenu = {},
+//            onMenuAction = {}
+//        )
+//    }
+//}
 

@@ -431,6 +431,7 @@ class ChatRoomViewModel(
                 }.sortedWith(descComparator())
                 applyAllMessagesDesc(next)
             }
+
             val res = sendMessageUseCase(
                 chatId = chatId,
                 text = text,

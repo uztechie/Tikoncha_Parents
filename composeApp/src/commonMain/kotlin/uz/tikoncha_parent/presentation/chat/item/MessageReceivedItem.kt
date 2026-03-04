@@ -345,7 +345,7 @@ private fun PreviewSentMessageShortOld() {
                 senderAvatar = ""
             ),
             showSender = true,
-            menuExpanded = false,
+            menuExpanded = true,
             onOpenMenu = {},
             onDismissMenu = {},
             onMenuAction = {}
@@ -376,7 +376,7 @@ private fun PreviewSentMessageTwoLinesOld() {
                 senderAvatar = ""
             ),
             showSender = true,
-            menuExpanded = false,
+            menuExpanded = true,
             onOpenMenu = {},
             onDismissMenu = {},
             onMenuAction = {}
@@ -407,7 +407,7 @@ private fun PreviewSentMessageLongOld() {
                 senderName = "Me",
                 senderAvatar = ""
             ),
-            menuExpanded = false,
+            menuExpanded = true,
             onOpenMenu = {},
             onDismissMenu = {},
             onMenuAction = {}

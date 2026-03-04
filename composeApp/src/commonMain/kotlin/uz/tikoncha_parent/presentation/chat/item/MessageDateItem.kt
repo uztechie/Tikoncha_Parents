@@ -28,8 +28,6 @@ fun MessageDateItem(
     modifier: Modifier = Modifier,
     date: ChatDateLabel,
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -50,10 +48,7 @@ fun MessageDateItem(
                 modifier = Modifier
             )
         }
-
-
     }
-
 }
 
 @Preview
