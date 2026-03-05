@@ -257,7 +257,7 @@ fun ChatRoomScreenUi(
                     },
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = PrimaryColor
+                        contentColor = MaterialTheme.extendedColor.textColor
                     ),
                 ) {
                     Icon(

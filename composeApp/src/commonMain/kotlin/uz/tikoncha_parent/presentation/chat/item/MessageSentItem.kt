@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.window.PopupProperties
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -361,9 +362,9 @@ private fun SentMeta(
 
         val textColor = when (status) {
             DeliveryStatus.SENDING -> MaterialTheme.extendedColor.hintColor
-            DeliveryStatus.SENT -> MaterialTheme.extendedColor.hintColor
-            DeliveryStatus.READ -> MaterialTheme.extendedColor.hintColor
-            DeliveryStatus.FAILED -> MaterialTheme.extendedColor.hintColor
+            DeliveryStatus.SENT -> MaterialTheme.extendedColor.primaryColor
+            DeliveryStatus.READ -> MaterialTheme.extendedColor.primaryColor
+            DeliveryStatus.FAILED -> Failed
         }
 
         val iconColor = when (status) {
@@ -447,7 +448,7 @@ private fun PreviewSentMessageTwoLinesOld() {
                 message = "Ustoz bugun birinchi darsga bir necha soatdan so‘ng darslar",
                 createdAt = DateTimeUtil.nowMillis(),
                 time = "10:26",
-                status = DeliveryStatus.SENT,
+                status = DeliveryStatus.SENDING,
                 senderName = "Me",
                 senderAvatar = "",
                 replyToId = "4",

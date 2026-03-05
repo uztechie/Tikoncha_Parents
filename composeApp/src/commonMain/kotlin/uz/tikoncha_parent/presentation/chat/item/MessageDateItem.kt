@@ -36,7 +36,7 @@ fun MessageDateItem(
         Box(
             modifier = Modifier
                 .background(
-                    color = MaterialTheme.extendedColor.disabledBgColor,
+                    color = MaterialTheme.extendedColor.cardColor,
                     shape = RoundedCornerShape(CardCornerRadius)
                 )
                 .padding(vertical = 4.dp, horizontal = 15.dp),

@@ -41,6 +41,7 @@ import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.task.TaskEvent
+import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.task.TaskViewModel
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -195,7 +196,10 @@ fun ProfileUi(
                     icon = painterResource(Res.drawable.coin),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
-                        .weight(1f)
+                        .weight(1f),
+                    onClick = {
+                        navigator?.push(CoinsScreen())
+                    }
                 )
 
                 SpaceSmall()
@@ -206,7 +210,10 @@ fun ProfileUi(
                     icon = painterResource(Res.drawable.file_png),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
-                        .weight(1f)
+                        .weight(1f),
+                    onClick = {
+                        navigator?.push(TaskScreen())
+                    }
                 )
             }
             SpaceLarge()
@@ -265,24 +272,6 @@ fun ProfileUi(
                 )
             }
             SpaceLarge()
-//            SpaceLarge()
-//
-//            CustomOutlinedButton(
-//                text = stringResource(Res.string.qr_kod),
-//                onClick = {
-//                    showQrCode = true
-//                },
-//                textColor = PrimaryColor,
-//                leadingIcon = {
-//                    Icon(
-//                        painter = painterResource(Res.drawable.scan),
-//                        contentDescription = ""
-//                    )
-//                },
-//                modifier = Modifier.width(130.dp)
-//            )
-//
-//            SpaceMedium()
         }
     }
 }
