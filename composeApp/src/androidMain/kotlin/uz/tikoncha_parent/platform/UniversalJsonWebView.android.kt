@@ -76,7 +76,7 @@ actual fun UniversalJsonWebView(
                     // Web -> Android ko‘prik (Web: AndroidJson.sendData / AndroidJson.backPressed)
                     addJavascriptInterface(
                         AndroidJsonBridge(
-                            sendData = onIncomingJson,
+                            onSendData = onIncomingJson,
                             onBackPressed = onBackPressed
                         ),
                         "AndroidJson"
@@ -109,14 +109,14 @@ actual fun UniversalJsonWebView(
 }
 
 private class AndroidJsonBridge(
-    private val sendData: (String?) -> Unit,
+    private val onSendData: (String?) -> Unit,
     private val onBackPressed: () -> Unit
 ) {
     private val mainHandler = Handler(Looper.getMainLooper())
 
     @JavascriptInterface
     fun sendData(json: String?) {
-        mainHandler.post { sendData(json) }
+        mainHandler.post { onSendData(json) }
     }
 
     @JavascriptInterface

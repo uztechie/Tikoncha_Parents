@@ -121,48 +121,60 @@ fun ChatUi(
             title = stringResource(Res.string.suhbat),
         )
 
-        if (state.chats.isEmpty()){
+        if (state.chats.isEmpty()) {
             AppEmptyList(
                 title = stringResource(Res.string.farzand_qoshilmagan),
                 message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
             )
-        }
+        } else {
+            Column(
+                modifier = Modifier.padding(horizontal = ContainerPadding)
+            )
+            {
+                LazyColumn {
 
-        Column(
-            modifier = Modifier.padding(horizontal = ContainerPadding)
-        )
-        {
-            LazyColumn {
-
-                items(state.chats){ item->
-                    ChatListItem(
-                        chatUi = item,
-                        onClick = {
-
-                            if (item.type == ChatType.BOT) {
-                                navigator?.push(
-                                    ChatMessageAiScreen(
-                                        chatId = item.chatId,
-                                        chatTitle = item.title,
+                    items(
+                        items = state.chats,
+                        key = { it.chatId },
+                        contentType = { "chat_item" }
+                    ) { item ->
+                        val onClick = remember(item.chatId) {
+                            {
+                                if (item.type == ChatType.BOT) {
+                                    navigator?.push(
+                                        ChatMessageAiScreen(
+                                            chatId = item.chatId,
+                                            chatTitle = item.title,
+                                        )
                                     )
-                                )
-                            } else {
-                                navigator?.push(
-                                    ChatRoomScreen(
-                                        chatId = item.chatId,
-                                        chatAvatar = item.avatar,
-                                        chatTitle = item.title,
-                                        chatType = item.type
+                                } else {
+                                    navigator?.push(
+                                        ChatRoomScreen(
+                                            chatId = item.chatId,
+                                            chatAvatar = item.avatar,
+                                            chatTitle = item.title,
+                                            chatType = item.type
+                                        )
                                     )
-                                )
+                                }
+                                Unit
                             }
                         }
-                    )
-                    DividerHorizontal()
+
+                        Column {
+                            ChatListItem(
+                                chatUi = item,
+                                onClick = onClick
+                            )
+                            DividerHorizontal()
+                        }
+                    }
                 }
             }
         }
     }
+
+
 }
 
 @Preview
