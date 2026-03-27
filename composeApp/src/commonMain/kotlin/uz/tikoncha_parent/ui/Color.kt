@@ -18,7 +18,7 @@ val GrayColor = Color(0xFFAFAFAF)
 val DarkColor = Color(0xFF010D01)
 val DarkGrayColor = Color(0xFF1F1F1F)
 val ShadowColor = Color(0xFFedf0ed)
-
+val TelegramButtonColor = Color(0xFF28A9EB)
 
 
 

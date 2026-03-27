@@ -137,6 +137,10 @@ class StatisticViewModel(
 
 
     private fun loadAppUsages() {
+        val childId = state.value.selectedChild?.userId
+        if (childId.isNullOrEmpty()){
+            return
+        }
         appUsageJob?.cancel()
         appUsageJob = screenModelScope.launch {
             _state.update {
@@ -150,6 +154,7 @@ class StatisticViewModel(
             when (response) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
+                    println("loadAppUsages ERROR: msg=${response.message}")
                     _state.update {
                         it.copy(
                             appUsageResponseState = ResponseState.Error(
@@ -252,15 +257,18 @@ class StatisticViewModel(
                             selectedChild = AppSettings.selectedChild
                         )
                     }
-                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
-                    if (AppSettings.selectedChild == null){
+                    if (AppSettings.selectedChild == null) {
                         AppSettings.selectedChild = AppSettings.children.firstOrNull()
+                        _state.update { it.copy(selectedChild = AppSettings.selectedChild) }
                     }
+                    loadAppUsages()
 
+//                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
+//                    if (AppSettings.selectedChild == null){
+//                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
+//                    }
                 }
             }
         }
     }
-
-
 }

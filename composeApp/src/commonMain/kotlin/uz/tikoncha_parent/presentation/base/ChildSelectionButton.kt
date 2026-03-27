@@ -90,16 +90,6 @@ fun ChildSelectionButton(
             modifier = modifier
                 .fillMaxWidth()
                 .height(buttonHeight)
-//                .dropShadow(
-//                    shape = shape,
-//                    shadow = Shadow(
-//                        radius = 10.dp,
-//                        spread = animatedSpreadDp,
-//                        brush = brush,
-//                        offset = DpOffset(0.dp, 0.dp),
-//                        alpha = animatedAlpha
-//                    )
-//                )
                 .clip(shape)
                 .background(background, shape)
                 .clickable(
@@ -140,45 +130,6 @@ fun ChildSelectionButton(
                     .weight(1f)
             )
         }
-    }
-}
-
-@Stable
-fun lerp1(start: Float, stop: Float, fraction: Float): Float {
-    return start + (stop - start) * fraction.coerceIn(0f, 1f)
-}
-
-@Composable
-fun rememberRotatingLinearGradient(
-    colors: List<Color>,
-    radiusPx: Float,
-    durationMs: Int = 3000
-): Brush {
-    val infinite = rememberInfiniteTransition(label = "rotateGradient")
-    val angle by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMs, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "angle"
-    )
-
-    val rad = angle * PI.toFloat() / 180f
-    val dx = (cos(rad) * radiusPx).toFloat()
-    val dy = (sin(rad) * radiusPx).toFloat()
-
-    val start = Offset(-dx, -dy)
-    val end = Offset(dx, dy)
-
-    // start/end o'zgarsa brush qayta hosil bo'ladi
-    return remember(colors, start, end) {
-        Brush.linearGradient(
-            colors = colors,
-            start = start,
-            end = end
-        )
     }
 }
 

@@ -88,11 +88,14 @@ fun TaskUi(
 
     val enabled: Boolean = if (state.selectedChild != null) true else false
     val enabledColor = if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
+    val noChild = state.childrenList.isEmpty()
 
     CustomListDialog(
         title = stringResource(Res.string.farzandlaringiz),
         items = state.childrenList,
         show = showDialog,
+        noChild = noChild,
+        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
         loading = taskLoading,
         errorMessage = taskErrorText,
         onItemSelected = {
