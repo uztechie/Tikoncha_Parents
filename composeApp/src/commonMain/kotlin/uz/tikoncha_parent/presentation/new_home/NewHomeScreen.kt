@@ -155,7 +155,7 @@ fun NewHomeUi(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    val noChild = if (state.childrenList.isEmpty()) true else false
+    val noChild = state.childrenList.isEmpty()
 
     val tableCount = state.blockedAppCount
     val taskCount = state.activeTaskCount

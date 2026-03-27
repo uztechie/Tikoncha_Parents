@@ -355,5 +355,22 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="diqqat2">DIQQAT!</string>
     <string name="davom_etishdan_oldin_ilova_turini_tanlang">Davom etishdan oldin ilova turini tanlang.</string>
     <string name="farzand_malumotlari_keyin_korinadi">Farzandingiz ma’lumotlari farzand qo‘shilgandan keyin ko‘rinadi.</string>
-    
+    <string name="otp_enter_code_with_phone">Telefon raqamingiz (%1$s)ga yuborilgan 6 xonali tasdiqlash kodini kiriting.</string>
+    <string name="javob_berish">Javob berish</string>
+    <string name="nusxalash">Nusxalash</string>
+    <string name="qayta_urinish">Qayta urinish</string>
+    <string name="xabarni_tahrirlash">Xabarni tahrirlash</string>
+    <string name="xabarni_o_chirish">Xabarni o'chirish</string>
+    <string name="haqiqatan_ham_bu_xabarni_o_chirmoqchimisiz">Haqiqatan ham bu xabarni o‘chirmoqchimisiz?</string>
+    <string name="raqamda_telegram_mavjud_emas">Bu raqamda Telegram mavjud emas</string>
+    <string name="kod_telegramga_yuboriladi">Kod Telegramga yuboriladi</string>
+    <string name="tasdiqlash_kodi_telegram">Tasdiqlash kodi Telegram orqali yuboriladi. Kodni olish uchun Telegram ilovasiga o‘ting.</string>
+    <string name="telegramga_otish">Telegramga o‘tish</string>
+    <string name="boshqa_raqamga_ozgartish">Boshqa raqamga o‘zgartish</string>
+    <string name="tasdiqlash_kodi_usulini_tanlash">Tasdiqlash kodini qaysi usul orqali \n yuborishimizni tanlang</string>
+    <string name="tasdiqlash_kodini_olish">Tasdiqlash kodini olish</string>
+    <string name="telegram_kod_kiritish">%1$s raqamiga ulangan Telegramga yuborilgan kodni kiriting</string>
+    <string name="xato_kod_kiritdingiz">Xato kod kirdingiz</string>
+    <string name="kod_olish_usulini_ozgartirish">Kod olish usulini o‘zgartirish</string>
+
 </resources>

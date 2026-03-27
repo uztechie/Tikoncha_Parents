@@ -1,29 +1,23 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.chat
 
 import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
-import tikoncha_parents.composeapp.generated.resources.server_connection_error
-import uz.tikoncha_parent.data.remote.model.UserInfoDto
 import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.domain.repository.ChatRepository
 
-
-class ChildrenUseCase(
-    private val repository: ChildRepository,
+class DeleteMessageUseCase(
+    private val repository: ChatRepository
 ) {
-    suspend operator fun invoke(): Resource<List<UserInfoDto>> {
+    suspend operator fun invoke(messageId: String): Resource<Boolean> {
         return try {
-            val response = repository.children()
-            if (response.success && response.data != null){
-                Resource.Success(response.data.children)
-            }
-            else {
+            val response = repository.deleteMessage(messageId)
+            if (response.success) {
+                Resource.Success(true)
+            } else {
                 Resource.Error(
-                    message = response.error,
-                    resId = Res.string.server_connection_error
+                    resId = Res.string.iltimos_internetga_ulang,
                 )
             }
         } catch (e: IOException) {

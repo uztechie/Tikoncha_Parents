@@ -353,5 +353,19 @@
     <string name="diqqat2">ВНИМАНИЕ!</string>
     <string name="davom_etishdan_oldin_ilova_turini_tanlang">Перед продолжением выберите тип приложения.</string>
     <string name="farzand_malumotlari_keyin_korinadi">Данные вашего ребёнка будут доступны после добавления ребёнка.</string>
+    <string name="otp_enter_code_with_phone">Введите 6-значный код подтверждения, отправленный на ваш номер телефона (%1$s).</string>
+    <string name="javob_berish">Ответить</string>
+    <string name="nusxalash">Копировать</string>
+    <string name="qayta_urinish">Повторить попытку</string>
+    <string name="raqamda_telegram_mavjud_emas">На этом номере нет Telegram</string>
+    <string name="kod_telegramga_yuboriladi">Код будет отправлен в Telegram</string>
+    <string name="tasdiqlash_kodi_telegram">Код подтверждения будет отправлен через Telegram. Откройте приложение Telegram, чтобы получить код.</string>
+    <string name="telegramga_otish">Открыть Telegram</string>
+    <string name="boshqa_raqamga_ozgartish">Изменить номер</string>
+    <string name="tasdiqlash_kodi_usulini_tanlash">Выберите способ отправки \n кода подтверждения</string>
+    <string name="tasdiqlash_kodini_olish">Получить код подтверждения</string>
+    <string name="telegram_kod_kiritish">Введите код, отправленный в Telegram, привязанный к номеру %1$s</string>
+    <string name="xato_kod_kiritdingiz">Вы ввели неверный код</string>
+    <string name="kod_olish_usulini_ozgartirish">Изменить способ получения кода</string>
 
 </resources>

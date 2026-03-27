@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.otp
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -38,7 +36,8 @@ class OtpViewmodel(
             is OtpEvent.OnOtpUpdate -> {
                 _state.update {
                     it.copy(
-                        otpCode = event.otpCode
+                        otpCode = event.otpCode,
+                        hasInputError = false
                     )
                 }
             }
@@ -51,28 +50,10 @@ class OtpViewmodel(
                 startTimer()
             }
 
-            OtpEvent.Tick -> {
-                val current = _state.value.timeLife
-                if (current > 0) {
-                    _state.value = _state.value.copy(timeLife = current - 1)
-                } else {
-                    timerJob?.cancel()
-                    _state.value = _state.value.copy(isRunning = false)
-                }
-            }
-
             is OtpEvent.SetPhone -> {
                 _state.update {
                     it.copy(
                         phoneNumber = event.phoneNumber
-                    )
-                }
-            }
-
-            OtpEvent.ClearNavigation -> {
-                _state.update {
-                    it.copy(
-                        isUserExists = null
                     )
                 }
             }
@@ -85,8 +66,16 @@ class OtpViewmodel(
                 }
             }
 
-            OtpEvent.ResendOtp -> {
-                resendOtp()
+            OtpEvent.SendOtp -> {
+                sentOtp()
+            }
+
+            is OtpEvent.SetTelegram -> {
+                _state.update {
+                    it.copy(
+                        isTelegram = event.isTelegram
+                    )
+                }
             }
         }
     }
@@ -112,12 +101,11 @@ class OtpViewmodel(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-
+                            hasInputError = true,
                             responseState = ResponseState.Error(
                                 res = response.resId,
                                 message = response.message
                             )
-
                         )
                     }
                 }
@@ -153,37 +141,26 @@ class OtpViewmodel(
         }
     }
 
-    //    private fun startTimer() {
-//        _state.value = _state.value.copy(isRunning = true)
-//        timerJob?.cancel()
-//        timerJob = viewModelScope.launch {
-//            while (_state.value.timeLife > 0) {
-//                delay(1000L)
-//                onEvent(OtpEvent.Tick)
-//            }
-//        }
-//    }
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = screenModelScope.launch {
-            _state.update { it.copy(timeLife = 60) }
+            _state.update { it.copy(timeLife = 60, isRunning = true) }
             while (_state.value.timeLife > 0) {
                 delay(1000)
                 _state.update { it.copy(timeLife = it.timeLife - 1) }
             }
+            _state.update { it.copy(isRunning = false) }
         }
     }
 
-    private fun resendOtp() {
+    private fun sentOtp() {
         val phone = state.value.phoneNumber
-        if (phone.isNullOrBlank()) return
+        if (phone.isBlank()) return
 
         screenModelScope.launch {
-            // optional: responseState = Loading qilish mumkin
             val request = SendOtpRequest(phone = phone)
             when (val res = sendOtpUseCase(request)) {
                 is Resource.Success -> {
-                    // timerni qayta start qilamiz
                     startTimer()
                     _state.update {
                         it.copy(
@@ -208,5 +185,4 @@ class OtpViewmodel(
             }
         }
     }
-
 }

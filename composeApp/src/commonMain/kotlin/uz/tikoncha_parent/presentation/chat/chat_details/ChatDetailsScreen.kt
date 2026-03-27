@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat_details
+package uz.tikoncha_parent.presentation.chat.chat_details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,6 +32,7 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.saidburxon.newedu.presentation.feature.chat.chat_details.ChatMemberItem
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -47,7 +48,8 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 class ChatDetailsScreen(
     val chatId: String,
     val chatAvatar: String,
-    val chatTitle: String
+    val chatTitle: String,
+    val chatType: ChatType
 ): Screen{
     @Composable
     override fun Content() {

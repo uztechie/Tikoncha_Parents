@@ -90,6 +90,7 @@ fun StatisticUi(
     var showDialog by remember { mutableStateOf(false) }
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
     val childrenErrorText = state.childrenResponseState.errorText()
+    val noChild = state.childrenList.isEmpty()
 
     LoadingDialog(appUsageLoading)
 
@@ -98,8 +99,9 @@ fun StatisticUi(
     }
 
     LaunchedEffect(Unit){
-        event(StatisticEvent.RefreshChild)
-        event(StatisticEvent.GetAppUsage)
+        event(StatisticEvent.GetChildren)
+//        event(StatisticEvent.RefreshChild)
+//        event(StatisticEvent.GetAppUsage)
     }
 
 
@@ -114,6 +116,8 @@ fun StatisticUi(
         items = state.childrenList,
         show = showDialog,
         loading = childrenLoading,
+        noChild = noChild,
+        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
         errorMessage = childrenErrorText,
         onItemSelected = {
             event(StatisticEvent.OnChildSelected(it))

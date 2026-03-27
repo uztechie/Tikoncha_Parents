@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.chat_details
+package uz.tikoncha_parent.presentation.chat.chat_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

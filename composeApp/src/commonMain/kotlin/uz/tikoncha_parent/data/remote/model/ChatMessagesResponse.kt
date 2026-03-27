@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.data.remote.model
 
 import kotlinx.serialization.Serializable
+import uz.tikoncha_parent.domain.model.ChatMessageMetaDto
 
 @Serializable
 data class ChatMessagesResponse(
@@ -26,13 +27,17 @@ data class ChatMessageDto(
     val sender_avatar: String?,
     val type: String,
     val text: String,
+    val meta: ChatMessageMetaDto?,
     val reply_to_id: String?,
+    val replied_message_owner: String?,
+    val replied_message_text: String?,
     val client_msg_id: String?,
     val created_at: String?,
     val edited_at: String?,
     val deleted_at: String?,
     val is_read: Boolean? = null,
     val is_mine: Boolean? = null,
+    val attachment_url: String? = null
 )
 
 

@@ -105,8 +105,6 @@ class PaymentViewModel(
             }
 
             is PaymentEvent.OnPromoCode -> {
-                if (event.promoCode.length == 10)
-                    return
                 _state.update {
                     it.copy(
                         promoCode = event.promoCode

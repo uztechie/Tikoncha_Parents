@@ -11,11 +11,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -27,6 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.attach
 import tikoncha_parents.composeapp.generated.resources.send
 import tikoncha_parents.composeapp.generated.resources.xabar_yozish
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.BackgroundColor
 import uz.tikoncha_parent.ui.ChatTextFieldCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.MyFontFamily
@@ -47,6 +57,7 @@ fun ChatTextField(
     value: String = "",
     onValueChange: (String) -> Unit,
     label: String = "",
+    focusRequester: FocusRequester = remember { FocusRequester() },
     containerColor: Color = MaterialTheme.extendedColor.cardColor,
     textColor: Color = MaterialTheme.extendedColor.textColor,
     placeholderColor: Color = MaterialTheme.extendedColor.hintColor,
@@ -57,8 +68,21 @@ fun ChatTextField(
     onFileClick: () -> Unit,
     onSend: () -> Unit
 ) {
+    var texFieldValue by remember { mutableStateOf(
+        TextFieldValue(
+            text = value,
+            selection = TextRange(value.length)
+        )
+    ) }
 
-
+    LaunchedEffect(value){
+        if (texFieldValue.text != value){
+            texFieldValue = TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
+        }
+    }
 
     Row(
         modifier = modifier
@@ -99,13 +123,15 @@ fun ChatTextField(
 
             BasicTextField(
                 cursorBrush = Brush.sweepGradient(listOf(textColor, textColor)),
-                value = value,
+                value = texFieldValue,
                 onValueChange = {
-                    onValueChange(it)
+                    texFieldValue = it
+                    onValueChange(texFieldValue.text)
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
+                    .focusRequester(focusRequester),
                 singleLine = false,
                 maxLines = 5,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(
@@ -134,11 +160,9 @@ fun ChatTextField(
                     }
                 }
             )
-
         }
-
-
         SpaceSmall()
+
         Box(
             modifier = Modifier.height(TextFieldHeight),
             contentAlignment = Alignment.Center
@@ -179,7 +203,7 @@ private fun Preview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(BackgroundColor)
                 .padding(horizontal = ContainerPadding),
             contentAlignment = Alignment.BottomCenter
         ) {

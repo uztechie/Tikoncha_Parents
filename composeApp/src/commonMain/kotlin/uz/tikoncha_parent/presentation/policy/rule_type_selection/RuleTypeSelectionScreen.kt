@@ -107,43 +107,43 @@ fun RuleTypeSelectionUi(
     )
 
 
-    CustomDialog(
-        painter = painterResource(Res.drawable.dialog_info),
-        show = showWarningDialog,
-        title = stringResource(Res.string.diqqat),
-        message = stringResource(Res.string.siz_tanlagan_vaqt_oraligida),
-        onDismiss = {
-            showWarningDialog = false
-        },
-        onButtonClick = {
-            showWarningDialog = false
-            when(selectedRuleType){
-                RuleType.TIME -> {
-                    if (state.subscriptionLimit.timeRule < 1){
-                        showSubscriptionLimitDialog = true
-                    }else{
-                        navigator?.push(TimeRuleListScreen())
-                    }
-                }
-                RuleType.USAGE_LIMIT -> {
-                    if (state.subscriptionLimit.limitRule < 1){
-                        showSubscriptionLimitDialog = true
-                    }else{
-                        navigator?.push(LimitRuleListScreen())
-                    }
-
-                }
-                RuleType.LOCATION -> {
-                    if (state.subscriptionLimit.locationRule < 1){
-                        showSubscriptionLimitDialog = true
-                    }else{
-                        navigator?.push(LocationRuleScreen())
-                    }
-                }
-               else -> {}
-            }
-        }
-    )
+//    CustomDialog(
+//        painter = painterResource(Res.drawable.dialog_info),
+//        show = showWarningDialog,
+//        title = stringResource(Res.string.diqqat),
+//        message = stringResource(Res.string.siz_tanlagan_vaqt_oraligida),
+//        onDismiss = {
+//            showWarningDialog = false
+//        },
+//        onButtonClick = {
+//            showWarningDialog = false
+//            when(selectedRuleType){
+//                RuleType.TIME -> {
+//                    if (state.subscriptionLimit.timeRule < 1){
+//                        showSubscriptionLimitDialog = true
+//                    }else{
+//                        navigator?.push(TimeRuleListScreen())
+//                    }
+//                }
+//                RuleType.USAGE_LIMIT -> {
+//                    if (state.subscriptionLimit.limitRule < 1){
+//                        showSubscriptionLimitDialog = true
+//                    }else{
+//                        navigator?.push(LimitRuleListScreen())
+//                    }
+//
+//                }
+//                RuleType.LOCATION -> {
+//                    if (state.subscriptionLimit.locationRule < 1){
+//                        showSubscriptionLimitDialog = true
+//                    }else{
+//                        navigator?.push(LocationRuleScreen())
+//                    }
+//                }
+//               else -> {}
+//            }
+//        }
+//    )
 
 
     val scheduleList = listOf(

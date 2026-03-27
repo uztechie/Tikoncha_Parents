@@ -9,6 +9,7 @@ import uz.tikoncha_parent.data.remote.model.ChatMessageDto
 import uz.tikoncha_parent.presentation.chat.ChatDateTimeUtil
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.model.ChatMessageType
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.model.ChatUi
@@ -65,7 +66,13 @@ fun ChatMessageDto.toChatMessageUi(): ChatMessageUi{
         isRead = is_read?:false,
         senderName = sender_name,
         senderAvatar = sender_avatar.prepareAvatar(),
+        remoteUrl = attachment_url ?: "",
+        messageType = ChatMessageType.getChatMessageTypeByName(type),
+        duration = meta?.duration,
         clientMsgId = client_msg_id,
+        replyToId = reply_to_id,
+        repliedMessageText = replied_message_text,
+        repliedMessageOwner = replied_message_owner,
         status = status
     )
 }
@@ -84,6 +91,9 @@ fun ChatMemberDto.toChatMemberUi(): ChatMemberUi{
 fun buildOptimisticTextMessage(
     text: String,
     clientMsgId: String,
+    replyToId: String? = null,
+    replyToMessageOwner: String? = null,
+    replyToMessageTex: String? = null,
     nowMillis: Long = DateTimeUtil.nowMillis()
 ): ChatMessageUi {
     return ChatMessageUi(
@@ -95,8 +105,15 @@ fun buildOptimisticTextMessage(
         isRead = false,
         senderName = "",
         senderAvatar = "",
+        remoteUrl = "",
+        messageType = ChatMessageType.TEXT,
+        amplitudes = emptyList(),
+        duration = null,
         clientMsgId = clientMsgId,
-        status = DeliveryStatus.SENDING
+        status = DeliveryStatus.SENDING,
+        replyToId = replyToId,
+        repliedMessageOwner = replyToMessageOwner,
+        repliedMessageText = replyToMessageTex
     )
 }
 

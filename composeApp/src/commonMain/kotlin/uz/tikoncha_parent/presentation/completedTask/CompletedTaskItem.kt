@@ -46,10 +46,10 @@ fun CompletedTaskItem(
         return
     }
     val importance = when (task.importance) {
-        ImportanceType.IMPORTANT -> "Muhim"
+        ImportanceType.IMPORTANT -> stringResource(Res.string.muhim)
         ImportanceType.NONE -> ""
-        ImportanceType.MEDIUM -> "O'rtacha"
-        ImportanceType.MOST_IMPORTANT -> "O'ta muhim"
+        ImportanceType.MEDIUM -> stringResource(Res.string.o_rtacha)
+        ImportanceType.MOST_IMPORTANT -> stringResource(Res.string.o_ta_muhim)
     }
 
     val shownTime = remember(task.id, task.dateTime) {

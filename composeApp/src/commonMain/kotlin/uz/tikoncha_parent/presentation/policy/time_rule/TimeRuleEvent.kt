@@ -17,7 +17,9 @@ sealed interface TimeRuleEvent {
     data class SetOutsideInterval(val outside: Boolean): TimeRuleEvent
     data class SetTimeRule(val startTime: LocalTime, val endTime: LocalTime): TimeRuleEvent
     data class SetTimeRuleData(val timeData: TimeRuleUi): TimeRuleEvent
-    data object SaveTime: TimeRuleEvent
+    data class SaveTime(val startTime: LocalTime, val endTime: LocalTime): TimeRuleEvent
     data object ClearTime: TimeRuleEvent
+    data class OpenEdite(val timeData: TimeRuleUi): TimeRuleEvent
+    object OpenCreate: TimeRuleEvent
     data class ShowSetupDialog(val show: Boolean): TimeRuleEvent
 }

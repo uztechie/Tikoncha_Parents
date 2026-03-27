@@ -32,6 +32,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add_square
@@ -56,6 +57,8 @@ import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.compareTo
 
@@ -179,10 +182,7 @@ fun TimeRuleListUi(
                             interactionSource = null,
                             indication = null,
                             onClick = {
-                                event(TimeRuleEvent.SetTimeRuleData(
-                                    it
-                                ))
-                                event(TimeRuleEvent.ShowSetupDialog(true))
+                                event(TimeRuleEvent.OpenEdite(it))
                             }
                         ),
                     item = it,
@@ -237,7 +237,7 @@ fun TimeRuleListUi(
                             showLimitDialog = true
                             return@CustomOutlinedButton
                         }
-                        event(TimeRuleEvent.ShowSetupDialog(true))
+                        event(TimeRuleEvent.OpenCreate)
                     },
                     text = stringResource(Res.string.oraliq_qoshish),
                     endingIcon = {
@@ -263,6 +263,21 @@ fun TimeRuleListUi(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        TimeRuleListUi(
+            navigator = null,
+            state = TimeRuleState(),
+            event = {},
+            sharedState = PolicySharedState()
+        )
     }
 }
 

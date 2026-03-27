@@ -82,6 +82,7 @@ import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
+import uz.tikoncha_parent.domain.use_case.chat.DeleteMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.DisconnectChatWebSocketUseCase
 import uz.tikoncha_parent.domain.use_case.chat.EditMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
@@ -223,6 +224,7 @@ val sharedModule = module {
     single { PurchaseIApPremiumUseCase(get() ) }
     single { ChildInfoEditUseCase(get() ) }
     single { UserInfoEditUseCase(get()) }
+    single { DeleteMessageUseCase(get()) }
 
 
 
@@ -256,7 +258,9 @@ val sharedModule = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            get(),
+            get(),
         )
     }
 

@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.data.remote.model
 
 import kotlinx.serialization.Serializable
+import uz.tikoncha_parent.domain.model.ChatMessageMetaDto
 
 
 @Serializable
@@ -14,7 +15,10 @@ data class WSSendMessage(
     val chat_id: String,
     val type: String,
     val text: String,
+    val reply_to_id: String?,
     val client_msg_id: String?,
+    val attachment_url: String?,
+    val meta: ChatMessageMetaDto?
 )
 
 @Serializable

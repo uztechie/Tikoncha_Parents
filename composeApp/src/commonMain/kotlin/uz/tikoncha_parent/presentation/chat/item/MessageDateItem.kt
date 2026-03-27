@@ -28,8 +28,6 @@ fun MessageDateItem(
     modifier: Modifier = Modifier,
     date: ChatDateLabel,
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -38,7 +36,7 @@ fun MessageDateItem(
         Box(
             modifier = Modifier
                 .background(
-                    color = MaterialTheme.extendedColor.disabledBgColor,
+                    color = MaterialTheme.extendedColor.cardColor,
                     shape = RoundedCornerShape(CardCornerRadius)
                 )
                 .padding(vertical = 4.dp, horizontal = 15.dp),
@@ -50,10 +48,7 @@ fun MessageDateItem(
                 modifier = Modifier
             )
         }
-
-
     }
-
 }
 
 @Preview

@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,13 +43,15 @@ fun UserStatsItem(
     title: String,
     value: String,
     icon: Painter,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
 
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(TextFieldCornerRadius))
             .background(MaterialTheme.extendedColor.cardColor)
+            .clickable(onClick = onClick)
             .padding(AppIconInnerPadding)
     ) {
 
