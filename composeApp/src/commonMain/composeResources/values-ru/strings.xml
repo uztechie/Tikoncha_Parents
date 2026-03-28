@@ -367,5 +367,6 @@
     <string name="telegram_kod_kiritish">Введите код, отправленный в Telegram, привязанный к номеру %1$s</string>
     <string name="xato_kod_kiritdingiz">Вы ввели неверный код</string>
     <string name="kod_olish_usulini_ozgartirish">Изменить способ получения кода</string>
+    <string name="versiya">Версия</string>
 
 </resources>

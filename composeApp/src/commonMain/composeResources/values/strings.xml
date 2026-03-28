@@ -372,5 +372,6 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="telegram_kod_kiritish">%1$s raqamiga ulangan Telegramga yuborilgan kodni kiriting</string>
     <string name="xato_kod_kiritdingiz">Xato kod kirdingiz</string>
     <string name="kod_olish_usulini_ozgartirish">Kod olish usulini o‘zgartirish</string>
+    <string name="versiya">Versiya</string>
 
 </resources>

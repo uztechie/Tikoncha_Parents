@@ -6,9 +6,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -37,6 +39,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.platform.getAppVersion
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
@@ -271,7 +274,17 @@ fun ProfileUi(
                     section = data.section
                 )
             }
-            SpaceLarge()
+
+            SpaceMedium()
+            Text(
+                text = "${stringResource(Res.string.versiya)}: ${getAppVersion()}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.extendedColor.textColor,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            SpaceMedium()
         }
     }
 }
