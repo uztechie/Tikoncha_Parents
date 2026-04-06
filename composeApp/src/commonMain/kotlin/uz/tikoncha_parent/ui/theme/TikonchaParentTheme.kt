@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import uz.tikoncha_parent.data.mapper.ExtendedColors
 import uz.tikoncha_parent.platform.SystemBarTheme
@@ -89,10 +91,15 @@ private val DarkExtendedColorScheme = ExtendedColors(
 val MaterialTheme.extendedColor: ExtendedColors
     @Composable get() = LocalExtendedColors.current
 
+private val TikonchaLocalExtendedColors = staticCompositionLocalOf<TikonchaExtendedColors> {
+    TikonchaParentLightExtendedColors
+}
+
+val AppColors @Composable get() = TikonchaLocalExtendedColors.current
 
 @Composable
 fun TikonchaParentTheme(
-    mode: ThemeMode,
+    mode: ThemeMode = ThemeMode.DARK,
     content: @Composable () -> Unit
 ) {
     val isDark = when (mode) {
@@ -108,10 +115,18 @@ fun TikonchaParentTheme(
 
     val extendedColor = if (isDark) DarkExtendedColorScheme else LightExtendedColorScheme
 
+    val tikonchaColors = if (isDark) {
+        TikonchaParentDarkExtendedColors
+    } else {
+        TikonchaParentLightExtendedColors
+    }
 
 
-    MaterialTheme(colorScheme = colorScheme) {
-        ProvideExtendedColors(extendedColor) {
+    CompositionLocalProvider(
+        LocalExtendedColors provides extendedColor,
+        TikonchaLocalExtendedColors provides tikonchaColors,
+    ) {
+        MaterialTheme(colorScheme = colorScheme) {
             val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
 
             if (!inPreview) {

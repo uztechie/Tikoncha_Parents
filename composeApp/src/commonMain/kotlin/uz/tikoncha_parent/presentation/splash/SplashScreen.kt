@@ -24,6 +24,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tikoncha_logo
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SplashScreen : Screen {
@@ -74,5 +75,7 @@ class SplashScreen : Screen {
 @Preview
 @Composable
 fun Preview(){
-    SplashScreen().Content()
+    TikonchaParentTheme(){
+        SplashScreen().Content()
+    }
 }

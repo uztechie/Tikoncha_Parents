@@ -50,6 +50,7 @@ import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -132,7 +133,7 @@ fun LoginUi(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.extendedColor.backgroundColor)
+                .background(AppColors.bg.page)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
