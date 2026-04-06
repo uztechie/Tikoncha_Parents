@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import uz.tikoncha_parent.data.mapper.ExtendedColors
@@ -95,7 +96,12 @@ private val TikonchaLocalExtendedColors = staticCompositionLocalOf<TikonchaExten
     TikonchaParentLightExtendedColors
 }
 
+private val LocalTikonchaTypography = staticCompositionLocalOf<TikonchaTypography> {
+    error("TikonchaTypography not provided")
+}
+
 val AppColors @Composable get() = TikonchaLocalExtendedColors.current
+val AppTypography @Composable get() = LocalTikonchaTypography.current
 
 @Composable
 fun TikonchaParentTheme(
@@ -112,6 +118,7 @@ fun TikonchaParentTheme(
         isDark -> DarkColorScheme
         else -> LightColorScheme
     }
+    val typographyPack = remember { createTypography() }
 
     val extendedColor = if (isDark) DarkExtendedColorScheme else LightExtendedColorScheme
 
@@ -125,8 +132,9 @@ fun TikonchaParentTheme(
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColor,
         TikonchaLocalExtendedColors provides tikonchaColors,
+        LocalTikonchaTypography provides typographyPack,
     ) {
-        MaterialTheme(colorScheme = colorScheme) {
+        MaterialTheme(colorScheme = colorScheme, typography = typographyPack.material3) {
             val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
 
             if (!inPreview) {
