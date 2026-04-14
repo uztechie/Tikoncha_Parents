@@ -288,8 +288,7 @@ fun ProfileUi(
                 text = "${stringResource(Res.string.versiya)}: $appVersion",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.extendedColor.textColor,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             SpaceMedium()
