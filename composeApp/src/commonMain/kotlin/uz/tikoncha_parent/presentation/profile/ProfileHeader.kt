@@ -9,33 +9,30 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import uz.tikoncha_parent.ui.ProfileImageSize
-import uz.tikoncha_parent.ui.ShapeCornerRadius
-import uz.tikoncha_parent.ui.SmallIconButtonSize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.ui.LargeTextSize
+import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileHeader(
@@ -47,9 +44,7 @@ fun ProfileHeader(
 ) {
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -58,19 +53,17 @@ fun ProfileHeader(
                 .size(ProfileImageSize),
             contentAlignment = Alignment.BottomEnd
         ) {
-            Logger.d("Profile","image: ${state.profileImageUrl}")
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.extendedColor.backgroundColor)
-                    .border(width = 2.dp, color = MaterialTheme.extendedColor.cardColor, shape = RoundedCornerShape(50))
-            ){
+                    .border(width = 2.dp, color = AppColors.border.tertiary, shape = CircleShape)
+            ) {
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.extendedColor.backgroundColor),
+                        .background(AppColors.bg.tertiary),
                     model = state.profileImageUrl,
                     placeholder = painterResource(Res.drawable.profile_hedgehog_img),
                     error = painterResource(Res.drawable.profile_hedgehog_img),
@@ -81,21 +74,20 @@ fun ProfileHeader(
 
             IconButton(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(ShapeCornerRadius))
-                    .background(MaterialTheme.extendedColor.tonalButtonColor)
-                    .size(SmallIconButtonSize),
+                    .clip(CircleShape)
+                    .border(2.dp, AppColors.border.secondarySubtle, CircleShape)
+                    .background(AppColors.bg.surface)
+                    .size(32.dp),
                 onClick = {
                     onSelectImageButtonClick()
                 },
-
-                ) {
-
+            ) {
                 Icon(
                     painter = painterResource(Res.drawable.camera),
                     contentDescription = "",
-                    tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = 0.8f),
+                    tint = AppColors.icon.accentPrimary,
                     modifier = Modifier
-                        .fillMaxSize(0.75f)
+                        .size(NormalIconSize)
                 )
             }
         }
@@ -107,10 +99,10 @@ fun ProfileHeader(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomText(
+            Text(
                 text = "$lastName  $firstName  $fathersName",
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.SemiBold,
+                style = AppTypography.emphasizedXlSemiBold,
+                color = AppColors.text.primary,
             )
         }
     }
@@ -120,8 +112,8 @@ fun ProfileHeader(
 @Composable
 private fun Pre() {
     TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
+        ThemeMode.LIGHT
+    ) {
         ProfileHeader(
             lastName = "Ahmadjonov",
             firstName = "Husniddin",

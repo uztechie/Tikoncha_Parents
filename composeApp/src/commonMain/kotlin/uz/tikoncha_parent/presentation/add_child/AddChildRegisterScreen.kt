@@ -42,10 +42,9 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -218,9 +217,7 @@ fun AddChildRegisterUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = enableButton,
-                text = stringResource(Res.string.qoshish),
-                fontWeight = FontWeight.W500,
-                fontSize = NormalTextSize
+                text = stringResource(Res.string.qoshish)
             )
             SpaceLarge()
         }

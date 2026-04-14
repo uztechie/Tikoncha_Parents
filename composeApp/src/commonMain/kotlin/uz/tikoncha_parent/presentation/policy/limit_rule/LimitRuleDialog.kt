@@ -38,7 +38,7 @@ import tikoncha_parents.composeapp.generated.resources.har_kuni
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.soat
 import tikoncha_parents.composeapp.generated.resources.soatbay
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
@@ -215,8 +215,7 @@ fun LimitRuleDialog(
                         .height(DialogButtonHeight),
                     text = stringResource(Res.string.saqlash),
                     shape = RoundedCornerShape(ButtonCornerRadius),
-                    textColor = OnPrimaryColor,
-                    fontWeight = FontWeight.SemiBold
+                    textColor = OnPrimaryColor
                 )
             }
         }

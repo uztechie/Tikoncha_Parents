@@ -368,5 +368,37 @@
     <string name="xato_kod_kiritdingiz">Вы ввели неверный код</string>
     <string name="kod_olish_usulini_ozgartirish">Изменить способ получения кода</string>
     <string name="versiya">Версия</string>
+    <string name="ozingiz_qoshing">Добавьте сами</string>
+    <string name="tavsiya_etilgan_paketlar">Рекомендуемые пакеты</string>
+    <string name="coins_help_use_title">Монеты Bilimdon AI</string>
+    <string name="coins_help_earn_title">Как накопить монеты?</string>
+    <string name="coins_help_use_intro">Монеты Bilimdon AI — это цифровые единицы внутри Tikoncha для общения с Bilimdon AI.</string>
+    <string name="coins_help_earn_intro">Монеты Bilimdon AI можно копить несколькими способами:</string>
+    <string-array name="coins_help_use_bullets">
+        <item>Задавать вопросы Bilimdon AI</item>
+        <item>Получать краткие и понятные объяснения по книгам, темам или заданиям</item>
+        <item>Закреплять знания и ускорять обучение</item>
+    </string-array>
+    <string-array name="coins_help_earn_bullets">
+        <item>Регулярно пользоваться приложением</item>
+        <item>Выполнять учебные задания и активно участвовать</item>
+        <item>Участвовать в специальных задачах или поощрительных активностях</item>
+        <item>Получать дополнительные возможности от родителей</item>
+    </string-array>
+    <string name="coins_help_use_note">За каждый вопрос или запрос списывается определённое количество монет. Сумма может зависеть от сложности вопроса и объёма ответа.</string>
+    <string name="coins_help_earn_note">Монеты накапливаются постепенно и в любой момент могут быть потрачены на услуги Bilimdon AI.</string>
+    <string name="coins_help_close">Закрыть</string>
+    <string name="qollash">Применить</string>
+    <string name="promokod">Промокод</string>
+    <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Вы успешно купили монеты.</string>
+    <string name="narx">Цена</string>
+    <string name="jami">Всего</string>
+    <string name="bekor_qilindi">Отменено!</string>
+    <string name="sorov_holati">Cтатус запроса</string>
+    <string name="qanday_qilib_ishlatish">Как пользоваться</string>
+    <string name="qanday_qilib_ishlab_topish">Как заработать</string>
+    <string name="yangilanish_mavjud">Доступно обновление</string>
+    <string name="app_update_desc">Tikoncha стала ещё стабильнее и удобнее. Обновите приложение, чтобы использовать последние возможности.</string>
+    <string name="yangilash">Обновить</string>
 
 </resources>

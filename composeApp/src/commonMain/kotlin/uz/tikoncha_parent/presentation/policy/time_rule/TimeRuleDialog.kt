@@ -35,7 +35,7 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tugashi
 import tikoncha_parents.composeapp.generated.resources.ushbu_oraliqdan_tashqari
 import tikoncha_parents.composeapp.generated.resources.vaqt
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
@@ -302,8 +302,7 @@ fun TimeRuleDialog(
                         .height(DialogButtonHeight),
                     text = stringResource(Res.string.saqlash),
                     shape = RoundedCornerShape(ButtonCornerRadius),
-                    textColor = OnPrimaryColor,
-                    fontWeight = FontWeight.SemiBold
+                    textColor = OnPrimaryColor
                 )
 
 

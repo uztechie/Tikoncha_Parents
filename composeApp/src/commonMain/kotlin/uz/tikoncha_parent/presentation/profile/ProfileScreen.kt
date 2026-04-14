@@ -3,6 +3,7 @@ package uz.tikoncha_parent.presentation.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -10,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -20,16 +23,10 @@ import uz.tikoncha_parent.data.mapper.toUploadPart
 import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
 import uz.tikoncha_parent.platform.rememberImagePicker
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.common.TransparentQrScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsScreen
-import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInformationScreen
-import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -37,15 +34,20 @@ import org.koin.compose.koinInject
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.platform.getAppVersion
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
-import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
+import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
+import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
+import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.task.TaskEvent
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.task.TaskViewModel
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -60,13 +62,13 @@ class ProfileScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        val useCase: MyCoinsUseCase = koinInject()
-        val coinCase: GetCoinPackagesUseCase = koinInject()
+        val useCase: GetMyCoinsUseCase = koinInject()
+        val coinCase: GetCoinPackageListUseCase = koinInject()
         val childCase: ChildrenUseCase = koinInject()
         val coinsViewModel = remember {
-            MyCoinsViewModel(
-                useCase = useCase,
-                getCoinPackagesUseCase = coinCase,
+            CoinsViewModel(
+                getMyCoinsUseCase = useCase,
+                coinsPackageListUseCase = coinCase,
                 childrenUseCase = childCase
             )
         }
@@ -74,16 +76,16 @@ class ProfileScreen : Screen {
             coinsViewModel.load()
         }
         val ui by coinsViewModel.state.collectAsStateWithLifecycle()
-        val aiTokens = ui.coins
+        val aiTokens = ui.myCoins
 
         val taskViewModel = koinScreenModel<TaskViewModel>()
         val taskState by taskViewModel.state.collectAsStateWithLifecycle()
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             taskViewModel.onEvent(TaskEvent.LoadAllChildrenActiveTasks)
         }
         val activeTasksCount = taskState.allChildrenActiveTaskCount
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             event(ProfileEvent.LoadAvatarFromServer)
         }
 
@@ -91,7 +93,7 @@ class ProfileScreen : Screen {
             navigator = navigator,
             event = event,
             state = state.value,
-            aiTokens = aiTokens?:0,
+            aiTokens = aiTokens ?: 0,
             activeTasksCount = activeTasksCount,
         )
     }
@@ -107,35 +109,6 @@ fun ProfileUi(
 ) {
     var showQrCode by remember { mutableStateOf(false) }
 
-    val sections = remember {
-        mutableStateListOf(
-            ProfileSectionItemData(
-                painter = Res.drawable.profile_info,
-                section = ProfileSection.PERSONAL_INFORMATION
-            ),
-            ProfileSectionItemData(
-                painter = Res.drawable.family,
-                section = ProfileSection.CHILDREN
-            ),
-            ProfileSectionItemData(
-                painter = Res.drawable.global,
-                section = ProfileSection.LANGUAGE
-            ),
-            ProfileSectionItemData(
-                painter = Res.drawable.settings,
-                section = ProfileSection.SETTINGS
-            ),
-            ProfileSectionItemData(
-                painter = Res.drawable.crown,
-                section = ProfileSection.SUBSCRIPTIONS
-            ),
-            ProfileSectionItemData(
-                painter = Res.drawable.coins,
-                section = ProfileSection.COINS
-            ),
-        )
-    }
-
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val launchPicker = rememberImagePicker { picked ->
         val bitmap = decodeImageBitmapOrNull(picked.bytes)
@@ -146,9 +119,9 @@ fun ProfileUi(
 
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
 
-    if (showQrCode){
+    if (showQrCode) {
         TransparentQrScreen(
-            painter =  painter,
+            painter = painter,
             onDismissRequest = {
                 showQrCode = false
             }
@@ -159,14 +132,14 @@ fun ProfileUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.bg.page)
     ) {
         CustomHeader(
             showBackButton = true,
+            title = stringResource(Res.string.profil),
             onBackClick = {
                 navigator?.pop()
-            },
-            title = stringResource(Res.string.profil),
+            }
         )
 
         Column(
@@ -175,28 +148,26 @@ fun ProfileUi(
                 .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            SpaceSmall()
+            Spacer(Modifier.height(16.dp))
+
             ProfileHeader(
-                firstName = state.userInfo?.name?:"",
-                lastName = state.userInfo?.lastName?:"",
-                fathersName = state.userInfo?.patronymic?:"",
+                state = state,
+                firstName = state.userInfo?.name ?: "",
+                lastName = state.userInfo?.lastName ?: "",
+                fathersName = state.userInfo?.patronymic ?: "",
                 onSelectImageButtonClick = {
                     launchPicker()
-                },
-                state = state
+                }
             )
-
-            SpaceLarge()
+            Spacer(Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) {
-
                 UserStatsItem(
+                    icon = painterResource(Res.drawable.coin_3d),
                     title = stringResource(Res.string.tangachalaringiz),
                     value = "$aiTokens ${stringResource(Res.string.ta)}",
-                    icon = painterResource(Res.drawable.coin),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
                         .weight(1f),
@@ -204,13 +175,12 @@ fun ProfileUi(
                         navigator?.push(CoinsScreen())
                     }
                 )
-
-                SpaceSmall()
+                Spacer(Modifier.width(12.dp))
 
                 UserStatsItem(
+                    icon = painterResource(Res.drawable.file_3d),
                     title = stringResource(Res.string.faol_vazifalar),
                     value = "$activeTasksCount ${stringResource(Res.string.ta)}",
-                    icon = painterResource(Res.drawable.file_png),
                     modifier = Modifier
                         .height(ProfileStatsContainerHeight)
                         .weight(1f),
@@ -219,65 +189,103 @@ fun ProfileUi(
                     }
                 )
             }
-            SpaceLarge()
+            Spacer(Modifier.height(12.dp))
 
-            CustomOutlinedButton(
+            CustomButtonDash(
                 text = stringResource(Res.string.farzand_qo_shish),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { navigator?.push(AddChildScreen()) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.add),
+                        contentDescription = "",
+                        tint = AppColors.icon.accentPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            )
+            Spacer(Modifier.height(12.dp))
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight),
-                endingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add_square),
-                        contentDescription = "",
-                        tint = PrimaryColor
-                    )
-                },
-                onClick = { navigator?.push(AddChildScreen())},
-                textColor = PrimaryColor,
-                borderColor = PrimaryColor
-            )
-            SpaceLarge()
-
-            sections.forEach { data ->
+                    .background(AppColors.bg.surface, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 8.dp)
+            ) {
+                ProfileSectionItem(
+                    title = stringResource(Res.string.shaxsiy_malumotlar),
+                    icon = painterResource(Res.drawable.person),
+                    onItemClick = {
+                        navigator?.push(PersonalInformationScreen())
+                    }
+                )
 
                 ProfileSectionItem(
-                    icon = painterResource(data.painter),
-                    onItemClick = { section ->
-                        when (section) {
+                    title = stringResource(Res.string.farzandlaringiz),
+                    icon = painterResource(Res.drawable.person),
+                    onItemClick = {
+                        navigator?.push(ChildrenScreen())
+                    }
+                )
 
-                            ProfileSection.PERSONAL_INFORMATION -> {
-                                navigator?.push(PersonalInformationScreen())
-                            }
+                ProfileSectionItem(
+                    title = stringResource(Res.string.sozlamalar),
+                    icon = painterResource(Res.drawable.settings),
+                    onItemClick = {
+                        navigator?.push(SettingsScreen())
+                    }
+                )
 
-                            ProfileSection.CHILDREN -> {
-                                navigator?.push(ChildrenScreen())
-                            }
+                ProfileSectionItem(
+                    title = stringResource(Res.string.til),
+                    icon = painterResource(Res.drawable.global),
+                    onItemClick = {
+                        navigator?.push(LanguageScreen())
+                    }
+                )
 
-                            ProfileSection.LANGUAGE -> {
-                                navigator?.push(LanguageScreen())
-                            }
+                ProfileSectionItem(
+                    title = stringResource(Res.string.obuna),
+                    icon = painterResource(Res.drawable.telegrams_star),
+                    onItemClick = {
+                        navigator?.push(SubscriptionPaymentScreen())
+                    }
+                )
 
-                            ProfileSection.SETTINGS -> {
-                                navigator?.push(SettingsScreen())
-                            }
+                ProfileSectionItem(
+                    title = stringResource(Res.string.tangachalar),
+                    icon = painterResource(Res.drawable.coins_profile),
+                    onItemClick = {
+                        navigator?.push(CoinsScreen())
+                    }
+                )
 
-                            ProfileSection.SUBSCRIPTIONS -> {
-                                navigator?.push(SubscriptionPaymentScreen())
-                            }
+                ProfileSectionItem(
+                    title = stringResource(Res.string.biz_haqimizda),
+                    icon = painterResource(Res.drawable.info_profile_us),
+                    onItemClick = {
 
-                            ProfileSection.COINS -> {
-                                navigator?.push(CoinsScreen())
-                            }
-                        }
-                    },
-                    section = data.section
+                    }
+                )
+
+                ProfileSectionItem(
+                    divider = false,
+                    title = stringResource(Res.string.chiqish),
+                    icon = painterResource(Res.drawable.logout),
+                    onItemClick = {
+
+                    }
                 )
             }
 
             SpaceMedium()
+            val appVersion = if (LocalInspectionMode.current) {
+                "1.0.0"
+            } else {
+                getAppVersion()
+            }
             Text(
-                text = "${stringResource(Res.string.versiya)}: ${getAppVersion()}",
+                text = "${stringResource(Res.string.versiya)}: $appVersion",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.extendedColor.textColor,
                 modifier = Modifier
@@ -291,10 +299,10 @@ fun ProfileUi(
 
 @Preview
 @Composable
-private fun PreviewProfileScreen(){
+private fun PreviewProfileScreen() {
     TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
+        ThemeMode.LIGHT
+    ) {
         ProfileUi(
             navigator = null,
             state = ProfileState(),

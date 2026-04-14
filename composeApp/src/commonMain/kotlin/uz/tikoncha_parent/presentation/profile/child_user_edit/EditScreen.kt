@@ -1,9 +1,5 @@
 package uz.tikoncha_parent.presentation.profile.child_user_edit
 
-import uz.tikoncha_parent.presentation.register.RegisterEvent
-import uz.tikoncha_parent.presentation.register.RegisterState
-import uz.tikoncha_parent.presentation.register.RegisterViewmodel
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontStyle
@@ -42,7 +37,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.parameter.parametersOf
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.domain.model.GenderType
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -153,8 +148,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -174,8 +168,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -195,8 +188,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -215,8 +207,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -247,9 +238,7 @@ fun EditUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = isValid,
-                text = stringResource(Res.string.saqlash),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalTextSize
+                text = stringResource(Res.string.saqlash)
             )
         }
     }

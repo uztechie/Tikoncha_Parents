@@ -78,8 +78,7 @@ fun PhoneNumberInputField(
                     .fillMaxWidth()
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
-                containerColor = Color.Transparent,
-                fontWeight = FontWeight.W500
+                containerColor = Color.Transparent
 
             )
         }

@@ -129,8 +129,7 @@ fun ChatUi(
         } else {
             Column(
                 modifier = Modifier.padding(horizontal = ContainerPadding)
-            )
-            {
+            ) {
                 LazyColumn {
 
                     items(

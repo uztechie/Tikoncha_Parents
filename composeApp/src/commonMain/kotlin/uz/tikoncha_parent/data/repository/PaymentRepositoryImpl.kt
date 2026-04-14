@@ -8,9 +8,13 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
+import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 
-class PaymentRepositoryImpl(private val api: PaymentApiService): PaymentRepository {
+class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentRepository {
+
     override suspend fun subscriptionPayment(subscriptionPaymentRequest: SubscriptionPaymentRequest): SubscriptionPaymentResponse {
         return api.subscriptionPayment(subscriptionPaymentRequest)
     }
@@ -29,6 +33,14 @@ class PaymentRepositoryImpl(private val api: PaymentApiService): PaymentReposito
 
     override suspend fun promoCodeValidation(promoCodeValidationRequest: PromoCodeValidationRequest): PromoCodeValidationResponse {
         return api.promoCodeValidation(promoCodeValidationRequest)
+    }
+
+    override suspend fun coinPackages(): CoinPackageListResponse {
+        return api.coinPackageList()
+    }
+
+    override suspend fun purchaseCoin(purchaseCoinRequest: PurchaseCoinRequest): PurchaseCoinResponse {
+        return api.purchaseCoin(purchaseCoinRequest)
     }
 
 

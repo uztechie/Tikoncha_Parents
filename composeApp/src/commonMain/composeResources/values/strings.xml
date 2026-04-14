@@ -373,5 +373,39 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="xato_kod_kiritdingiz">Xato kod kirdingiz</string>
     <string name="kod_olish_usulini_ozgartirish">Kod olish usulini o‘zgartirish</string>
     <string name="versiya">Versiya</string>
+    <string name="biz_haqimizda">Biz haqimizda</string>
+    <string name="ozingiz_qoshing">O‘zingiz qo‘shing</string>
+    <string name="tavsiya_etilgan_paketlar">Tavsiya etilgan paketlar</string>
+    <string name="tanga_s">%1$s tanga</string>
+    <string name="coins_help_use_title">Bilimdon AI tangachalari</string>
+    <string name="coins_help_earn_title">Tangachalarni qanday jamg‘arish mumkin?</string>
+    <string name="coins_help_use_intro">Bilimdon AI tangachalari — bu Tikoncha ichida Bilimdon AI bilan muloqot qilish uchun ishlatiladigan raqamli birliklar.</string>
+    <string name="coins_help_earn_intro">Bilimdon AI tangachalarini bir necha yo‘l bilan jamg‘arishingiz mumkin:</string>
+    <string-array name="coins_help_use_bullets">
+        <item>Bilimdon AI’dan savol so‘rash</item>
+        <item>Kitoblar, mavzular yoki topshiriqlar bo‘yicha qisqa va tushunarli tushuntirishlar olish</item>
+        <item>Bilimni mustahkamlash va o‘rganishni tezlashtirish</item>
+    </string-array>
+    <string-array name="coins_help_earn_bullets">
+        <item>Ilovadan muntazam foydalanish orqali</item>
+        <item>Ta’limiy topshiriqlarni bajarish va faol qatnashish orqali</item>
+        <item>Maxsus vazifalar yoki rag‘batlantiruvchi faoliyatlarda ishtirok etish orqali</item>
+        <item>Ota-ona tomonidan beriladigan qo‘shimcha imkoniyatlar orqali</item>
+    </string-array>
+    <string name="coins_help_use_note">Har bir savol yoki so‘rov uchun ma’lum miqdorda tangacha sarflanadi. Miqdor savol murakkabligi va javob hajmiga bog‘liq bo‘lishi mumkin.</string>
+    <string name="coins_help_earn_note">Tangachalar bosqichma-bosqich yig‘iladi va keyin istalgan vaqtda Bilimdon AI xizmatlaridan foydalanish uchun sarflanishi mumkin.</string>
+    <string name="coins_help_close">Yopish</string>
+    <string name="qollash">Qo‘llash</string>
+    <string name="promokod">Promokod</string>
+    <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Siz tangachalarni muvaqqiyatli sotib oldingiz.</string>
+    <string name="narx">Narx</string>
+    <string name="jami">Jami</string>
+    <string name="bekor_qilindi">Bekor qilindi!</string>
+    <string name="sorov_holati">So‘rov holati</string>
+    <string name="qanday_qilib_ishlatish">Qanday qilib ishlatish</string>
+    <string name="qanday_qilib_ishlab_topish">Qanday qilib jamg‘arish</string>
+    <string name="yangilanish_mavjud">Yangilanish mavjud</string>
+    <string name="app_update_desc">Tikoncha yanada barqaror va qulay bo‘ldi. Eng so‘nggi imkoniyatlardan foydalanish uchun ilovani yangilang.</string>
+    <string name="yangilash">Yangilash</string>
 
 </resources>

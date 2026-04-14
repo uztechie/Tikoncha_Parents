@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.SubscriptionDuration

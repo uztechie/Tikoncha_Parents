@@ -207,7 +207,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         tertiary = Color(0xFF85888E),                           // neutral.500
         accentEmphasis = Color(0xFFF9F5EF),                     // orange.50
         disabled = Color(0xFFEFEFF0),                           // neutral.200
-        primaryHover = Color(0xFF9C7749),                       // orange.600
+        primaryHover = Color(0xFF409452),                       // green.600
         primaryPressed = Color(0xFF755937),                     // orange.700
         secondaryPressed = Color(0xFFDCDDDF),                   // neutral.300
         accentEmphasisPressed = Color(0xFFF3EADE),              // orange.100
@@ -311,7 +311,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         secondarySubtle = Color(0xFF2F3137),                    // neutral.700
     ),
     button = ButtonColors(
-        primary = Color(0xFF4BB462),                            // green.500
+        primary = Color(0xFFC3955B),                            // orange.500
         secondary = Color(0xFF2F3137),                          // neutral.700
         tertiary = Color(0xFF22262F),                           // neutral.800
         accentEmphasis = Color(0xFF2F3137),                     // neutral.700

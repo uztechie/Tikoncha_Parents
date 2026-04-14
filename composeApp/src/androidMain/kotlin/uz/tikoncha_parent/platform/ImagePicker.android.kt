@@ -14,9 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-
+import androidx.compose.ui.platform.LocalInspectionMode
 @Composable
 actual fun rememberImagePicker(onPickedImage: (PickedImage) -> Unit): () -> Unit {
+    if (LocalInspectionMode.current) {
+        return remember { {} }
+    }
     val context = LocalContext.current
     val activity = context.findActivity() ?: error("Activity not found")
 

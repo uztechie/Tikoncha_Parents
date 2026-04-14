@@ -41,10 +41,9 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.data.local.AppSettings
@@ -252,7 +251,7 @@ fun PaymentTypeScreenUi(
                 if (isIos() && state.isTestAccount) {
                     PaymentOption(
                         modifier = Modifier.weight(1f),
-                        paymentType = PaymentType.AppStore,
+//                        paymentType = PaymentType.AppStore,
                         isSelected = state.selectedPaymentType == PaymentType.AppStore,
                         onClick = {
                             event(PaymentEvent.SetPaymentType(PaymentType.AppStore))
@@ -261,7 +260,7 @@ fun PaymentTypeScreenUi(
                 }
                 PaymentOption(
                     modifier = Modifier.weight(1f),
-                    paymentType = PaymentType.Click,
+//                    paymentType = PaymentType.Click,
                     isSelected = state.selectedPaymentType == PaymentType.Click,
                     onClick = {
                         event(PaymentEvent.SetPaymentType(
@@ -646,7 +645,6 @@ fun PaymentTypeScreenUi(
                     .height(ButtonHeight),
                 text = stringResource(Res.string.sotib_olish),
                 enabled = state.paymentStatus != PaymentStatus.PENDING && state.selectedPaymentType != null,
-                fontSize = NormalLargeTextSize,
                 onClick = {
                     event(PaymentEvent.Pay)
                 }

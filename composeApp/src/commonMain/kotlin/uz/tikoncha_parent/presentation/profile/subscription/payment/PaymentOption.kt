@@ -13,10 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.*
 import uz.tikoncha_parent.ui.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.click_pay
+import uz.tikoncha_parent.presentation.base.CustomRadio
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.simpleShadow
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -24,23 +30,18 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 @Composable
 fun PaymentOption(
     modifier: Modifier = Modifier,
-    paymentType: PaymentType,
+    painter: Painter = painterResource(Res.drawable.click_pay),
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
 
-    val interactionSource = remember { MutableInteractionSource() }
-
     Box(
         modifier = modifier
-            .height(72.dp)
-            .border(1.dp, BorderColor, RoundedCornerShape(TextFieldCornerRadius))
-            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { onClick() }
-            .padding(horizontal = 35.dp),
+            .height(64.dp)
+            .simpleShadow(RoundedCornerShape(16.dp))
+            .background(AppColors.bg.surface, RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
@@ -48,27 +49,14 @@ fun PaymentOption(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (paymentType.icon != null){
-                Image(
-                    painter = painterResource(paymentType.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                )
-            }
-            else{
-                CustomText(
-                    text = paymentType.title?:"",
-                    color = MaterialTheme.extendedColor.onBackgroundColor,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-
-            RadioButton(
-                selected = isSelected,
-                onClick = null,
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = PrimaryColor
-                )
+            Image(
+                painter = painter,
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(0.25f),
+            )
+            CustomRadio(
+                checked = isSelected,
+                onChecked = { }
             )
         }
     }
@@ -82,7 +70,6 @@ private fun Preview() {
     TikonchaParentTheme(mode = ThemeMode.DARK){
         PaymentOption(
             onClick = {},
-            paymentType = PaymentType.AppStore,
             isSelected = false
         )
     }

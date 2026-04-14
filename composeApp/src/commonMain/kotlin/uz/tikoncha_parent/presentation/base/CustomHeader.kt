@@ -7,6 +7,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -27,7 +30,6 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun CustomHeader(
     modifier: Modifier = Modifier,
     title: String = "",
-    fonWeight: FontWeight = FontWeight.W500,
     showBackButton: Boolean = false,
     onBackClick: () -> Unit = {},
     trailingIcon: (@Composable () -> Unit)? = null,
@@ -48,10 +50,10 @@ fun CustomHeader(
             .height(HeaderHeight)
             .topShadow(
                 shape = RoundedCornerShape(ShapeCornerRadius),
-                color = MaterialTheme.extendedColor.backgroundColor
+                color = AppColors.bg.page
             )
             .background(
-                color = MaterialTheme.extendedColor.backgroundColor,
+                color = AppColors.bg.page,
                 shape = bottomRoundedShape
             )
             .padding(horizontal = ContainerPadding),
@@ -81,12 +83,11 @@ fun CustomHeader(
             SpaceMedium()
         }
 
-        CustomText(
+        Text(
             text = title,
-            fontSize = LargeTextSize,
-            fontWeight = fonWeight,
+            style = AppTypography.headlineSmSemiBold,
+            color = AppColors.text.primary,
             maxLines = 1,
-            modifier = Modifier
         )
         SpaceMedium()
         Spacer(modifier = Modifier.weight(1f))

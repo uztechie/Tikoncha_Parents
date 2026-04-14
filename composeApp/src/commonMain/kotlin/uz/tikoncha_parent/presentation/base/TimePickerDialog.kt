@@ -46,7 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.coverShadow
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -141,8 +141,7 @@ fun TimePickerDialog(
                                 .fillMaxWidth()
                                 .height(DialogButtonHeight),
                             text = stringResource(Res.string.saqlash),
-                            shape = RoundedCornerShape(TextFieldCornerRadius),
-                            fontWeight = FontWeight.SemiBold
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
                     }
                 }

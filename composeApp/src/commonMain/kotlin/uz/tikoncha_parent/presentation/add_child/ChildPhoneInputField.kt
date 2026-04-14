@@ -100,8 +100,7 @@ fun ChildPhoneInputField(
                     .height(TextFieldHeight),
                 visualTransformation = PhoneNumberTransformation(),
                 containerColor = MaterialTheme.extendedColor.backgroundColor,
-                contentColor = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor,
-                fontWeight = FontWeight.W500
+                contentColor = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor
             )
         }
     }

@@ -2,8 +2,6 @@
 
 package uz.tikoncha_parent.presentation.task
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -25,7 +23,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.TodoUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
@@ -39,7 +37,7 @@ class TaskViewModel(
     private val childrenUseCase: ChildrenUseCase,
     private val todoListUseCase: TodoListUseCase,
     private val updateTodoUseCase: UpdateTodoUseCase,
-    private val coinsUseCase: MyCoinsUseCase,
+    private val coinsUseCase: GetMyCoinsUseCase,
 ) : ScreenModel {
 
     private var requestTodoJob: Job? = null

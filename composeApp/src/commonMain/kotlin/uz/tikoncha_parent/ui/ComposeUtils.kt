@@ -41,7 +41,7 @@ val NormalIconButtonPadding = 8.dp
 val ChatHeaderAvatarSize = 44.dp
 val SmallIconButtonPadding = 5.dp
 
-val ButtonCornerRadius = 16.dp
+val ButtonCornerRadius = 24.dp
 val ButtonDialogCornerRadius = 12.dp
 
 val ChatMessageCornerRadius = 20.dp
@@ -54,7 +54,7 @@ val MainCornerRadius = 16.dp
 val ShapeCornerRadius = 10.dp
 val ItemElevation = 2.dp
 
-val SliderCornerRadius = 20.dp
+val SmallCardCornerRadius = 18.dp
 
 val TextFieldCornerRadius = 12.dp
 val CoinsCornerRadius = 8.dp
@@ -95,10 +95,10 @@ val AppIconInnerPadding: Dp = 10.dp
 val AppItemHeight: Dp = 60.dp
 val SmallIconSize: Dp = 18.dp
 val HomeIconSize: Dp = 90.dp
-val NormalIconSize: Dp = 22.dp
+val NormalIconSize: Dp = 20.dp
 val LargeIconSize: Dp = 28.dp
 
-val ProfileImageSize: Dp = 90.dp
+val ProfileImageSize: Dp = 100.dp
 
 val ProfileStatsContainerHeight: Dp = 85.dp
 

@@ -1,7 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.app_selection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,15 +35,13 @@ import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.dialog_subscription
 import tikoncha_parents.composeapp.generated.resources.ilovalar
 import tikoncha_parents.composeapp.generated.resources.jadval
-import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tez_kunda
 import tikoncha_parents.composeapp.generated.resources.veb_sayt
 import tikoncha_parents.composeapp.generated.resources.veb_sayt_tez_kunda_izoh
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomText

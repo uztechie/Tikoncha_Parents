@@ -42,9 +42,8 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -152,8 +151,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -171,8 +169,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -190,8 +187,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -225,8 +221,6 @@ fun Register(
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
             text = stringResource(Res.string.keyingisi),
-            fontWeight = FontWeight.W600,
-            fontSize = NormalTextSize
         )
         SpaceSmall()
         LegalLinksRow()

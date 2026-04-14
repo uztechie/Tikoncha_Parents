@@ -18,7 +18,7 @@ class ChatApiService (
     suspend fun chatList(): ChatListResponse =
         httpClient.safeRequest(
             method = HttpMethod.Get,
-            url = "chat/chats/",
+            url = "/chat/chats",
             block = {}
         )
 

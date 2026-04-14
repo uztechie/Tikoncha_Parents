@@ -11,31 +11,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.HomeIconSize
 import uz.tikoncha_parent.ui.HomeItemHeight
-import uz.tikoncha_parent.ui.LargeIconSize
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.LargeCardCornerRadius
 import uz.tikoncha_parent.ui.SpaceMedium
-import uz.tikoncha_parent.ui.UltraLargeIconButtonSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun NewHomeItem(
@@ -46,12 +38,12 @@ fun NewHomeItem(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(CardCornerRadius))
+                    .clip(RoundedCornerShape(LargeCardCornerRadius))
                     .clickable { onSettingSelected(selection) }
                     .height(HomeItemHeight)
                     .background(
-                        color = MaterialTheme.extendedColor.cardColor,
-                        shape = RoundedCornerShape(CardCornerRadius)
+                        color = AppColors.section.tertiary,
+                        shape = RoundedCornerShape(LargeCardCornerRadius)
                     )
                     .padding(horizontal = 20.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center
@@ -63,17 +55,15 @@ fun NewHomeItem(
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        CustomText(
+                        Text(
                             text = stringResource(selection.title),
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.extendedColor.titleColor,
+                            color = AppColors.text.primary,
+                            style = AppTypography.displaySmRegular
                         )
-                        CustomText(
+                        Text(
                             text = stringResource(selection.subtitle),
-                            fontSize = SmallTextSize,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.extendedColor.titleColor,
+                            color = AppColors.text.secondary,
+                            style = AppTypography.titleSmMedium,
                         )
                     }
                     SpaceMedium()
