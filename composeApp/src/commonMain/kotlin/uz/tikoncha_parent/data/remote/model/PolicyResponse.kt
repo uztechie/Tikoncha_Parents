@@ -29,6 +29,7 @@ data class PolicyDto(
     val priority: Int,
     val packages: List<String>? = emptyList(),
     val sites: List<String>? = emptyList(),
+    val categories: List<String>? = emptyList(),
     val time_rule: List<TimeRuleDto>? = emptyList(),
     val limit_rule: List<LimitRuleDto>? = emptyList(),
     val location_rule: LocationRuleDto? = null,
@@ -53,8 +54,8 @@ data class LimitRuleDto(
 
 @Serializable
 data class LocationRuleDto(
-    val polygon: List<List<Double>> = emptyList(), // [ [lat, lng], ... ]
-    val circle_radius: Int? = null,               // meters
+    val polygon: List<List<Double>>? = emptyList(), // [ [lat, lng], ... ]
+    val circle_radius: Double? = null,               // meters
     val center_latitude: Double? = null,               // meters
     val center_longitude: Double? = null,               // meters
     val location_include: Boolean,                // true => ichida, false => tashqarida

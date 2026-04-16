@@ -38,6 +38,26 @@ fun Modifier.verticalShadow(
 
 }
 
+@Composable
+fun Modifier.simpleShadow(
+    shape: Shape = RoundedCornerShape(20.dp),
+    radius: Dp = 25.dp,
+    spread: Dp = 0.dp,
+    offset: Dp = 0.dp,
+    color: Color = Color.Black.copy(alpha = 0.07f),
+) = composed {
+    this
+        .dropShadow(
+            shape = shape,
+            shadow = Shadow(
+                color = color,
+                offset = DpOffset(offset, offset),
+                radius = radius,
+                spread = spread
+            )
+        )
+}
+
 
 
 @Composable

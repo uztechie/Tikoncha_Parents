@@ -13,12 +13,14 @@ import uz.tikoncha_parent.data.mapper.toLocationRuleDto
 import uz.tikoncha_parent.data.mapper.toTimeRuleDtoList
 import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
 import uz.tikoncha_parent.data.remote.model.UpdatePolicyRequest
+import uz.tikoncha_parent.domain.model.PolicyResourceType
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicySetupViewModel(
@@ -33,258 +35,84 @@ class PolicySetupViewModel(
     val state = _state.asStateFlow()
 
 
-    fun onEvent(event: PolicySetupEvent){
-        when(event){
-            is PolicySetupEvent.SetLimitRule -> {
-                _state.value = _state.value.copy(
-                    limitList = event.list
-                )
-            }
-            is PolicySetupEvent.SetTimeRule -> {
-                _state.value = _state.value.copy(
-                    timeList = event.list
-                )
-
-            }
-
-            is PolicySetupEvent.SetLocationRule -> {
-                _state.update {
-                    it.copy(
-                        locationRule = event.locationRule
-                    )
-                }
-            }
-
-            PolicySetupEvent.ClearData -> {
-                _state.update {
-                    it.copy(
-                        limitList = emptyList(),
-                        timeList = emptyList(),
-                        locationRule = null,
-                        responseState = ResponseState.Idle,
-                        updateState = ResponseState.Idle,
-                        deleteState = ResponseState.Idle
-                    )
-                }
-
-            }
+    fun onEvent(event: PolicySetupEvent) {
+        when (event) {
             is PolicySetupEvent.SavePolicy -> {
-                if (state.value.selectedPolicyItemUi == null){
-                    requestCreatePolicy()
-                }
-                else{
-                    requestUpdatePolicy()
-                }
+                if (event.sharedState.isEditMode) requestUpdate(event.sharedState)
+                else requestCreate(event.sharedState)
             }
-
-            is PolicySetupEvent.UpdatePackagesLint -> {
-                _state.update {
-                    it.copy(
-                        packagesString = event.value,
-                    )
-                }
-            }
-
-
-
-            is PolicySetupEvent.SetSelectedApps -> {
-                Logger.d(TAG, "onEvent: SetSelectedApps=${event.list}")
-                _state.update {
-                    it.copy(
-                        selectedPackages = event.list
-                    )
-                }
-            }
-            is PolicySetupEvent.SetPolicy -> {
-                _state.update {
-                    it.copy(
-                        selectedPolicyItemUi = event.policyItemUi
-                    )
-                }
-            }
-
-            is PolicySetupEvent.SetTitle -> {
-                _state.update {
-                    it.copy(
-                        title = event.title
-                    )
-                }
-            }
-
-            PolicySetupEvent.DeletePolicy -> {
-                requestDeletePolicy()
-            }
+            is PolicySetupEvent.DeletePolicy -> requestDelete(event.ruleId)
             PolicySetupEvent.ResetResponseState -> {
                 _state.update {
-                    it.copy(
-                        responseState = ResponseState.Idle,
-                        updateState = ResponseState.Idle,
-                        deleteState = ResponseState.Idle
-                    )
-                }
-            }
-
-            is PolicySetupEvent.SetSelectedChild -> {
-                _state.update {
-                    it.copy(
-                        selectedChild = event.child
-                    )
-                }
-
-            }
-
-            is PolicySetupEvent.SetPolicyDraftSnapshot -> {
-                _state.update { innerState->
-                    val hasChanges: Boolean = event.initialSnapshot.title != event.updatedSnapshot.title
-                            || event.initialSnapshot.timeList != event.updatedSnapshot.timeList
-                            || event.initialSnapshot.limitList != event.updatedSnapshot.limitList
-                            || event.initialSnapshot.locationRule != event.updatedSnapshot.locationRule
-                            || event.initialSnapshot.packages != event.updatedSnapshot.packages
-
-                    innerState.copy(
-                        policyDraftSnapshot = event.updatedSnapshot,
-                        hasChanges = hasChanges
-                    )
+                    PolicySetupState()
                 }
             }
         }
-
     }
 
 
-
-
-
-    private fun requestCreatePolicy(){
+    private fun requestCreate(shared: PolicySharedState) {
         screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    responseState = ResponseState.Loading
-                )
-            }
-
-
+            _state.update { it.copy(createState = ResponseState.Loading) }
             val request = CreatePolicyRequest(
-                policy_name = state.value.title,
-                scope_id = state.value.selectedChild?.userId?:"",
-                rule_name = state.value.title,
+                policy_name = shared.policyTitle,
+                scope_id = shared.selectedChild?.userId,
+                rule_name = shared.policyTitle,
                 scope_type = PolicyType.PARENT_CHILD.name,
                 policy_is_active = true,
-                resource_type = "APP",
-                action = "DENY",
-                priority = 101,
-                packages = _state.value.selectedPackages,
-                sites = emptyList(),
-                time_rule = _state.value.timeList.toTimeRuleDtoList(),
-                limit_rule = _state.value.limitList.toLimitRuleDtoList(),
-                location_rule = _state.value.locationRule?.toLocationRuleDto(),
-                wifi = null
+                resource_type = PolicyResourceType.APP.name,
+                action = shared.policyAction.name,
+                priority = 100,
+                packages = shared.selectedPkgs.toList(),
+                categories = shared.selectedCategories.toList(),
+                sites = shared.selectedSites.toList(),
+                time_rule = shared.timeList.toTimeRuleDtoList(),
+                limit_rule = shared.limitList.toLimitRuleDtoList(),
+                location_rule = shared.locationRule?.toLocationRuleDto(),
+                wifi = null,
             )
-
-            val result = createPolicyUseCase.invoke(request)
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            responseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
-                        )
-                    }
-                }
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            responseState = ResponseState.Success()
-                        )
-                    }
-                }
+            when (val result = createPolicyUseCase(request)) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update { it.copy(createState = ResponseState.Error(message = result.message,  res = result.resId)) }
+                is Resource.Success -> _state.update { it.copy(createState = ResponseState.Success()) }
             }
-
         }
     }
 
-    private fun requestUpdatePolicy(){
+
+    private fun requestUpdate(shared: PolicySharedState) {
         screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    updateState = ResponseState.Loading
-                )
-            }
-
-
+            _state.update { it.copy(updateState = ResponseState.Loading) }
+            val ruleId = shared.selectedPolicy?.ruleId.orEmpty()
             val request = UpdatePolicyRequest(
-                name = state.value.title,
-                resource_type = "APP",
-                action = "DENY",
-                priority = 101,
-                packages = _state.value.selectedPackages,
-                sites = emptyList(),
-                time_rule = _state.value.timeList.toTimeRuleDtoList(),
-                limit_rule = _state.value.limitList.toLimitRuleDtoList(),
-                location_rule = _state.value.locationRule?.toLocationRuleDto(),
-                wifi = null
+                name = shared.policyTitle,
+                resource_type = PolicyResourceType.APP.name,
+                action = shared.policyAction.name,
+                priority = 100,
+                packages = shared.selectedPkgs.toList(),
+                categories = shared.selectedCategories.toList(),
+                sites = shared.selectedSites.toList(),
+                time_rule = shared.timeList.toTimeRuleDtoList(),
+                limit_rule = shared.limitList.toLimitRuleDtoList(),
+                location_rule = shared.locationRule?.toLocationRuleDto(),
+                wifi = null,
             )
-
-            val result = updatePolicyUseCase.invoke(request, state.value.selectedPolicyItemUi?.policyId?:"")
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            updateState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
-                        )
-                    }
-                }
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            updateState = ResponseState.Success()
-                        )
-                    }
-                }
+            when (val result = updatePolicyUseCase(request, ruleId)) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update { it.copy(updateState = ResponseState.Error(message = result.message,  res = result.resId)) }
+                is Resource.Success -> _state.update { it.copy(updateState = ResponseState.Success()) }
             }
-
         }
     }
 
-    private fun requestDeletePolicy(){
+    private fun requestDelete(ruleId: String) {
         screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    deleteState = ResponseState.Loading
-                )
+            _state.update { it.copy(deleteState = ResponseState.Loading) }
+            when (val result = deletePolicyUseCase(ruleId)) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update { it.copy(deleteState = ResponseState.Error(message = result.message,   res = result.resId)) }
+                is Resource.Success -> _state.update { it.copy(deleteState = ResponseState.Success()) }
             }
-
-
-            val result = deletePolicyUseCase.invoke( state.value.selectedPolicyItemUi?.policyId?:"")
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            deleteState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
-                        )
-                    }
-                }
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            deleteState = ResponseState.Success()
-                        )
-                    }
-                }
-            }
-
         }
     }
-
 }

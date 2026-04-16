@@ -2,7 +2,6 @@
 
 package uz.tikoncha_parent.presentation.policy.limit_rule
 
-import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.model.ScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,14 +11,12 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.WeekDay
-import uz.tikoncha_parent.presentation.policy.WeekDayChipUi
-import uz.tikoncha_parent.presentation.policy.asHasWeekDays
-import uz.tikoncha_parent.presentation.policy.buildChipsForClear
-import uz.tikoncha_parent.presentation.policy.buildChipsForCreate
-import uz.tikoncha_parent.presentation.policy.buildChipsForEdit
+import uz.tikoncha_parent.presentation.policy.common.WeekDayChipUi
+import uz.tikoncha_parent.presentation.policy.common.asHasWeekDays
+import uz.tikoncha_parent.presentation.policy.common.buildChipsForClear
+import uz.tikoncha_parent.presentation.policy.common.buildChipsForCreate
+import uz.tikoncha_parent.presentation.policy.common.buildChipsForEdit
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
-import kotlin.compareTo
-import kotlin.text.set
 
 
 class LimitRuleViewModel : ScreenModel {

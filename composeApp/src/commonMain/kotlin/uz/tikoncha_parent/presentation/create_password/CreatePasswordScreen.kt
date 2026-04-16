@@ -38,7 +38,6 @@ import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.keyingisi
 import tikoncha_parents.composeapp.generated.resources.parol_kiriting
@@ -47,7 +46,7 @@ import tikoncha_parents.composeapp.generated.resources.password_eye_close
 import tikoncha_parents.composeapp.generated.resources.password_eye_open
 import tikoncha_parents.composeapp.generated.resources.ro_yxatdan_o_tish_parol_yaratish
 import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.tikoncha_parent.ui.theme.extendedColor

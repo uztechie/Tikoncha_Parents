@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +21,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -34,65 +38,52 @@ fun CustomHeader(
 ) {
 
 
-    val bottomRoundedShape = RoundedCornerShape(
-        topStart = 0.dp,
-        topEnd = 0.dp,
-        bottomStart = ShapeCornerRadius,
-        bottomEnd = ShapeCornerRadius
-    )
 
     Row(
         modifier = modifier
-            .zIndex(1f)
             .fillMaxWidth()
-            .height(HeaderHeight)
-            .topShadow(
-                shape = RoundedCornerShape(ShapeCornerRadius),
-                color = MaterialTheme.extendedColor.backgroundColor
-            )
-            .background(
-                color = MaterialTheme.extendedColor.backgroundColor,
-                shape = bottomRoundedShape
-            )
-            .padding(horizontal = ContainerPadding),
+            .height(56.dp),
         verticalAlignment = Alignment.CenterVertically
     )
     {
 
         if (showBackButton) {
-            FilledTonalIconButton(
+            Space(4.dp)
+            IconButton(
                 modifier = Modifier
-                    .size(NormalIconButtonSize),
+                    .size(36.dp),
                 onClick = onBackClick,
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
-                    containerColor = MaterialTheme.extendedColor.cardColor,
-                    contentColor = MaterialTheme.extendedColor.onBackgroundColor
-                ),
-                shape = RoundedCornerShape(10.dp)
+                    containerColor = Color.Transparent,
+                    contentColor = AppColors.icon.primary
+                )
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.arrow_left),
+                    painter = painterResource(Res.drawable.arrow_back),
                     contentDescription = "",
+                    tint = AppColors.icon.primary,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(NormalIconButtonPadding)
+                        .size(24.dp)
                 )
             }
-            SpaceMedium()
+        }
+        else{
+            Space(16.dp)
         }
 
-        CustomText(
+        Text(
             text = title,
-            fontSize = LargeTextSize,
-            fontWeight = fonWeight,
+            style = AppTypography.headlineSmSemiBold,
+            color = AppColors.text.primary,
             maxLines = 1,
             modifier = Modifier
+                .weight(1f)
         )
-        SpaceMedium()
-        Spacer(modifier = Modifier.weight(1f))
+        Space(16.dp)
 
         if (trailingIcon != null) {
             trailingIcon()
+            Space(16.dp)
         }
     }
 
@@ -102,7 +93,7 @@ fun CustomHeader(
 @Composable
 private fun Preview() {
     TikonchaParentTheme(
-        ThemeMode.DARK
+        ThemeMode.LIGHT
     ){
         Column(
             modifier = Modifier

@@ -1,4 +1,4 @@
-package uz.saidburxon.newedu.presentation.base
+package uz.tikoncha_parent.presentation.base
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.*
 
 

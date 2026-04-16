@@ -45,7 +45,7 @@ val ButtonCornerRadius = 16.dp
 val ButtonDialogCornerRadius = 12.dp
 
 val ChatMessageCornerRadius = 20.dp
-val CardCornerRadius = 25.dp
+val CardCornerRadius = 24.dp
 val LargeCardCornerRadius = 32.dp
 val CardCornerPadding = 20.dp
 val ContainerCornerRadius = 15.dp
@@ -67,9 +67,9 @@ val TextFieldInnerPadding = 15.dp
 val TextFieldIconSize = 20.dp
 
 val NormalTextSizeSp = 16.sp
-val ContainerPadding = 15.dp
+val ContainerPadding = 16.dp
 
-val HeaderHeight = 60.dp
+val HeaderHeight = 56.dp
 val HomeItemHeight = 130.dp
 val TextFieldTextStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
 val ChatTextSize:TextUnit @Composable get() =  14.sp //.responsiveSp()
@@ -116,6 +116,12 @@ fun SpaceMedium() {
 fun SpaceSmall() {
     Spacer(Modifier.size(10.dp))
 }
+
+@Composable
+fun Space(size: Dp) {
+    Spacer(Modifier.size(size))
+}
+
 
 
 @Composable

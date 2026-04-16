@@ -36,7 +36,7 @@ import tikoncha_parents.composeapp.generated.resources.wi_fi_tarmoqlarni_tanlang
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomTextField
-import uz.tikoncha_parent.presentation.policy.RoundedCheckbox
+import uz.tikoncha_parent.presentation.policy.common.RoundedCheckbox
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HintTextColor
 import uz.tikoncha_parent.ui.LargeTextSize

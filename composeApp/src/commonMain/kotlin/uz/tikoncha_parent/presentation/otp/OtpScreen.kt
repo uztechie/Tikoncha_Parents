@@ -37,7 +37,7 @@ import uz.tikoncha_parent.presentation.register.RegisterScreen
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.maskPhone
 import uz.tikoncha_parent.platform.openTelegram
 import uz.tikoncha_parent.presentation.base.CustomText

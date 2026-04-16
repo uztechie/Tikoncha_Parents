@@ -256,7 +256,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         surface = Color(0xFF252528),                            // gray.700
         elevated = Color(0xFF252528),                           // gray.700
         secondary = Color(0xFF010D01),                          // base.black
-        primary = Color(0xFF4BB462),                            // green.500
+        primary = Color(0xFFC3955B),                            // green.500
         primaryContainer = Color(0xFF2C2F36),                   // gray.500
         secondaryBrand = Color(0xFF409452),                     // green.600
         secondaryContainer = Color(0xFF252528),                 // gray.700
@@ -311,7 +311,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         secondarySubtle = Color(0xFF2F3137),                    // neutral.700
     ),
     button = ButtonColors(
-        primary = Color(0xFF4BB462),                            // green.500
+        primary = Color(0xFFC3955B),                            // green.500
         secondary = Color(0xFF2F3137),                          // neutral.700
         tertiary = Color(0xFF22262F),                           // neutral.800
         accentEmphasis = Color(0xFF2F3137),                     // neutral.700
@@ -335,7 +335,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         accentDanger = Color(0xFFF04438),                       // red.500
     ),
     section = SectionColors(
-        primary = Color(0xFF4BB462),                            // green.500
+        primary = Color(0xFFC3955B),                            // green.500
         secondary = Color(0xFF2F3137),                          // neutral.700
         section = Color(0xFF2F3137),                            // neutral.700
         tertiary = Color(0xFF252528),                           // gray.700

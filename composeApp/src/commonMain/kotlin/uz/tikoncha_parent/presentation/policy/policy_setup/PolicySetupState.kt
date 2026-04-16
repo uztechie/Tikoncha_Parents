@@ -2,27 +2,18 @@ package uz.tikoncha_parent.presentation.policy.policy_setup
 
 import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.presentation.policy.PolicyItemUi
+import uz.tikoncha_parent.presentation.policy.policy_list.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
-import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class PolicySetupState(
-    val limitList: List<LimitRuleUi> = emptyList(),
-    val timeList: List<TimeRuleUi> = emptyList(),
-    val locationRule: LocationRule? = null,
-    val responseState: ResponseState<Nothing> = ResponseState.Idle,
+    val createState: ResponseState<Nothing> = ResponseState.Idle,
     val updateState: ResponseState<Nothing> = ResponseState.Idle,
     val deleteState: ResponseState<Nothing> = ResponseState.Idle,
-    val selectedChild: UserInfo? = null,
-    val packagesString: String = "",
-    val title: String = "",
-    val selectedPackages: List<String> = emptyList(),
-    val selectedPolicyItemUi: PolicyItemUi? = null,
-
-
-    val policyDraftSnapshot: PolicyDraftSnapshot? = null,
-    val hasChanges: Boolean = false
-){
+) {
+    val isLoading: Boolean
+        get() = createState is ResponseState.Loading
+                || updateState is ResponseState.Loading
+                || deleteState is ResponseState.Loading
 }

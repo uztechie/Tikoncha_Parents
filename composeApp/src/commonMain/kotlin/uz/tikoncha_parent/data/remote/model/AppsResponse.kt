@@ -20,6 +20,6 @@ data class AppDto(
     val `package`: String,
     val name: String? = null,
     val category: String? = null,
-    val logo: String? = null,
+    val icon: String? = null,
     val order: Int
 )

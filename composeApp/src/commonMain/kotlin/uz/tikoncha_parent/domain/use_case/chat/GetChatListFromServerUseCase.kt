@@ -17,7 +17,7 @@ class GetChatListFromServerUseCase(
         return try {
             val response = repository.chatList()
             if (response.success && response.data != null) {
-                Resource.Success(response.data)
+                Resource.Success(response.data.chats)
             } else {
                 Resource.Error(
                     message = response.error,

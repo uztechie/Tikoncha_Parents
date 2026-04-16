@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +25,14 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.location
+import uz.tikoncha_parent.App
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.SoonBox
 import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleType
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -43,11 +48,9 @@ fun RuleTypeItem(
     val enabled = ruleTypeUi.enabled
 
     val bgColor =
-        if (enabled) MaterialTheme.extendedColor.cardColor else MaterialTheme.extendedColor.disabledBgColor
+        if (enabled) AppColors.section.tertiary else AppColors.section.tertiary.copy(alpha = 0.5f)
     val contentColor =
-        if (enabled) MaterialTheme.extendedColor.textColor else MaterialTheme.extendedColor.disabledContentColor
-    val secondaryContentColor =
-        if (enabled) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.disabledContentColor
+        if (enabled) AppColors.text.primary else AppColors.text.primary.copy(0.5f)
 
 
     var updatedModifier = modifier
@@ -61,13 +64,13 @@ fun RuleTypeItem(
     }
 
 
-    Box{
+    Box {
         Row(
             modifier = updatedModifier
                 .background(
-                    bgColor, RoundedCornerShape(TextFieldCornerRadius)
+                    bgColor, RoundedCornerShape(24.dp)
                 )
-                .padding(10.dp)
+                .padding(12.dp)
                 .clickable(
                     enabled = ruleTypeUi.enabled,
                     interactionSource = null,
@@ -79,63 +82,62 @@ fun RuleTypeItem(
         {
             Box(
                 modifier = Modifier
-                    .size(NormalIconButtonSize)
-                    .clip(RoundedCornerShape(ShapeCornerRadius)),
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(if (enabled) AppColors.button.accentEmphasisPressed else AppColors.section.secondary),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = ruleTypeUi.icon,
                     contentDescription = "",
                     modifier = Modifier
-                        .fillMaxSize(0.6f),
-                    tint = if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
+                        .size(16.dp),
+                    tint = if (enabled) AppColors.icon.accentPrimary else AppColors.icon.secondary
                 )
             }
 
-            SpaceMedium()
+            Space(12.dp)
 
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                CustomText(
+                Text(
                     text = ruleTypeUi.title,
-                    fontSize = NormalTextSize,
-                    fontWeight = FontWeight.SemiBold,
-                    color = contentColor
+                    color = contentColor,
+                    style = AppTypography.titleMdSemiBold
                 )
 
-
-                CustomText(
+                Space(4.dp)
+                Text(
                     text = ruleTypeUi.subtitle,
-                    fontSize = NormalTextSize,
-                    fontWeight = FontWeight.W500,
-                    color = secondaryContentColor,
+                    color = contentColor,
+                    style = AppTypography.bodyMdRegular
 
-                    )
+                )
             }
         }
 
-        if (ruleTypeUi.soon){
-            SoonBox(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-            )
-
-        }
+//        if (ruleTypeUi.soon) {
+//            SoonBox(
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//            )
+//
+//        }
     }
 }
 
 @Preview
 @Composable
 private fun Preview() {
-    TikonchaParentTheme(ThemeMode.LIGHT) {
+    TikonchaParentTheme(ThemeMode.DARK) {
         RuleTypeItem(
             ruleTypeUi = RuleTypeUi(
                 type = RuleType.LOCATION,
                 icon = painterResource(Res.drawable.location),
                 title = "Lokatsiya",
-                subtitle = "",
-                enabled = true,
+                subtitle = "Salom elon \n sasak",
+                enabled = false,
                 hasItems = true,
                 soon = true,
             ),

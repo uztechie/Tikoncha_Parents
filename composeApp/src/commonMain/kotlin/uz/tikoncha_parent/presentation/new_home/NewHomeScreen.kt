@@ -61,7 +61,7 @@ import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
-import uz.tikoncha_parent.presentation.policy.PolicyListScreen
+import uz.tikoncha_parent.presentation.policy.policy_list.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen

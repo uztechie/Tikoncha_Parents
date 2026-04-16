@@ -15,6 +15,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,12 +29,14 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.davom_etish
-import uz.saidburxon.newedu.presentation.base.CustomButton
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.OtpErrorColor
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -46,7 +49,8 @@ fun CustomBottomDialog(
     message: String,
     confirmButtonText: String = stringResource(Res.string.davom_etish),
     dismissButtonText: String = stringResource(Res.string.bekor_qilish),
-    confirmButtonColor: Color = OtpErrorColor,
+    confirmButtonColor: Color = AppColors.button.primary,
+    showCancelButton: Boolean = true,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ){
@@ -94,37 +98,44 @@ fun CustomBottomDialog(
                                 .width(36.dp)
                         )
 
-                        CustomText(
+                        Text(
                             text = title,
-                        )
-                        SpaceSmall()
+                            color = AppColors.text.primary,
+                            style = AppTypography.titleLgSemiBold
 
-                        CustomText(
+                        )
+                        Space(12.dp)
+
+                        Text(
                             text = message,
-                            modifier = Modifier.fillMaxWidth(),
+                            color = AppColors.text.secondary,
+                            style = AppTypography.emphasizedMdMedium,
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
-                        SpaceLarge()
+                        Space(16.dp)
 
-                        CustomButton(
+                        CustomButtonNew(
                             text = confirmButtonText,
                             onClick = {
                                 onConfirm()
                             },
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            color = confirmButtonColor
+                            containerColor = confirmButtonColor
                         )
-                        SpaceSmall()
-
-                        CustomButton(
-                            text = dismissButtonText,
-                            onClick = onDismiss,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            color = MaterialTheme.extendedColor.disabledBgColor,
-                            textColor = MaterialTheme.extendedColor.textColor
-                        )
+                        if (showCancelButton){
+                            Space(8.dp)
+                            CustomButtonNew(
+                                text = dismissButtonText,
+                                onClick = onDismiss,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                containerColor = AppColors.section.section,
+                                contentColor = AppColors.text.primary
+                            )
+                        }
                     }
                 }
                 SpaceLarge()

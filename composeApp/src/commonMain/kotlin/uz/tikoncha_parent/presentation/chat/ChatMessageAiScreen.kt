@@ -29,7 +29,6 @@ import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.UniversalJsonWebView
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleUi
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
-import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalIconButtonSize

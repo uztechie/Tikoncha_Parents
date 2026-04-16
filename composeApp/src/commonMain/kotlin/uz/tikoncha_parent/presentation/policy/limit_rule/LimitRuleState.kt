@@ -2,8 +2,7 @@ package uz.tikoncha_parent.presentation.policy.limit_rule
 
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
-import uz.tikoncha_parent.domain.model.WeekDay
-import uz.tikoncha_parent.presentation.policy.WeekDayChipUi
+import uz.tikoncha_parent.presentation.policy.common.WeekDayChipUi
 import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleType
 
 data class LimitRuleState(

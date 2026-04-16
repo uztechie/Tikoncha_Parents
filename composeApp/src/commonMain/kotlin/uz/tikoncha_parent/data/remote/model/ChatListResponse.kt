@@ -5,10 +5,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChatListResponse(
     val success: Boolean,
-    val data: List<ChatDto>? = null,
+    val data: ChatListData? = null,
     val error: String? = null,
     val code: Int? = null,
 
+)
+
+
+@Serializable
+data class ChatListData(
+    val chats: List<ChatDto>,
+    val notification: Boolean
 )
 
 @Serializable

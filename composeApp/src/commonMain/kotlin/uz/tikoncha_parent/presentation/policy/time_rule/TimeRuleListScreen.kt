@@ -29,7 +29,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -43,7 +42,7 @@ import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.oraliq_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_vaqt_oraligi_qoshish
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
@@ -60,7 +59,6 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
-import kotlin.compareTo
 
 
 class TimeRuleListScreen(): Screen {
@@ -82,7 +80,7 @@ class TimeRuleListScreen(): Screen {
 
         DisposableEffect(Unit) {
             event(TimeRuleEvent.SetList(sharedState.timeList))
-            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
+//            sharedEvent(PolicySharedEvent.RefreshSubscriptionLimit)
             onDispose {
                 sharedEvent(PolicySharedEvent.SetTimeRule(state.timeList))
             }
@@ -122,11 +120,11 @@ fun TimeRuleListUi(
         onDismiss = {showLimitDialog = false},
         onButtonClick = {
             showLimitDialog = false
-            navigator?.push(
-                SubscriptionPaymentScreen(
-                    selectedChild = sharedState.selectedChild
-                )
-            )
+//            navigator?.push(
+//                SubscriptionPaymentScreen(
+//                    selectedChild = sharedState.selectedChild
+//                )
+//            )
         }
     )
 
@@ -230,7 +228,7 @@ fun TimeRuleListUi(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-                        val count = sharedState.subscriptionLimit.limitRule
+                        val count = 0
                         val listCount = state.timeList.size
 
                         if (listCount >= count) {

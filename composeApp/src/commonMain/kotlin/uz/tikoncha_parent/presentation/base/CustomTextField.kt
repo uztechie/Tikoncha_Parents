@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
@@ -32,6 +34,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -48,14 +52,16 @@ fun CustomTextField(
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     shadow: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.cardColor,
-    contentColor: Color = MaterialTheme.extendedColor.textColor,
+    containerColor: Color = AppColors.field.page,
+    contentColor: Color = AppColors.text.primary,
+    placeholderColor: Color = AppColors.text.placeholder,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
     fonSize: TextUnit = NormalTextSize,
+    style: TextStyle = AppTypography.titleSmMedium,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
 
@@ -108,10 +114,8 @@ fun CustomTextField(
                 .background(backgroundColor),
             singleLine = singleLine,
             maxLines = if (singleLine) 1 else 5,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = contentColor,
-                fontSize = fonSize,
-                fontWeight = fontWeight
+            textStyle = style.copy(
+                color = contentColor
             ),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
@@ -132,11 +136,10 @@ fun CustomTextField(
                             .weight(1f)
                     ) {
                         if (value.isEmpty()) {
-                            CustomText(
+                            Text(
                                 text = label,
-                                fontSize = fonSize,
-                                color = HintTextColor,
-                                fontWeight = fontWeight
+                                color = placeholderColor,
+                                style = style
                             )
                         }
                         innerTextField()

@@ -48,15 +48,13 @@ import org.jetbrains.compose.resources.painterResource
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.child_confirm_cod.ChildConfirmCodeScreen
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.format6DigitCode
 import uz.tikoncha_parent.platform.copyPlainText
 import uz.tikoncha_parent.presentation.base.CustomText

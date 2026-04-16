@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
+import uz.tikoncha_parent.App
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -74,7 +77,7 @@ fun CustomDialog(
                 modifier = modifier
                     .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.extendedColor.backgroundColor
+                    containerColor = AppColors.bg.surface
                 ),
                 shape = RoundedCornerShape(CardCornerRadius)
             )
@@ -82,7 +85,7 @@ fun CustomDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(ContainerPadding),
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -94,76 +97,48 @@ fun CustomDialog(
                             .size(60.dp)
                             .align(Alignment.CenterHorizontally)
                     )
-                    SpaceLarge()
-                    CustomText(
+                    Space(16.dp)
+                    Text(
                         text = dialogTitle,
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.SemiBold,
+                        color = AppColors.text.primary,
+                        style = AppTypography.titleLgSemiBold,
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
 
-                    SpaceLarge()
+                    Space(8.dp)
 
-                    CustomText(
+                    Text(
                         text = dialogMessage,
-                        fontSize = NormalTextSize,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
+                        color = AppColors.text.secondary,
+                        style = AppTypography.emphasizedMdMedium
                     )
 
-                    SpaceLarge()
+                    Space(16.dp)
 
-                    if (isRow) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            if (showCloseButton) {
-                                CustomOutlinedButton(
-                                    text = buttonText2,
-                                    onClick = onDismiss,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(DialogButtonHeight)
-                                )
-                            }
-
-                            CustomButton(
-                                text = buttonText,
-                                onClick = onButtonClick,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(DialogButtonHeight)
-                            )
-                        }
-
-                    } else {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-
-                            if (showCloseButton) {
-                                CustomOutlinedButton(
-                                    text = stringResource(Res.string.bekor_qilish),
-                                    onClick = onDismiss,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(DialogButtonHeight)
-                                )
-                                SpaceSmall()
-                            }
-
-                            CustomButton(
-                                text = buttonText,
-                                onClick = onButtonClick,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(DialogButtonHeight)
-                            )
-                        }
+                    CustomButtonNew(
+                        text = buttonText,
+                        onClick = {
+                            onButtonClick()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        containerColor = AppColors.button.primary
+                    )
+                    if (showCloseButton){
+                        Space(8.dp)
+                        CustomButtonNew(
+                            text = buttonText2,
+                            onClick = onDismiss,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            containerColor = AppColors.section.section,
+                            contentColor = AppColors.text.primary
+                        )
                     }
-                    SpaceLarge()
-
                 }
             }
         }

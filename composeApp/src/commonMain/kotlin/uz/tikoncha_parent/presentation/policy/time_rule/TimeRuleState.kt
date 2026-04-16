@@ -2,8 +2,7 @@ package uz.tikoncha_parent.presentation.policy.time_rule
 
 import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.domain.model.MinuteRange
-import uz.tikoncha_parent.domain.model.WeekDay
-import uz.tikoncha_parent.presentation.policy.WeekDayChipUi
+import uz.tikoncha_parent.presentation.policy.common.WeekDayChipUi
 
 data class TimeRuleState(
     val timeList: List<TimeRuleUi> = emptyList(),

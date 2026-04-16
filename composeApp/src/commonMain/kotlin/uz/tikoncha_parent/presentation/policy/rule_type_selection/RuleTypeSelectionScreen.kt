@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -31,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupUi
@@ -41,6 +44,8 @@ import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -85,65 +90,7 @@ fun RuleTypeSelectionUi(
     }
 
 
-    CustomDialog(
-        showCloseButton = true,
-        painter = painterResource(Res.drawable.dialog_subscription),
-        show = showSubscriptionLimitDialog,
-        title = stringResource(Res.string.obuna),
-        message = stringResource(Res.string.obuna_dialog_message),
-        buttonText = stringResource(Res.string.obuna_bolish),
-        onDismiss = {
-            showSubscriptionLimitDialog = false
-        },
-        onButtonClick = {
-            showSubscriptionLimitDialog = false
-            navigator?.push(
-                SubscriptionPaymentScreen(
-                    selectedChild = state.selectedChild
-                )
-            )
 
-        }
-    )
-
-
-//    CustomDialog(
-//        painter = painterResource(Res.drawable.dialog_info),
-//        show = showWarningDialog,
-//        title = stringResource(Res.string.diqqat),
-//        message = stringResource(Res.string.siz_tanlagan_vaqt_oraligida),
-//        onDismiss = {
-//            showWarningDialog = false
-//        },
-//        onButtonClick = {
-//            showWarningDialog = false
-//            when(selectedRuleType){
-//                RuleType.TIME -> {
-//                    if (state.subscriptionLimit.timeRule < 1){
-//                        showSubscriptionLimitDialog = true
-//                    }else{
-//                        navigator?.push(TimeRuleListScreen())
-//                    }
-//                }
-//                RuleType.USAGE_LIMIT -> {
-//                    if (state.subscriptionLimit.limitRule < 1){
-//                        showSubscriptionLimitDialog = true
-//                    }else{
-//                        navigator?.push(LimitRuleListScreen())
-//                    }
-//
-//                }
-//                RuleType.LOCATION -> {
-//                    if (state.subscriptionLimit.locationRule < 1){
-//                        showSubscriptionLimitDialog = true
-//                    }else{
-//                        navigator?.push(LocationRuleScreen())
-//                    }
-//                }
-//               else -> {}
-//            }
-//        }
-//    )
 
 
     val scheduleList = listOf(
@@ -158,7 +105,7 @@ fun RuleTypeSelectionUi(
         ),
         RuleTypeUi(
             type = RuleType.USAGE_LIMIT,
-            icon = painterResource(Res.drawable.time_limit),
+            icon = painterResource(Res.drawable.locked),
             title = stringResource(Res.string.foydalanish_chegarasi),
             subtitle = stringResource(Res.string.chegaralash_kun_soat_va_daqiqa),
             enabled = state.limitList.isEmpty(),
@@ -193,7 +140,7 @@ fun RuleTypeSelectionUi(
             soon = true
         ),
 
-    )
+        )
 
     var showSetupDialog by remember {
         mutableStateOf(false)
@@ -202,7 +149,7 @@ fun RuleTypeSelectionUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.jadval),
@@ -213,36 +160,41 @@ fun RuleTypeSelectionUi(
         )
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp)
         ) {
+            Space(12.dp)
 
-            CustomText(
+            Text(
                 text = stringResource(Res.string.bloklash_shartlari),
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(
-                    horizontal = ContainerPadding
-                )
+                color = AppColors.text.primary,
+                style = AppTypography.headlineMdSemiBold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = ContainerPadding
+                    ),
+                textAlign = TextAlign.Center
             )
 
-            SpaceMedium()
+            Space(12.dp)
 
-            CustomText(
-                text = stringResource(Res.string.qachon_va_qayerda),
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.SemiBold,
-                color = HintTextColor,
-                modifier = Modifier.padding(
-                    horizontal = ContainerPadding
-                )
+            Text(
+                text = stringResource(Res.string.qachon_va_qanday_holatlarda_ilova_va_veb),
+                color = AppColors.text.secondary,
+                style = AppTypography.emphasizedMdMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
+            Space(4.dp)
 
-            SpaceMedium()
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(
-                    ContainerPadding
+                    vertical = 24.dp
                 ),
                 content = {
                     items(items = scheduleList, key = { it.type }) { item ->
@@ -254,37 +206,19 @@ fun RuleTypeSelectionUi(
 
                                 selectedRuleType = item.type
 
-                                when(item.type){
+                                when (item.type) {
                                     RuleType.TIME -> {
-                                        if (state.limitList.isNotEmpty()){
-                                            showWarningDialog = true
-                                            return@RuleTypeItem
-                                        }
-                                        if (state.subscriptionLimit.timeRule < 1){
-                                            showSubscriptionLimitDialog = true
-                                        }else{
-                                            navigator?.push(TimeRuleListScreen())
-                                        }
+                                        navigator?.push(TimeRuleListScreen())
                                     }
+
                                     RuleType.USAGE_LIMIT -> {
-                                        if (state.timeList.isNotEmpty()){
-                                            showWarningDialog = true
-                                            return@RuleTypeItem
-                                        }
-                                        if (state.subscriptionLimit.limitRule < 1){
-                                            showSubscriptionLimitDialog = true
-                                        }else{
-                                            navigator?.push(LimitRuleListScreen())
-                                        }
+                                        navigator?.push(LimitRuleListScreen())
                                     }
 
                                     RuleType.LOCATION -> {
-                                        if (state.subscriptionLimit.locationRule < 1){
-                                            showSubscriptionLimitDialog = true
-                                        }else{
-                                            navigator?.push(LocationRuleScreen())
-                                        }
+                                        navigator?.push(LocationRuleScreen())
                                     }
+
                                     RuleType.WIFI -> {}
                                     RuleType.LAUNCH_COUNT -> {}
 

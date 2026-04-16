@@ -7,4 +7,11 @@ import kotlinx.serialization.Serializable
 data class HourMinute(
     val hour:Int = 0,
     val minute:Int = 0
-):JavaSerializable
+){
+    companion object {
+        fun fromMinutes(total: Int): HourMinute =
+            HourMinute(total / 60, total % 60)
+    }
+
+    fun toMinutes(): Int = hour * 60 + minute
+}

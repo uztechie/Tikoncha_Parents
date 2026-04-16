@@ -373,5 +373,45 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="xato_kod_kiritdingiz">Xato kod kirdingiz</string>
     <string name="kod_olish_usulini_ozgartirish">Kod olish usulini o‘zgartirish</string>
     <string name="versiya">Versiya</string>
+    <string name="jadval_yaratish">Jadval yaratish</string>
+    <string name="sizning_cheklovlaringiz">Sizning cheklovlaringiz</string>
+    <string name="kunlik_bloklashlarni_rejalashtiring">Vaqt, joy va boshqa parametrlar bo‘yicha kunlik bloklashlarni rejalashtiring.</string>
+
+    <string name="avtomatik_bloklash_vaqti">Tanlangan kun va soatlarda avtomatik bloklash</string>
+    <string name="foydalanish_vaqtini_cheklash">Kunlik yoki soatlik foydalanish vaqtini cheklash</string>
+    <string name="hududga_kirilganda_bloklash">Ma’lum hududga kirilganda ilovalarni bloklash</string>
+    <string name="hamroh_tasdiqlash_kodi_kiritish">Hamrohingiz telefoniga kelgan tasdiqlash kodini kiriting va hisobni bog‘lang.</string>
+    <string name="bloklash_rejimi_tanlang">Bloklash rejimini tanlang</string>
+    <string name="ilovalarni_belgilash">Qaysi ilovalar ishlashi yoki bloklanishini belgilang</string>
+    <string name="tanlangan_ilovalar_bloklanadi">Tanlangan ilovalar bloklanadi, qolganlari ochiq qoladi.</string>
+    <string name="tanlangan_ilovalar_ochiq">Tanlangan ilovalar ochiq qoladi, qolganlari bloklanadi.</string>
+    <string name="oq_royhat">Oq ro‘yhat</string>
+    <string name="soniya">soniya</string>
+    <string name="sayt_manzilini_kiriting">Sayt manzilini kiriting</string>
+    <string name="ilova_qidirish">Ilova qidirish</string>
+    <string name="sayt_qidirish">Sayt qidirish</string>
+    <string name="diqqatni_yoqotmasdan_organing">Diqqatni yo‘qotmasdan o‘rganing</string>
+    <string name="rejalashtiring_va_kuzating">Rejalashtiring va bajarishni kuzating</string>
+    <string name="kategoriyalar">Kategoriyalar</string>
+    <string name="jadval_o_chirilsinmi">Jadval o‘chirilsinmi?</string>
+    <string name="chiqmoqchimisiz">Chiqmoqchimisiz?</string>
+    <string name="kiritilgan_ma_lumotlar_saqlanmaydi">Kiritilgan ma’lumotlar saqlanmaydi.</string>
+    <string name="qolish">Qolish</string>
+    <string name="noto_g_ri_url_format">Noto\'g\'ri URL format</string>
+    <string name="bu_sayt_allaqachon_ro_yxatda">Bu sayt allaqachon ro\'yxatda</string>
+    <string name="to_liq_nazoratni_yoqing">To‘liq nazoratni yoqing</string>
+    <string name="tikoncha_orqali_ilovalar_vaqt_va_foydalanishni_boshqaring">Tikoncha orqali ilovalar, vaqt va foydalanishni boshqaring. Plus bilan cheklovlarsiz ishlang va Qalqon rejimi orqali maksimal himoyani yoqing.</string>
+    <string name="plus_imkoniyatlarini_ochish">Plus imkoniyatlarini ochish</string>
+    <string name="sayt_limiti_plus_tavsif">Siz %1$d ta vebsayt limitiga yetdingiz. Plus obuna bilan ko‘proq vebsaytlarni tanlab, qo‘shimcha imkoniyatlardan foydalaning.</string>
+    <string name="kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring">Kategoriya bo‘yicha jadval yaratish uchun PLUS obunasini faollashtiring</string>
+    <string name="jadval_limit_tugadi_plus">Sizda yana boshqa jadval yaratish uchun limitingiz tugadi. Yana yangi jadval yaratish uchun PLUS obunasini sotib oling.</string>
+    <string name="jadval_qoshish">Jadval qo‘shish</string>
+    <string name="jadval_nomi">Jadval nomi</string>
+    <string name="bloklash_rejimi">Bloklash rejimi</string>
+    <string name="saytlar">Saytlar</string>
+    <string name="ilova_limiti_plus_tavsif">Siz %1$d ta ilova limitiga yetdingiz. Plus obuna bilan ko‘proq ilovalarni tanlab, qo‘shimcha imkoniyatlardan foydalaning.</string>
+    <string name="qachon_va_qanday_holatlarda_ilova_va_veb">Qachon va qanday holatlarda ilovalar va vebsaytlarni cheklashni belgilang</string>
+
+
 
 </resources>

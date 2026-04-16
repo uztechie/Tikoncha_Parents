@@ -2,70 +2,61 @@
 
 package uz.tikoncha_parent.presentation.policy.policy_setup
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
-import coil3.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.saidburxon.newedu.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.common.ScreenJson
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.domain.model.DayHour
-import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.domain.model.GeoType
+import uz.tikoncha_parent.domain.model.LocationRule
+import uz.tikoncha_parent.domain.model.policy.PolicyAction
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebSelectionScreen
+import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebSelectionScreen
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleTypeSelectionScreen
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.domain.model.weekdayLabel
-import uz.tikoncha_parent.domain.util.capitalizeFirst
+import uz.tikoncha_parent.presentation.base.CustomBottomDialog
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.base.CustomDialogTextField
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.CustomTextField
+import uz.tikoncha_parent.presentation.base.DashedBorderButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.policy.PolicyItemUi
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebEvent
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebState
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
+import uz.tikoncha_parent.presentation.base.simpleShadow
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
@@ -74,24 +65,12 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.*
 
-class PolicySetupScreen(
-    val childJson: String? = null,
-    val policyItemUiJson: String? = null
-) : Screen {
+class PolicySetupScreen : Screen {
 
 
 
     @Composable
     override fun Content() {
-
-        val child = remember(childJson) {
-            ScreenJson.decode<UserInfo>(childJson)
-        }
-        val policyItemUi = remember(policyItemUiJson) {
-            ScreenJson.decode<PolicyItemUi>(policyItemUiJson)
-        }
-
-        val navigator = LocalNavigator.current?:return
 
         val viewModel = koinScreenModel<PolicySetupViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -101,162 +80,86 @@ class PolicySetupScreen(
         val sharedEvent = sharedViewModel::onEvent
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
 
-
-
-        val sharedAppViewModel = navigator.koinNavigatorScreenModel<AppWebViewModel>()
-        val sharedAppState by sharedAppViewModel.state.collectAsStateWithLifecycle()
-        val sharedAppEvent = sharedAppViewModel::onEvent
-
-
-        LaunchedEffect(Unit) {
-            sharedAppEvent(AppWebEvent.SetChildId(child?.userId?:""))
-            sharedAppEvent(AppWebEvent.GetAppsFromServer)
-            sharedAppEvent(AppWebEvent.SetServerPackages(policyItemUi?.packages?:emptyList()))
-        }
-
-        LaunchedEffect(Unit){
-            event(PolicySetupEvent.SetSelectedChild(child))
-        }
-
-
-
-        Logger.d("PolicySetupScreen", "Content: ${sharedState.timeList}")
-        LaunchedEffect(sharedState.timeList, sharedState.limitList, sharedAppState.selectedPkgs, sharedState.policyTitle, sharedState.locationRule, sharedState.initialDraftSnapshot){
-            event(PolicySetupEvent.SetLimitRule(sharedState.limitList))
-            event(PolicySetupEvent.SetTimeRule(sharedState.timeList))
-            event(PolicySetupEvent.SetLocationRule(sharedState.locationRule))
-            event(PolicySetupEvent.SetSelectedApps(sharedAppState.selectedPkgs.toList()))
-            event(PolicySetupEvent.SetTitle(sharedState.policyTitle))
-            sharedState.selectedPolicy?.let {
-                event(PolicySetupEvent.SetPolicy(it))
-            }
-
-            val snapshot =  PolicyDraftSnapshot(
-                title = sharedState.policyTitle,
-                timeList = sharedState.timeList,
-                limitList = sharedState.limitList,
-                locationRule = sharedState.locationRule,
-                packages = sharedAppState.selectedPkgs.toList()
-            )
-
-            sharedEvent(PolicySharedEvent.SetPolicyDraftSnapshot(
-                snapshot = snapshot
-            ))
-
-            sharedState.initialDraftSnapshot?.let{ initialSnapshot->
-                event(PolicySetupEvent.SetPolicyDraftSnapshot(
-                    initialSnapshot = initialSnapshot,
-                    updatedSnapshot = snapshot
-                ))
-            }
-
-
-        }
-
-
-
-
         PolicySetupUi(
-            navigator = navigator,
             state = state,
             event = event,
-            sharedAppState = sharedAppState,
             sharedState = sharedState,
             sharedEvent = sharedEvent
         )
     }
 
-    private fun rememberSaveable(function: () -> MutableState<Boolean>) {}
 }
 
 @Composable
 fun PolicySetupUi(
-    navigator: Navigator?,
     state: PolicySetupState = PolicySetupState(),
     event: (PolicySetupEvent) -> Unit = {},
-    sharedAppState: AppWebState = AppWebState(),
-    sharedState: PolicySharedState = PolicySharedState(),
-    sharedEvent: (PolicySharedEvent) -> Unit = {}
+    sharedState: PolicySharedState,
+    sharedEvent: (PolicySharedEvent) -> Unit,
 ) {
 
+    val navigator: Navigator? = LocalNavigator.current
+    val cardColor = AppColors.bg.surface
 
-    DisposableEffect(Unit) {
-        onDispose {
-            sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
-        }
-    }
-
-    var showDialogEdit by remember { mutableStateOf(false) }
     var showCloseConfirmDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
 
-    val loading =
-        state.responseState is ResponseState.Loading || state.updateState is ResponseState.Loading || state.deleteState is ResponseState.Loading
-    val createErrorText = state.responseState.errorText()
-    val createSuccess = state.responseState is ResponseState.Success
-
+    val createErrorText = state.createState.errorText()
     val updateErrorText = state.updateState.errorText()
-    val updateSuccess = state.updateState is ResponseState.Success
-
     val deleteErrorText = state.deleteState.errorText()
+
+    val createSuccess = state.createState is ResponseState.Success
+    val updateSuccess = state.updateState is ResponseState.Success
     val deleteSuccess = state.deleteState is ResponseState.Success
 
-    val selectedApps = sharedAppState.apps.filter { it.checked }
-
-    LaunchedEffect(deleteSuccess){
-        if (deleteSuccess){
-            sharedEvent(PolicySharedEvent.LoadSubscriptionLimit)
-        }
+    var policyName by rememberSaveable(sharedState.policyTitle) {
+        mutableStateOf(sharedState.policyTitle)
     }
 
+    var showPopupMenu by remember { mutableStateOf(false) }
+    var showPolicyNameUpdateDialog by remember { mutableStateOf(false) }
 
-
-    LoadingDialog(loading)
-
-    var showErrorDialog by remember() {
-        mutableStateOf(false)
-    }
-    var showSuccessDialog by remember() {
-        mutableStateOf(false)
+    // ── Initial snapshot lock ────────────────
+    LaunchedEffect(Unit) {
+        sharedEvent(PolicySharedEvent.LockInitialSnapshot)
     }
 
+    // ── Error dialog trigger ─────────────────
     LaunchedEffect(createErrorText, updateErrorText, deleteErrorText) {
         if (createErrorText.isNotEmpty() || updateErrorText.isNotEmpty() || deleteErrorText.isNotEmpty()) {
             showErrorDialog = true
         }
     }
+
+    // ── Success dialog trigger ───────────────
     LaunchedEffect(createSuccess, updateSuccess, deleteSuccess) {
         if (createSuccess || updateSuccess || deleteSuccess) {
             showSuccessDialog = true
         }
     }
 
-    Logger.d("PolicySetupScreen", "createError=$createErrorText  show=$showErrorDialog")
+    LaunchedEffect(showSuccessDialog) {
+        if (showSuccessDialog){
+            delay(3000)
+            showSuccessDialog = false
+            event(PolicySetupEvent.ResetResponseState)
+            navigator?.pop()
+        }
+    }
 
-    BackHandler(enabled = true) {
-        if (state.hasChanges && sharedState.canUpdate) {
+    // ── Back handler ─────────────────────────
+    BackHandler(true) {
+        if (sharedState.hasChanges && sharedState.canUpdate) {
             showCloseConfirmDialog = true
         } else {
             navigator?.pop()
         }
     }
 
-
-
-
-    CustomDialogTextField(
-        enabled = sharedState.policyTitle.isNotEmpty(),
-        show = showDialogEdit,
-        title = stringResource(Res.string.jadval_nomini_kiriting),
-        value = sharedState.policyTitle,
-        onValueChange = { sharedEvent(PolicySharedEvent.SetPolicyTitle(it)) },
-        buttonText = stringResource(Res.string.saqlash),
-        label = stringResource(Res.string.misol_o_quv_markaz),
-        onDismiss = { showDialogEdit = false },
-        onButtonClick = {
-            showDialogEdit = false
-        }
-    )
+    // ── Dialoglar ────────────────────────────
+    LoadingDialog(state.isLoading)
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -265,23 +168,19 @@ fun PolicySetupUi(
         message = createErrorText.ifEmpty { updateErrorText }.ifEmpty { deleteErrorText },
         buttonText = stringResource(Res.string.ok),
         showCloseButton = false,
-        onDismiss = {
-            showErrorDialog = false
-            event(PolicySetupEvent.ResetResponseState)
-        },
-        onButtonClick = {
-            showErrorDialog = false
-            event(PolicySetupEvent.ResetResponseState)
-        }
+        onDismiss = { showErrorDialog = false },
+        onButtonClick = { showErrorDialog = false },
     )
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_success),
         show = showSuccessDialog,
         title = stringResource(Res.string.muvaffaqiyatli),
-        message = if (createSuccess) stringResource(Res.string.jadval_muvaffaqiyatli_yaratildi)
-        else if (updateSuccess) stringResource(Res.string.jadval_muvaffaqiyatli_tahrirlandi)
-        else stringResource(Res.string.jadval_muvaffaqiyatli_o_chirildi),
+        message = when {
+            createSuccess -> stringResource(Res.string.jadval_muvaffaqiyatli_yaratildi)
+            updateSuccess -> stringResource(Res.string.jadval_muvaffaqiyatli_tahrirlandi)
+            else -> stringResource(Res.string.jadval_muvaffaqiyatli_o_chirildi)
+        },
         buttonText = stringResource(Res.string.ok),
         showCloseButton = false,
         onDismiss = {
@@ -292,452 +191,547 @@ fun PolicySetupUi(
             showSuccessDialog = false
             navigator?.pop()
             event(PolicySetupEvent.ResetResponseState)
-        }
+        },
     )
 
-    CustomDialog(
+    CustomBottomDialog(
         show = showDeleteConfirmDialog,
-        painter = painterResource(Res.drawable.dialog_warning),
-        title = stringResource(Res.string.diqqat),
+        title = stringResource(Res.string.jadval_o_chirilsinmi),
         message = stringResource(Res.string.siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz),
-        buttonText = stringResource(Res.string.ochirish),
-        showCloseButton = true,
-        onDismiss = {
+        confirmButtonText = stringResource(Res.string.ochirish),
+        confirmButtonColor = AppColors.action.accentDanger,
+        dismissButtonText = stringResource(Res.string.bekor_qilish),
+        showCancelButton = true,
+        onDismiss = { showDeleteConfirmDialog = false },
+        onConfirm = {
             showDeleteConfirmDialog = false
+            sharedState.selectedPolicy?.ruleId?.let {
+                event(PolicySetupEvent.DeletePolicy(it))
+            }
         },
-        onButtonClick = {
-            showDeleteConfirmDialog = false
-            event(PolicySetupEvent.DeletePolicy)
-        }
     )
 
-    CustomDialog(
+    CustomBottomDialog(
         show = showCloseConfirmDialog,
-        painter = painterResource(Res.drawable.dialog_warning),
-        title = stringResource(Res.string.diqqat),
-        message = stringResource(Res.string.jadvalni_saqlamasdan_chiqishga_rozimisiz),
-        buttonText = stringResource(Res.string.roziman).capitalizeFirst(),
-        showCloseButton = true,
-        onDismiss = {
-            showCloseConfirmDialog = false
-        },
-        onButtonClick = {
+        title = stringResource(Res.string.chiqmoqchimisiz),
+        message = stringResource(Res.string.kiritilgan_ma_lumotlar_saqlanmaydi),
+        confirmButtonText = stringResource(Res.string.chiqish),
+        confirmButtonColor = AppColors.button.primary,
+        dismissButtonText = stringResource(Res.string.qolish),
+        showCancelButton = true,
+        onDismiss = { showCloseConfirmDialog = false },
+        onConfirm = {
             showCloseConfirmDialog = false
             navigator?.pop()
-        }
+        },
+    )
+
+
+    PolicyNameDialog(
+        policyName = sharedState.policyTitle,
+        show = showPolicyNameUpdateDialog,
+        onDismiss = {showPolicyNameUpdateDialog = false},
+        onButtonClick = {
+            sharedEvent(PolicySharedEvent.SetPolicyTitle(it))
+            showPolicyNameUpdateDialog = false
+        },
     )
 
 
 
+    // ── Asosiy content ───────────────────────
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.bg.secondary),
     ) {
         CustomHeader(
-            title = sharedState.policyTitle,
+            title = if (sharedState.isEditMode) sharedState.policyTitle
+            else stringResource(Res.string.jadval_yaratish),
+            modifier = Modifier
+                .fillMaxWidth(),
             showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            },
-            modifier = Modifier.fillMaxWidth(),
+            onBackClick = { navigator?.pop() },
             trailingIcon = {
-
-                if (sharedState.canUpdate){
-                    Box(
-                        modifier = Modifier
-                            .size(NormalIconButtonSize)
-                            .clip(RoundedCornerShape(ShapeCornerRadius))
-                            .background(MaterialTheme.extendedColor.cardColor)
-                            .clickable(
-                                indication = null,
-                                interactionSource = null
-                            ) {
-                                showDialogEdit = true
+                if (sharedState.isEditMode && sharedState.canUpdate){
+                    Box(){
+                        IconButton(
+                            onClick = {
+                                showPopupMenu = !showPopupMenu
                             },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.edite_pen_ilne),
-                            contentDescription = "Search",
-                            tint = MaterialTheme.extendedColor.onBackgroundColor
-                        )
+                            modifier = Modifier
+                                .size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Menu",
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
+                        }
+
+                        DropdownMenu(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(24.dp)),
+                            expanded = showPopupMenu,
+                            onDismissRequest = {showPopupMenu = false},
+                            shape = RoundedCornerShape(24.dp),
+                            containerColor = AppColors.modal.primary,
+
+                            ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(Res.string.tahrirlash),
+                                        style = AppTypography.titleSmMedium,
+                                        color = AppColors.text.primary
+                                    )
+                                },
+                                onClick = {
+                                    showPolicyNameUpdateDialog = true
+                                    showPopupMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.edite_pen_ilne),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(20.dp),
+                                        tint = AppColors.icon.primary
+                                    )
+                                }
+
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(Res.string.ochirish),
+                                        style = AppTypography.titleSmMedium,
+                                        color = AppColors.text.primary
+                                    )
+                                },
+                                onClick = {
+                                    showDeleteConfirmDialog = true
+                                    showPopupMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.message_delete),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .size(20.dp),
+                                        tint = AppColors.icon.primary
+                                    )
+                                }
+
+                            )
+                        }
                     }
                 }
 
-
             }
         )
-
-        SpaceMedium()
+        Space(20.dp)
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = ContainerPadding)
-                .verticalScroll(rememberScrollState())
-        )
-        {
-            CustomText(
-                text = stringResource(Res.string.shartlar),
-                fontSize = LargeTextSize,
-                fontWeight = FontWeight.SemiBold
-            )
+                .padding(horizontal = 10.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            // ── Jadval nomi ──────────────────
 
-            SpaceLarge()
-
-            if (state.timeList.isNotEmpty()) {
-                val subTitle = if (state.timeList.size == 1) {
-                    val timeRule = state.timeList.first()
-                    val weekdays = if (timeRule.weekDays.size == 7) {
-                        stringResource(Res.string.har_kuni)
-                    } else {
-                        timeRule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
-                    }
-                    val time = if (timeRule.allDay) {
-                        stringResource(Res.string.kun_davomida)
-                    } else {
-                        timeRule.time
-                    }
-
-                    if (timeRule.outside) {
-                        "$weekdays  $time (${stringResource(Res.string.tashqarida)})"
-                    } else {
-                        "$weekdays  $time"
-                    }
-                } else {
-                    "${state.timeList.size} ${stringResource(Res.string.ta_jadval)}"
-                }
-
-                PolicySetupRuleItem(
-                    title = stringResource(Res.string.vaqt),
-                    subTitle = subTitle,
-                    onRemoveClick = {
-                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
-                        sharedEvent(PolicySharedEvent.SetTimeRule(emptyList()))
-                    },
-                    onItemClick = {
-                        navigator?.push(TimeRuleListScreen())
-                    },
-                    canRemove = sharedState.canUpdate
-
-                )
-                SpaceLarge()
-            }
-
-            if (state.limitList.isNotEmpty()) {
-                val subTitle = if (state.limitList.size == 1) {
-                    val limitRule = state.limitList.first()
-                    val weekdays = if (limitRule.weekDays.size == 7) {
-                        stringResource(Res.string.har_kuni)
-                    } else {
-                        limitRule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
-                    }
-                    val hourMinute = limitRule.time
-
-                    val time = StringBuilder()
-                    if (hourMinute.hour > 0) {
-                        time.append(hourMinute.hour)
-                        time.append(" ")
-                        time.append(stringResource(Res.string.soat))
-                        time.append(", ")
-                    }
-                    if (hourMinute.minute > 0) {
-                        time.append(hourMinute.minute)
-                        time.append(" ")
-                        time.append(stringResource(Res.string.daqiqa))
-                    }
-
-                    val type =
-                        if (limitRule.limitType == DayHour.DAY) stringResource(Res.string.kunlik) else stringResource(
-                            Res.string.soatlik
-                        )
-
-                    "$weekdays  ${time} \n${type}"
-                } else {
-                    "${state.limitList.size} ${stringResource(Res.string.ta_jadval)}"
-                }
-
-                PolicySetupRuleItem(
-                    title = stringResource(Res.string.foydalanish_chegarasi),
-                    subTitle = subTitle,
-                    onRemoveClick = {
-                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
-                        sharedEvent(PolicySharedEvent.SetLimitRule(emptyList()))
-                    },
-                    onItemClick = {
-                        navigator?.push(LimitRuleListScreen())
-                    },
-                    canRemove = sharedState.canUpdate
-
-                )
-                SpaceLarge()
-            }
-
-            if (state.locationRule != null) {
-
-                val subTitle = if (state.locationRule.reverse){
-                    stringResource(Res.string.belgilangan_hududdan_tashqarida)
-                }
-                else{
-                    stringResource(Res.string.belgilangan_hudud_ichida)
-                }
-
-
-                PolicySetupRuleItem(
-                    title = stringResource(Res.string.joylashuv),
-                    subTitle = subTitle,
-                    onRemoveClick = {
-                        sharedEvent(PolicySharedEvent.StopPolicyDraftSnapshotUpdate)
-                        sharedEvent(PolicySharedEvent.SetLocationRule(null))
-                    },
-                    onItemClick = {
-                        navigator?.push(LocationRuleScreen())
-                    },
-                    canRemove = sharedState.canUpdate
-
-                )
-                SpaceLarge()
-            }
-
-            if (sharedState.canUpdate) {
-                SpaceMedium()
-                CustomOutlinedButton(
-                    onClick = {
-                        navigator?.push(RuleTypeSelectionScreen())
-                    },
-                    text = stringResource(Res.string.shartlar_kiritish),
-                    endingIcon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.add_square),
-                            contentDescription = "",
-                            tint = PrimaryColor
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            SpaceLarge()
-
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            )
-            {
-                CustomText(
-                    text = stringResource(Res.string.qora_ro_yxat),
-                    fontSize = LargeTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                IconButton(
-                    onClick = { }
+            if (!sharedState.isEditMode && sharedState.canUpdate) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .simpleShadow(shape = RoundedCornerShape(20.dp))
+                        .background(cardColor, RoundedCornerShape(20.dp))
+                        .padding(ContainerPadding),
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.arrow_down),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.textColor)
+                    Text(
+                        text = stringResource(Res.string.jadval_nomi),
+                        style = AppTypography.titleLgSemiBold,
+                        color = AppColors.text.primary,
+                    )
+                    SpaceSmall()
+                    CustomTextField(
+                        label = stringResource(Res.string.jadval_nomini_kiriting),
+                        enabled = sharedState.canUpdate,
+                        value = policyName,
+                        onValueChange = { newValue ->
+                            policyName = newValue
+                            sharedEvent(PolicySharedEvent.SetPolicyTitle(newValue))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(TextFieldHeight),
+                        containerColor = AppColors.field.page,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
+
+
+
+            // ── Shartlar ─────────────────────
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .simpleShadow(shape = RoundedCornerShape(20.dp))
+                    .background(cardColor, RoundedCornerShape(20.dp))
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.shartlar),
+                    style = AppTypography.titleLgSemiBold,
+                    color = AppColors.text.primary,
+                )
+
+                if (sharedState.limitList.isNotEmpty() || sharedState.timeList.isNotEmpty() || sharedState.locationRule != null){
+                    Space(12.dp)
+                }
+
+                // Time rule
+                if (sharedState.timeList.isNotEmpty()) {
+                    val subTitle = buildTimeRuleSubtitle(sharedState)
+                    PolicySetupRuleItem(
+                        title = stringResource(Res.string.vaqt),
+                        painter = painterResource(Res.drawable.time_square),
+                        subTitle = subTitle,
+                        canRemove = sharedState.canUpdate,
+                        onRemoveClick = {
+                            sharedEvent(PolicySharedEvent.SetTimeRule(emptyList()))
+                        },
+                        onItemClick = {
+                            navigator?.push(TimeRuleListScreen())
+                        },
+                    )
+                    Space(10.dp)
+                }
+
+                // Limit rule
+                if (sharedState.limitList.isNotEmpty()) {
+                    val subTitle = buildLimitRuleSubtitle(sharedState)
+                    PolicySetupRuleItem(
+                        title = stringResource(Res.string.foydalanish_chegarasi),
+                        painter = painterResource(Res.drawable.per_time_enabled),
+                        subTitle = subTitle,
+                        canRemove = sharedState.canUpdate,
+                        onRemoveClick = {
+                            sharedEvent(PolicySharedEvent.SetLimitRule(emptyList()))
+                        },
+                        onItemClick = {
+                            navigator?.push(LimitRuleListScreen())
+                        },
+                    )
+                    Space(10.dp)
+                }
+
+                // Location rule
+                if (sharedState.locationRule != null) {
+                    val subTitle = if (sharedState.locationRule.reverse)
+                        stringResource(Res.string.belgilangan_hududdan_tashqarida)
+                    else stringResource(Res.string.belgilangan_hudud_ichida)
+
+                    PolicySetupRuleItem(
+                        title = stringResource(Res.string.joylashuv),
+                        painter = painterResource(Res.drawable.per_location_enable),
+                        subTitle = subTitle,
+                        canRemove = sharedState.canUpdate,
+                        onRemoveClick = {
+                            sharedEvent(PolicySharedEvent.SetLocationRule(null))
+                        },
+                        onItemClick = {
+                            navigator?.push(LocationRuleScreen())
+                        },
+                    )
+                }
+
+                // Shart qo'shish tugmasi
+                if (sharedState.showAddRuleButton) {
+                    Space(12.dp)
+                    DashedBorderButton(
+                        text = stringResource(Res.string.shartlar_kiritish),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(DialogButtonHeight),
+                        onClick = {
+                            navigator?.push(RuleTypeSelectionScreen())
+                                  },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = AppColors.text.accentEmphasis,
+                            )
+                        }
                     )
                 }
             }
 
-            CustomText(
-                text = stringResource(Res.string.bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang),
-                fontSize = NormalTextSize,
-                color = HintTextColor
-            )
+            Spacer(Modifier.height(24.dp))
 
-            SpaceLarge()
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.bloklash_rejimi),
+                    style = AppTypography.titleLgSemiBold,
+                    color = AppColors.text.primary,
+                    modifier = Modifier.weight(1f),
+                )
+                // Action badge
+                val actionText = if (sharedState.policyAction == PolicyAction.DENY)
+                    stringResource(Res.string.qora_ro_yxat)
+                else stringResource(Res.string.oq_royhat)
+
+                val actionIcon = if (sharedState.policyAction == PolicyAction.DENY)
+                    painterResource(Res.drawable.blocklist)
+                else
+                    painterResource(Res.drawable.whitelist)
+
+                Row(
+                    modifier = Modifier
+                        .singleClick {
+                            if (sharedState.canUpdate) {
+                                navigator?.push(PolicyActionScreen())
+                            }
+                        }
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = actionIcon,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(20.dp),
+                        tint = AppColors.icon.accentPrimary
+                    )
+                    Space(4.dp)
+                    Text(
+                        text = actionText,
+                        style = AppTypography.titleLgSemiBold,
+                        color = AppColors.text.accentEmphasis
+                    )
+                    Space(4.dp)
+
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_down_reg),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = AppColors.icon.accentPrimary,
+                    )
+                }
+            }
+            Space(12.dp)
+            Text(
+                text = stringResource(Res.string.bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang),
+                style = AppTypography.bodyLgMedium,
+                color = AppColors.text.primary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp),
+            )
+            Spacer(Modifier.height(20.dp))
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        navigator?.push(AppWebSelectionScreen())
-                    }
-                    .clip(RoundedCornerShape(CardCornerRadius))
-                    .background(
-                        MaterialTheme.extendedColor.cardColor
-                    )
-            )
-            {
+                    .simpleShadow(shape = RoundedCornerShape(20.dp))
+                    .background(AppColors.bg.surface, RoundedCornerShape(20.dp))
+            ) {
 
-                val statusColor = if (selectedApps.isEmpty()) HintTextColor else PrimaryColor
-                val countText = selectedApps.size.toString()
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            top = ContainerPadding,
-                            start = ContainerPadding,
-                            end = ContainerPadding
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-                    CustomText(
+                        .height(52.dp)
+                        .padding(horizontal = 16.dp)
+                        .singleClick {
+                            navigator?.push(AppWebSelectionScreen())
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
                         text = stringResource(Res.string.ilovalar),
-                        fontSize = LargeTextSize,
-                        fontWeight = FontWeight.SemiBold
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
+                        modifier = Modifier.weight(1f),
                     )
-
-                    Spacer(Modifier.weight(1f))
-
-                    Icon(
-                        painter = painterResource(Res.drawable.apps_icon),
-                        contentDescription = null,
-                        tint = statusColor,
-                        modifier = Modifier.size(SmallIconSize)
+                    Text(
+                        text = "${sharedState.selectedPkgs.size}",
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
                     )
-                    Spacer(Modifier.size(4.dp))
-                    CustomText(
-                        text = countText,
-                        fontSize = NormalTextSize,
-                        color = statusColor
-                    )
-
                     SpaceUltraSmall()
                     Icon(
-                        painter = painterResource(Res.drawable.arrow_right),
+                        painter = painterResource(Res.drawable.arrow_right_rounded),
                         contentDescription = null,
-                        modifier = Modifier.size(NormalIconSize),
-                        tint = MaterialTheme.extendedColor.textColor
-                    )
-                }
-                if (selectedApps.isNotEmpty()) {
-                    SpaceSmall()
-                }
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(
-                        start = ContainerPadding,
-                        bottom = ContainerPadding,
-                        end = ContainerPadding
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                )
-                {
-                    items(selectedApps) { app ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.extendedColor.backgroundColor,
-                                    RoundedCornerShape(CardCornerRadius)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            if (!app.iconUrl.isNullOrEmpty()) {
-                                AsyncImage(
-                                    modifier = Modifier.size(SmallIconSize)
-                                        .clip(RoundedCornerShape(6.dp)),
-                                    model = app.iconUrl,
-                                    contentDescription = null,
-                                    placeholder = painterResource(Res.drawable.ic_launcher_foreground),
-                                    error = painterResource(Res.drawable.ic_launcher_foreground),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-
-                                Image(
-                                    painter = painterResource(Res.drawable.ic_launcher_foreground),
-                                    modifier = Modifier.size(SmallIconSize)
-                                        .clip(RoundedCornerShape(6.dp)),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
-
-
-                            }
-                            SpaceSmall()
-                            CustomText(
-                                text = app.name,
-                                color = MaterialTheme.extendedColor.textColor,
-                                fontSize = SmallTextSize,
-                                lineHeight = SmallTextSize
-                            )
-                        }
-                    }
-
-                }
-                if (sharedAppState.serverMissingCount > 0) {
-                    CustomText(
-                        text = stringResource(
-                            Res.string.ta_ilova_sizda_o_rnatilmagan,
-                            sharedAppState.serverMissingCount
-                        ),
-                        modifier = Modifier
-                            .padding(
-                                start = ContainerPadding,
-                                end = ContainerPadding,
-                                bottom = ContainerPadding
-                            ),
-                        color = MaterialTheme.extendedColor.hintColor
+                        modifier = Modifier.size(16.dp),
+                        tint = AppColors.icon.secondary,
                     )
                 }
 
-
-            }
-            SpaceLarge()
-            SpaceLarge()
-
-            if (sharedState.selectedPolicy != null && sharedState.canUpdate) {
-                CustomOutlinedButton(
-                    text = stringResource(Res.string.ochirish),
-                    borderColor = MostImportantButtonColor,
-                    textColor = MostImportantButtonColor,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    endingIcon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.delete),
-                            contentDescription = "",
-                            tint = MostImportantButtonColor,
-                            modifier = Modifier
-                                .size(SmallIconSize)
-                        )
-                    },
-                    onClick = {
-                        showDeleteConfirmDialog = true
-                    }
+                HorizontalDivider(
+                    color = AppColors.border.tertiarySubtle,
+                    thickness = 1.dp
                 )
-                SpaceLarge()
+
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .padding(horizontal = 16.dp)
+                        .singleClick {
+                            navigator?.push(AppWebSelectionScreen())
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(Res.string.kategoriyalar),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = "${sharedState.selectedCategories.size}",
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
+                    )
+                    SpaceUltraSmall()
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_right_rounded),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = AppColors.icon.secondary,
+                    )
+                }
+
+                HorizontalDivider(
+                    color = AppColors.border.tertiarySubtle,
+                    thickness = 1.dp
+                )
+
+
+                // Saytlar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .padding(horizontal = 16.dp)
+                        .singleClick {
+                            navigator?.push(AppWebSelectionScreen())
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(Res.string.saytlar),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = "${sharedState.selectedSites.size}",
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary,
+                    )
+                    SpaceUltraSmall()
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_right_rounded),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = AppColors.icon.secondary,
+                    )
+                }
             }
 
-
+            SpaceLarge()
         }
 
+
+        // ── Saqlash tugmasi ──────────────────
         if (sharedState.canUpdate) {
-            CustomButton(
-                enabled = (state.limitList.isNotEmpty() || state.timeList.isNotEmpty() || state.locationRule != null) && selectedApps.isNotEmpty(),
-                text = stringResource(Res.string.saqlash),
-                onClick = {
-                    event(PolicySetupEvent.SavePolicy)
-                },
+            Box(
                 modifier = Modifier
-                    .padding(ContainerPadding)
                     .fillMaxWidth()
-                    .height(ButtonHeight),
-            )
+                    .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+            ){
+                CustomButtonNew(
+                    enabled = sharedState.canSave,
+                    text = stringResource(Res.string.saqlash),
+                    onClick = { event(PolicySetupEvent.SavePolicy(sharedState)) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
+
         }
-
     }
+}
 
+// ── Subtitle helpers ─────────────────────────
 
+@Composable
+private fun buildTimeRuleSubtitle(sharedState: PolicySharedState): String {
+    return if (sharedState.timeList.size == 1) {
+        val rule = sharedState.timeList.first()
+        val weekdays = if (rule.weekDays.size == 7) stringResource(Res.string.har_kuni)
+        else rule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
+
+        val time = if (rule.allDay) stringResource(Res.string.kun_davomida) else rule.time
+
+        if (rule.outside) "$weekdays  $time (${stringResource(Res.string.tashqarida)})"
+        else "$weekdays  $time"
+    } else {
+        "${sharedState.timeList.size} ${stringResource(Res.string.ta_jadval)}"
+    }
+}
+
+@Composable
+private fun buildLimitRuleSubtitle(sharedState: PolicySharedState): String {
+    return if (sharedState.limitList.size == 1) {
+        val rule = sharedState.limitList.first()
+        val weekdays = if (rule.weekDays.size == 7) stringResource(Res.string.har_kuni)
+        else rule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
+
+        val time = buildString {
+            if (rule.time.hour > 0) append("${rule.time.hour} ${stringResource(Res.string.soat)}, ")
+            if (rule.time.minute > 0) append("${rule.time.minute} ${stringResource(Res.string.daqiqa)}")
+        }
+        val type = if (rule.limitType == DayHour.DAY) stringResource(Res.string.kunlik)
+        else stringResource(Res.string.soatlik)
+
+        "$weekdays  $time\n$type"
+    } else {
+        "${sharedState.limitList.size} ${stringResource(Res.string.ta_jadval)}"
+    }
 }
 
 @Preview
 @Composable
 private fun PreviewTableScreen() {
-    TikonchaParentTheme(ThemeMode.LIGHT) {
+    TikonchaParentTheme(ThemeMode.DARK) {
         PolicySetupUi(
-            navigator = null
+            state = PolicySetupState(),
+            event = {},
+            sharedState = PolicySharedState(
+                locationRule = LocationRule(
+                    geoType = GeoType.CIRCLE,
+                    reverse = false
+                )
+            ),
+            sharedEvent = {}
         )
     }
 

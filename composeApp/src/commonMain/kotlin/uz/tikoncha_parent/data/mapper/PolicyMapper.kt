@@ -1,8 +1,6 @@
 package uz.tikoncha_parent.data.mapper
 
-import dev.icerock.moko.geo.LatLng
 import kotlinx.datetime.LocalTime
-import uz.tikoncha_parent.data.mapper.toPolygonDto
 import uz.tikoncha_parent.data.remote.model.AppDto
 import uz.tikoncha_parent.data.remote.model.LimitRuleDto
 import uz.tikoncha_parent.data.remote.model.LocationRuleDto
@@ -11,26 +9,29 @@ import uz.tikoncha_parent.data.remote.model.TimeRuleDto
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.GeoType
 import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.LimitRule
+import uz.tikoncha_parent.domain.model.LimitWindow
 import uz.tikoncha_parent.domain.model.LocationData
 import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.MinuteRange
 import uz.tikoncha_parent.domain.model.PolicyType
+import uz.tikoncha_parent.domain.model.TimeRule
 import uz.tikoncha_parent.domain.model.WeekDay
-import uz.tikoncha_parent.presentation.policy.PolicyItemUi
-import uz.tikoncha_parent.presentation.policy.app_selection.AppSelectionUi
+import uz.tikoncha_parent.domain.model.policy.PolicyAction
+import uz.tikoncha_parent.presentation.policy.policy_list.PolicyItemUi
+import uz.tikoncha_parent.presentation.policy.app_site_selection.AppSelectionUi
+import uz.tikoncha_parent.presentation.policy.app_site_selection.CategoryLocalizer
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.toMinutes
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
-import kotlin.collections.get
-import kotlin.compareTo
 
 
 fun AppDto.toAppSelectionUi(): AppSelectionUi {
     return AppSelectionUi(
         name = name?:"",
         packageName = `package`,
-        iconUrl = logo,
-        checked = false,
+        iconUrl = icon,
+        category = CategoryLocalizer.toCode(category?:""),
         order = order
     )
 }
@@ -80,7 +81,7 @@ fun LocationRule?.toLocationRuleDto(): LocationRuleDto?{
     if (this == null) return null
     return LocationRuleDto(
         polygon = polygon.toPolygonDto(),
-        circle_radius = radiusMeters,
+        circle_radius = radiusMeters?.toDouble(),
         center_latitude = centerLat,
         center_longitude = centerLng,
         location_include = !reverse,
@@ -122,7 +123,7 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi{
     val location = buildLocation(location_rule)
     val policyType = PolicyType.getPolicyType(scope_type)
     return PolicyItemUi(
-        policyId = rule_id,
+        ruleId = rule_id,
         policyName = rule_name ?: policy_name,
         appCount = packages?.size?:0,
         webCount = sites?.size?:0,
@@ -131,6 +132,8 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi{
         hasLocationRule = location_rule != null,
         isActive = true,
         packages = packages?:emptyList(),
+        categories = categories?:emptyList(),
+        action = PolicyAction.valueToPolicyAction(action),
         sites = sites?:emptyList(),
         timeRule = time_rule?.map { it.toTimeRuleUi() }?:emptyList(),
         limitRule = limit_rule?.map { it.toLimitRuleUi() }?:emptyList(),
@@ -152,7 +155,7 @@ private fun buildLocation(dto: LocationRuleDto?): LocationRule? {
             geoType = GeoType.CIRCLE,
             centerLat = dto.center_latitude,
             centerLng = dto.center_longitude,
-            radiusMeters = dto.circle_radius,
+            radiusMeters = dto.circle_radius?.toInt(),
             polygon = null,
             reverse = !dto.location_include
         )
@@ -161,7 +164,7 @@ private fun buildLocation(dto: LocationRuleDto?): LocationRule? {
             centerLat = null,
             centerLng = null,
             radiusMeters = null,
-            polygon = dto.polygon.mapNotNull { p ->
+            polygon = dto.polygon?.mapNotNull { p ->
                 if (p.size >= 2) LocationData(p[1], p[0]) else null
             },
             reverse = !dto.location_include
@@ -223,4 +226,69 @@ private fun LocalTime.hm(): String {
 private fun Int.toHourMinute(): HourMinute {
     return if (this >= 24 * 60) HourMinute(23, 59)
     else HourMinute(this / 60, this % 60)
+}
+
+fun List<TimeRule>.toTimeRuleUiList(): List<TimeRuleUi> {
+    if (isEmpty()) return emptyList()
+
+    val grouped = groupBy { Triple(it.startMin, it.endMin, it.inversion) }
+
+    val sortedKeys = grouped.keys.sortedWith(
+        compareBy<Triple<Int, Int, Boolean>> { it.first }
+            .thenBy { it.second }
+            .thenBy { it.third },
+    )
+
+    var counter = 1
+    return sortedKeys.map { (startMin, endMin, inversion) ->
+        val items = grouped[Triple(startMin, endMin, inversion)].orEmpty()
+        val weekDays = items.map { WeekDay.fromNum(it.weekDay) }.toSet()
+
+        val startLt = startMin.toLocalTime()
+        val endLt = endMin.toLocalTime()
+        val allDay = !inversion && startMin == 0 && endMin == (24 * 60) - 1
+
+        val timeLabel = when {
+            allDay -> "${startLt.hm()} – ${endLt.hm()}"
+            inversion -> "00:00 - ${startLt.hm()}, ${endLt.hm()} - 23:59"
+            else -> "${startLt.hm()} – ${endLt.hm()}"
+        }
+
+        TimeRuleUi(
+            id = counter++,
+            startTime = startLt,
+            endTime = endLt,
+            outside = inversion,
+            allDay = allDay,
+            time = timeLabel,
+            weekDays = weekDays,
+            timeRange = buildTimeRanges(
+                startTime = startLt,
+                endTime = endLt,
+                outside = inversion,
+            ),
+        )
+    }
+}
+
+fun List<LimitRule>.toLimitRuleUi(): List<LimitRuleUi> {
+    if (isEmpty()) return emptyList()
+
+    var indexCounter = 1
+    return groupBy { it.window }
+        .flatMap { (window, rules) ->
+            rules
+                .groupBy { it.allowedMinutes }
+                .map { (minutes, sameLimitRules) ->
+                    LimitRuleUi(
+                        id = indexCounter++,
+                        time = HourMinute.fromMinutes(minutes),
+                        weekDays = sameLimitRules.map { WeekDay.fromNum(it.weekDay) }.toSet(),
+                        limitType = when (window) {
+                            LimitWindow.DAILY -> DayHour.DAY
+                            LimitWindow.HOURLY -> DayHour.HOUR
+                        },
+                    )
+                }
+        }
 }

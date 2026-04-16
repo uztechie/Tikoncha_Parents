@@ -112,8 +112,8 @@ import uz.tikoncha_parent.presentation.new_home.HomeViewModel
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
-import uz.tikoncha_parent.presentation.policy.PolicyViewModel
-import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
+import uz.tikoncha_parent.presentation.policy.policy_list.PolicyViewModel
+import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel

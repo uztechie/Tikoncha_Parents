@@ -6,6 +6,6 @@ enum class AppCode(private val code:Int) {
     TEACHER(3);
 
     companion object{
-        val currentAppCode = STUDENT.code
+        val currentAppCode = PARENT.code
     }
 }
