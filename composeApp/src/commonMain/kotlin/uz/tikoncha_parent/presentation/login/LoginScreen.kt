@@ -19,11 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -35,8 +31,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.LogoHeader
 import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
 import uz.tikoncha_parent.ui.*
@@ -47,22 +41,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-class LoginScreen :Screen {
+class LoginScreen : Screen {
 
     @Composable
     override fun Content() {
-
         val viewModel = koinScreenModel<LoginViewmodel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
-
         val navigator = LocalNavigator.current
 
         LoginUi(
@@ -74,61 +64,22 @@ class LoginScreen :Screen {
 }
 
 
-
-
 @Composable
 fun LoginUi(
     navigator: Navigator?,
     state: LoginState,
-    event: (LoginEvent)-> Unit
+    event: (LoginEvent) -> Unit
 ) {
 
-    val isPhoneNumberValid = state.number.length == 9 && state.number.filter { it.isDigit() }.length == 9
+    val isPhoneNumberValid = state.number.length == 9 && state.number.all { it.isDigit() }
     val isKeyboardOpen = KeyboardAsState().value
-
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-
-    val otpLoading = state.responseState is ResponseState.Loading
-    val otpErrorText = state.responseState.errorText()
-    val otpSuccess = state.responseState is ResponseState.Success
-
-
-    LaunchedEffect(otpErrorText) {
-        showDialog = otpErrorText.isNotEmpty()
-    }
-
-    LoadingDialog(show = otpLoading)
-    CustomDialog(
-        painter = painterResource(Res.drawable.dialog_failed),
-        show = showDialog,
-        title = stringResource(Res.string.xatolik),
-        message = otpErrorText,
-        buttonText = stringResource(Res.string.ok),
-        onDismiss = {
-            showDialog = false
-        },
-        onButtonClick = {
-            showDialog = false
-        }
-    )
-
-    LaunchedEffect(otpSuccess) {
-        if (otpSuccess){
-            event(LoginEvent.Reset)
-            navigator?.push(OtpScreen(phoneNumber = state.fullNumber))
-        }
-    }
-
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .background(MaterialTheme.extendedColor.backgroundColor)
-    ){
-
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,11 +87,10 @@ fun LoginUi(
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-
             LogoHeader()
 
             val animatedRatioHeight by animateFloatAsState(
-                targetValue = if(isKeyboardOpen) 2f else 3f,
+                targetValue = if (isKeyboardOpen) 2f else 3f,
                 label = "AspectRatioAnimation"
             )
 
@@ -182,7 +132,10 @@ fun LoginUi(
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
                 onClick = {
-                    event(LoginEvent.OnConfirmClicked)
+                    if (isPhoneNumberValid) {
+                        event(LoginEvent.OnConfirmClicked)
+                        navigator?.push(OtpScreen(phoneNumber = state.fullNumber))
+                    }
                 },
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -192,36 +145,6 @@ fun LoginUi(
                 text = stringResource(Res.string.keyingisi)
             )
             SpaceSmall()
-
-//            val annotatedText = buildAnnotatedString {
-//
-//                append("Авторизуясь, вы принимаете наши Условия использования и ")
-//                pushStringAnnotation(
-//                    tag = "POLICY",
-//                    annotation = "policy",
-//                )
-//                withStyle(
-//                    style = SpanStyle(
-//                        color = MaterialTheme.extendedColor.primaryColor,
-//                        textDecoration = TextDecoration.Underline,
-//                        fontSize = NormalTextSize,
-//                        fontWeight = FontWeight.W500
-//                    )
-//                ) {
-//                    append("Политику конфиденциальности.")
-//                }
-//                pop()
-//            }
-//            ClickableText(
-//                text = annotatedText,
-//                style = TextStyle(fontSize = NormalTextSize, color = MaterialTheme.extendedColor.onBackgroundColor),
-//                onClick = { offset ->
-//                    annotatedText.getStringAnnotations(tag = "POLICY", start = offset, end = offset)
-//                        .firstOrNull()?.let {
-//                        }
-//                }
-//            )
-//            SpaceSmall()
         }
     }
 }
@@ -229,9 +152,7 @@ fun LoginUi(
 @Composable
 @Preview
 private fun Preview() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
+    TikonchaParentTheme(ThemeMode.DARK) {
         LoginUi(
             navigator = null,
             state = LoginState(),

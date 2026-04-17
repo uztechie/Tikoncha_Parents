@@ -42,16 +42,17 @@ class SplashScreen : Screen {
 
 
             delay(1000) // 1 sekund
-            if (AppSettings.hasUserLogin){
+            if (AppSettings.hasUserLogin) {
                 Logger.d("SplashScreen", "hasUserLogin")
                 navigator?.replaceAll(NewHomeScreen())
-            }else{
-                if (AppSettings.isFirstLaunch){
-                    navigator?.replaceAll(SliderScreen())
-                }
-                else{
-                    navigator?.replaceAll(LoginScreen())
-                }
+            } else {
+//                if (AppSettings.isFirstLaunch){
+//                    navigator?.replaceAll(SliderScreen())
+//                }
+//                else{
+//                    navigator?.replaceAll(LoginScreen())
+//                }
+                navigator?.replaceAll(LoginScreen())
             }
         }
 
@@ -74,8 +75,8 @@ class SplashScreen : Screen {
 
 @Preview
 @Composable
-fun Preview(){
-    TikonchaParentTheme(){
+fun Preview() {
+    TikonchaParentTheme() {
         SplashScreen().Content()
     }
 }

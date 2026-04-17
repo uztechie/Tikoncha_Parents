@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.statistic
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,10 +23,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
@@ -34,6 +36,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.number
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
@@ -49,6 +53,8 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
@@ -57,13 +63,13 @@ class StatisticScreen : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current?:return
+        val navigator = LocalNavigator.current ?: return
 
         val viewModel = navigator.koinNavigatorScreenModel<StatisticViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             event(StatisticEvent.GetChildren)
         }
 
@@ -98,7 +104,7 @@ fun StatisticUi(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         event(StatisticEvent.GetChildren)
 //        event(StatisticEvent.RefreshChild)
 //        event(StatisticEvent.GetAppUsage)
@@ -129,7 +135,7 @@ fun StatisticUi(
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
-        onDismiss = {showAppUsageErrorDialog = false},
+        onDismiss = { showAppUsageErrorDialog = false },
         show = showAppUsageErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = appUsageErrorText,
@@ -175,8 +181,8 @@ fun StatisticUi(
                     ChildSelectionButton(
                         modifier = Modifier
                             .widthIn(120.dp, 160.dp),
-                        text = state.selectedChild?.name?:"",
-                        imageUrl = state.selectedChild?.avatarUrl?:"",
+                        text = state.selectedChild?.name ?: "",
+                        imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzandingizni_tanlang),
                         onClick = {
                             showDialog = true
@@ -194,69 +200,129 @@ fun StatisticUi(
                     .verticalScroll(rememberScrollState())
             ) {
                 SpaceMedium()
-                SegmentedToggle(
-                    options = listOf(
-                        stringResource(Res.string.haftalik) to null,
-                        stringResource(Res.string.kunlik) to null
-                    ),
-                    selectedIndex = selectionTypeIndex,
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    onOptionSelected = {
-                        selectionTypeIndex = it
-                        selectionType =
-                            if (it == 0) DateSelectionType.WEEK else DateSelectionType.DAY
+                        .fillMaxWidth()
+                        .background(AppColors.bg.surface, RoundedCornerShape(TextFieldCornerRadius))
+                        .padding(ContainerPadding)
+                ) {
+                    SegmentedToggle(
+                        backgroundColor = AppColors.bg.secondarySurface,
+                        options = listOf(
+                            stringResource(Res.string.haftalik) to null,
+                            stringResource(Res.string.kunlik) to null
+                        ),
+                        selectedIndex = selectionTypeIndex,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        onOptionSelected = {
+                            selectionTypeIndex = it
+                            selectionType =
+                                if (it == 0) DateSelectionType.WEEK else DateSelectionType.DAY
+                        }
+                    )
+                    SpaceMedium()
+
+//                    val averageTime = if (selectionType == DateSelectionType.DAY) {
+//                        val formatTime = state.averageUsageTime
+//                        buildList {
+//
+//                            if (state.isTodaySelected) {
+//                                add(stringResource(Res.string.bugun))
+//                            }
+//                            if (formatTime.hour > 0) {
+//                                add("${formatTime.hour} ${stringResource(Res.string.soat)}")
+//                            }
+//                            if (formatTime.minute > 0) {
+//                                add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
+//                            }
+//                        }.joinToString(" ")
+//                    } else {
+//
+//                        val formatTime = state.averageUsageTime
+//                        val usageTime = buildList {
+//                            if (formatTime.hour > 0) {
+//                                add("${formatTime.hour} ${stringResource(Res.string.soat)}")
+//                            }
+//                            if (formatTime.minute > 0) {
+//                                add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
+//                            }
+//                        }.joinToString(" ")
+//
+//                        "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
+//                    }
+                    val sliderTimeText = if (selectionType == DateSelectionType.DAY) {
+                        val f = state.averageUsageTime
+                        buildList {
+                            if (state.isTodaySelected) add(stringResource(Res.string.bugun))
+                            if (f.hour > 0) add("${f.hour} ${stringResource(Res.string.soat)}")
+                            if (f.minute > 0) add("${f.minute} ${stringResource(Res.string.daqiqa)}")
+                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
+                            .joinToString(" ")
+                    } else {
+                        val totalMinutes = state.weeklyChartData.values.sum().toInt()
+                        val hours = totalMinutes / 60
+                        val minutes = totalMinutes % 60
+
+                        buildList {
+                            if (hours > 0) add("$hours ${stringResource(Res.string.soat)}")
+                            if (minutes > 0) add("$minutes ${stringResource(Res.string.daqiqa)}")
+                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
+                            .joinToString(" ")
                     }
-                )
-                SpaceMedium()
 
-                val averageTime = if (selectionType == DateSelectionType.DAY) {
-                    val formatTime = state.averageUsageTime
-                    buildList<String> {
+                    DateSelectorSlider(
+                        type = selectionType,
+                        averageTimeText = sliderTimeText,
+                        periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
+                        onDateSelected = {
+                            event(StatisticEvent.GetUsageList(it, selectionType))
+                        },
+                        onLastItemSelected = {
+                            event(StatisticEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
+                        }
+                    )
 
-                        if (state.isTodaySelected) {
-                            add(stringResource(Res.string.bugun))
-                        }
-                        if (formatTime.hour > 0) {
-                            add("${formatTime.hour} ${stringResource(Res.string.soat)}")
-                        }
-                        if (formatTime.minute > 0) {
-                            add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
-                        }
-                    }.joinToString(" ")
-                } else {
+                    SpaceLarge()
 
-                    val formatTime = state.averageUsageTime
-                    val usageTime = buildList<String> {
-                        if (formatTime.hour > 0) {
-                            add("${formatTime.hour} ${stringResource(Res.string.soat)}")
-                        }
-                        if (formatTime.minute > 0) {
-                            add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
-                        }
-                    }.joinToString(" ")
+                    val data = if (selectionType == DateSelectionType.WEEK) normalizeWeeklyKeys(state.weeklyChartData) else state.dailyChartData
+                    UsageBarChart(
+                        data = data,
+                        isWeekly = selectionType == DateSelectionType.WEEK,
+                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                    )
 
-                    "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
+                    if (selectionType == DateSelectionType.WEEK && state.selectedPeriod != null) {
+                        val dailyMinutes = state.weeklyChartData.values
+                        val totalMinutes = dailyMinutes.sum().toInt()
+                        val activeDays = dailyMinutes.count { it > 0.0 }
+
+                        val avgPerDay = if (activeDays > 0) totalMinutes / activeDays else 0
+                        val hours = avgPerDay / 60
+                        val minutes = avgPerDay % 60
+
+                        val usageTime = buildList {
+                            if (hours > 0) add("$hours ${stringResource(Res.string.soat)}")
+                            if (minutes > 0) add("$minutes ${stringResource(Res.string.daqiqa)}")
+                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
+                            .joinToString(" ")
+
+                        val weeklyAvgText = "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = weeklyAvgText,
+                                style = AppTypography.titleMdMedium,
+                                color = AppColors.text.secondary,
+                            )
+                        }
+                    }
                 }
-                DateSelectorSlider(
-                    type = selectionType,
-                    averageTimeText = averageTime,
-                    periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
-                    onDateSelected = {
-                        event(StatisticEvent.GetUsageList(it, selectionType))
-                    },
-                    onLastItemSelected = {
-                        event(StatisticEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
-                    }
-                )
-                SpaceLarge()
-
-                val data = if (selectionType == DateSelectionType.WEEK) normalizeWeeklyKeys(state.weeklyChartData) else state.dailyChartData
-                UsageBarChart(
-                    data = data,
-                    isWeekly = selectionType == DateSelectionType.WEEK,
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
-                )
                 SpaceMedium()
 
                 CustomText(
@@ -266,24 +332,35 @@ fun StatisticUi(
                 )
                 SpaceSmall()
 
-                state.appUsageUiList.forEach { item ->
-                    AppUsageItem(
-                        appUsageUi = item,
-                    )
-                    SpaceUltraSmall()
-                    DividerHorizontal()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AppColors.bg.surface, RoundedCornerShape(TextFieldCornerRadius))
+                        .padding(ContainerPadding)
+                ) {
+                    state.appUsageUiList.forEach { item ->
+                        AppUsageItem(appUsageUi = item)
+                        SpaceUltraSmall()
+                        DividerHorizontal()
+                    }
                 }
             }
         }
     }
 }
 
+private fun formatDate(date: LocalDate): String {
+    val d = date.day.toString().padStart(2, '0')
+    val m = date.month.number.toString().padStart(2, '0')
+    return "$d.$m.${date.year}"
+}
+
 @Preview
 @Composable
 private fun Pre() {
     TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
+        ThemeMode.LIGHT
+    ) {
         StatisticUi(
             navigator = null,
             state = StatisticState(),
