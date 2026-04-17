@@ -4,64 +4,80 @@ import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
+// ═════════════════════════════════════════════════════════════
+// Chips builder
+// ═════════════════════════════════════════════════════════════
 
-interface HasWeekDays {
-    val id: Int
-    val weekDays: Set<WeekDay>
+/**
+ * Rule setup ekranlari uchun hafta kunlari chiplarini quradi.
+ *
+ * Qoida: bir tur rule ro'yxati (time YOKI limit) ichida har bir hafta kuni
+ * faqat 1 marta ishlatilishi mumkin. Shu turdagi boshqa rulelardagi
+ * tanlangan kunlar disabled bo'ladi.
+ *
+ * @param otherRuleDays shu turdagi BOSHQA rulelardagi tanlangan kunlar
+ *                      (tahrirlanayotgan rule chetlab o'tilgan holda)
+ * @param currentSelected shu rule hozir tanlagan kunlari
+ */
+fun buildWeekdayChips(
+    otherRuleDays: Set<WeekDay>,
+    currentSelected: Set<WeekDay> = emptySet(),
+): List<WeekDayChipUi> = WeekDay.ordered.map { day ->
+    WeekDayChipUi(
+        day = day,
+        selected = day in currentSelected,
+        enabled = day !in otherRuleDays,
+    )
 }
 
-fun TimeRuleUi.asHasWeekDays(): HasWeekDays = object : HasWeekDays {
-    override val id: Int get() = this@asHasWeekDays.id
-    override val weekDays: Set<WeekDay> get() = this@asHasWeekDays.weekDays
-}
+// ═════════════════════════════════════════════════════════════
+// Occupied days — bir turdagi rulelardan band kunlarni yig'adi
+// ═════════════════════════════════════════════════════════════
 
-fun LimitRuleUi.asHasWeekDays(): HasWeekDays = object : HasWeekDays {
-    override val id: Int get() = this@asHasWeekDays.id
-    override val weekDays: Set<WeekDay> get() = this@asHasWeekDays.weekDays
-}
-
-
-fun <T : HasWeekDays> calcDisabledDays(
-    rules: List<T>,
-    excludeId: Int? = null
+/**
+ * Time rulelardan band kunlarni yig'adi.
+ * @param excludeId tahrirlanayotgan rule ID si (o'zini band deb hisoblamaslik uchun)
+ */
+fun occupiedTimeDays(
+    rules: List<TimeRuleUi>,
+    excludeId: Int? = null,
 ): Set<WeekDay> = rules.asSequence()
     .filter { excludeId == null || it.id != excludeId }
     .flatMap { it.weekDays.asSequence() }
     .toSet()
 
-fun buildWeekdayChips(
-    selected: Set<WeekDay>,
-    disabled: Set<WeekDay>
-): List<WeekDayChipUi> = WeekDay.ordered.map { day ->
-    WeekDayChipUi(
-        day = day,
-        labelResId = 1, //day.labelResId(),
-        selected = day in selected,
-        enabled = day !in disabled
-    )
-}
+/**
+ * Limit rulelardan band kunlarni yig'adi.
+ * @param excludeId tahrirlanayotgan rule ID si (o'zini band deb hisoblamaslik uchun)
+ */
+fun occupiedLimitDays(
+    rules: List<LimitRuleUi>,
+    excludeId: Int? = null,
+): Set<WeekDay> = rules.asSequence()
+    .filter { excludeId == null || it.id != excludeId }
+    .flatMap { it.weekDays.asSequence() }
+    .toSet()
 
-fun <T : HasWeekDays> buildChipsForCreate(
-    rules: List<T>
-): List<WeekDayChipUi> {
-    val disabled = calcDisabledDays(rules)
-    return buildWeekdayChips(selected = emptySet(), disabled = disabled)
-}
+// ═════════════════════════════════════════════════════════════
+// Chip list extensions — Setup VM lar ichida ishlatiladi
+// ═════════════════════════════════════════════════════════════
 
-fun <T : HasWeekDays> buildChipsForEdit(
-    currentSelected: Set<WeekDay>,
-    rules: List<T>,
-    excludeId: Int
-): List<WeekDayChipUi> {
-    val disabled = calcDisabledDays(rules, excludeId = excludeId)
-    return buildWeekdayChips(selected = currentSelected, disabled = disabled)
-}
+/**
+ * Faqat enabled bo'lgan kunni toggle qiladi.
+ * Disabled chiplar (band kunlar) teginilmaydi.
+ */
+fun List<WeekDayChipUi>.toggleDay(day: WeekDay): List<WeekDayChipUi> =
+    map { chip ->
+        if (chip.day == day && chip.enabled) chip.copy(selected = !chip.selected)
+        else chip
+    }
 
-fun <T : HasWeekDays> buildChipsForClear(
-    rules: List<T> = emptyList()
-): List<WeekDayChipUi> {
-    // clear paytida agar mavjud qoida bo‘lsa, ularning kunlari disable bo‘lib qoladi,
-    // aks holda hammasi enabled va tanlanmagan bo‘ladi
-    val disabled = calcDisabledDays(rules)
-    return buildWeekdayChips(selected = emptySet(), disabled = disabled)
-}
+/**
+ * Chiplardan tanlangan kunlarni to'plam ko'rinishida qaytaradi.
+ * Rule saqlashda ishlatiladi.
+ */
+fun List<WeekDayChipUi>.selectedDays(): Set<WeekDay> =
+    asSequence()
+        .filter { it.selected }
+        .map { it.day }
+        .toSet()

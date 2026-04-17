@@ -205,9 +205,7 @@ fun UserEditUi(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalTextSize,
+                    .height(ButtonHeight)
             )
 
             Spacer(modifier = Modifier.weight(1f))

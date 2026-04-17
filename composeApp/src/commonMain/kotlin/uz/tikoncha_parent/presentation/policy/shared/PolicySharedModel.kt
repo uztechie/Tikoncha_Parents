@@ -7,14 +7,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toLimitRuleUi
 import uz.tikoncha_parent.data.mapper.toTimeRuleUiList
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.apps.AppCategory
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicyDraftSnapshot
+import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 import kotlin.plus
 import kotlin.text.category
 
@@ -124,6 +125,12 @@ class PolicySharedModel(
                     )
                 }
             }
+
+            is PolicySharedEvent.UpsertTimeRule -> upsertTimeRule(event.rule)
+            is PolicySharedEvent.RemoveTimeRule -> removeTimeRule(event.id)
+
+            is PolicySharedEvent.UpsertLimitRule -> upsertLimitRule(event.rule)
+            is PolicySharedEvent.RemoveLimitRule -> removeLimitRule(event.id)
         }
     }
 
@@ -269,6 +276,52 @@ class PolicySharedModel(
                 return
             }
             _state.update { it.copy(selectedSites = it.selectedSites + url) }
+        }
+    }
+
+    // ═════════════════════════════════════════
+// Rule upsert/remove helpers
+// ═════════════════════════════════════════
+
+    private fun upsertTimeRule(rule: TimeRuleUi) {
+        _state.update { s ->
+            // Edit rejim: id > 0 va ro'yxatda mavjud
+            if (rule.id != 0) {
+                val idx = s.timeList.indexOfFirst { it.id == rule.id }
+                if (idx >= 0) {
+                    val newList = s.timeList.toMutableList().apply { this[idx] = rule }
+                    return@update s.copy(timeList = newList)
+                }
+            }
+            // Create rejim yoki id topilmadi: yangi id beriladi
+            val newId = (s.timeList.maxOfOrNull { it.id } ?: 0) + 1
+            s.copy(timeList = s.timeList + rule.copy(id = newId))
+        }
+    }
+
+    private fun removeTimeRule(id: Int) {
+        _state.update { s ->
+            s.copy(timeList = s.timeList.filterNot { it.id == id })
+        }
+    }
+
+    private fun upsertLimitRule(rule: LimitRuleUi) {
+        _state.update { s ->
+            if (rule.id != 0) {
+                val idx = s.limitList.indexOfFirst { it.id == rule.id }
+                if (idx >= 0) {
+                    val newList = s.limitList.toMutableList().apply { this[idx] = rule }
+                    return@update s.copy(limitList = newList)
+                }
+            }
+            val newId = (s.limitList.maxOfOrNull { it.id } ?: 0) + 1
+            s.copy(limitList = s.limitList + rule.copy(id = newId))
+        }
+    }
+
+    private fun removeLimitRule(id: Int) {
+        _state.update { s ->
+            s.copy(limitList = s.limitList.filterNot { it.id == id })
         }
     }
 }

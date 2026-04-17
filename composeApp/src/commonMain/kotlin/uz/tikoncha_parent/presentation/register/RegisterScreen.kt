@@ -207,9 +207,7 @@ fun Register(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(ButtonHeight),
-            fontWeight = FontWeight.W600,
-            fontSize = NormalTextSize,
+                .height(ButtonHeight)
         )
 
 

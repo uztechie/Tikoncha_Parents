@@ -411,6 +411,11 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="saytlar">Saytlar</string>
     <string name="ilova_limiti_plus_tavsif">Siz %1$d ta ilova limitiga yetdingiz. Plus obuna bilan ko‘proq ilovalarni tanlab, qo‘shimcha imkoniyatlardan foydalaning.</string>
     <string name="qachon_va_qanday_holatlarda_ilova_va_veb">Qachon va qanday holatlarda ilovalar va vebsaytlarni cheklashni belgilang</string>
+    <string name="sizda_faol_vaqt_yoq">Sizda faol vaqt yo‘q</string>
+    <string name="faol_vaqtni_qoshing">Faol vaqtni qo‘shing</string>
+    <string name="faqat_shu_vaqtda_ishlasin">Faqat shu vaqtda ishlasin</string>
+    <string name="cheklov_vaqti">Cheklov vaqti</string>
+    <string name="vaqt_qoshish">Vaqt qo‘shish</string>
 
 
 

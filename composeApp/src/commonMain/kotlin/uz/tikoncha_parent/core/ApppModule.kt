@@ -114,11 +114,11 @@ import uz.tikoncha_parent.presentation.notification.NotificationViewModel
 import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyViewModel
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebViewModel
-import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
+import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupViewModel
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleViewModel
+import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupViewModel
 import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
@@ -267,8 +267,8 @@ val sharedModule = module {
     factory { MonitorViewModel(get(), get()) }
     factory { NotificationViewModel(get(), get()) }
     factory { PolicyViewModel(get(), get()) }
-    factory { TimeRuleViewModel() }
-    factory { LimitRuleViewModel() }
+    factory { TimeRuleSetupViewModel() }
+    factory { LimitRuleSetupViewModel() }
     factory { MyCoinsViewModel(get(), get(), get()) }
 
     factory { PolicySetupViewModel(get(), get(), get()) }

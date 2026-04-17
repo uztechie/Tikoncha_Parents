@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,7 +80,7 @@ fun CustomTextField(
 
     var newModifier = if (hasBorder){
         modifier
-            .border(1.dp, borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, borderColor, shape = shape)
     }else{
         modifier
     }
@@ -87,11 +88,11 @@ fun CustomTextField(
     val columnModifier = if (shadow) {
         modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(MaterialTheme.extendedColor.cardColor, shape = shape)
     } else {
         modifier
             .fillMaxWidth()
-            .background(Color.Transparent, RoundedCornerShape(TextFieldCornerRadius))
+            .background(Color.Transparent, shape = shape)
     }
 
 
@@ -166,7 +167,10 @@ private fun Preview() {
         CustomTextField(
             onValueChange = {},
             label = "Shopping",
-            value = ""
+            value = "",
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .height(48.dp)
         )
     }
 }

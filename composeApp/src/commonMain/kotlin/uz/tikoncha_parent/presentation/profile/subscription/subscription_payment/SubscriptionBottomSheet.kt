@@ -121,7 +121,6 @@ fun SubscriptionBottomSheet(
 
             SegmentedToggle(
                 options = options,
-                fontSize = NormalTextSize,
                 selectedIndex = selectedOptionIndex,
                 onOptionSelected = {
                     selectedOptionIndex = it

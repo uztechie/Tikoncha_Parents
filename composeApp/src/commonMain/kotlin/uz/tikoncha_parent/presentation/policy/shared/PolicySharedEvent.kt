@@ -76,5 +76,12 @@ sealed interface PolicySharedEvent {
     data object ClearData :
         PolicySharedEvent
 
+    data class UpsertTimeRule(val rule: TimeRuleUi) : PolicySharedEvent
+    data class RemoveTimeRule(val id: Int) : PolicySharedEvent
+
+    // ── Limit rule granular ──────────────────
+    data class UpsertLimitRule(val rule: LimitRuleUi) : PolicySharedEvent
+    data class RemoveLimitRule(val id: Int) : PolicySharedEvent
+
 
 }

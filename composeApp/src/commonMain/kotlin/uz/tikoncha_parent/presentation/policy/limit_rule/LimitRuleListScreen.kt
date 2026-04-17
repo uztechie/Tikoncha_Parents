@@ -1,250 +1,179 @@
 package uz.tikoncha_parent.presentation.policy.limit_rule
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomDialog
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
+import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
+import tikoncha_parents.composeapp.generated.resources.time_large_icon
+import tikoncha_parents.composeapp.generated.resources.vaqt
+import tikoncha_parents.composeapp.generated.resources.vaqt_qoshish
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
-import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupScreen
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
-import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.theme.extendedColor
-
+import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleItem
+import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 
 class LimitRuleListScreen : Screen {
+
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.current
 
-        val viewModel = koinScreenModel<LimitRuleViewModel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::event
-
         val sharedViewModel = koinViewModel<PolicySharedModel>()
-        val sharedEvent = sharedViewModel::onEvent
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
-
-        DisposableEffect(Unit) {
-            event(LimitRuleEvent.SetList(sharedState.limitList))
-
-            onDispose {
-                sharedEvent(PolicySharedEvent.SetLimitRule(state.value.limitRuleList))
-            }
-        }
-
-
+        val sharedEvent = sharedViewModel::onEvent
 
         LimitRuleListUi(
-            navigator = navigator,
-            state = state.value,
-            event = event,
-            sharedState = sharedState
+            rules = sharedState.limitList,
+            canUpdate = sharedState.canUpdate,
+            canSave = sharedState.canSave,
+            onBack = { navigator?.pop() },
+            onAdd = {
+                if (sharedState.canUpdate) {
+                    navigator?.push(LimitRuleSetupScreen(ruleId = null))
+                }
+            },
+            onItemClick = { rule ->
+                if (sharedState.canUpdate) {
+                    navigator?.push(LimitRuleSetupScreen(ruleId = rule.id))
+                }
+            },
+            onDelete = { id ->
+                sharedEvent(PolicySharedEvent.RemoveLimitRule(id))
+            },
+            onDone = {
+                navigator?.popUntil { it is PolicySetupScreen }
+            },
         )
     }
 }
-
 @Composable
 fun LimitRuleListUi(
-    navigator: Navigator?,
-    state: LimitRuleState,
-    event: (LimitRuleEvent) -> Unit,
-    sharedState: PolicySharedState
+    rules: List<LimitRuleUi>,
+    canUpdate: Boolean,
+    canSave: Boolean,
+    onBack: () -> Unit,
+    onAdd: () -> Unit,
+    onItemClick: (LimitRuleUi) -> Unit,
+    onDelete: (id: Int) -> Unit,
+    onDone: () -> Unit,
 ) {
-
-
-    var showLimitDialog by remember { mutableStateOf(false) }
-    CustomDialog(
-        showCloseButton = true,
-        painter = painterResource(Res.drawable.dialog_subscription),
-        title = stringResource(Res.string.limit_tugadi),
-        message = stringResource(Res.string.sizda_foydalanish_chegarasini_qoshish),
-        show = showLimitDialog,
-        onDismiss = { showLimitDialog = false },
-        buttonText = stringResource(Res.string.obuna_bolish),
-        onButtonClick = {
-            showLimitDialog = false
-//            navigator?.push(
-//                SubscriptionPaymentScreen(
-//                    selectedChild = sharedState.selectedChild
-//                )
-//            )
-        }
-    )
-
-    LimitRuleDialog(
-        show = state.showSetupDialog && sharedState.canUpdate,
-        state = state,
-        event = event,
-        onDismiss = {
-            event(LimitRuleEvent.ClearData)
-            event(LimitRuleEvent.ShowSetupDialog(false))
-        }
-    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.bg.secondary)
     ) {
-
         CustomHeader(
-            modifier = Modifier
-                .zIndex(1f),
-            title = stringResource(Res.string.foydalanish_chegarasi),
+            title = stringResource(Res.string.vaqt),
             showBackButton = true,
-            onBackClick = { navigator?.pop() }
+            onBackClick = onBack
         )
 
-
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
-            contentPadding = PaddingValues(ContainerPadding)
-        ) {
-            items(state.limitRuleList) {
-                LimitRuleItem(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = {
-                                event(
-                                    LimitRuleEvent.SetUsageLimitData(
-                                        it
-                                    )
-                                )
-                                event(LimitRuleEvent.ShowSetupDialog(true))
-                            }
-                        ),
-                    item = it,
-                    onRemove = {
-                        event(LimitRuleEvent.RemoveLimitRule(it))
-                    },
-                    canRemove = sharedState.canUpdate
-                )
-            }
-        }
-
-        if (sharedState.canUpdate) {
+        if (rules.isEmpty()){
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .bottomShadow(
-                        shape = RoundedCornerShape(
-                            topStart = ButtonCornerRadius,
-                            topEnd = ButtonCornerRadius
-                        ),
-                        color = MaterialTheme.extendedColor.backgroundColor
-                    )
-                    .bottomShadow(
-                        shape = RoundedCornerShape(
-                            topStart = ButtonCornerRadius,
-                            topEnd = ButtonCornerRadius
-                        ),
-                        color = MaterialTheme.extendedColor.backgroundColor,
-                        lowerOffset = -5.dp,
-                        radius = 10.dp
+                    .fillMaxSize()
+                    .padding(horizontal = 50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
 
-                    )
-                    .background(MaterialTheme.extendedColor.backgroundColor)
-                    .padding(
-                        start = ContainerPadding,
-                        end = ContainerPadding,
-                        bottom = ContainerPadding
-                    )
-
-
-            )
-            {
-                CustomOutlinedButton(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    onClick = {
-                        val count = 0
-                        val listCount = state.limitRuleList.size
-
-                        if (listCount >= count) {
-                            showLimitDialog = true
-                            return@CustomOutlinedButton
-                        }
-                        event(LimitRuleEvent.ShowSetupDialog(true))
-                    },
-                    text = stringResource(Res.string.oraliq_qoshish),
-                    endingIcon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.add_square),
-                            contentDescription = "",
-                        )
-                    }
-
+                ) {
+                Image(
+                    painter = painterResource(Res.drawable.time_large_icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(200.dp),
                 )
-                SpaceSmall()
-
-                CustomButton(
-                    text = stringResource(Res.string.saqlash),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(ButtonHeight),
-                    onClick = {
-                        navigator?.popUntil {
-                            it is PolicySetupScreen
-                        }
-                    }
+                Space(27.dp)
+                Text(
+                    text = stringResource(Res.string.sizda_faol_vaqt_yoq),
+                    style = AppTypography.titleMdMedium,
+                    color = AppColors.text.primary,
+                    textAlign = TextAlign.Center,
                 )
+
+                if (canUpdate) {
+                    Space(20.dp)
+                    CustomButtonNew(
+                        text = stringResource(Res.string.faol_vaqtni_qoshing),
+                        onClick = onAdd,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
         }
+        else{
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentPadding = PaddingValues(
+                    horizontal = 10.dp,
+                    vertical = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(
+                    items = rules,
+                    key = {"${it.id}:${it.weekDays}:${it.time}"}
+                ){
+                    LimitRuleItem(
+                        item = it,
+                        onClick = { onItemClick(it) },
+                        onRemove = { onDelete(it.id) },
+                        canRemove = canUpdate
+                    )
+                }
+            }
+
+            if (canUpdate) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ){
+                    CustomButtonNew(
+                        enabled = canSave,
+                        text = stringResource(Res.string.vaqt_qoshish),
+                        onClick = onAdd,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                    )
+                }
+            }
+        }
+
     }
 
-
-}
-
-@Preview
-@Composable
-private fun PreviewScheduleTimeListScreen() {
-    LimitRuleListUi(
-        navigator = null,
-        state = LimitRuleState(),
-        event = {},
-        sharedState = PolicySharedState()
-    )
 }

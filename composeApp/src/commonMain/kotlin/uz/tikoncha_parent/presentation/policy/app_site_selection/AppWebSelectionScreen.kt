@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.presentation.policy.app_site_selection
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,15 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults.LargeIconSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,23 +29,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.app_limit_exceeded
 import tikoncha_parents.composeapp.generated.resources.bu_sayt_allaqachon_ro_yxatda
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
-import tikoncha_parents.composeapp.generated.resources.dialog_subscription
 import tikoncha_parents.composeapp.generated.resources.ilova_limiti_plus_tavsif
 import tikoncha_parents.composeapp.generated.resources.ilova_qidirish
 import tikoncha_parents.composeapp.generated.resources.ilovalar
@@ -55,42 +49,30 @@ import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.noto_g_ri_url_format
-import tikoncha_parents.composeapp.generated.resources.obuna_bolish
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sayt_limiti_plus_tavsif
 import tikoncha_parents.composeapp.generated.resources.sayt_qidirish
-import tikoncha_parents.composeapp.generated.resources.tez_kunda
-import tikoncha_parents.composeapp.generated.resources.veb_sayt
-import tikoncha_parents.composeapp.generated.resources.veb_sayt_tez_kunda_izoh
+import tikoncha_parents.composeapp.generated.resources.saytlar
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
+import uz.tikoncha_parent.presentation.policy.SegmentedTabBar
+import uz.tikoncha_parent.presentation.policy.SegmentedTabBarDefaults
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
-import uz.tikoncha_parent.ui.ButtonHeight
-import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.DividerHorizontal
-import uz.tikoncha_parent.ui.LargeTextSize
 import uz.tikoncha_parent.ui.NormalIconButtonSize
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
-import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
-import kotlin.text.ifEmpty
 
 
 class AppWebSelectionScreen(): Screen{
@@ -338,7 +320,6 @@ fun AppWebSelectionUi(
             )
         }
 
-        SpaceMedium()
 
         Column(
             modifier = Modifier
@@ -346,25 +327,30 @@ fun AppWebSelectionUi(
                 .padding(),
         ) {
             // Tab
-            SegmentedToggle(
-                options = listOf(
-                    stringResource(Res.string.ilovalar) to null,
-                    stringResource(Res.string.veb_sayt) to null,
+            SegmentedTabBar(
+                items = listOf(
+                    stringResource(Res.string.ilovalar),
+                    stringResource(Res.string.saytlar),
                 ),
                 selectedIndex = appState.tabIndex,
-                onOptionSelected = { appEvent(AppWebEvent.OnTabSelected(it)) },
+                borderWidth = 2.dp,
+                textStyle = AppTypography.bodyLgMedium,
+                onSelect = { appEvent(AppWebEvent.OnTabSelected(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(44.dp)
                     .padding(horizontal = 16.dp),
+                colors = SegmentedTabBarDefaults.colors(
+                    textColor = AppColors.text.primary,
+                    selectedBorderColor = AppColors.border.accentEmphasis,
+                    unselectedBorderColor = AppColors.border.disabled
+                )
             )
-
-            SpaceLarge()
 
             // Content
             Box(modifier = Modifier.weight(1f)) {
                 LazyColumn(
-                    contentPadding = PaddingValues(vertical = 8.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (appState.tabIndex) {
@@ -492,14 +478,20 @@ fun AppWebSelectionUi(
 
             // Saqlash
             if (sharedState.canUpdate) {
-                CustomButton(
-                    text = stringResource(Res.string.saqlash),
-                    onClick = { navigator?.pop() },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                )
-                SpaceMedium()
+                        .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ){
+                    CustomButtonNew(
+                        enabled = sharedState.canSave,
+                        text = stringResource(Res.string.saqlash),
+                        onClick = { navigator?.pop() },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }

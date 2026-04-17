@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,16 +29,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -46,11 +49,11 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun SegmentedToggle(
     options: List<Pair<String, Painter?>>,
     selectedIndex: Int,
-    fontSize: TextUnit = NormalTextSize,
-    fontWeight: FontWeight = FontWeight.Bold,
+    style: TextStyle = AppTypography.titleSmSemiBold,
     onOptionSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.extendedColor.cardColor
+    containerColor: Color = AppColors.bg.surface,
+    shape: Shape = RoundedCornerShape(TextFieldCornerRadius)
 ) {
 
     val itemCount = options.size
@@ -61,7 +64,7 @@ fun SegmentedToggle(
     Box(
         modifier = modifier
             .height(TextFieldHeight)
-            .background(backgroundColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(containerColor, shape)
             .padding(4.dp)
             .onGloballyPositioned { layoutCoordinates ->
                 val totalWidth = layoutCoordinates.size.width
@@ -82,7 +85,7 @@ fun SegmentedToggle(
                 .fillMaxHeight()
                 .width(itemWidth.value)
                 .offset(x = indicatorOffset)
-                .clip(RoundedCornerShape(TextFieldCornerRadius))
+                .clip(shape = shape)
                 .background(PrimaryColor)
         )
 
@@ -125,11 +128,10 @@ fun SegmentedToggle(
                         Spacer(modifier = Modifier.width(TextFieldInnerPadding))
                     }
 
-                    CustomText(
+                    Text(
                         text = label,
                         color = contentColor,
-                        fontWeight = fontWeight,
-                        fontSize = fontSize
+                        style = style
                     )
                 }
             }

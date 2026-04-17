@@ -141,8 +141,6 @@ fun CompletedTaskUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                fontWeight = FontWeight.Normal,
-                fontSize = SmallTextSize
             )
 
             SpaceMedium()

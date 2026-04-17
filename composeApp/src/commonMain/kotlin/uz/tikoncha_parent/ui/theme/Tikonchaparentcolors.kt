@@ -96,6 +96,7 @@ data class ButtonColors(
     val secondaryPressed: Color,
     val accentEmphasisPressed: Color,
     val accentDanger: Color,
+    val surface: Color,
 )
 
 @Immutable
@@ -212,6 +213,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         secondaryPressed = Color(0xFFDCDDDF),                   // neutral.300
         accentEmphasisPressed = Color(0xFFF3EADE),              // orange.100
         accentDanger = Color(0xFFF04438),                       // red.500
+        surface = Color(0xFFFFFFFF)
     ),
     action = ActionColors(
         primary = Color(0xFFC3955B),                            // orange.500
@@ -321,6 +323,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         secondaryPressed = Color(0xFF2B2B31),                   // gray.600
         accentEmphasisPressed = Color(0xFF2B2B31),              // gray.600
         accentDanger = Color(0xFFF04438),                       // red.500
+        surface = Color(0xFF2F3137)
     ),
     action = ActionColors(
         primary = Color(0xFFC3955B),                            // orange.500

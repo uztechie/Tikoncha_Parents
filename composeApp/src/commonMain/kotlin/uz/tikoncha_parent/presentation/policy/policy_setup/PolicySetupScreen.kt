@@ -689,9 +689,17 @@ private fun buildTimeRuleSubtitle(sharedState: PolicySharedState): String {
         val weekdays = if (rule.weekDays.size == 7) stringResource(Res.string.har_kuni)
         else rule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
 
-        val time = if (rule.allDay) stringResource(Res.string.kun_davomida) else rule.time
+        val time = if (rule.allDay) {
+            stringResource(Res.string.kun_davomida)
+        } else {
+            val sh = rule.startTime.hour.toString().padStart(2, '0')
+            val sm = rule.startTime.minute.toString().padStart(2, '0')
+            val eh = rule.endTime.hour.toString().padStart(2, '0')
+            val em = rule.endTime.minute.toString().padStart(2, '0')
+            "$sh:$sm - $eh:$em"
+        }
 
-        if (rule.outside) "$weekdays  $time (${stringResource(Res.string.tashqarida)})"
+        if (rule.reverse) "$weekdays  $time (${stringResource(Res.string.tashqarida)})"
         else "$weekdays  $time"
     } else {
         "${sharedState.timeList.size} ${stringResource(Res.string.ta_jadval)}"
