@@ -279,7 +279,6 @@ fun AddNewTask(
                         modifier = Modifier.size(22.dp),
                     )
                 },
-                fonSize = SmallTextSize,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     autoCorrectEnabled = true,
@@ -357,7 +356,6 @@ fun AddNewTask(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 CustomButton(
-                    fontSize = SmallTextSize,
                     modifier = Modifier
                         .weight(1f)
                         .height(DialogButtonHeight),
@@ -369,7 +367,6 @@ fun AddNewTask(
                     textColor = if (state.importance == ImportanceType.MEDIUM || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(
-                    fontSize = SmallTextSize,
                     modifier = Modifier
                         .weight(1f)
                         .height(DialogButtonHeight),
@@ -381,7 +378,6 @@ fun AddNewTask(
                     textColor = if (state.importance == ImportanceType.IMPORTANT || state.importance == ImportanceType.NONE) OnPrimaryColor else HintTextColor
                 )
                 CustomButton(
-                    fontSize = SmallTextSize,
                     modifier = Modifier
                         .weight(1f)
                         .height(DialogButtonHeight),

@@ -141,8 +141,7 @@ fun TimePickerDialog(
                                 .fillMaxWidth()
                                 .height(DialogButtonHeight),
                             text = stringResource(Res.string.saqlash),
-                            shape = RoundedCornerShape(TextFieldCornerRadius),
-                            fontWeight = FontWeight.SemiBold
+                            shape = RoundedCornerShape(TextFieldCornerRadius)
                         )
                     }
                 }

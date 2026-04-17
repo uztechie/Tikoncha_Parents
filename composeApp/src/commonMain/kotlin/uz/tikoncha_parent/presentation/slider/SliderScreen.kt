@@ -39,6 +39,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 class SliderScreen : Screen {
@@ -181,5 +183,9 @@ class SliderScreen : Screen {
 )
 @Composable
 private fun Preview() {
-    SliderScreen()
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        SliderScreen()
+    }
 }

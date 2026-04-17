@@ -145,7 +145,6 @@ fun SubscriptionPaymentUi(
             onBackClick = {
                 navigator?.pop()
             },
-            fonWeight = FontWeight.W600,
             trailingIcon = {
                 SpaceMedium()
 

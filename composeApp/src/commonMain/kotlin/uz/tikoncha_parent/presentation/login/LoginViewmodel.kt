@@ -35,7 +35,7 @@ class LoginViewmodel(
             }
 
             LoginEvent.OnConfirmClicked -> {
-                sendOtp()
+//                sendOtp()
             }
 
             LoginEvent.Reset -> {
@@ -87,12 +87,6 @@ class LoginViewmodel(
                     }
                 }
             }
-
-
         }
-
-
     }
-
-
 }

@@ -128,7 +128,6 @@ fun ThemeUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = true,
-                fontSize = NormalLargeTextSize,
                 onClick = {
                     ThemeController.setMode(selectedTheme)
                     navigator?.replaceAll(NewHomeScreen())

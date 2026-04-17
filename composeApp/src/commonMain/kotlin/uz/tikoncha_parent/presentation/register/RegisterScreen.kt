@@ -151,8 +151,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -170,8 +169,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -189,8 +187,7 @@ fun Register(
                     colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                     modifier = Modifier.size(NormalIconSize)
                 )
-            },
-            fontWeight = FontWeight.W500
+            }
         )
 
         SpaceMedium()
@@ -222,8 +219,6 @@ fun Register(
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
             text = stringResource(Res.string.keyingisi),
-            fontWeight = FontWeight.W600,
-            fontSize = NormalTextSize
         )
         SpaceSmall()
         LegalLinksRow()

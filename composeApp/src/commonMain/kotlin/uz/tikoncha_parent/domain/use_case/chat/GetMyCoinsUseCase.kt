@@ -4,12 +4,11 @@ import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
-import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.domain.model.MyCoins
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 
-class MyCoinsUseCase(
+class GetMyCoinsUseCase(
     private val repository: MyCoinsRepository
 ) {
     suspend operator fun invoke(): Resource<MyCoins> {

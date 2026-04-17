@@ -251,7 +251,7 @@ fun PaymentTypeScreenUi(
                 if (isIos() && state.isTestAccount) {
                     PaymentOption(
                         modifier = Modifier.weight(1f),
-                        paymentType = PaymentType.AppStore,
+//                        paymentType = PaymentType.AppStore,
                         isSelected = state.selectedPaymentType == PaymentType.AppStore,
                         onClick = {
                             event(PaymentEvent.SetPaymentType(PaymentType.AppStore))
@@ -260,7 +260,7 @@ fun PaymentTypeScreenUi(
                 }
                 PaymentOption(
                     modifier = Modifier.weight(1f),
-                    paymentType = PaymentType.Click,
+//                    paymentType = PaymentType.Click,
                     isSelected = state.selectedPaymentType == PaymentType.Click,
                     onClick = {
                         event(PaymentEvent.SetPaymentType(
@@ -645,7 +645,6 @@ fun PaymentTypeScreenUi(
                     .height(ButtonHeight),
                 text = stringResource(Res.string.sotib_olish),
                 enabled = state.paymentStatus != PaymentStatus.PENDING && state.selectedPaymentType != null,
-                fontSize = NormalLargeTextSize,
                 onClick = {
                     event(PaymentEvent.Pay)
                 }

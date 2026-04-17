@@ -172,9 +172,7 @@ fun ChildConfirmCodeRegisterUi(
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = stringResource(Res.string.davom_etish),
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.W600,
+                text = stringResource(Res.string.davom_etish)
             )
             SpaceLarge()
         }

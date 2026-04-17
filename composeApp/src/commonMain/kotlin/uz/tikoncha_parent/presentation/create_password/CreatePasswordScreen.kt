@@ -199,9 +199,7 @@ fun CreatePassword(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = isPhoneNumberValid ,
-                text = stringResource(Res.string.keyingisi),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalTextSize
+                text = stringResource(Res.string.keyingisi)
             )
             SpaceLarge()
         }

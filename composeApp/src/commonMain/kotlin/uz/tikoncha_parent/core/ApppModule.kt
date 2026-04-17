@@ -43,6 +43,7 @@ import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.dsl.module
 import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
+import uz.tikoncha_parent.data.in_app_update.InAppUpdateDataSource
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
@@ -60,6 +61,7 @@ import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
+import uz.tikoncha_parent.data.repository.UpdateRepositoryImpl
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.CoinPackageRepository
@@ -70,8 +72,9 @@ import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
-import uz.tikoncha_parent.domain.use_case.GetCoinPackagesUseCase
+import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
@@ -89,14 +92,18 @@ import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetChatMessagesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
 import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MyCoinsUseCase
+import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
+import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
+import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
+import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
+import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
@@ -107,6 +114,7 @@ import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomViewModel
+import uz.tikoncha_parent.presentation.in_app_update.UpdateViewModel
 import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.new_home.HomeViewModel
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestViewModel
@@ -115,11 +123,16 @@ import uz.tikoncha_parent.presentation.profile.coins.MyCoinsViewModel
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyViewModel
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupViewModel
+import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
+import uz.tikoncha_parent.presentation.policy.PolicyViewModel
+import uz.tikoncha_parent.presentation.policy.app_selection.AppWebViewModel
+import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleViewModel
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupViewModel
 import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
+import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
@@ -168,6 +181,7 @@ val sharedModule = module {
     single< PolicyRepository> { PolicyRepositoryImpl(get()) }
     single< PaymentRepository> { PaymentRepositoryImpl(get()) }
     single< ParentRequestsRepository> { ParentRequestsRepositoryImpl(get()) }
+    single< UpdateRepository> { UpdateRepositoryImpl(get()) }
 
 
 
@@ -205,7 +219,7 @@ val sharedModule = module {
     single { SendMessageApiUseCase(get()) }
     single { RegisterDeviceUseCase(get()) }
     single { NewsUseCase(get()) }
-    single { MyCoinsUseCase(get()) }
+    single { GetMyCoinsUseCase(get()) }
     single { CreatePolicyUseCase(get()) }
     single { UpdatePolicyUseCase(get()) }
     single { DeletePolicyUseCase(get()) }
@@ -218,13 +232,17 @@ val sharedModule = module {
 
     single { ChatConnectionManager(get(), get()) }
     single { GetPoliciesFromServerUseCase(get() ) }
-    single { GetCoinPackagesUseCase(get() ) }
+    single { GetCoinPackageListUseCase(get() ) }
     single { ParentRequestsUseCase(get() ) }
     single { UpdateParentRequestStatusUseCase(get() ) }
     single { PurchaseIApPremiumUseCase(get() ) }
     single { ChildInfoEditUseCase(get() ) }
     single { UserInfoEditUseCase(get()) }
     single { DeleteMessageUseCase(get()) }
+    single { PurchaseCoinUseCase(get()) }
+    single { CheckUpdateUseCase(get()) }
+    single { ObserveInstallEventsUseCase(get()) }
+    single { CompleteFlexibleUpdateUseCase(get()) }
 
 
 
@@ -291,5 +309,7 @@ val sharedModule = module {
             userInfo = userInfo
         )
     }
+    factory { CoinPurchaseViewModel(get(), get(), get()) }
+    single { UpdateViewModel(get(), get(), get()) }
 
 }

@@ -10,6 +10,9 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
+import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
 
 class PaymentApiService(private val client: HttpClient) {
 
@@ -51,6 +54,22 @@ class PaymentApiService(private val client: HttpClient) {
             url = "/payments/promocode/validate",
             block = {
                 setBody(promoCodeValidationRequest)
+            }
+        )
+
+    suspend fun coinPackageList(): CoinPackageListResponse =
+        client.safeRequest(
+            method = HttpMethod.Companion.Get,
+            url = "/payments/packages",
+            block = {}
+        )
+
+    suspend fun purchaseCoin(purchaseCoinRequest: PurchaseCoinRequest): PurchaseCoinResponse =
+        client.safeRequest(
+            method = HttpMethod.Companion.Post,
+            url = "/payments/create-intent",
+            block = {
+                setBody(purchaseCoinRequest)
             }
         )
 

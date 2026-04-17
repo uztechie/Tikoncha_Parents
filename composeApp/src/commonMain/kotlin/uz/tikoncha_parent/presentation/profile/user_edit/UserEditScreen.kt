@@ -146,8 +146,7 @@ fun UserEditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -167,8 +166,7 @@ fun UserEditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -188,8 +186,7 @@ fun UserEditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
             SpaceMedium()
 
@@ -218,8 +215,6 @@ fun UserEditUi(
                     .height(ButtonHeight),
                 enabled = isValid,
                 text = stringResource(Res.string.saqlash),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalTextSize
             )
         }
     }

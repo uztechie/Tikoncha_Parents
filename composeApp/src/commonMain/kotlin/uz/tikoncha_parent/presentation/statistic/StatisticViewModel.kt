@@ -86,6 +86,7 @@ class StatisticViewModel(
                 _state.update {
                     it.copy(
                         dateSelectionType = event.dateSelectionType,
+                        selectedPeriod = event.usagePeriod
                     )
                 }
                 recomputeAll()

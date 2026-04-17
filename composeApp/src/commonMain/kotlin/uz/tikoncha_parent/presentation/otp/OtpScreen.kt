@@ -90,11 +90,11 @@ fun OtpUi(
         else -> MaterialTheme.extendedColor.borderColor
     }
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-    var showDialogOtpTelegram by remember { mutableStateOf(true) }
-    var showDialogOtpMethodSelection by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Ekranga kirgan zahoti method selection dialog ochiladi (SMS / Telegram / boshqa raqam)
+    var showDialogOtpMethodSelection by remember { mutableStateOf(true) }
+
     val otpLoading = state.responseState is ResponseState.Loading
     val otpErrorText = state.responseState.errorText()
     val otpSuccess = state.responseState is ResponseState.Success
@@ -116,12 +116,8 @@ fun OtpUi(
         title = stringResource(Res.string.xatolik),
         message = otpErrorText,
         buttonText = stringResource(Res.string.ok),
-        onDismiss = {
-            showDialog = false
-        },
-        onButtonClick = {
-            showDialog = false
-        }
+        onDismiss = { showDialog = false },
+        onButtonClick = { showDialog = false }
     )
 
 
@@ -138,30 +134,18 @@ fun OtpUi(
         }
     }
 
-
-    TelegramOtpDialog(
-        show = showDialogOtpTelegram,
-        onDismiss = {
-            showDialogOtpTelegram = false
-            showDialogOtpMethodSelection = true
-        },
-        onConfirm = {
-            showDialogOtpTelegram = false
-            openTelegram(state.phoneNumber)
-            event(OtpEvent.SetTelegram(true))
-            event(OtpEvent.TimeStart)
-        }
-    )
-
     OtpMethodSelectionDialog(
         show = showDialogOtpMethodSelection,
         onDismiss = {
+            // Foydalanuvchi dialogni yopsa — login ekraniga qaytamiz,
+            // chunki OTP usuli tanlanmagan.
             showDialogOtpMethodSelection = false
+            navigator?.pop()
         },
         onConfirmSMS = {
             showDialogOtpMethodSelection = false
             event(OtpEvent.SetTelegram(false))
-            event(OtpEvent.SendOtp)
+            event(OtpEvent.SendOtp) // SMS orqali OTP shu yerda jo'natiladi
         },
         onOtherNumber = {
             showDialogOtpMethodSelection = false
@@ -169,8 +153,8 @@ fun OtpUi(
         },
         onConfirmTelegram = {
             showDialogOtpMethodSelection = false
-            openTelegram(state.phoneNumber)
             event(OtpEvent.SetTelegram(true))
+            openTelegram(state.phoneNumber) // Telegram tanlansa, faqat telegram ochiladi
             event(OtpEvent.TimeStart)
         }
     )
@@ -219,7 +203,6 @@ fun OtpUi(
                             color = OtpErrorColor
                         )
                         SpaceUltraSmall()
-
                         CustomText(text = stringResource(Res.string.sekund, formattedTime))
                     } else {
                         CustomText(text = stringResource(Res.string.sekund, formattedTime))
@@ -231,7 +214,6 @@ fun OtpUi(
                         color = OtpErrorColor
                     )
                     SpaceUltraSmall()
-
                     CustomText(
                         text = stringResource(Res.string.kod_olish_usulini_ozgartirish),
                         color = MaterialTheme.extendedColor.primaryColor,
@@ -263,10 +245,7 @@ fun OtpUi(
                 .fillMaxWidth()
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
-            text = stringResource(Res.string.keyingisi),
-            fontSize = NormalTextSize,
-            fontWeight = FontWeight.W600
-
+            text = stringResource(Res.string.keyingisi)
         )
         SpaceLarge()
     }
@@ -276,9 +255,7 @@ fun OtpUi(
 @Preview
 @Composable
 private fun Preview() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ) {
+    TikonchaParentTheme(ThemeMode.DARK) {
         OtpUi(
             navigator = null,
             state = OtpState(),

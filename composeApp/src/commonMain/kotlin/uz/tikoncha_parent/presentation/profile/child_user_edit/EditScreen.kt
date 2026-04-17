@@ -148,8 +148,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -169,8 +168,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -190,8 +188,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -210,8 +207,7 @@ fun EditUi(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
                         modifier = Modifier.size(NormalIconSize)
                     )
-                },
-                fontWeight = FontWeight.W500
+                }
             )
 
             SpaceMedium()
@@ -240,9 +236,7 @@ fun EditUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = isValid,
-                text = stringResource(Res.string.saqlash),
-                fontWeight = FontWeight.W600,
-                fontSize = NormalTextSize
+                text = stringResource(Res.string.saqlash)
             )
         }
     }

@@ -1,15 +1,12 @@
 package uz.tikoncha_parent.presentation.profile.coins
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,12 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -31,40 +27,38 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceMedium
-import uz.tikoncha_parent.ui.SpaceUltraSmall
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 class CoinsScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current?:return
+        val navigator = LocalNavigator.current ?: return
 
-        val viewModel = koinScreenModel<MyCoinsViewModel>()
+        val viewModel = koinScreenModel<CoinsViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-//        AppSettings.hasUserLogin = false
-
-        LaunchedEffect(Unit){
-            viewModel.loadCoinsPackages()
+        LaunchedEffect(Unit) {
+            event(CoinsEvent.LoadCoinList)
         }
-        LaunchedEffect(Unit){
+
+        LaunchedEffect(Unit) {
             event(CoinsEvent.GetChildren)
         }
 
@@ -80,13 +74,11 @@ class CoinsScreen : Screen {
 @Composable
 fun CoinsUi(
     navigator: Navigator?,
-    state: MyCoinsState,
+    state: CoinsState,
     event: (CoinsEvent) -> Unit
 ) {
-
-    var coinsAmount by remember {
-        mutableStateOf("1")
-    }
+    val borderColor = AppColors.border.tertiary
+    var helpType by remember { mutableStateOf<CoinsHelpType?>(null) }
 
     var showDialog by remember { mutableStateOf(false) }
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
@@ -109,7 +101,8 @@ fun CoinsUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .imePadding()
+            .background(AppColors.bg.page)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tangachalar),
@@ -121,8 +114,8 @@ fun CoinsUi(
                 ChildSelectionButton(
                     modifier = Modifier
                         .widthIn(120.dp, 160.dp),
-                    text = state.selectedChild?.name?:"",
-                    imageUrl = state.selectedChild?.avatarUrl?:"",
+                    text = state.selectedChild?.name ?: "",
+                    imageUrl = state.selectedChild?.avatarUrl ?: "",
                     label = stringResource(Res.string.farzandingizni_tanlang),
                     onClick = {
                         showDialog = true
@@ -130,193 +123,245 @@ fun CoinsUi(
                 )
             }
         )
-
-        SpaceMedium()
+        Spacer(Modifier.height(12.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
-                .imePadding()
+                .weight(1f)
+                .padding(top = ContainerPadding, start = ContainerPadding, end = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .height(72.dp)
+                    .background(AppColors.bg.surface, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(SmallIconButtonSize)
-                        .clip(RoundedCornerShape(ShapeCornerRadius))
-                        .background(MaterialTheme.extendedColor.cardColor),
-                    contentAlignment = Alignment.Center
-                ){
-                    Image(
-                        painter = painterResource(Res.drawable.coin),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .fillMaxSize(0.7f)
-                    )
-                }
-
-                SpaceUltraSmall()
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar),
-                    fontSize = NormalTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Spacer(
+                Text(
+                    text = stringResource(Res.string.ozingiz_qoshing),
+                    color = AppColors.text.primary,
+                    style = AppTypography.titleMdMedium,
                     modifier = Modifier
                         .weight(1f)
                 )
 
-                CoinAmountTextField(
-                    coinsAmount = coinsAmount,
-                    onValueChange = {
-                        coinsAmount = it
-                    },
-                    onAddCoinClicked = {
-                        coinsAmount = it.toString()
-                    },
-                    onSubtractButtonClicked = {
-                        coinsAmount = it.toString()
+                CoinNumberPicker(
+                    value = state.coinsToBuy,
+                    onValueChanged = {
+                        event(CoinsEvent.OnCoinsChanged(it))
                     }
                 )
             }
-            SpaceMedium()
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(Res.string.tavsiya_etilgan_paketlar),
+                color = AppColors.text.secondary,
+                style = AppTypography.titleMdSemiBold
+            )
+            Spacer(Modifier.height(16.dp))
+
             Column(
                 modifier = Modifier
-                    .zIndex(1f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.extendedColor.cardColor, CircleShape)
-                    .padding(6.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor),
-                )
-                {
-                    Column(
+                state.coinPackageList.forEachIndexed { index, item ->
+                    CoinPackageItem(
+                        coinPackageUi = item,
+                        hasBorder = state.selectedPackageIndex == index,
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        MaterialTheme.extendedColor.cardColor,
-                                        CircleShape
+                            .fillMaxWidth()
+                            .clickable {
+                                event(CoinsEvent.OnPackageSelected(index))
+                                navigator?.push(
+                                    CoinPurchaseScreen(
+                                        coins = item.coins,
+                                        totalPrice = item.price.toInt(),
+                                        discountPrice = item.discountedPrice.toInt()
                                     )
-                                    .padding(10.dp)
-                            ) {
-                                Image(
-                                    painter = painterResource(Res.drawable.money_light),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
-                                    modifier = Modifier
-                                        .size(NormalIconSize)
                                 )
                             }
-
-                            SpaceMedium()
-
-                            CustomText(
-                                text = stringResource(Res.string.tolov_summasi),
-                                fontSize = NormalTextSize,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Spacer(Modifier.weight(1f))
-                            CustomText(
-                                text =  "${coinsAmount.toInt() * 100} UZS",
-                                fontSize = NormalTextSize,
-                                color = PrimaryColor,
-                                fontWeight = FontWeight.W600
-                            )
-                        }
-                    }
-
-                }
-            }
-
-            SpaceMedium()
-
-            CustomButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                onClick = {
-//                    navigator!!.push(PaymentTypeScreen(coinsAmount = coinsAmount.toInt(),))
-                },
-                text = stringResource(Res.string.sotib_olish),
-                enabled = true,
-                fontSize = NormalLargeTextSize
-            )
-            SpaceLarge()
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(ContainerCornerRadius))
-                    .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(ContainerPadding)
-            ) {
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = PrimaryColor,
-                    fontSize = NormalLargeTextSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                SpaceUltraSmall()
-
-                CustomText(
-                    text = stringResource(Res.string.tangachalar_orqali),
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = NormalTextSize,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    style = TextStyle()
-                )
-            }
-            
-            SpaceMedium()
-
-            CustomText(
-                text = stringResource(Res.string.chegirmalar),
-                fontSize = NormalTextSize,
-            )
-
-            SpaceMedium()
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                state.packages.forEach { pac ->
-                    CoinPackItem(
-                        coins = pac.coins,
-                        price = pac.price,
-                        discountPercent = pac.discountPercent,
-                        onClick = {}
                     )
                 }
             }
+            Spacer(Modifier.height(24.dp))
+
+            CoinQuestionItem(
+                title = stringResource(Res.string.qanday_qilib_ishlatish),
+                onClick = {
+                    helpType = CoinsHelpType.USE
+                }
+            )
+            Spacer(Modifier.height(8.dp))
+
+            CoinQuestionItem(
+                title = stringResource(Res.string.qanday_qilib_ishlab_topish),
+                onClick = {
+                    helpType = CoinsHelpType.EARN
+                }
+            )
             SpaceMedium()
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .simpleShadow(RoundedCornerShape(16.dp))
+                .background(
+                    AppColors.bg.surface,
+                    shape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp)
+                )
+                .drawWithContent {
+                    drawContent()
+                    val strokeWidth = 2.dp.toPx()
+                    val halfStroke = strokeWidth / 2f
+                    val cornerRadius = MainCornerRadius.toPx()
+                    val segments = 100 // ko'p bo'lsa, silliqroq
+
+                    // Chap burchak yoyi — 180°→270°, shaffofdan to'liq rangga
+                    repeat(segments) { i ->
+                        val progress =
+                            i.toFloat() / segments       // 0.0 → 1.0 (astar shaffof)
+                        val nextProgress = (i + 1f) / segments
+                        val midProgress = (progress + nextProgress) / 2f
+
+                        val alpha = midProgress                     // 0.0 → 1.0
+                        val width =
+                            strokeWidth * midProgress       // ingichkadan qalinlikka
+
+                        val startAngle = 180f + progress * 90f
+                        val sweepAngle = 90f / segments
+
+                        drawArc(
+                            color = borderColor.copy(alpha = alpha),
+                            startAngle = startAngle,
+                            sweepAngle = sweepAngle + 0.5f,         // overlap — bo'shliqsiz
+                            useCenter = false,
+                            topLeft = Offset(halfStroke, halfStroke),
+                            size = Size(
+                                cornerRadius * 2 - strokeWidth,
+                                cornerRadius * 2 - strokeWidth
+                            ),
+                            style = Stroke(width = width)
+                        )
+                    }
+
+                    // Yuqori to'g'ri chiziq — to'liq rang
+                    drawLine(
+                        color = borderColor,
+                        start = Offset(cornerRadius, halfStroke),
+                        end = Offset(size.width - cornerRadius, halfStroke),
+                        strokeWidth = strokeWidth
+                    )
+
+                    // O'ng burchak yoyi — 270°→360°, to'liq rangdan shaffofga
+                    repeat(segments) { i ->
+                        val progress = i.toFloat() / segments       // 0.0 → 1.0
+                        val nextProgress = (i + 1f) / segments
+                        val midProgress = (progress + nextProgress) / 2f
+
+                        val alpha = 1f - midProgress                // 1.0 → 0.0
+                        val width =
+                            strokeWidth * (1f - midProgress) // qalindan ingichkaga
+
+                        val startAngle = 270f + progress * 90f
+                        val sweepAngle = 90f / segments
+
+                        drawArc(
+                            color = borderColor.copy(alpha = alpha),
+                            startAngle = startAngle,
+                            sweepAngle = sweepAngle + 0.5f,
+                            useCenter = false,
+                            topLeft = Offset(
+                                size.width - cornerRadius * 2 + halfStroke,
+                                halfStroke
+                            ),
+                            size = Size(
+                                cornerRadius * 2 - strokeWidth,
+                                cornerRadius * 2 - strokeWidth
+                            ),
+                            style = Stroke(width = width)
+                        )
+                    }
+                }
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${stringResource(Res.string.tangachalar)}:",
+                    color = AppColors.text.secondary,
+                    style = AppTypography.bodyMdMedium
+                )
+                Text(
+                    text = stringResource(Res.string.tanga_s, state.coinsToBuy.toCurrency()),
+                    color = AppColors.text.secondary,
+                    style = AppTypography.bodyMdMedium
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(top = 5.dp, start = 24.dp, end = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${stringResource(Res.string.narx)}:",
+                    color = AppColors.text.secondary,
+                    style = AppTypography.bodyMdMedium
+                )
+                Text(
+                    text = "${state.coinPrice.toCurrency()} UZS",
+                    color = AppColors.text.secondary,
+                    style = AppTypography.bodyMdMedium
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${stringResource(Res.string.tolov)}:",
+                    color = AppColors.text.primary,
+                    style = AppTypography.titleLgSemiBold
+                )
+                Text(
+                    text = "${state.totalPrice.toCurrency()} UZS",
+                    color = AppColors.text.accentEmphasis,
+                    style = AppTypography.titleLgSemiBold
+                )
+            }
+
+            CustomButton(
+                enabled = state.continueButtonEnabled,
+                text = stringResource(Res.string.davom_etish),
+                onClick = {
+                    navigator?.push(
+                        CoinPurchaseScreen(
+                            coins = state.coinsToBuy,
+                            totalPrice = state.totalPrice,
+                            discountPrice = state.coinPrice
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .height(52.dp),
+            )
         }
     }
 }
@@ -326,10 +371,22 @@ fun CoinsUi(
 private fun PreviewCoinsScreen() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         CoinsUi(
             navigator = null,
-            state = MyCoinsState(),
+            state = CoinsState(
+                coinPackageList = listOf(
+                    CoinPackageUi(
+                        coins = 10,
+                        priceInString = "10 000 UZS",
+                        discountPercent = 10,
+                        priceWithDiscountInString = "8 000 UZS",
+                        price = 10000,
+                        priceWithDiscount = 8000,
+                        discountedPrice = 2000
+                    )
+                )
+            ),
             event = {}
         )
     }

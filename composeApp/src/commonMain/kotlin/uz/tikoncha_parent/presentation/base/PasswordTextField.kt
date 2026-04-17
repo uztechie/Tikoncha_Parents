@@ -107,9 +107,7 @@ fun PasswordTextField(
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password
-        ),
-        fontWeight = fontWeight,
-        fonSize = fonSize
+        )
     )
 }
 

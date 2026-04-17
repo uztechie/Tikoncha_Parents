@@ -217,9 +217,7 @@ fun AddChildRegisterUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = enableButton,
-                text = stringResource(Res.string.qoshish),
-                fontWeight = FontWeight.W500,
-                fontSize = NormalTextSize
+                text = stringResource(Res.string.qoshish)
             )
             SpaceLarge()
         }

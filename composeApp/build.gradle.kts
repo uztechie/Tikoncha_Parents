@@ -68,6 +68,11 @@ kotlin {
             implementation("com.google.firebase:firebase-messaging-ktx")
 
             implementation(libs.androidx.appcompat)
+
+            //update
+            implementation("com.google.android.play:app-update:2.1.0")
+            implementation("com.google.android.play:app-update-ktx:2.1.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

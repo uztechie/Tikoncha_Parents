@@ -7,6 +7,9 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
+import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
+import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
 
 interface PaymentRepository {
     suspend fun subscriptionPayment(subscriptionPaymentRequest: SubscriptionPaymentRequest): SubscriptionPaymentResponse
@@ -19,5 +22,7 @@ interface PaymentRepository {
 
     suspend fun promoCodeValidation(promoCodeValidationRequest: PromoCodeValidationRequest): PromoCodeValidationResponse
 
+    suspend fun coinPackages(): CoinPackageListResponse
 
+    suspend fun purchaseCoin(purchaseCoinRequest: PurchaseCoinRequest): PurchaseCoinResponse
 }

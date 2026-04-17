@@ -196,7 +196,6 @@ fun PromoCodeDialog(
 
             if (success) {
                 CustomButton(
-                    fontSize = SmallTextSize,
                     text = stringResource(Res.string.yopish),
                     onClick = {
                         onDismiss()
@@ -207,7 +206,6 @@ fun PromoCodeDialog(
                 )
             } else {
                 CustomLoadingButton(
-                    fontSize = SmallTextSize,
                     loading = loading,
                     enabled = !loading && state.promoCode.isNotEmpty(),
                     text = buttonLabel,

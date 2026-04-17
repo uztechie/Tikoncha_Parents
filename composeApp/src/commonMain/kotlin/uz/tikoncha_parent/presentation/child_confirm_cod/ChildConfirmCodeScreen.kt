@@ -177,9 +177,7 @@ fun ChildConfirmCodeUi(
                     .padding(top = 5.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                text = stringResource(Res.string.yakunlash),
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.W600,
+                text = stringResource(Res.string.yakunlash)
             )
             SpaceLarge()
         }
