@@ -19,5 +19,6 @@ data class AppUsageDataDto(
 data class AppUsageItemDto(
     @SerialName("package") val packageName: String,
     val name: String,
+    val icon: String? = null,
     val usage: Map<String, Map<String, Long>>
 )

@@ -50,6 +50,7 @@ fun AppUsageDataDto.toAppUsageList(): List<AppUsage>{
                             date = date,
                             usageTime = parseTimeHHmm(timeStr),
                             usageMillis = usageMillis,
+                            icon = item.icon
                         )
                     )
                 }
@@ -281,7 +282,7 @@ fun List<AppUsage>.toUsageUi(startDate: LocalDate?, endDate: LocalDate?): List<A
             AppUsageUi(
                 packageName = pkg,
                 name = usages.first().appName,   // birinchi AppUsage'dan olish mumkin
-                icon = "",                       // ⚠️ siz bu yerda haqiqiy icon path/url ni qo‘yishingiz kerak
+                icon = usages.first().icon?:"",
                 usageTime = HourMinute(hours, minutes),
                 allowed = aggregatedAllowed
             )

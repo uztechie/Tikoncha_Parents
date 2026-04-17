@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalTime
 data class AppUsage(
     val packageName: String,
     val appName: String,
+    val icon: String?,
     val date: LocalDate,
     val usageMillis: Long,
     val usageTime: LocalTime,

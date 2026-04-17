@@ -207,7 +207,7 @@ fun StatisticUi(
                         .padding(ContainerPadding)
                 ) {
                     SegmentedToggle(
-                        backgroundColor = AppColors.bg.secondarySurface,
+                        containerColor = AppColors.bg.secondarySurface,
                         options = listOf(
                             stringResource(Res.string.haftalik) to null,
                             stringResource(Res.string.kunlik) to null
