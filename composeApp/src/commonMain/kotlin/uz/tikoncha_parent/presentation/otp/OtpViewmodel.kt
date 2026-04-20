@@ -175,8 +175,9 @@ class OtpViewmodel(
                         it.copy(
                             responseState = ResponseState.Error(
                                 res = res.resId,
-                                message = res.message
-                            )
+                                message = res.message,
+                            ),
+                            deleteAccountUrl = res.data
                         )
                     }
                 }

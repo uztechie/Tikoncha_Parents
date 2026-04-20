@@ -24,3 +24,14 @@ actual fun openTelegram(phoneNumber: String) {
         )
     }
 }
+
+actual fun openUrl(url: String) {
+    val nsUrl = NSURL.URLWithString(url) ?: return
+    if (UIApplication.sharedApplication.canOpenURL(nsUrl)) {
+        UIApplication.sharedApplication.openURL(
+            nsUrl,
+            options = emptyMap<Any?, Any?>(),
+            completionHandler = null
+        )
+    }
+}

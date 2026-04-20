@@ -12,7 +12,6 @@ sealed interface StatisticEvent {
 
     data object RefreshSubscriptionLimit: StatisticEvent
 
-    data class TodaySelected(val today: Boolean): StatisticEvent
 
     data class OnChildSelected(val child: UserInfo): StatisticEvent
 

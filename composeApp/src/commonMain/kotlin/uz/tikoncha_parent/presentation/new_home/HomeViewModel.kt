@@ -20,7 +20,7 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
-import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.TodoListUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
@@ -150,6 +150,11 @@ class HomeViewModel(
 
                     // ✅ AppSettings + selectedChild sync
                     AppSettings.syncSelectedChildWith(children)
+
+                    if (children.isEmpty()){
+                        AppSettings.selectedChild = null
+                        AppSettings.selectedChildId = ""
+                    }
 
                     _state.update {
                         it.copy(

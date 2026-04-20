@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.data.remote
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
@@ -13,6 +14,7 @@ import uz.saidburxon.newedu.data.model.SendOtpRequest
 import uz.saidburxon.newedu.data.model.SendOtpResponse
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
 import uz.saidburxon.newedu.data.model.VerifyOtpResponse
+import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
 import uz.tikoncha_parent.domain.model.UserInfo
 
@@ -24,6 +26,7 @@ class LoginApiService(private val client: HttpClient) {
             method = HttpMethod.Post,
             url = "auth/send-otp",
             block = {
+                header("APP_CODE", AppCode.currentAppCode)
                 setBody(request)
             }
         )

@@ -67,7 +67,7 @@ import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.CoinPackageRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.repository.ParentRequestsRepository
-import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
@@ -98,6 +98,7 @@ import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
+import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
@@ -239,6 +240,7 @@ val sharedModule = module {
     single { CheckUpdateUseCase(get()) }
     single { ObserveInstallEventsUseCase(get()) }
     single { CompleteFlexibleUpdateUseCase(get()) }
+    single { LogoutUseCase(get()) }
 
 
 
@@ -248,7 +250,7 @@ val sharedModule = module {
     factory { LoginViewmodel(get()) }
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
-    factory { ProfileViewModel(get(), get(), get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get(), get()) }
     factory { CreatePasswordViewmodel() }
     factory { ChildViewmodel(get()) }
     factory { LoginPasswordViewmodel() }
@@ -292,6 +294,7 @@ val sharedModule = module {
     factory { SubscriptionPaymentViewModel(get(), get()) }
     factory { ParentRequestViewModel(get(), get()) }
     factory { LocationRuleViewModel() }
+    factory { CoinsViewModel(get(), get(), get()) }
     factory { (child: UserInfo) ->
         ChildInfoEditViewModel(
             childInfoEditUseCase = get(),

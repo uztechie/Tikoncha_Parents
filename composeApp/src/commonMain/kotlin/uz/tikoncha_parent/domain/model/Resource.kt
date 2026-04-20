@@ -9,6 +9,7 @@ sealed class Resource<T> {
         val resId: StringResource,
         val message: String? = null,
         val data:T? = null,
-        val cause: Throwable? = null
+        val cause: Throwable? = null,
+        val code: Int? = null,
     ):Resource<T>()
 }

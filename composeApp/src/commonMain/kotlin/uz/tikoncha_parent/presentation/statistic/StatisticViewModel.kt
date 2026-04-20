@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.mapToDailyUsagePeriods
@@ -33,6 +36,7 @@ import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.presentation.new_home.HomeEvent
 import uz.tikoncha_parent.presentation.profile.coins.CoinsEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 
@@ -83,10 +87,13 @@ class StatisticViewModel(
 
             is StatisticEvent.GetUsageList -> {
                 _usagePeriod.value = event.usagePeriod
+                val isToday = event.dateSelectionType == DateSelectionType.DAY &&
+                        event.usagePeriod.startDate.isToday()
                 _state.update {
                     it.copy(
                         dateSelectionType = event.dateSelectionType,
-                        selectedPeriod = event.usagePeriod
+                        selectedPeriod = event.usagePeriod,
+                        isTodaySelected = isToday
                     )
                 }
                 recomputeAll()
@@ -96,13 +103,7 @@ class StatisticViewModel(
                 loadAppUsages()
             }
 
-            is StatisticEvent.TodaySelected -> {
-                _state.update {
-                    it.copy(
-                        isTodaySelected = event.today
-                    )
-                }
-            }
+
 
             StatisticEvent.RefreshSubscriptionLimit -> {
                 getSubscriptionLimit()
@@ -129,6 +130,12 @@ class StatisticViewModel(
     }
 
 
+    private fun LocalDate.isToday(): Boolean {
+        val today = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+        return this == today
+    }
 
     private fun getSubscriptionLimit(){
         screenModelScope.launch {

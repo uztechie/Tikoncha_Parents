@@ -277,9 +277,6 @@ fun StatisticUi(
                         periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
                         onDateSelected = {
                             event(StatisticEvent.GetUsageList(it, selectionType))
-                        },
-                        onLastItemSelected = {
-                            event(StatisticEvent.TodaySelected(today = it && selectionType == DateSelectionType.DAY))
                         }
                     )
 

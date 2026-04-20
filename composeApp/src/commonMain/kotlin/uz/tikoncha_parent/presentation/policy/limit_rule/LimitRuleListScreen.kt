@@ -38,7 +38,6 @@ import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupScr
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleItem
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -56,7 +55,7 @@ class LimitRuleListScreen : Screen {
         LimitRuleListUi(
             rules = sharedState.limitList,
             canUpdate = sharedState.canUpdate,
-            canSave = sharedState.canSave,
+            canSave = sharedState.canSavePolicy,
             onBack = { navigator?.pop() },
             onAdd = {
                 if (sharedState.canUpdate) {
@@ -164,7 +163,6 @@ fun LimitRuleListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ){
                     CustomButtonNew(
-                        enabled = canSave,
                         text = stringResource(Res.string.vaqt_qoshish),
                         onClick = onAdd,
                         modifier = Modifier

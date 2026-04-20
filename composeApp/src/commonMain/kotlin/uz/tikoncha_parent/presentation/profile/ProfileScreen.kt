@@ -38,7 +38,11 @@ import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.platform.getAppVersion
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonDash
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
@@ -47,6 +51,8 @@ import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 import uz.tikoncha_parent.presentation.task.TaskEvent
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.task.TaskViewModel
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -108,6 +114,8 @@ fun ProfileUi(
     event: (ProfileEvent) -> Unit
 ) {
     var showQrCode by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    var showLogoutErrorDialog by remember { mutableStateOf(false) }
 
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val launchPicker = rememberImagePicker { picked ->
@@ -116,6 +124,44 @@ fun ProfileUi(
         event(ProfileEvent.OnAvatarPreviewSelected(bitmap))
         event(ProfileEvent.OnAvatarPhotoSelected(picked.toUploadPart("avatar.jpg")))
     }
+
+    val logoutLoading = state.logoutState is ResponseState.Loading
+    val logoutError = state.logoutState.errorText()
+    val logoutSuccess = state.logoutState is ResponseState.Success
+
+    LaunchedEffect(logoutError){
+        if (logoutError.isNotEmpty()){
+            showLogoutErrorDialog = true
+        }
+    }
+
+    LaunchedEffect(logoutSuccess){
+        if (logoutSuccess){
+            navigator?.replaceAll(LoginScreen())
+        }
+    }
+
+
+
+    LoadingDialog(
+        logoutLoading
+    )
+
+    CustomDialog(
+        show = showLogoutErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = logoutError,
+        buttonText = stringResource(Res.string.ok),
+        painter = painterResource(Res.drawable.dialog_failed),
+        onDismiss = {
+            event(ProfileEvent.Clear)
+            showLogoutErrorDialog = false
+        },
+        onButtonClick = {
+            event(ProfileEvent.Clear)
+            showLogoutErrorDialog = false
+        }
+    )
 
     val painter = rememberQrKitPainter(data = "There will be url or smth like this")
 
@@ -127,6 +173,21 @@ fun ProfileUi(
             }
         )
     }
+
+    CustomBottomDialog(
+        show = showLogoutDialog,
+        title = stringResource(Res.string.chiqishni_xohlaysizmi),
+        message = stringResource(Res.string.hisobdan_chiqishni_tasdiqlaysizmi),
+        showCancelButton = true,
+        confirmButtonText = stringResource(Res.string.chiqish),
+        dismissButtonText = stringResource(Res.string.bekor_qilish),
+        confirmButtonColor = AppColors.button.accentDanger,
+        onConfirm = {
+            showLogoutDialog = true
+            event(ProfileEvent.RequestLogout)
+        },
+        onDismiss = {showLogoutDialog = false}
+    )
 
 
     Column(
@@ -273,7 +334,7 @@ fun ProfileUi(
                     title = stringResource(Res.string.chiqish),
                     icon = painterResource(Res.drawable.logout),
                     onItemClick = {
-
+                        showLogoutDialog = true
                     }
                 )
             }

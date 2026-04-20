@@ -68,7 +68,6 @@ import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.NormalIconButtonSize
-import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -485,7 +484,7 @@ fun AppWebSelectionUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ){
                     CustomButtonNew(
-                        enabled = sharedState.canSave,
+                        enabled = sharedState.canSaveAppWebSelection,
                         text = stringResource(Res.string.saqlash),
                         onClick = { navigator?.pop() },
                         modifier = Modifier

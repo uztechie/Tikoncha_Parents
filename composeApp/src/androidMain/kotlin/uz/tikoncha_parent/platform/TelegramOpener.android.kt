@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.core.net.toUri
 
 lateinit var appContext: Context
 
@@ -38,4 +39,11 @@ actual fun openTelegram(phoneNumber: String) {
             }
         )
     }
+}
+
+actual fun openUrl(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    appContext.startActivity(intent)
 }

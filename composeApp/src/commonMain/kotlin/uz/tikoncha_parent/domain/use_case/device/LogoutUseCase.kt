@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.device
 
 import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -9,13 +9,13 @@ import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 
-class RegisterDeviceUseCase(
+class LogoutUseCase(
     private val repository: DeviceRepository
 ) {
 
-    suspend operator fun invoke(request: DeviceRegisterRequest): Resource<Boolean>{
+    suspend operator fun invoke(fcm: String): Resource<Boolean> {
         return try {
-            val response = repository.registerDevice(request)
+            val response = repository.logout(fcm)
             if (response.success){
                 Resource.Success(true)
             }

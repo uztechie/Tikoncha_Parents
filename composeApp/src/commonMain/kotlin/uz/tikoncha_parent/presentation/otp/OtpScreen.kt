@@ -28,8 +28,6 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.yourpackage.utils.formatTwoDigits
-import org.jetbrains.compose.resources.painterResource
-import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.LogoHeader
 import uz.tikoncha_parent.ui.*
@@ -40,6 +38,8 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.maskPhone
 import uz.tikoncha_parent.platform.openTelegram
+import uz.tikoncha_parent.platform.openUrl
+import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -90,7 +90,7 @@ fun OtpUi(
         else -> MaterialTheme.extendedColor.borderColor
     }
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
 
     // Ekranga kirgan zahoti method selection dialog ochiladi (SMS / Telegram / boshqa raqam)
     var showDialogOtpMethodSelection by remember { mutableStateOf(true) }
@@ -106,18 +106,27 @@ fun OtpUi(
     }
 
     LaunchedEffect(otpErrorText) {
-        showDialog = otpErrorText.isNotEmpty()
+        showErrorDialog = otpErrorText.isNotEmpty()
     }
 
     LoadingDialog(show = otpLoading)
-    CustomDialog(
-        painter = painterResource(Res.drawable.dialog_failed),
-        show = showDialog,
+
+
+    CustomBottomDialog(
+        show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = otpErrorText,
-        buttonText = stringResource(Res.string.ok),
-        onDismiss = { showDialog = false },
-        onButtonClick = { showDialog = false }
+        confirmButtonText = if (!state.deleteAccountUrl.isNullOrBlank()) stringResource(Res.string.sahifaga_otish) else stringResource(Res.string.ok),
+        showCancelButton = !state.deleteAccountUrl.isNullOrBlank(),
+        onDismiss = {
+            showErrorDialog = false
+        },
+        onConfirm = {
+            showErrorDialog = false
+            if (!state.deleteAccountUrl.isNullOrBlank()){
+                openUrl(state.deleteAccountUrl)
+            }
+        }
     )
 
 

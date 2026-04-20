@@ -15,11 +15,14 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
+import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ProfileViewModel(
     private val userInfoUseCase: UserInfoUseCase,
     private val childrenUseCase: ChildrenUseCase,
+    private val logoutUseCase: LogoutUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
 ): ScreenModel {
@@ -71,6 +74,18 @@ class ProfileViewModel(
                 getChildren()
                 getAvatar()
             }
+
+            ProfileEvent.RequestLogout -> {
+                logoutRequest()
+            }
+
+            ProfileEvent.Clear -> {
+                _state.update {
+                    it.copy(
+                        logoutState = ResponseState.Idle
+                    )
+                }
+            }
         }
     }
 
@@ -100,6 +115,39 @@ class ProfileViewModel(
                     _state.update { it.copy(profileImageUrl = url) }
                 }
                 else -> Unit
+            }
+        }
+    }
+
+    private fun logoutRequest(){
+        _state.update {
+            it.copy(
+                logoutState = ResponseState.Loading
+            )
+        }
+        screenModelScope.launch {
+            val result = logoutUseCase.invoke(AppSettings.fcmToken)
+            when(result){
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            logoutState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId
+                            )
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    AppSettings.clearSession()
+                    _state.update {
+                        it.copy(
+                            logoutState = ResponseState.Success()
+                        )
+                    }
+                }
+
             }
         }
     }

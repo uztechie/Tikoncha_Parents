@@ -189,6 +189,7 @@ object AppSettings {
         settings.remove(KEY_PROFILE_IMAGE_URL)
         settings.remove(KEY_POLICY_ID)
         settings.remove(KEY_HAS_USER_LOGIN)
+        settings.remove(KEY_FCM_TOKEN)
 
         // user/children
         settings.remove(KEY_USER_INFO)

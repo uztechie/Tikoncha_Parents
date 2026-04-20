@@ -1,29 +1,28 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.device
 
 import okio.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
+import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.repository.LoginRepository
-import uz.saidburxon.newedu.data.model.SendOtpRequest
+import uz.tikoncha_parent.domain.repository.DeviceRepository
 
-
-class SendOtpUseCase(
-    private val repository: LoginRepository,
+class RegisterDeviceUseCase(
+    private val repository: DeviceRepository
 ) {
-    suspend operator fun invoke(request: SendOtpRequest): Resource<String> {
+
+    suspend operator fun invoke(request: DeviceRegisterRequest): Resource<Boolean> {
         return try {
-            val response = repository.sendOtp(request)
+            val response = repository.registerDevice(request)
             if (response.success){
-                Resource.Success("")
+                Resource.Success(true)
             }
             else {
                 Resource.Error(
                     message = response.error,
-                    resId = Res.string.server_connection_error,
-                    data = response.url
+                    resId = Res.string.server_connection_error
                 )
             }
         } catch (e: IOException) {

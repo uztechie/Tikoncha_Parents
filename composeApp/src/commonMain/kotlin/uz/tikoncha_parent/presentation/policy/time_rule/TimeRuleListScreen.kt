@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +29,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
-import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
 import tikoncha_parents.composeapp.generated.resources.time_large_icon
 import tikoncha_parents.composeapp.generated.resources.vaqt
@@ -41,7 +39,6 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupScreen
-import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupUi
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -62,7 +59,7 @@ class TimeRuleListScreen: Screen {
         TimeRuleListUi(
             rules = sharedState.timeList,
             canUpdate = sharedState.canUpdate,
-            canSave = sharedState.canSave,
+            canSave = sharedState.canSavePolicy,
             onBack = { navigator?.pop() },
             onAdd = {
                 if (sharedState.canUpdate) {
@@ -174,7 +171,6 @@ fun TimeRuleListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ){
                     CustomButtonNew(
-                        enabled = canSave,
                         text = stringResource(Res.string.vaqt_qoshish),
                         onClick = onAdd,
                         modifier = Modifier

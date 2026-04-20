@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
 import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
-import uz.tikoncha_parent.domain.use_case.RegisterDeviceUseCase
+import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.platform.getDeviceInfo
 
 object FcmTokenRegister {

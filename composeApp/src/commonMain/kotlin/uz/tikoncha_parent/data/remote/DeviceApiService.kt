@@ -1,8 +1,10 @@
 package uz.tikoncha_parent.data.remote
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
+import uz.tikoncha_parent.data.remote.device.LogoutResponse
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterResponse
 
@@ -17,4 +19,17 @@ class DeviceApiService (
                 setBody(request)
             }
         )
+
+    suspend fun logout(fcmToken: String): LogoutResponse =
+        httpClient.safeRequest(
+            method = HttpMethod.Post,
+            url = "devices/logout",
+            block = {
+                parameter("fcm_token", fcmToken)
+            }
+        )
+
+
+
+
 }

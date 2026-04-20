@@ -1,7 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.shared
 
 import uz.tikoncha_parent.domain.model.LocationRule
-import uz.tikoncha_parent.domain.model.Policy
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.SubscriptionType
@@ -57,7 +56,7 @@ data class PolicySharedState(
     val showAddRuleButton: Boolean get() = (limitList.isEmpty() || timeList.isEmpty() || locationRule == null) && canUpdate
 
 
-    val canSave: Boolean
+    val canSavePolicy: Boolean
         get() {
             val hasRule = timeList.isNotEmpty() || limitList.isNotEmpty() || locationRule != null
             val hasResource =
@@ -123,6 +122,8 @@ data class PolicySharedState(
 
     val canSelectCategory: Boolean
         get() = subscriptionLimitEntity?.subscriptionType != SubscriptionType.FREE
+
+    val canSaveAppWebSelection: Boolean get() = selectedPkgs.isNotEmpty() || selectedSites.isNotEmpty() || selectedCategories.isNotEmpty()
 }
 
 

@@ -11,5 +11,6 @@ data class OtpState(
     val hasInputError: Boolean = false,
     var timeLife: Int = 0,
     var isUserExists: Boolean? = null,
-    val responseState: ResponseState<VerifyOtpResponseData> = ResponseState.Idle
+    val responseState: ResponseState<VerifyOtpResponseData> = ResponseState.Idle,
+    val deleteAccountUrl: String? = null
 )

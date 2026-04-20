@@ -9,4 +9,6 @@ sealed interface ProfileEvent {
     data class OnAvatarPreviewSelected(val bitmap: ImageBitmap?) : ProfileEvent
     object LoadAvatarFromServer: ProfileEvent
     data object Refresh : ProfileEvent
+    data object RequestLogout : ProfileEvent
+    data object Clear : ProfileEvent
 }

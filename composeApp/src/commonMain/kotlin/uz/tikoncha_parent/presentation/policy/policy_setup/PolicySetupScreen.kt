@@ -37,7 +37,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.GeoType
 import uz.tikoncha_parent.domain.model.LocationRule
@@ -668,7 +667,7 @@ fun PolicySetupUi(
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ){
                 CustomButtonNew(
-                    enabled = sharedState.canSave,
+                    enabled = sharedState.canSavePolicy,
                     text = stringResource(Res.string.saqlash),
                     onClick = { event(PolicySetupEvent.SavePolicy(sharedState)) },
                     modifier = Modifier
