@@ -15,7 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
@@ -34,16 +32,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bajarildi
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
-import tikoncha_parents.composeapp.generated.resources.davom_etish
-import uz.example.wheeltimepicker.WheelTimePicker
-import uz.example.wheeltimepicker.WheelTimePickerDefaults
-import uz.tikoncha_parent.App
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -85,14 +77,14 @@ fun WheelTimePickerDialog(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .padding(
-                        start = ContainerPadding,
-                        end = ContainerPadding
+                        start = 16.dp,
+                        end = 16.dp
                     )
             ){
                 Card(
-                    shape = RoundedCornerShape(CardCornerRadius),
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
+                        containerColor = AppColors.bg.surface
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ){

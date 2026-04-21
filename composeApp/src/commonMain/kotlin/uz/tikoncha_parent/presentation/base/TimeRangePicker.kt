@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package uz.tikoncha_parent.presentation.policy
+package uz.tikoncha_parent.presentation.base
 
 
 import androidx.compose.animation.core.Animatable
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -52,11 +53,86 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bed_sleeping
+import tikoncha_parents.composeapp.generated.resources.dot
 import tikoncha_parents.composeapp.generated.resources.timer
 import uz.tikoncha_parent.ui.theme.AppColors
 import kotlin.math.*
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+
+
+@Immutable
+data class TimeRangePickerColors(
+    val trackColor: Color,           // Ellipse 1: #E5E5E6
+    val innerRingColor: Color,       // Ellipse 4 stroke: #CECFD2
+    val outerDashedColor: Color,     // Tashqi dashed (active arc ichida): #FFFFFF
+    val innerDashedColor: Color,     // Ichki dashed (raqamlar halqasida): #CECFD2
+    val activeColor: Color,          // Ellipse 2 + icon: #C3955B (icon/accent-primary)
+    val labelColor: Color,           // 0/6/12/18: #22262F (text/primary)
+    val currentTimeColor: Color      // hozirgi vaqt nuqtasi
+)
+
+object TimeRangePickerDefaults {
+
+    @Composable
+    fun colors(
+        trackColor: Color = AppColors.border.secondary,
+        innerRingColor: Color = AppColors.border.primary,
+        outerDashedColor: Color = AppColors.border.tertiary,
+        innerDashedColor: Color = AppColors.border.primary,
+        activeColor: Color = AppColors.border.accentEmphasis,
+        labelColor: Color = AppColors.text.primary,
+        currentTimeColor: Color = Color(0xFF2F6BFF)
+    ): TimeRangePickerColors = TimeRangePickerColors(
+        trackColor = trackColor,
+        innerRingColor = innerRingColor,
+        outerDashedColor = outerDashedColor,
+        innerDashedColor = innerDashedColor,
+        activeColor = activeColor,
+        labelColor = labelColor,
+        currentTimeColor = currentTimeColor
+    )
+}
+
+// -------- LocalTime overload --------
+
+@Composable
+fun TimeRangePicker(
+    start: LocalTime,
+    end: LocalTime,
+    onTimeChange: (start: LocalTime, end: LocalTime) -> Unit,
+    modifier: Modifier = Modifier,
+    reverse: Boolean = false,
+    colors: TimeRangePickerColors = TimeRangePickerDefaults.colors(),
+    animationDurationMs: Int = 350,
+    stepMinutes: Int = 1,  // ← qo'shildi
+    startIcon: (@Composable () -> Unit)? = null,
+    endIcon: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+    centerContent: @Composable () -> Unit = {}
+) {
+    TimeRangePicker(
+        startMinutes = start.hour * 60 + start.minute,
+        endMinutes = end.hour * 60 + end.minute,
+        onTimeChange = { s, e ->
+            onTimeChange(
+                LocalTime(hour = s / 60, minute = s % 60),
+                LocalTime(hour = e / 60, minute = e % 60)
+            )
+        },
+        modifier = modifier,
+        inverted = reverse,
+        colors = colors,
+        animationDurationMs = animationDurationMs,
+        stepMinutes = stepMinutes,
+        startIcon = startIcon,
+        endIcon = endIcon,
+        onClick = onClick,
+        centerContent = centerContent
+    )
+}
+
+
 
 /**
  * 24 soatlik doiraviy vaqt oralig'i tanlagich.
@@ -93,11 +169,11 @@ fun TimeRangePicker(
     iconStartSize: Dp = 35.dp,
     iconEndSize: Dp = 31.dp,
     // Protsent qiymatlar — ichki halqa chegaradan 15.83% masofada
-    innerRingInsetPercent: Float = 0.1583f,
+    innerRingGapFromTrack: Dp = 18.dp,
     // Tashqi dashed chegaradan 16dp
-    outerDashedInset: Dp = 16.dp,
     centerSize: Dp = 100.dp,
     iconGap: Dp = 10.dp,
+    stepMinutes: Int = 1,  // 1..60
     // --- Slotlar ---
     startIcon: (@Composable () -> Unit)? = null,
     endIcon: (@Composable () -> Unit)? = null,
@@ -117,21 +193,24 @@ fun TimeRangePicker(
         val trackStrokePx = with(density) { trackStrokeWidth.toPx() }
         val activeStrokePx = with(density) { activeStrokeWidth.toPx() }
         val dashStrokePx = with(density) { dashStrokeWidth.toPx() }
-        val outerDashedInsetPx = with(density) { outerDashedInset.toPx() }
         val iconStartPx = with(density) { iconStartSize.toPx() }
         val iconEndPx = with(density) { iconEndSize.toPx() }
         val iconGapPx = with(density) { iconGap.toPx() }
 
-        // Inner ring insetini protsent bilan hisoblash (sizePx ga nisbatan)
-        val innerRingInsetPx = sizePx * innerRingInsetPercent
+
+
+        // ... Dp → px konversiyalari ...
+        val innerRingGapPx = with(density) { innerRingGapFromTrack.toPx() }  // ← YANGI
 
         // Radiuslar
         val arcRadius = (sizePx - trackStrokePx) / 2f
-        val innerRingRadius = sizePx / 2f - innerRingInsetPx
-        val outerDashedRadius = sizePx / 2f - outerDashedInsetPx
-        // Inner dashed = raqamlar = bir xil radius (Figma'ga mos)
-        val innerDashedRadius = innerRingRadius
-        val labelRadiusPx = innerRingRadius   // ⬅ AYNI RADIUS
+        val trackInnerEdge = arcRadius - trackStrokePx / 2f
+        val innerRingRadius = trackInnerEdge - innerRingGapPx
+        val labelRadiusPx = innerRingRadius
+
+
+
+        // Radiuslar
 
         // --- Animatsiya state ---
         val startAnim = remember { Animatable(startMinutes.toFloat()) }
@@ -163,7 +242,7 @@ fun TimeRangePicker(
         val currentTimeMinutes by produceState(initialValue = currentMinutesOfDay()) {
             while (true) {
                 value = currentMinutesOfDay()
-                kotlinx.coroutines.delay(30_000L)
+                delay(30_000L)
             }
         }
 
@@ -215,8 +294,8 @@ fun TimeRangePicker(
                             activeHandle = null
                             isDragging = false
                             onTimeChange(
-                                startAnim.value.roundToInt().mod(1440),
-                                endAnim.value.roundToInt().mod(1440)
+                                snapToStep(startAnim.value.roundToInt(), stepMinutes),
+                                snapToStep(endAnim.value.roundToInt(), stepMinutes)
                             )
                         },
                         onDragCancel = {
@@ -226,7 +305,8 @@ fun TimeRangePicker(
                         onDrag = { change, _ ->
                             val h = activeHandle ?: return@detectDragGestures
                             change.consume()
-                            val newMin = positionToMinutes(change.position, center)
+                            val rawMin = positionToMinutes(change.position, center)
+                            val newMin = snapToStep(rawMin, stepMinutes)
                             scope.launch {
                                 when (h) {
                                     Handle.Start -> startAnim.snapTo(newMin.toFloat())
@@ -260,7 +340,7 @@ fun TimeRangePicker(
                 startMin = 0f + half,
                 endMin = 360f - half,
                 center = center,
-                radius = innerDashedRadius,
+                radius = innerRingRadius,
                 strokeWidth = dashStrokePx,
                 color = colors.innerDashedColor,
                 strokeCap = StrokeCap.Butt
@@ -269,7 +349,7 @@ fun TimeRangePicker(
                 startMin = 360f + half,
                 endMin = 720f - half,
                 center = center,
-                radius = innerDashedRadius,
+                radius = innerRingRadius,
                 strokeWidth = dashStrokePx,
                 color = colors.innerDashedColor,
                 strokeCap = StrokeCap.Butt
@@ -278,7 +358,7 @@ fun TimeRangePicker(
                 startMin = 720f + half,
                 endMin = 1080f - half,
                 center = center,
-                radius = innerDashedRadius,
+                radius = innerRingRadius,
                 strokeWidth = dashStrokePx,
                 color = colors.innerDashedColor,
                 strokeCap = StrokeCap.Butt
@@ -287,7 +367,7 @@ fun TimeRangePicker(
                 startMin = 1080f + half,
                 endMin = 1440f - half,
                 center = center,
-                radius = innerDashedRadius,
+                radius = innerRingRadius,
                 strokeWidth = dashStrokePx,
                 color = colors.innerDashedColor,
                 strokeCap = StrokeCap.Butt
@@ -399,8 +479,7 @@ fun TimeRangePicker(
     activeArcCap: StrokeCap = StrokeCap.Round,
     iconStartSize: Dp = 35.dp,
     iconEndSize: Dp = 31.dp,
-    innerRingInsetPercent: Float = 0.1583f,
-    outerDashedInset: Dp = 16.dp,
+    innerRingGapFromTrack: Dp = 18.dp,
     centerSize: Dp = 100.dp,
     iconGap: Dp = 10.dp,
     startIcon: (@Composable () -> Unit)? = null,
@@ -428,8 +507,7 @@ fun TimeRangePicker(
         activeArcCap = activeArcCap,
         iconStartSize = iconStartSize,
         iconEndSize = iconEndSize,
-        innerRingInsetPercent = innerRingInsetPercent,
-        outerDashedInset = outerDashedInset,
+        innerRingGapFromTrack = innerRingGapFromTrack,
         centerSize = centerSize,
         iconGap = iconGap,
         startIcon = startIcon,
@@ -656,14 +734,12 @@ private fun HandleIconsOverlay(
 }
 
 private fun Modifier.absoluteOffsetPx(x: Float, y: Float): Modifier =
-    this.then(
-        layout { measurable, constraints ->
-            val placeable = measurable.measure(constraints)
-            layout(placeable.width, placeable.height) {
-                placeable.place(x.roundToInt(), y.roundToInt())
-            }
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width, placeable.height) {
+            placeable.place(x.roundToInt(), y.roundToInt())
         }
-    )
+    }
 
 private fun currentMinutesOfDay(): Int {
     val now = Clock.System.now()
@@ -671,6 +747,19 @@ private fun currentMinutesOfDay(): Int {
     val local = now.toLocalDateTime(tz)
     return local.hour * 60 + local.minute
 }
+
+private fun snapToStep(minutes: Int, stepMinutes: Int): Int {
+    val step = stepMinutes.coerceIn(1, 60)
+    if (step == 1) return minutes.mod(1440)
+    val snapped = ((minutes.toFloat() / step).roundToInt() * step)
+    return snapped.mod(1440)
+}
+
+
+
+
+
+
 
 
 // ---------- Preview ----------
@@ -686,17 +775,17 @@ private fun TimeRangePickerPreview_Default() {
             modifier = Modifier.fillMaxWidth(1f),
             startIcon = {
                 Icon(
-                    painter = painterResource(Res.drawable.bed_sleeping),
+                    painter = painterResource(Res.drawable.dot),
                     contentDescription = "",
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(10.dp),
                     tint = AppColors.icon.inverse
                 )
             },
             endIcon = {
                 Icon(
-                    painter = painterResource(Res.drawable.timer),
+                    painter = painterResource(Res.drawable.dot),
                     contentDescription = "",
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(10.dp),
                     tint = AppColors.icon.inverse
                 )
             },

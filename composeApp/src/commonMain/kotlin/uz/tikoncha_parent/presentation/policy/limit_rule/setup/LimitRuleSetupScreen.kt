@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -19,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -31,23 +28,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_remove
-import tikoncha_parents.composeapp.generated.resources.kunlik
 import tikoncha_parents.composeapp.generated.resources.saqlash
-import tikoncha_parents.composeapp.generated.resources.soatlik
-import uz.example.wheeltimepicker.WheelTimePicker
-import uz.example.wheeltimepicker.WheelTimePickerDefaults
+import uz.tikoncha_parent.presentation.base.WheelTimePicker
+import uz.tikoncha_parent.presentation.base.WheelTimePickerDefaults
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.PillSegmentedButton
 import uz.tikoncha_parent.presentation.base.PillSegmentedItem
-import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.policy.common.WeekdayChips
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupEvent
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 

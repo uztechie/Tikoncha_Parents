@@ -77,6 +77,7 @@ data class BorderColors(
     val primary: Color,
     val secondary: Color,
     val tertiary: Color,
+    val inverse: Color,
     val accentEmphasis: Color,
     val disabled: Color,
     val accentWarning: Color,
@@ -197,6 +198,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         secondary = Color(0xFFE5E5E6),                          // gray.200
         tertiary = Color(0xFFFFFFFF),                           // base.white
         accentEmphasis = Color(0xFFC3955B),                     // orange.500
+        inverse = Color(0xFFFFFFFF),                     // orange.500
         disabled = Color(0xFFEFEFF0),                           // gray.100
         accentWarning = Color(0xFFF79009),                      // orange-variant.500
         tertiarySubtle = Color(0xFFFFFFFF),                     // base.white
@@ -308,6 +310,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         tertiary = Color(0xFF61656C),                           // neutral.600
         accentEmphasis = Color(0xFFC3955B),                     // orange.500
         disabled = Color(0xFF2B2B31),                           // gray.600
+        inverse = Color(0xFFFFFFFF),                           // gray.600
         accentWarning = Color(0xFFF79009),                      // orange-variant.500
         tertiarySubtle = Color(0xFF2F3137),                     // neutral.700
         secondarySubtle = Color(0xFF2F3137),                    // neutral.700

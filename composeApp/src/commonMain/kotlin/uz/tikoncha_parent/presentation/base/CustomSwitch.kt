@@ -1,18 +1,21 @@
-
 package uz.tikoncha_parent.presentation.base
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
 fun CustomSwitch(
@@ -34,63 +39,92 @@ fun CustomSwitch(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 
-    // O‘lchamlar
-    width: Dp = 48.dp,
+    // O'lchamlar
+    width: Dp = 52.dp,
     height: Dp = 28.dp,
-    padding: Dp = 3.dp, // track ichidagi bo'shliq
+    padding: Dp = 2.dp,
 
     // Ranglar
-    trackOnColor: Color = MaterialTheme.colorScheme.primary,
-    trackOffColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    trackBorderColor: Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+    trackOnColor: Color = AppColors.section.secondary,
+    trackOffColor: Color = AppColors.section.secondary,
+    trackBorderOnColor: Color = Color.Transparent,
+    trackBorderOffColor: Color = AppColors.section.secondary,
 
-    thumbOnColor: Color = MaterialTheme.colorScheme.onPrimary,
-    thumbOffColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    thumbOnColor: Color = AppColors.icon.accentPrimary,
+    thumbOffColor: Color = AppColors.icon.secondary,
 ) {
     val trackShape = RoundedCornerShape(percent = 50)
     val thumbSize = height - padding * 2
+    val maxOffset = width - thumbSize - padding * 2
+
+    // Bitta umumiy spec — hamma animation'lar sinxron
+    val colorSpec = tween<Color>(durationMillis = 220, easing = FastOutSlowInEasing)
+    val thumbSpec = spring<Dp>(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessMedium
+    )
 
     val trackColor by animateColorAsState(
         targetValue = if (checked) trackOnColor else trackOffColor,
+        animationSpec = colorSpec,
         label = "trackColor"
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (checked) trackBorderOnColor else trackBorderOffColor,
+        animationSpec = colorSpec,
+        label = "borderColor"
     )
     val thumbColor by animateColorAsState(
         targetValue = if (checked) thumbOnColor else thumbOffColor,
+        animationSpec = colorSpec,
         label = "thumbColor"
     )
+    val animatedOffset by animateDpAsState(
+        targetValue = if (checked) maxOffset else 0.dp,
+        animationSpec = thumbSpec,
+        label = "thumbOffset"
+    )
 
-    // Thumb gorizontal ofseti
-    val maxOffset = (width - thumbSize - padding * 2)
-    val targetOffset = if (checked) maxOffset else 0.dp
-    val animatedOffset by animateDpAsState(targetValue = targetOffset, label = "thumbOffset")
+    // Ripple'ni o'chirish uchun
+    val interactionSource = remember { MutableInteractionSource() }
 
     Box(
         modifier = modifier
             .size(width, height)
             .clip(trackShape)
             .background(trackColor, trackShape)
-            .let {
-                if (!checked) it.border(1.dp, trackBorderColor, trackShape) else it
-            }
+            .border(1.dp, borderColor, trackShape)  // Har doim chizilgan
             .semantics(mergeDescendants = true) {
-                toggleableState = if (checked) androidx.compose.ui.state.ToggleableState.On
-                else androidx.compose.ui.state.ToggleableState.Off
+                toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
             }
             .clickable(
                 enabled = enabled,
                 role = Role.Switch,
+                interactionSource = interactionSource,
+                indication = null,  // iOS-uslub: ripple yo'q
                 onClick = { onCheckedChange(!checked) }
             ),
         contentAlignment = Alignment.CenterStart
     ) {
-        // Thumb
         Box(
             modifier = Modifier
-                .padding(start = padding, top = padding, bottom = padding)
+                .padding(horizontal = padding)
                 .offset { IntOffset(animatedOffset.roundToPx(), 0) }
                 .size(thumbSize)
                 .clip(CircleShape)
                 .background(thumbColor)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CustomSwitchPreview() {
+    TikonchaParentTheme {
+        var checked by remember { mutableStateOf(false) }
+        CustomSwitch(
+            checked = checked,
+            onCheckedChange = { checked = it }
         )
     }
 }

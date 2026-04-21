@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package uz.example.wheeltimepicker
+package uz.tikoncha_parent.presentation.base
 
 /*
  * WheelTimePicker — Compose Multiplatform uchun smooth wheel time picker.
@@ -78,7 +78,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.daqiqa
 import tikoncha_parents.composeapp.generated.resources.soat
-import uz.tikoncha_parent.App
 import uz.tikoncha_parent.ui.theme.AppColors
 
 // ============================================================================

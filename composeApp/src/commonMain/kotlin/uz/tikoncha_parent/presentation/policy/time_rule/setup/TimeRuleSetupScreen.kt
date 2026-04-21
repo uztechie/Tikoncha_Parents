@@ -32,7 +32,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -40,28 +39,25 @@ import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bed_sleeping
 import tikoncha_parents.composeapp.generated.resources.cheklov_vaqti
-import tikoncha_parents.composeapp.generated.resources.cheklovlar
 import tikoncha_parents.composeapp.generated.resources.close_remove
+import tikoncha_parents.composeapp.generated.resources.dot
 import tikoncha_parents.composeapp.generated.resources.faqat_shu_vaqtda_ishlasin
 import tikoncha_parents.composeapp.generated.resources.kun_davomida
 import tikoncha_parents.composeapp.generated.resources.sand_time_policy
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.time_icon
 import tikoncha_parents.composeapp.generated.resources.timer
-import tikoncha_parents.composeapp.generated.resources.vaqt
-import uz.tikoncha_parent.App
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomSwitch
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDialog
-import uz.tikoncha_parent.presentation.policy.TimeRangePicker
-import uz.tikoncha_parent.presentation.policy.TimeRangePickerDefaults
+import uz.tikoncha_parent.presentation.base.TimeRangePicker
+import uz.tikoncha_parent.presentation.base.TimeRangePickerDefaults
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppCheckbox
 import uz.tikoncha_parent.presentation.policy.common.WeekdayChips
 import uz.tikoncha_parent.presentation.policy.common.formatDuration
 import uz.tikoncha_parent.presentation.policy.common.toHhMm
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.CustomCheckBox
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -195,6 +191,7 @@ fun TimeRuleSetupUi(
             TimeRangePicker(
                 start = state.startTime,
                 end = state.endTime,
+                stepMinutes = 10,
                 onTimeChange = { start, end ->
                     event(TimeRuleSetupEvent.SetTimeRange(start, end))
                 },
@@ -205,16 +202,20 @@ fun TimeRuleSetupUi(
                     .padding(horizontal = 50.dp),
                 startIcon = {
                     Icon(
-                        painter = painterResource(Res.drawable.bed_sleeping),
+                        painter = painterResource(Res.drawable.dot),
                         contentDescription = "",
-                        tint = AppColors.icon.inverse
+                        tint = AppColors.icon.inverse,
+                        modifier = Modifier
+                            .size(10.dp)
                     )
                 },
                 endIcon = {
                     Icon(
-                        painter = painterResource(Res.drawable.timer),
+                        painter = painterResource(Res.drawable.dot),
                         contentDescription = "",
-                        tint = AppColors.icon.inverse
+                        tint = AppColors.icon.inverse,
+                        modifier = Modifier
+                            .size(10.dp)
                     )
                 },
                 centerContent = {
