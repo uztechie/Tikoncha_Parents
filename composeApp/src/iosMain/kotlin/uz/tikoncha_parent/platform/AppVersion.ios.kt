@@ -1,7 +1,8 @@
 package uz.tikoncha_parent.platform
 
+import platform.Foundation.NSBundle
+
 actual fun getAppVersion(): String {
-    return ""
-//    return NSBundle.mainBundle.infoDictionary
-//        ?.get("CFBundleShortVersionString") as? String ?: ""
+    return NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String
+        ?: ""
 }
