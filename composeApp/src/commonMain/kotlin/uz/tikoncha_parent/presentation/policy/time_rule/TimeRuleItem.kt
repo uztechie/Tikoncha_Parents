@@ -16,43 +16,31 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import qrgenerator.qrkitpainter.text
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bed_sleeping
 import tikoncha_parents.composeapp.generated.resources.close_remove
-import tikoncha_parents.composeapp.generated.resources.har_kuni
 import tikoncha_parents.composeapp.generated.resources.kun_davomida
 import tikoncha_parents.composeapp.generated.resources.sleep_large_icon
 import tikoncha_parents.composeapp.generated.resources.timer
 import uz.tikoncha_parent.domain.model.WeekDay
-import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.weekdayLabel
-import uz.tikoncha_parent.presentation.base.CloseButton
-import uz.tikoncha_parent.presentation.policy.TimeProgressCircle
-import uz.tikoncha_parent.presentation.policy.TimeProgressCircleDefaults
+import uz.tikoncha_parent.presentation.policy.common.TimeProgressCircle
+import uz.tikoncha_parent.presentation.policy.common.TimeProgressCircleDefaults
 import uz.tikoncha_parent.presentation.policy.common.toHhMm
-import uz.tikoncha_parent.ui.LargeTextSize
-import uz.tikoncha_parent.ui.NormalTextSize
-import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.Space
-import uz.tikoncha_parent.ui.SpaceSmall
-import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable

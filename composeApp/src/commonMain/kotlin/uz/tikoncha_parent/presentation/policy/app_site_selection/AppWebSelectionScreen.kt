@@ -59,8 +59,8 @@ import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
-import uz.tikoncha_parent.presentation.policy.SegmentedTabBar
-import uz.tikoncha_parent.presentation.policy.SegmentedTabBarDefaults
+import uz.tikoncha_parent.presentation.policy.common.SegmentedTabBar
+import uz.tikoncha_parent.presentation.policy.common.SegmentedTabBarDefaults
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState

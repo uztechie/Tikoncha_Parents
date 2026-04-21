@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.presentation.policy.limit_rule
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,32 +13,23 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.CloseButton
 import uz.tikoncha_parent.domain.model.weekdayLabel
-import uz.tikoncha_parent.presentation.policy.TimeProgressCircle
-import uz.tikoncha_parent.presentation.policy.TimeProgressCircleDefaults
 import uz.tikoncha_parent.presentation.policy.common.formatDuration
-import uz.tikoncha_parent.presentation.policy.common.toHhMm
-import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleIconTextRow
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 
 @Composable
