@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.add_child
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.call
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -57,7 +61,6 @@ fun ChildPhoneInputField(
             .clip(RoundedCornerShape(TextFieldCornerRadius))
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .border(
@@ -66,7 +69,8 @@ fun ChildPhoneInputField(
                     shape = RoundedCornerShape(TextFieldCornerRadius)
                 )
                 .background(Color.Transparent)
-                .padding(horizontal = 20.dp, vertical = 0.dp)
+                .padding(horizontal = 20.dp, vertical = 0.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(Res.drawable.call),
@@ -74,11 +78,10 @@ fun ChildPhoneInputField(
                 tint = MaterialTheme.extendedColor.primaryColor,
                 modifier = Modifier.padding(end = 8.dp).size(NormalIconSize)
             )
-            CustomText(
+            Text(
                 text = "+998",
-                fontSize = NormalTextSize,
-                color = if (isAccepted) PrimaryColor else MaterialTheme.extendedColor.onBackgroundColor,
-                fontWeight = FontWeight.W500
+                style = AppTypography.titleLgMedium,
+                color = AppColors.text.tertiary,
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(

@@ -36,14 +36,13 @@ import uz.tikoncha_parent.presentation.add_child.ChildViewmodel
 import uz.tikoncha_parent.presentation.child_confirm_cod.ChildConfirmViewModel
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
-import uz.tikoncha_parent.presentation.login.LoginViewmodel
+import uz.tikoncha_parent.presentation.login.LoginViewModel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
 import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.dsl.module
 import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
 import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
-import uz.tikoncha_parent.data.in_app_update.InAppUpdateDataSource
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
@@ -247,12 +246,12 @@ val sharedModule = module {
 
 
 
-    factory { LoginViewmodel(get()) }
+    factory { LoginViewModel() }
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
     factory { ProfileViewModel(get(), get(), get(), get(), get()) }
     factory { CreatePasswordViewmodel() }
-    factory { ChildViewmodel(get()) }
+    factory { ChildViewmodel(get(), get()) }
     factory { LoginPasswordViewmodel() }
     factory { ChildConfirmViewModel() }
     factory { TaskViewModel(get (), get(), get(), get(), get()) }

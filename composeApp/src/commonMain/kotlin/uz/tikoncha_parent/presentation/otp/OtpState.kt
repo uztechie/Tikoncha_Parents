@@ -10,7 +10,7 @@ data class OtpState(
     val isTelegram: Boolean? = null,
     val hasInputError: Boolean = false,
     var timeLife: Int = 0,
-    var isUserExists: Boolean? = null,
+    var isSendingOtp: Boolean = false,
     val responseState: ResponseState<VerifyOtpResponseData> = ResponseState.Idle,
     val deleteAccountUrl: String? = null
 )

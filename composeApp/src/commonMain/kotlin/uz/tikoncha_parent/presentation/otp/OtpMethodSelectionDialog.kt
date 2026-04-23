@@ -130,12 +130,11 @@ fun OtpMethodSelectionDialog(
                         SpaceSmall()
 
                         CustomButton(
-                            text = stringResource(Res.string.boshqa_raqamga_ozgartish),
                             onClick = onOtherNumber,
-                            color = MaterialTheme.extendedColor.disabledContentColor,
-                            textColor = MaterialTheme.extendedColor.textColor,
-                            modifier = Modifier
-                                .fillMaxWidth()
+                            color = AppColors.action.section,
+                            modifier = Modifier.fillMaxWidth(),
+                            textColor = AppColors.text.primary,
+                            text = stringResource(Res.string.boshqa_raqamga_ozgartish)
                         )
                     }
                 }

@@ -2,27 +2,30 @@
 
 package uz.tikoncha_parent.presentation.login
 
-import uz.tikoncha_parent.platform.KeyboardAsState
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,7 +53,7 @@ class LoginScreen : Screen {
 
     @Composable
     override fun Content() {
-        val viewModel = koinScreenModel<LoginViewmodel>()
+        val viewModel = koinScreenModel<LoginViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current
@@ -70,42 +73,30 @@ fun LoginUi(
     state: LoginState,
     event: (LoginEvent) -> Unit
 ) {
-
-    val isPhoneNumberValid = state.number.length == 9 && state.number.all { it.isDigit() }
-    val isKeyboardOpen = KeyboardAsState().value
+//    val isKeyboardOpen = KeyboardAsState().value
+    val isKeyboardOpen = rememberIsKeyboardOpen()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.bg.page)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppColors.bg.page)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             LogoHeader()
 
-            val animatedRatioHeight by animateFloatAsState(
-                targetValue = if (isKeyboardOpen) 2f else 3f,
-                label = "AspectRatioAnimation"
-            )
-
-            val sliderImage = if (isKeyboardOpen) {
-                painterResource(Res.drawable.slider_small)
-            } else {
-                painterResource(Res.drawable.slider_normal)
-            }
-            if (!isKeyboardOpen) {
+            AnimatedVisibility(visible = !isKeyboardOpen) {
                 Image(
-                    painter = sliderImage,
+                    painter = painterResource(Res.drawable.slider_normal),
                     contentDescription = "",
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .aspectRatio(4f / animatedRatioHeight),
+                        .fillMaxWidth()
+                        .aspectRatio(4f / 3f),
                     contentScale = ContentScale.FillBounds
                 )
             }
@@ -132,21 +123,30 @@ fun LoginUi(
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
                 onClick = {
-                    if (isPhoneNumberValid) {
-                        event(LoginEvent.OnConfirmClicked)
-                        navigator?.push(OtpScreen(phoneNumber = state.fullNumber))
+                    if (state.isPhoneNumberValid) {
+                        navigator?.push(OtpScreen(state.fullNumber))
                     }
                 },
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                enabled = isPhoneNumberValid,
+                enabled = state.isPhoneNumberValid,
                 text = stringResource(Res.string.keyingisi)
             )
             SpaceSmall()
         }
     }
+}
+
+@Composable
+private fun rememberIsKeyboardOpen(): Boolean {
+    val ime = WindowInsets.ime
+    val density = LocalDensity.current
+    val isOpen by remember {
+        derivedStateOf { ime.getBottom(density) > 0 }
+    }
+    return isOpen
 }
 
 @Composable

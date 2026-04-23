@@ -448,5 +448,6 @@
     <string name="vaqt_qoshish">Добавить время</string>
     <string name="biz_haqimizda">О нас</string>
     <string name="tanga_s">%1$s монет</string>
-
+    <string name="farzand_ulan_di">Ваш ребёнок успешно подключён, теперь вы можете спокойно контролировать его цифровую жизнь</string>
+    <string name="confirm_code_instruction">Этот код должен быть введён вашим ребёнком в разделе «Добавить родителя» в приложении "Tikoncha".</string>
 </resources>

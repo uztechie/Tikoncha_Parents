@@ -23,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +37,11 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -58,6 +62,7 @@ import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.format6DigitCode
 import uz.tikoncha_parent.platform.copyPlainText
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -90,62 +95,86 @@ fun AddChildUi(
     state: ChildState,
     event: (ChildEvent) -> Unit
 ) {
-
-
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-
+    var showErrorDialog by remember { mutableStateOf(false) }
 
     val isLoading = state.responseState is ResponseState.Loading
     val errorText = state.responseState.errorText()
     val isSuccess = state.responseState is ResponseState.Success
 
-    val scope = rememberCoroutineScope ()
+    val scope = rememberCoroutineScope()
     val clipboard = LocalClipboard.current
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-
     val formatted = remember(state.confirmCode) { format6DigitCode(state.confirmCode) }
-
+    val canEditePhone by remember(state.confirmCode) { mutableStateOf(state.confirmCode.isEmpty()) }
 
     LoadingDialog(isLoading)
     LaunchedEffect(errorText) {
-        showDialog = errorText.isNotEmpty()
+        showErrorDialog = errorText.isNotEmpty()
     }
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
-        show = showDialog,
+        show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = state.responseState.errorText(),
         buttonText = stringResource(Res.string.ok),
         onDismiss = {
-            showDialog = false
+            showErrorDialog = false
         },
         onButtonClick = {
-            showDialog = false
+            showErrorDialog = false
         }
     )
 
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_success),
+        show = state.childJoined,
+        title = stringResource(Res.string.muvaffaqiyatli),
+        buttonText = stringResource(Res.string.ok),
+        message = stringResource(Res.string.farzand_ulan_di),
+        onDismiss = {
+            event(ChildEvent.OnSuccessDismissed)
+        },
+        onButtonClick = {
+            val addedPhone = state.fullNumber
+            event(ChildEvent.OnSuccessDismissed)
+            navigator?.replace(ChildrenScreen(highlightPhone = addedPhone))
+        }
+    )
 
     LaunchedEffect(isSuccess) {
-        if (isSuccess){
+        if (isSuccess) {
             event(ChildEvent.Reset)
 //            navigator?.push(ChildConfirmCodeScreen(confirmCode = state.confirmCode))
         }
     }
 
-
-    val confirmCode by remember(state.confirmCode) { mutableStateOf(state.confirmCode.isEmpty()) }
-
-    var enableButton by remember {
-        mutableStateOf(false)
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        if (state.confirmCode.isNotEmpty() && !state.childJoined) {
+            event(ChildEvent.StartWatching)
+        }
     }
 
-    LaunchedEffect(state.number){
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        event(ChildEvent.StopWatching)
+    }
+
+    LaunchedEffect(state.confirmCode) {
+        if (state.confirmCode.isNotEmpty() && !state.childJoined) {
+            event(ChildEvent.StartWatching)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            event(ChildEvent.StopWatching)
+        }
+    }
+
+    var enableButton by remember { mutableStateOf(false) }
+    LaunchedEffect(state.number) {
         enableButton = state.number.length >= 9
     }
 
@@ -155,7 +184,6 @@ fun AddChildUi(
             .imePadding()
             .background(MaterialTheme.extendedColor.backgroundColor)
     ) {
-
         CustomHeader(
             title = stringResource(Res.string.farzand_qoshish),
             showBackButton = true,
@@ -170,8 +198,6 @@ fun AddChildUi(
                 .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-
-
             SpaceLarge()
 
             CustomText(
@@ -180,17 +206,19 @@ fun AddChildUi(
                 color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500
             )
-
             SpaceMedium()
 
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .border(width = 1.dp, color = if (state.accept) PrimaryColor else Color.Transparent, shape = RoundedCornerShape(TextFieldCornerRadius)),
+                    .border(
+                        width = 1.dp,
+                        color = if (state.accept) PrimaryColor else Color.Transparent,
+                        shape = RoundedCornerShape(TextFieldCornerRadius)
+                    ),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
-            )
-            {
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -201,31 +229,30 @@ fun AddChildUi(
                         fontSize = SmallTextSize,
                         fontWeight = FontWeight.W500
                     )
-
                     SpaceMedium()
 
                     ChildPhoneInputField(
+                        isAccepted = state.accept,
                         phoneNumber = state.number,
                         onPhoneNumberChange = { newNumber ->
-                            if (confirmCode) {
+                            if (canEditePhone) {
                                 event(ChildEvent.OnNumberInsert(newNumber))
                             }
-                        },
-                        isAccepted = state.accept
+                        }
                     )
                 }
             }
-
-
             SpaceLarge()
             SpaceLarge()
 
-
-            if (state.confirmCode.isNotEmpty()){
+            if (state.confirmCode.isNotEmpty()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+                        .background(
+                            MaterialTheme.extendedColor.cardColor,
+                            RoundedCornerShape(TextFieldCornerRadius)
+                        )
                         .height(TextFieldHeight),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -249,25 +276,20 @@ fun AddChildUi(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 22.sp
                     )
-
                 }
-
-
                 SpaceSmall()
 
                 CustomText(
-                    text = stringResource(Res.string.ushbu_kodni_farzandingiz_telefonidan_kiriting),
+                    text = stringResource(Res.string.confirm_code_instruction),
                     fontSize = NormalTextSize,
                     color = MaterialTheme.extendedColor.hintColor,
-                    fontWeight = FontWeight.W500
+                    fontWeight = FontWeight.W500,
+                    textAlign = TextAlign.Center
                 )
-
             }
-
-
             Spacer(modifier = Modifier.weight(1f))
 
-            if (confirmCode) {
+            if (canEditePhone) {
                 CustomButton(
                     onClick = {
                         event(ChildEvent.OnAddClicked)
@@ -292,7 +314,7 @@ fun AddChildUi(
 private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         AddChildUi(
             navigator = null,
             state = ChildState(),

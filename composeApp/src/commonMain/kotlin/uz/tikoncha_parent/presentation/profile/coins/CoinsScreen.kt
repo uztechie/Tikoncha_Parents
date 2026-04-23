@@ -32,6 +32,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.common.Util.toCurrency
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.simpleShadow
@@ -118,7 +119,11 @@ fun CoinsUi(
                     imageUrl = state.selectedChild?.avatarUrl ?: "",
                     label = stringResource(Res.string.farzandingizni_tanlang),
                     onClick = {
-                        showDialog = true
+                        if (state.childrenList.isEmpty()) {
+                            navigator?.push(AddChildScreen())
+                        } else {
+                            showDialog = true
+                        }
                     },
                 )
             }

@@ -27,16 +27,17 @@ class OtpViewmodel(
     val state = _state.asStateFlow()
 
     private var verifyOtpJob: Job? = null
-
+    private var snedOtpJob: Job? = null
     private var timerJob: Job? = null
 
 
     fun onEvent(event: OtpEvent) {
         when (event) {
             is OtpEvent.OnOtpUpdate -> {
+                val clean = event.otpCode.filter { it.isDigit() }.take(6)
                 _state.update {
                     it.copy(
-                        otpCode = event.otpCode,
+                        otpCode = clean,
                         hasInputError = false
                     )
                 }
@@ -51,10 +52,12 @@ class OtpViewmodel(
             }
 
             is OtpEvent.SetPhone -> {
-                _state.update {
-                    it.copy(
-                        phoneNumber = event.phoneNumber
-                    )
+                if (_state.value.phoneNumber.isEmpty()) {
+                    _state.update {
+                        it.copy(
+                            phoneNumber = event.phoneNumber
+                        )
+                    }
                 }
             }
 
@@ -77,26 +80,37 @@ class OtpViewmodel(
                     )
                 }
             }
+
+            OtpEvent.ResetError -> {
+                _state.update {
+                    it.copy(
+                        responseState = ResponseState.Idle,
+                        deleteAccountUrl = null,
+                        hasInputError = false
+                    )
+                }
+            }
         }
     }
 
     private fun verifyOtp() {
-        val phone = _state.value.phoneNumber
-        val otp = _state.value.otpCode
+        val current = _state.value
+        if (current.otpCode.length != 6) return
+        if (current.responseState is ResponseState.Loading) return
 
         verifyOtpJob?.cancel()
-        verifyOtpJob = screenModelScope.launch() {
+        verifyOtpJob = screenModelScope.launch {
             _state.update {
                 it.copy(
-                    responseState = ResponseState.Loading,
+                    responseState = ResponseState.Loading
                 )
             }
+
             val request = VerifyOtpRequest(
-                phone = phone,
-                otp_code = otp
+                phone = current.phoneNumber,
+                otp_code = current.otpCode
             )
-            val response = verifyOtpUseCase(request)
-            when (response) {
+            when (val response = verifyOtpUseCase(request)) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -111,13 +125,13 @@ class OtpViewmodel(
                 }
 
                 is Resource.Success -> {
-
-                    AppSettings.refreshToken = response.data.refresh_token ?: ""
-                    AppSettings.accessToken = response.data.access_token ?: ""
-                    AppSettings.hasUserLogin = response.data.user_info != null
-                    AppSettings.userId = response.data.user_id ?: ""
-                    AppSettings.userInfo = response.data.user_info?.toUserInfo()
-                    AppSettings.isTestAccount = state.value.phoneNumber.startsWith("+99811")
+                    val data = response.data
+                    AppSettings.refreshToken = data.refresh_token ?: ""
+                    AppSettings.accessToken = data.access_token ?: ""
+                    AppSettings.hasUserLogin = data.user_info != null
+                    AppSettings.userId = data.user_id ?: ""
+                    AppSettings.userInfo = data.user_info?.toUserInfo()
+                    AppSettings.isTestAccount = current.phoneNumber.startsWith(TEST_ACCOUNT_PREFIX)
 
                     Logger.d(
                         "OtpViewModel",
@@ -132,7 +146,7 @@ class OtpViewmodel(
                     _state.update {
                         it.copy(
                             responseState = ResponseState.Success(
-                                data = response.data
+                                data = data
                             )
                         )
                     }
@@ -144,30 +158,55 @@ class OtpViewmodel(
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = screenModelScope.launch {
-            _state.update { it.copy(timeLife = 60, isRunning = true) }
+            _state.update {
+                it.copy(
+                    timeLife = TIMER_SECONDS,
+                    isRunning = true
+                )
+            }
+
             while (_state.value.timeLife > 0) {
                 delay(1000)
-                _state.update { it.copy(timeLife = it.timeLife - 1) }
+                _state.update {
+                    it.copy(
+                        timeLife = it.timeLife - 1
+                    )
+                }
             }
-            _state.update { it.copy(isRunning = false) }
+
+            _state.update {
+                it.copy(
+                    isRunning = false
+                )
+            }
         }
     }
 
     private fun sentOtp() {
         val phone = state.value.phoneNumber
         if (phone.isBlank()) return
+        if (_state.value.isSendingOtp) return
 
-        screenModelScope.launch {
+        snedOtpJob?.cancel()
+        snedOtpJob = screenModelScope.launch {
+            _state.update {
+                it.copy(
+                    isSendingOtp = true
+                )
+            }
+
             val request = SendOtpRequest(phone = phone)
             when (val res = sendOtpUseCase(request)) {
                 is Resource.Success -> {
-                    startTimer()
                     _state.update {
                         it.copy(
                             otpCode = "",
+                            isSendingOtp = false,
+                            hasInputError = false,
                             responseState = ResponseState.Idle
                         )
                     }
+                    startTimer()
                 }
 
                 is Resource.Error -> {
@@ -185,5 +224,10 @@ class OtpViewmodel(
                 is Resource.Loading -> {}
             }
         }
+    }
+
+    companion object {
+        private const val TIMER_SECONDS = 60
+        private const val TEST_ACCOUNT_PREFIX = "+99811"
     }
 }

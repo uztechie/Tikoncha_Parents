@@ -7,5 +7,6 @@ sealed class OtpEvent {
     object OnConfirmClicked: OtpEvent()
     object TimeStart: OtpEvent()
     object Reset : OtpEvent()
+    object ResetError : OtpEvent()
     object SendOtp : OtpEvent()
 }

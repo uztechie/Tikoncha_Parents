@@ -205,4 +205,15 @@ object Util {
 
         return "$country $operator $part1 $part2 $part3"
     }
+
+    fun normalizePhone(phone: String?): String? {
+        if (phone.isNullOrBlank()) return null
+        val digits = phone.filter { it.isDigit() }
+        if (digits.isEmpty()) return null
+        return when {
+            digits.startsWith("998") -> "+$digits"
+            digits.length == 9 -> "+998$digits"
+            else -> "+$digits"
+        }
+    }
 }
