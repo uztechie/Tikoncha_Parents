@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -103,6 +104,7 @@ fun TimeRangePicker(
     onTimeChange: (start: LocalTime, end: LocalTime) -> Unit,
     modifier: Modifier = Modifier,
     reverse: Boolean = false,
+    enabled: Boolean = true,
     colors: TimeRangePickerColors = TimeRangePickerDefaults.colors(),
     animationDurationMs: Int = 350,
     stepMinutes: Int = 1,  // ← qo'shildi
@@ -122,6 +124,7 @@ fun TimeRangePicker(
         },
         modifier = modifier,
         inverted = reverse,
+        enabled = enabled,
         colors = colors,
         animationDurationMs = animationDurationMs,
         stepMinutes = stepMinutes,
@@ -158,6 +161,7 @@ fun TimeRangePicker(
     onTimeChange: (startMinutes: Int, endMinutes: Int) -> Unit,
     modifier: Modifier = Modifier,
     inverted: Boolean = false,
+    enabled: Boolean = true,
     colors: TimeRangePickerColors = TimeRangePickerDefaults.colors(),
     animationDurationMs: Int = 350,
     // --- O'lchamlar (Figma qiymatlari) ---
@@ -260,7 +264,8 @@ fun TimeRangePicker(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
+                .pointerInput(enabled) {
+                    if (!enabled) return@pointerInput
                     detectTapGestures(
                         onTap = { pos ->
                             val handle = detectHandleHit(
@@ -276,7 +281,8 @@ fun TimeRangePicker(
                         }
                     )
                 }
-                .pointerInput(Unit) {
+                .pointerInput(enabled) {
+                    if (!enabled) return@pointerInput
                     detectDragGestures(
                         onDragStart = { pos ->
                             activeHandle = detectHandleHit(
@@ -441,6 +447,7 @@ fun TimeRangePicker(
         // 5) Handle iconlari
         HandleIconsOverlay(
             sizePx = sizePx,
+            enabled = enabled,
             arcRadius = arcRadius,
             startHandleRadiusPx = iconStartPx / 2f,
             endHandleRadiusPx = iconEndPx / 2f,
@@ -470,6 +477,7 @@ fun TimeRangePicker(
     onTimeChange: (start: LocalTime, end: LocalTime) -> Unit,
     modifier: Modifier = Modifier,
     inverted: Boolean = false,
+    enabled: Boolean = true,
     colors: TimeRangePickerColors = TimeRangePickerDefaults.colors(),
     animationDurationMs: Int = 350,
     trackStrokeWidth: Dp = 36.dp,
@@ -498,6 +506,7 @@ fun TimeRangePicker(
         },
         modifier = modifier,
         inverted = inverted,
+        enabled = enabled,
         colors = colors,
         animationDurationMs = animationDurationMs,
         trackStrokeWidth = trackStrokeWidth,
@@ -675,6 +684,7 @@ private fun DrawScope.drawInnerArcRangeDashed(
 @Composable
 private fun HandleIconsOverlay(
     sizePx: Float,
+    enabled: Boolean,
     arcRadius: Float,
     startHandleRadiusPx: Float,
     endHandleRadiusPx: Float,
@@ -684,6 +694,7 @@ private fun HandleIconsOverlay(
     endIcon: (@Composable () -> Unit)?
 ) {
     val density = LocalDensity.current
+    val iconsAlpha = if (enabled) 1f else 0.4f
 
     val startAngle = minutesToAngleRad(startMinutes)
     val startPx = sizePx / 2f + arcRadius * cos(startAngle)
@@ -709,7 +720,8 @@ private fun HandleIconsOverlay(
                         startPx - startHandleRadiusPx,
                         startPy - startHandleRadiusPx
                     )
-                    .size(sizeD),
+                    .size(sizeD)
+                    .alpha(iconsAlpha),
                 contentAlignment = Alignment.Center
             ) {
                 startIcon()
@@ -724,7 +736,8 @@ private fun HandleIconsOverlay(
                         endPx - endHandleRadiusPx,
                         endPy - endHandleRadiusPx
                     )
-                    .size(sizeD),
+                    .size(sizeD)
+                    .alpha(iconsAlpha),
                 contentAlignment = Alignment.Center
             ) {
                 endIcon()

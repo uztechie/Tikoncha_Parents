@@ -189,6 +189,7 @@ fun TimeRuleSetupUi(
             )
             Space(24.dp)
             TimeRangePicker(
+                enabled = !state.allDay,
                 start = state.startTime,
                 end = state.endTime,
                 stepMinutes = 10,
@@ -235,13 +236,23 @@ fun TimeRuleSetupUi(
                     .height(44.dp)
                     .background(AppColors.bg.primaryContainer, RoundedCornerShape(16.dp))
                     .padding(horizontal = 12.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = null,
+                        enabled = !state.allDay,
+                        onClick = {
+                            event(TimeRuleSetupEvent.SetReverse(!state.reverse))
+                        }
+                    )
                     .align(Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppCheckbox(
                     checked = state.reverse,
                     onCheckedChange = {
-                        event(TimeRuleSetupEvent.SetReverse(it))
+                        if (!state.allDay){
+                            event(TimeRuleSetupEvent.SetReverse(it))
+                        }
                     }
                 )
                 Space(10.dp)
@@ -262,7 +273,9 @@ fun TimeRuleSetupUi(
                 TimeRuleSetupTimeCard(
                     value = state.startTime.toHhMm(),
                     onClick = {
-                        showStartTimePickerDialog = true
+                        if (!state.allDay){
+                            showStartTimePickerDialog = true
+                        }
                     }
                 )
                 Space(16.dp)
@@ -275,7 +288,9 @@ fun TimeRuleSetupUi(
                 TimeRuleSetupTimeCard(
                     value = state.endTime.toHhMm(),
                     onClick = {
-                        showEndTimePickerDialog = true
+                        if (!state.allDay){
+                            showEndTimePickerDialog = true
+                        }
                     }
                 )
 
@@ -297,6 +312,13 @@ fun TimeRuleSetupUi(
                     .padding(horizontal = 10.dp)
                     .fillMaxWidth()
                     .background(AppColors.bg.surface, RoundedCornerShape(20.dp))
+                    .clickable(
+                        indication = null,
+                        interactionSource = null,
+                        onClick = {
+                            event(TimeRuleSetupEvent.SetAllDay(!state.allDay))
+                        }
+                    )
                     .padding(16.dp)
             ) {
                 Icon(

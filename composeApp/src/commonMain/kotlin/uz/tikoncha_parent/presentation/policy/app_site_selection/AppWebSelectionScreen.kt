@@ -54,6 +54,7 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sayt_limiti_plus_tavsif
 import tikoncha_parents.composeapp.generated.resources.sayt_qidirish
 import tikoncha_parents.composeapp.generated.resources.saytlar
+import tikoncha_parents.composeapp.generated.resources.search_normal
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -74,7 +75,7 @@ import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 
-class AppWebSelectionScreen(): Screen{
+class AppWebSelectionScreen(val appSiteTabIndex: Int): Screen{
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
@@ -89,6 +90,7 @@ class AppWebSelectionScreen(): Screen{
 
         LaunchedEffect(Unit){
             event(AppWebEvent.LoadApps(sharedState.selectedChild?.userId?:""))
+            event(AppWebEvent.OnTabSelected(appSiteTabIndex))
         }
 
 
@@ -306,11 +308,11 @@ fun AppWebSelectionUi(
                         onClick = { isSearchMode = true },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color.Transparent,
-                            contentColor = AppColors.icon.primary,
+                            contentColor = AppColors.icon.secondary,
                         ),
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            painter = painterResource(Res.drawable.search_normal),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
                         )

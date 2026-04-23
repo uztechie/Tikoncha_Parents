@@ -20,6 +20,8 @@ sealed interface LimitRuleSetupEvent {
 
     data class SelectLimitType(val type: DayHour) : LimitRuleSetupEvent
 
+    data class SetDuration(val hour: Int, val minute: Int) : LimitRuleSetupEvent
+
     data class SetHour(val hour: Int) : LimitRuleSetupEvent
     data class SetMinute(val minute: Int) : LimitRuleSetupEvent
 

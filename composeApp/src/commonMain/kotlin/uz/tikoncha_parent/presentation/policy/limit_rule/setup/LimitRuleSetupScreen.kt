@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +33,7 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import uz.tikoncha_parent.presentation.base.WheelTimePicker
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDefaults
 import uz.tikoncha_parent.domain.model.DayHour
+import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.PillSegmentedButton
 import uz.tikoncha_parent.presentation.base.PillSegmentedItem
@@ -82,6 +84,21 @@ class LimitRuleSetupScreen(
             }
         }
 
+        LaunchedEffect(Unit) {
+            val editing = ruleId?.let { id -> sharedState.limitList.find { it.id == id } }
+            println("SetupScreen: ruleId=$ruleId, limitList=${sharedState.limitList}, editing=$editing")
+            event(LimitRuleSetupEvent.Init(editingRule = editing, allLimitRules = sharedState.limitList))
+        }
+
+// VM state kuzatuv:
+        LaunchedEffect(state.duration, state.isInitialized) {
+            println("SetupState: duration=${state.duration}, init=${state.isInitialized}, limitType=${state.limitType}")
+        }
+
+        LaunchedEffect(state.duration, state.isInitialized) {
+            println("SetupState: duration=${state.duration}, init=${state.isInitialized}")
+        }
+
         // ── UI — o'zingiz yozasiz ──────────────
         LimitRuleSetupUi(
             state = state,
@@ -99,6 +116,8 @@ fun LimitRuleSetupUi(
     canUpdate: Boolean,
     onBack: () -> Unit,
 ) {
+
+
 
     Column(
         modifier = Modifier
@@ -156,18 +175,22 @@ fun LimitRuleSetupUi(
                     .padding(horizontal = 20.dp),
             )
             Space(24.dp)
-            WheelTimePicker(
-                initialMinute = state.duration.toMinutes(),
-                onTimeChanged = { hour, minute ->
-                    event(LimitRuleSetupEvent.SetHour(hour))
-                    event(LimitRuleSetupEvent.SetMinute(minute))
-                },
-                colors = WheelTimePickerDefaults.colors(),
-                showHours = state.limitType == DayHour.DAY,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-            )
+            if (state.isInitialized) {
+                key(state.limitType) {
+                    WheelTimePicker(
+                        initialMinute = state.duration.minute,
+                        initialHour = state.duration.hour,
+                        onTimeChanged = { hour, minute ->
+                            event(LimitRuleSetupEvent.SetDuration(hour, minute))
+                        },
+                        colors = WheelTimePickerDefaults.colors(),
+                        showHours = state.limitType == DayHour.DAY,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                    )
+                }
+            }
         }
         Box(
             modifier = Modifier
@@ -197,7 +220,9 @@ fun Pre(){
     TikonchaParentTheme (mode = ThemeMode.LIGHT){
         LimitRuleSetupUi(
             state = LimitRuleSetupState(
-                limitType = DayHour.HOUR
+                limitType = DayHour.DAY,
+                isInitialized = true,
+                duration = HourMinute(1,2)
             ),
             event = {},
             canUpdate = true,

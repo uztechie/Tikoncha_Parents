@@ -28,10 +28,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
+import tikoncha_parents.composeapp.generated.resources.foydalanish_limiti
+import tikoncha_parents.composeapp.generated.resources.limit_qoshish
+import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
 import tikoncha_parents.composeapp.generated.resources.time_large_icon
 import tikoncha_parents.composeapp.generated.resources.vaqt
 import tikoncha_parents.composeapp.generated.resources.vaqt_qoshish
+import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupScreen
@@ -94,7 +98,7 @@ fun LimitRuleListUi(
             .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
-            title = stringResource(Res.string.vaqt),
+            title = stringResource(Res.string.foydalanish_limiti),
             showBackButton = true,
             onBackClick = onBack
         )
@@ -153,6 +157,16 @@ fun LimitRuleListUi(
                         canRemove = canUpdate
                     )
                 }
+                item {
+                    if(rules.isNotEmpty()){
+                        CustomButtonDash(
+                            text = stringResource(Res.string.limit_qoshish),
+                            onClick = onAdd,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                        )
+                    }
+                }
             }
 
             if (canUpdate) {
@@ -163,8 +177,8 @@ fun LimitRuleListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ){
                     CustomButtonNew(
-                        text = stringResource(Res.string.vaqt_qoshish),
-                        onClick = onAdd,
+                        text = stringResource(Res.string.saqlash),
+                        onClick = onDone,
                         modifier = Modifier
                             .fillMaxWidth(),
                     )

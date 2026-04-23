@@ -23,16 +23,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
+import tikoncha_parents.composeapp.generated.resources.foydalanish_limiti
+import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
 import tikoncha_parents.composeapp.generated.resources.time_large_icon
 import tikoncha_parents.composeapp.generated.resources.vaqt
 import tikoncha_parents.composeapp.generated.resources.vaqt_qoshish
+import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
@@ -59,7 +63,6 @@ class TimeRuleListScreen: Screen {
         TimeRuleListUi(
             rules = sharedState.timeList,
             canUpdate = sharedState.canUpdate,
-            canSave = sharedState.canSavePolicy,
             onBack = { navigator?.pop() },
             onAdd = {
                 if (sharedState.canUpdate) {
@@ -89,7 +92,6 @@ class TimeRuleListScreen: Screen {
 fun TimeRuleListUi(
     rules: List<TimeRuleUi>,
     canUpdate: Boolean,
-    canSave: Boolean,
     onBack: () -> Unit,
     onAdd: () -> Unit,
     onItemClick: (TimeRuleUi) -> Unit,
@@ -161,6 +163,16 @@ fun TimeRuleListUi(
                         canRemove = canUpdate
                     )
                 }
+                item {
+                    if(rules.isNotEmpty()){
+                        CustomButtonDash(
+                            text = stringResource(Res.string.vaqt_qoshish),
+                            onClick = onAdd,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                        )
+                    }
+                }
             }
 
             if (canUpdate) {
@@ -171,8 +183,8 @@ fun TimeRuleListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ){
                     CustomButtonNew(
-                        text = stringResource(Res.string.vaqt_qoshish),
-                        onClick = onAdd,
+                        text = stringResource(Res.string.saqlash),
+                        onClick = onDone,
                         modifier = Modifier
                             .fillMaxWidth(),
                     )
@@ -188,9 +200,16 @@ fun TimeRuleListUi(
 fun Pre(){
     TikonchaParentTheme {
         TimeRuleListUi(
-            rules = emptyList<TimeRuleUi>(),
+            rules = listOf<TimeRuleUi>(
+                TimeRuleUi(
+                    id = 1,
+                    startTime = LocalTime(10, 0),
+                    endTime = LocalTime(12, 0),
+                    reverse = false,
+                    allDay = false,
+                )
+            ),
             canUpdate = true,
-            canSave = true,
             onBack = {},
             onDelete = {},
             onAdd = {},

@@ -40,6 +40,7 @@ class TimeRuleSetupViewModel : ScreenModel {
             is TimeRuleSetupEvent.SetAllDay -> {
                 _state.update {
                     it.copy(
+                        reverse = false,
                         allDay = event.allDay,
                         startTime = if (event.allDay) LocalTime(0,0) else DEFAULT_START_TIME,
                         endTime = if (event.allDay) LocalTime(23,59) else DEFAULT_END_TIME

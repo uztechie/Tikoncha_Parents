@@ -452,6 +452,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="yangilanish_mavjud">Yangilanish mavjud</string>
     <string name="app_update_desc">Tikoncha yanada barqaror va qulay bo‘ldi. Eng so‘nggi imkoniyatlardan foydalanish uchun ilovani yangilang.</string>
     <string name="yangilash">Yangilash</string>
+    <string name="limit_qoshish">Limit qo‘shish</string>
+    <string name="foydalanish_limiti">Foydalanish limiti</string>
     <string name="sahifaga_otish">Sahifaga o‘tish</string>
 
 </resources>

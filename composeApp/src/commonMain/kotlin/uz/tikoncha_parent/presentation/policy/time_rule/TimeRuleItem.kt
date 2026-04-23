@@ -161,7 +161,8 @@ fun TimeRuleItem(
                     strokeWidth = 14.dp,
                     colors = TimeProgressCircleDefaults.colors(
 
-                    )
+                    ),
+                    textHorizontalPadding = 10.dp
                 )
             }
 

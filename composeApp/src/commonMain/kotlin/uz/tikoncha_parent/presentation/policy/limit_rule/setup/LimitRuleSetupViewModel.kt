@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.limit_rule.setup
 
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.channels.Channel
@@ -36,7 +37,6 @@ class LimitRuleSetupViewModel : ScreenModel {
                 // Tipni o'zgartirganda davomiyat resetlanadi — boshqa oraliq
                 it.copy(
                     limitType = event.type,
-                    duration = HourMinute(0, 0),
                 )
             }
 
@@ -48,6 +48,10 @@ class LimitRuleSetupViewModel : ScreenModel {
 
             is LimitRuleSetupEvent.SetMinute -> _state.update {
                 it.copy(duration = it.duration.copy(minute = event.minute))
+            }
+
+            is LimitRuleSetupEvent.SetDuration -> _state.update {
+                it.copy(duration = HourMinute(event.hour, event.minute))
             }
 
             LimitRuleSetupEvent.Save -> save()
@@ -81,15 +85,15 @@ class LimitRuleSetupViewModel : ScreenModel {
         val s = _state.value
         if (!s.canSave) return
 
+        val cleanDuration = when (s.limitType) {
+            DayHour.DAY -> s.duration
+            DayHour.HOUR -> HourMinute(hour = 0, minute = s.duration.minute)
+        }
+
         val rule = LimitRuleUi(
-            // id = 0 → create signal. Edit bo'lsa mavjud id.
-            // Yakuniy id PolicySharedModel.upsertLimitRule ichida beriladi.
             id = s.editingId ?: 0,
             weekDays = s.weekDays.selectedDays(),
-            time = HourMinute(
-                hour = if (s.limitType == DayHour.HOUR) 0 else s.duration.hour,
-                minute = s.duration.minute,
-            ),
+            time = cleanDuration,
             limitType = s.limitType,
         )
 

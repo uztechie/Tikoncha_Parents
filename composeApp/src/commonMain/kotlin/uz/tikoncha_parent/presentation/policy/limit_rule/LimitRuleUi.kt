@@ -7,7 +7,6 @@ import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.WeekDay
 
 @Serializable
-
 data class LimitRuleUi(
     val id: Int = 0,
     val time: HourMinute = HourMinute(),
