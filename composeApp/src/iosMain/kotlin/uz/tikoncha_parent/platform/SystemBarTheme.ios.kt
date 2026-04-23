@@ -29,7 +29,6 @@ actual object SystemBarTheme {
         navigationBarFallbackColor: Color,
         transparentStatusBar: Boolean
     ) {
-
         SideEffect {
             val style =
                 if (isDark) UIStatusBarStyleLightContent else UIStatusBarStyleDarkContent
@@ -38,17 +37,15 @@ actual object SystemBarTheme {
 
         if (!transparentStatusBar) {
             Box(Modifier.fillMaxSize()) {
-                // Status bar ostini bo‘yash
                 Spacer(
                     Modifier
-                        .background(statusBarColor)
+                        .background(statusBarColor)       // ← statusbar rangi
                         .fillMaxWidth()
                         .windowInsetsTopHeight(WindowInsets.statusBars)
                 )
-                // Home indicator (bottom safe area) ustini bo‘yash
                 Spacer(
                     Modifier
-                        .background(navigationBarColor)
+                        .background(navigationBarColor)   // ← navbar rangi (tuzatildi)
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .windowInsetsBottomHeight(WindowInsets.navigationBars)
