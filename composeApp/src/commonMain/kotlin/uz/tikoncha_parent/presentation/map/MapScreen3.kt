@@ -38,7 +38,6 @@ import uz.tikoncha_parent.platform.isLocationServiceEnabled
 import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.theme.LocalBarsConfig
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.ThemePrefs
 import org.jetbrains.compose.resources.painterResource
@@ -203,15 +202,6 @@ class MapScreen3 : Screen {
             }
         }
 
-        val bars = LocalBarsConfig.current
-        DisposableEffect(Unit) {
-            val prev = bars.value
-            bars.value = prev.copy(
-                paddingEnabled = false,
-                transparentStatusBar = true
-            )
-            onDispose { bars.value = prev }
-        }
 
         Box(
             modifier = Modifier

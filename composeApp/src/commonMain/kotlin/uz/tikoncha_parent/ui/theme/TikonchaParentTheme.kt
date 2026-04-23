@@ -138,14 +138,7 @@ fun TikonchaParentTheme(
             val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
 
             if (!inPreview) {
-                val cfg = LocalBarsConfig.current.value
-                SystemBarTheme.apply(
-                    isDark = isDark,
-                    statusBarColor = extendedColor.backgroundColor,
-                    navigationBarColor = extendedColor.backgroundColor,
-                    navigationBarFallbackColor = extendedColor.backgroundColor,
-                    transparentStatusBar = cfg.transparentStatusBar
-                )
+                SystemBarTheme.applyIconStyle(isDark = isDark)
             }
             content()
         }

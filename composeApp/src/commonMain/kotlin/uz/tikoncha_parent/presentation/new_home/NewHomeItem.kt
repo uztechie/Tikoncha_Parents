@@ -23,6 +23,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.ui.HomeIconSize
 import uz.tikoncha_parent.ui.HomeItemHeight
 import uz.tikoncha_parent.ui.LargeCardCornerRadius
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -74,7 +75,7 @@ fun NewHomeItem(
                     )
                 }
             }
-            SpaceMedium()
+            Space(12.dp)
         }
     }
 }

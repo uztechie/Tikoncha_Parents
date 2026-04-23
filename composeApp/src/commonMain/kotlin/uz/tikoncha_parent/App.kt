@@ -15,8 +15,6 @@ import uz.tikoncha_parent.presentation.splash.SplashScreen
 
 import uz.tikoncha_parent.presentation.profile.language.LanguageController
 import uz.tikoncha_parent.presentation.profile.language.LocalLanguageController
-import uz.tikoncha_parent.ui.theme.BarConfig
-import uz.tikoncha_parent.ui.theme.LocalBarsConfig
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
@@ -46,7 +44,6 @@ fun App() {
 
 
     val langController = remember { LanguageController() }
-    val barsConfig = remember { mutableStateOf(BarConfig()) }
 
     val mode by ThemeController.mode.collectAsState(initial = ThemeMode.LIGHT)
 
@@ -78,8 +75,7 @@ fun App() {
     AppEnvironment {
 
         CompositionLocalProvider(
-            LocalLanguageController provides langController,
-            LocalBarsConfig provides barsConfig
+            LocalLanguageController provides langController
         )
         {
 
@@ -94,13 +90,8 @@ fun App() {
             TikonchaParentTheme(
                 mode = mode
             ) {
-                val cfg = barsConfig.value
 
-                Surface(
-                    modifier = Modifier
-                        .then(if (cfg.paddingEnabled) Modifier.statusBarsPadding() else Modifier)
-                        .then(if (cfg.paddingEnabled) Modifier.navigationBarsPadding() else Modifier)
-                ) {
+                Surface {
 
                     val pendingLinks = remember { PendingDeepLinks.drain() }
 

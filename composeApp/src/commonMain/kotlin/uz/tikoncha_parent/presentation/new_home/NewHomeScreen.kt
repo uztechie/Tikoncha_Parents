@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -51,12 +52,14 @@ import tikoncha_parents.composeapp.generated.resources.linkedin_icon
 import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
+import uz.tikoncha_parent.App
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateCard
@@ -87,6 +90,7 @@ import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.SpaceUltraSmall
@@ -96,6 +100,7 @@ import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class NewHomeScreen : Screen {
@@ -201,15 +206,20 @@ fun NewHomeUi(
         onConfirm = { type -> appUpdateEvent(UpdateEvent.StartUpdateClicked(type)) }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.page)
-            .padding(ContainerPadding)
     ) {
         Row(
             modifier = Modifier
-                .background(Color.Transparent),
+                .background(Color.Transparent)
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -271,53 +281,60 @@ fun NewHomeUi(
             }
         }
 
-        if (count > 0) {
-            SpaceLarge()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.extendedColor.cardColor,
-                        RoundedCornerShape(CardCornerRadius)
-                    )
-                    .clip(RoundedCornerShape(CardCornerRadius))
-                    .clickable {
-                        navigator?.push(ParentRequestScreen())
-                    }
-                    .padding(horizontal = CardCornerPadding, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CustomText(
-                    text = stringResource(Res.string.sorovlar),
-                    fontSize = LargeTextSize,
-                    modifier = Modifier.weight(1f)
-                )
-                if (count > 0) {
-                    Box(
-                        modifier = Modifier
-                            .background(OtpErrorColor, CircleShape)
-                            .size(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CustomText(
-                            text = if (count > 99) "99" else count.toString(),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
-                            maxLines = 1,
-                            fontSize = SmallTextSize
-                        )
-                    }
-                }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
+
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
+
             item {
-                SpaceSmall()
+                if (count > 0) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .simpleShadow(RoundedCornerShape(CardCornerRadius))
+                            .background(
+                                MaterialTheme.extendedColor.cardColor,
+                                RoundedCornerShape(CardCornerRadius)
+                            )
+                            .clip(RoundedCornerShape(CardCornerRadius))
+                            .clickable {
+                                navigator?.push(ParentRequestScreen())
+                            }
+                            .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CustomText(
+                            text = stringResource(Res.string.sorovlar),
+                            fontSize = LargeTextSize,
+                            modifier = Modifier.weight(1f)
+                        )
+                        if (count > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .background(OtpErrorColor, CircleShape)
+                                    .size(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CustomText(
+                                    text = if (count > 99) "99" else count.toString(),
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
+                                    maxLines = 1,
+                                    fontSize = SmallTextSize
+                                )
+                            }
+                        }
+                    }
+                    Space(12.dp)
+                }
+            }
+
+            item {
                 InAppUpdateCard(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp),
                     state = appUpdateState,
                     event = appUpdateEvent
                 )
@@ -449,6 +466,7 @@ fun NewHomeUi(
                         }
                     }
                 }
+                Space(12.dp)
             }
 
             item {
@@ -489,6 +507,7 @@ fun NewHomeUi(
                         modifier = Modifier.size(HomeIconSize)
                     )
                 }
+                Space(12.dp)
             }
 
             item {
@@ -529,6 +548,7 @@ fun NewHomeUi(
                         modifier = Modifier.size(HomeIconSize)
                     )
                 }
+                Space(12.dp)
             }
 
             item {
