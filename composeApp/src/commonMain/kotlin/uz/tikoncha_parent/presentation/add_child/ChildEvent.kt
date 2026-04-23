@@ -5,4 +5,7 @@ sealed class ChildEvent {
     data object Reset: ChildEvent()
     data object Clear: ChildEvent()
     data object OnAddClicked: ChildEvent()
+    data object StartWatching : ChildEvent()      // YANGI
+    data object StopWatching : ChildEvent()       // YANGI
+    data object OnSuccessDismissed : ChildEvent() // YANGI
 }

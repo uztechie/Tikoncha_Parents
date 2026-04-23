@@ -48,6 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
@@ -65,7 +66,7 @@ class TaskScreen : Screen {
         val viewModel = koinScreenModel<TaskViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
-        val navigator = LocalNavigator.current?:return
+        val navigator = LocalNavigator.current ?: return
 
         TaskUi(
             navigator = navigator,
@@ -87,7 +88,8 @@ fun TaskUi(
     val taskErrorText = state.taskResponseState.errorText()
 
     val enabled: Boolean = if (state.selectedChild != null) true else false
-    val enabledColor = if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
+    val enabledColor =
+        if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
     val noChild = state.childrenList.isEmpty()
 
     CustomListDialog(
@@ -162,12 +164,18 @@ fun TaskUi(
 
                 ChildSelectionButton(
                     text = state.selectedChild?.name ?: "",
+                    imageUrl = state.selectedChild?.avatarUrl ?: "",
                     label = stringResource(Res.string.farzandlaringiz),
-                    onClick = {showDialog = true},
-                    imageUrl = state.selectedChild?.avatarUrl?:"",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(TextFieldHeight)
+                        .height(TextFieldHeight),
+                    onClick = {
+                        if (state.childrenList.isEmpty()) {
+                            navigator?.push(AddChildScreen())
+                        } else {
+                            showDialog = true
+                        }
+                    }
                 )
                 SpaceMedium()
 
@@ -350,7 +358,11 @@ fun TaskUi(
                     color = MaterialTheme.extendedColor.backgroundColor
                 )
                 .background(MaterialTheme.extendedColor.backgroundColor)
-                .padding(start = ContainerPadding, end = ContainerPadding, bottom = ContainerPadding)
+                .padding(
+                    start = ContainerPadding,
+                    end = ContainerPadding,
+                    bottom = ContainerPadding
+                )
                 .height(ButtonHeight),
             onClick = {
                 navigator?.push(AddNewTaskScreen())
@@ -372,7 +384,7 @@ fun TaskUi(
 private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         TaskUi(
             state = TaskState(),
             event = {},

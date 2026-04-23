@@ -36,6 +36,7 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
@@ -155,7 +156,11 @@ fun SubscriptionPaymentUi(
                     label = stringResource(Res.string.farzandingizni_tanlang),
                     imageUrl = state.selectedChild?.avatarUrl?:"",
                     onClick = {
-                        showDialog = true
+                        if (state.children.isEmpty()) {
+                            navigator?.push(AddChildScreen())
+                        } else {
+                            showDialog = true
+                        }
                     },
                 )
             }

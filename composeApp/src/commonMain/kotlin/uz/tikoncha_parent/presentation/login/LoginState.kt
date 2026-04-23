@@ -1,10 +1,13 @@
 package uz.tikoncha_parent.presentation.login
 
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-
 data class LoginState(
     val number: String = "",
-    val fullNumber: String = "",
-    val accept: Boolean = false,
-    val responseState: ResponseState<Nothing> = ResponseState.Idle
-)
+) {
+    val isPhoneNumberValid: Boolean
+        get() = number.length == 9 &&
+                number.all { it.isDigit() } &&
+                (number.take(2).toIntOrNull()?.let { it in 10..99 } == true)
+
+    val fullNumber: String
+        get() = if (isPhoneNumberValid) "+998$number" else ""
+}

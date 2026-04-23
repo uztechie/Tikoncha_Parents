@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -54,10 +57,10 @@ fun PhoneNumberInputField(
                 tint = MaterialTheme.extendedColor.primaryColor,
                 modifier = Modifier.padding(end = 8.dp).size(NormalIconSize)
             )
-            CustomText(
+            Text(
                 text = "+998",
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.W500
+                style = AppTypography.titleLgMedium,
+                color = AppColors.text.tertiary,
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(

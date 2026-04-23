@@ -50,15 +50,9 @@ class LanguageScreen: Screen {
 fun LanguageUi(
     navigator: Navigator?
 ){
-    val controller = remember {
-        LocalLanguageController
-    }.current
-
-
+    val controller = remember { LocalLanguageController }.current
     val current = controller.current.collectAsState().value
-    var selectedLanguage by remember {
-        mutableStateOf(current)
-    }
+    var selectedLanguage by remember { mutableStateOf(current) }
 
 
     Column(
@@ -73,7 +67,6 @@ fun LanguageUi(
                 navigator!!.pop()
             }
         )
-
         SpaceMedium()
 
         Column(
@@ -102,7 +95,7 @@ fun LanguageUi(
                     .height(ButtonHeight),
                 onClick = {
                     controller.select(selectedLanguage)
-                    navigator!!.pop()
+                    navigator?.pop()
                 }
             )
             SpaceLarge()

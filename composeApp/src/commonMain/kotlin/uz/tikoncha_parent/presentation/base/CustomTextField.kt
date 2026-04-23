@@ -62,7 +62,7 @@ fun CustomTextField(
     onClick:() -> Unit = {},
     hasBorder: Boolean = false,
     fonSize: TextUnit = NormalTextSize,
-    style: TextStyle = AppTypography.titleSmMedium,
+    style: TextStyle = AppTypography.titleLgMedium,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
 
@@ -134,7 +134,8 @@ fun CustomTextField(
                     }
                     Box(
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         if (value.isEmpty()) {
                             Text(

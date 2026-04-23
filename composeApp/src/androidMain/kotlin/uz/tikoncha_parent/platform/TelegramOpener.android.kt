@@ -6,44 +6,50 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.net.toUri
 
-lateinit var appContext: Context
+var appContext: Context? = null
 
-actual fun openTelegram(phoneNumber: String) {
-    val context = appContext
-    val phone = phoneNumber.removePrefix("+")
-    val uri = Uri.parse("https://t.me/tikoncha_bot?start=$phone")
-    val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    val resolvedApps = context.packageManager
-        .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        .map { it.activityInfo.packageName }
+private const val TG_BOT = "tikoncha_bot"
+private const val TG_PKG = "org.telegram.messenger"
+actual fun openTelegram(phoneNumber: String): Boolean {
+    val context = appContext ?: return false
+    val phone = phoneNumber.filter { it.isDigit() }
+    if (phone.isEmpty()) return false
 
-    val preferredPackages = listOf(
-        "org.telegram.messenger",
-        "org.telegram.messenger.web",
-        "org.telegram.plus",
-        "com.vidiogram",
-        "org.nicegram.application",
+    // Ketma-ket urinadigan URL'lar (yuqoridan pastga):
+    // 1. tg://          → Telegram app. Bir nechta variant bo'lsa,
+    //                     Android avtomatik sistema chooserini ko'rsatadi.
+    // 2. https://t.me/  → Telegram universal link yoki brauzer.
+    // 3. market://      → Play Market ilovasi (Telegram yuklab olish).
+    // 4. play.google... → Play Store web (Play Market ham yo'q bo'lsa).
+    val urls = listOf(
+        "tg://resolve?domain=$TG_BOT&start=$phone",
+        "https://t.me/$TG_BOT?start=$phone",
+        "market://details?id=$TG_PKG",
+        "https://play.google.com/store/apps/details?id=$TG_PKG"
     )
 
-    val target = preferredPackages.firstOrNull { it in resolvedApps }
-        ?: resolvedApps.firstOrNull { "telegram" in it.lowercase() }
-
-    if (target != null) {
-        context.startActivity(intent.apply { setPackage(target) })
-    } else {
-        context.startActivity(
-            Intent.createChooser(intent, null).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        )
+    for (url in urls) {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            context.startActivity(intent)
+            return true
+        } catch (_: Throwable) {
+            // Keyingi urinishga o'tamiz — crash yo'q
+        }
     }
+    return false
 }
 
-actual fun openUrl(url: String) {
-    val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+actual fun openUrl(url: String): Boolean {
+    val context = appContext ?: return false
+    if (url.isEmpty()) return false
+    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    return try {
+        context.startActivity(intent)
+        true
+    } catch (_: Throwable) {
+        false
     }
-    appContext.startActivity(intent)
 }

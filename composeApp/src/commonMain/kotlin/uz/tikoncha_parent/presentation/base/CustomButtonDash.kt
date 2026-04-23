@@ -29,7 +29,9 @@ import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import kotlin.time.TimeSource
-
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 @Composable
 fun CustomButtonDash(
     modifier: Modifier = Modifier,
@@ -37,6 +39,9 @@ fun CustomButtonDash(
     onClick: () -> Unit,
     enabled: Boolean = true,
     border: Boolean = true,
+    borderWidth: Dp = 1.dp,
+    dashLength: Dp = 6.dp,
+    dashGap: Dp = 3.dp,
     height: Dp = DialogButtonHeight,
     style: TextStyle = AppTypography.titleSmMedium,
     color: Color = AppColors.bg.surface,
@@ -48,9 +53,8 @@ fun CustomButtonDash(
     disabledContainerColor: Color = AppColors.section.disabledTertiary,
     contentPadding: PaddingValues = PaddingValues(horizontal = 5.dp),
 ) {
-
     val contentColor = if (enabled) textColor else AppColors.text.disabledTertiary
-    val borderColor = if (border) borderColor else Color.Transparent
+    val actualBorderColor = if (border) borderColor else Color.Transparent
     val timSource = TimeSource.Monotonic
     var lastClickTime by remember { mutableStateOf(timSource.markNow()) }
 
@@ -64,14 +68,27 @@ fun CustomButtonDash(
     Button(
         onClick = debouncedClick,
         modifier = modifier
-            .drawBehind {
+            .drawWithContent {
+                drawContent() // Avval Button kontentini chizamiz
+
+                // Keyin ustidan dashed border chizamiz
+                val strokeWidthPx = borderWidth.toPx()
+                val dashPx = dashLength.toPx()
+                val gapPx = dashGap.toPx()
                 val cornerRadius = size.height / 2
+                val inset = strokeWidthPx / 2
+
                 drawRoundRect(
-                    color = borderColor,
+                    color = actualBorderColor,
+                    topLeft = Offset(inset, inset),
+                    size = Size(
+                        size.width - strokeWidthPx,
+                        size.height - strokeWidthPx
+                    ),
                     style = Stroke(
-                        width = 3f,
+                        width = strokeWidthPx,
                         pathEffect = PathEffect.dashPathEffect(
-                            floatArrayOf(20f, 8f),
+                            floatArrayOf(dashPx, gapPx),
                             phase = 0f
                         )
                     ),
@@ -93,13 +110,7 @@ fun CustomButtonDash(
             leadingIcon()
             SpaceSmall()
         }
-
-        Text(
-            color = contentColor,
-            style = style,
-            text = text,
-        )
-
+        Text(color = contentColor, style = style, text = text)
         if (endingIcon != null) {
             SpaceSmall()
             endingIcon()

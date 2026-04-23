@@ -47,6 +47,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -185,7 +186,11 @@ fun StatisticUi(
                         imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzandingizni_tanlang),
                         onClick = {
-                            showDialog = true
+                            if (state.childrenList.isEmpty()) {
+                                navigator?.push(AddChildScreen())
+                            } else {
+                                showDialog = true
+                            }
                         },
                     )
                 }
