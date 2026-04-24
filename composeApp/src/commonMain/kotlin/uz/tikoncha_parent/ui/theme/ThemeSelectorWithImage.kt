@@ -134,8 +134,10 @@ fun ThemeSelectionGrid(
 @Preview
 @Composable
 private fun Pre() {
-    ThemeSelectionGrid(
-        selected = ThemeMode.DARK,
-        onSelect = {}
-    )
+    TikonchaParentTheme {
+        ThemeSelectionGrid(
+            selected = ThemeMode.DARK,
+            onSelect = {}
+        )
+    }
 }

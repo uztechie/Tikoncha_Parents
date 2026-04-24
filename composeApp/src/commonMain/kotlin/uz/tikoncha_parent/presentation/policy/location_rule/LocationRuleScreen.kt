@@ -59,7 +59,9 @@ import uz.tikoncha_parent.presentation.map.PermissionViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.rememberIsDarkTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class LocationRuleScreen: Screen {
@@ -268,10 +270,15 @@ fun LocationRuleUi(
 ) {
     val navigator = LocalNavigator.current
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
     ) {
 
         UniversalJsonWebView(
@@ -293,11 +300,7 @@ fun LocationRuleUi(
                 navigator?.pop()
             }
         )
-
     }
-
-
-
 }
 
 @Preview

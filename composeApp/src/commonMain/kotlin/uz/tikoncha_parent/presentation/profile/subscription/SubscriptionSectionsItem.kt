@@ -44,7 +44,6 @@ fun SubscriptionSectionsItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor)
             .clickable(
                 indication = null,
                 interactionSource = null,

@@ -57,6 +57,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ProfileScreen : Screen {
     @Composable
@@ -189,10 +190,15 @@ fun ProfileUi(
         onDismiss = {showLogoutDialog = false}
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.page)
     ) {
         CustomHeader(
@@ -324,9 +330,7 @@ fun ProfileUi(
                 ProfileSectionItem(
                     title = stringResource(Res.string.biz_haqimizda),
                     icon = painterResource(Res.drawable.info_profile_us),
-                    onItemClick = {
-
-                    }
+                    onItemClick = { }
                 )
 
                 ProfileSectionItem(

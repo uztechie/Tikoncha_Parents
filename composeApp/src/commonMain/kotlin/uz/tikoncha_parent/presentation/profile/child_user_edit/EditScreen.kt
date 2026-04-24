@@ -45,9 +45,11 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class EditScreen(
@@ -104,9 +106,16 @@ fun EditUi(
         onButtonClick = { !showDialog }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.surface,
+        navigationBarColor = AppColors.bg.surface
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
+            .background(AppColors.bg.surface)
     ){
         CustomHeader(
             title = stringResource(Res.string.tahrirlash),
@@ -115,10 +124,10 @@ fun EditUi(
                 navigator?.pop()
             }
         )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(ContainerPadding)
                 .imePadding()
         ) {

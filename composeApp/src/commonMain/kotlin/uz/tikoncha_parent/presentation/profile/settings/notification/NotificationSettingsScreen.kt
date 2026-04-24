@@ -25,9 +25,11 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bildirishnomalar
 import tikoncha_parents.composeapp.generated.resources.davom_etish
 import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class NotificationSettingsScreen: Screen {
     @Composable
@@ -49,14 +51,20 @@ fun NotificationSettingsUi(
 
     val notificationStates = remember {
         mutableStateMapOf<NotificationType, Boolean>().apply {
-            NotificationType.values().forEach { this[it] = false }
+            NotificationType.entries.forEach { this[it] = false }
         }
     }
+
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.bildirishnomalar),

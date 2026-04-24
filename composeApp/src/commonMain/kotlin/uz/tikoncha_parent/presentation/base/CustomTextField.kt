@@ -44,26 +44,24 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
     value: String = "",
-    onValueChange: (String) -> Unit,
     label: String = "",
+    shadow: Boolean = true,
+    onClick:() -> Unit = {},
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    hasBorder: Boolean = false,
     singleLine: Boolean = true,
-    shadow: Boolean = true,
-    containerColor: Color = AppColors.field.page,
+    onValueChange: (String) -> Unit,
     contentColor: Color = AppColors.text.primary,
+    containerColor: Color = AppColors.field.page,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    style: TextStyle = AppTypography.titleLgMedium,
     placeholderColor: Color = AppColors.text.placeholder,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    onClick:() -> Unit = {},
-    hasBorder: Boolean = false,
-    fonSize: TextUnit = NormalTextSize,
-    style: TextStyle = AppTypography.titleLgMedium,
-    fontWeight: FontWeight = FontWeight.Normal
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -75,10 +73,10 @@ fun CustomTextField(
         }
     }
 
-    var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) MaterialTheme.extendedColor.borderColor else DisableButtonContentColor
+    val backgroundColor = if (enabled)  containerColor else DisableButtonColor
+    val borderColor  = if (enabled) MaterialTheme.extendedColor.borderColor else DisableButtonContentColor
 
-    var newModifier = if (hasBorder){
+    val newModifier = if (hasBorder){
         modifier
             .border(1.dp, borderColor, shape = shape)
     }else{

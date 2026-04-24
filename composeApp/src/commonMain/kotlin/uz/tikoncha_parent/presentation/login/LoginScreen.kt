@@ -48,6 +48,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class LoginScreen : Screen {
 
@@ -73,18 +74,23 @@ fun LoginUi(
     state: LoginState,
     event: (LoginEvent) -> Unit
 ) {
-//    val isKeyboardOpen = KeyboardAsState().value
     val isKeyboardOpen = rememberIsKeyboardOpen()
+
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .background(AppColors.bg.page)
+            .background(AppColors.bg.secondary)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .then(systemBars.modifier)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {

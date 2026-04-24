@@ -44,9 +44,11 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ChildConfirmCodeScreen(
     private val confirmCode: String
@@ -88,13 +90,17 @@ fun ChildConfirmCodeUi(
     val formatted = remember(state.codeNumber) { format6DigitCode(state.codeNumber) }
 
 
-
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column (
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .imePadding()
-            .background(MaterialTheme.extendedColor.backgroundColor),
+            .background(AppColors.bg.secondary),
 
         ) {
 

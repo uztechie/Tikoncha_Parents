@@ -47,6 +47,7 @@ import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class TimeRuleListScreen: Screen {
@@ -98,9 +99,15 @@ fun TimeRuleListUi(
     onDelete: (id: Int) -> Unit,
     onDone: () -> Unit,
 ) {
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
     ) {
         CustomHeader(

@@ -41,8 +41,6 @@ import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
 import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.dsl.module
-import uz.tikoncha_parent.presentation.create_password.CreatePasswordViewmodel
-import uz.saidburxon.newedu.presentation.feature.login_password.LoginPasswordViewmodel
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
@@ -115,7 +113,6 @@ import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomViewModel
 import uz.tikoncha_parent.presentation.in_app_update.UpdateViewModel
-import uz.tikoncha_parent.presentation.monitoring.MonitorViewModel
 import uz.tikoncha_parent.presentation.new_home.HomeViewModel
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestViewModel
 import uz.tikoncha_parent.presentation.notification.NotificationViewModel
@@ -250,9 +247,7 @@ val sharedModule = module {
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
     factory { ProfileViewModel(get(), get(), get(), get(), get()) }
-    factory { CreatePasswordViewmodel() }
     factory { ChildViewmodel(get(), get()) }
-    factory { LoginPasswordViewmodel() }
     factory { ChildConfirmViewModel() }
     factory { TaskViewModel(get (), get(), get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get()) }
@@ -279,7 +274,6 @@ val sharedModule = module {
         )
     }
 
-    factory { MonitorViewModel(get(), get()) }
     factory { NotificationViewModel(get(), get()) }
     factory { PolicyViewModel(get(), get()) }
     factory { TimeRuleSetupViewModel() }

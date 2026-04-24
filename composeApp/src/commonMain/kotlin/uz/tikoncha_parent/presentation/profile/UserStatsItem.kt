@@ -27,6 +27,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.coin
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.AppItemHeight
 import uz.tikoncha_parent.ui.SmallCardCornerRadius
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -53,7 +54,7 @@ fun UserStatsItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(SmallCardCornerRadius))
-                .clickable(onClick = onClick)
+                .singleClick(onClick = onClick)
                 .background(AppColors.bg.surface, RoundedCornerShape(SmallCardCornerRadius))
                 .padding(AppIconInnerPadding)
         ) {

@@ -236,12 +236,16 @@ fun PolicySetupUi(
         },
     )
 
-
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.elevated
+    )
 
     // ── Asosiy content ───────────────────────
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.secondary),
     ) {
         CustomHeader(

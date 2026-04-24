@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -34,11 +33,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -48,12 +42,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.ui.BorderColor
 import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
-@Stable
-private fun String.onlyDigits(max: Int): String = filter(Char::isDigit).take(max)
+// Zero-width space — har bir katakda "placeholder" sifatida turadi
+// iOS da bo'sh katakda backspace ni aniqlash uchun kerak
+private const val ZWSP = "\u200B"
 
 @Composable
 fun OtpInput(
@@ -67,27 +65,42 @@ fun OtpInput(
     val onOtpUpdateLatest by rememberUpdatedState(onOtpUpdate)
 
     val focusRequesters = remember(otpLength) { List(otpLength) { FocusRequester() } }
+
+    // Har bir katakda TextFieldValue saqlaymiz
+    // Initial qiymat: faqat ZWSP (ko'rinmas belgi)
     val values = remember(otpLength) {
-        mutableStateListOf(*Array(otpLength) { TextFieldValue("", TextRange(0)) })
+        mutableStateListOf(*Array(otpLength) {
+            TextFieldValue(ZWSP, TextRange(ZWSP.length))
+        })
     }
 
     var activeIndex by remember { mutableIntStateOf(0) }
 
-    fun currentOtp(): String = values.joinToString("") { it.text }
+    // Har bir katakdan faqat raqamni ajratib olish
+    fun digitAt(index: Int): String = values[index].text.replace(ZWSP, "")
 
-    fun setCell(index: Int, text: String) {
-        val t = text.onlyDigits(1)
-        values[index] = TextFieldValue(t, TextRange(t.length)) // ✅ cursor always end
+    // Butun OTP kodni yig'ish
+    fun currentOtp(): String = (0 until otpLength).joinToString("") { digitAt(it) }
+
+    // Katakka raqam yozish (ZWSP saqlab qolamiz)
+    fun setDigit(index: Int, digit: String) {
+        val text = ZWSP + digit
+        values[index] = TextFieldValue(text, TextRange(text.length))
     }
 
-    fun clearCell(index: Int) {
-        values[index] = TextFieldValue("", TextRange(0))
+    // Katakni tozalash (faqat ZWSP qoladi)
+    fun clearDigit(index: Int) {
+        values[index] = TextFieldValue(ZWSP, TextRange(ZWSP.length))
     }
 
     fun requestFocus(index: Int) {
         val idx = index.coerceIn(0, otpLength - 1)
         activeIndex = idx
-        focusRequesters[idx].requestFocus()
+        try {
+            focusRequesters[idx].requestFocus()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun publish() {
@@ -99,19 +112,18 @@ fun OtpInput(
         if (autoFocus) requestFocus(0)
     }
 
-    // External sync
+    // Tashqi sync (otpText parametri)
     LaunchedEffect(otpText, otpLength) {
-        val incoming = otpText?.onlyDigits(otpLength).orEmpty()
+        val incoming = otpText.orEmpty().filter(Char::isDigit).take(otpLength)
         if (incoming == currentOtp()) return@LaunchedEffect
 
         for (i in 0 until otpLength) {
             val ch = incoming.getOrNull(i)?.toString().orEmpty()
-            values[i] = TextFieldValue(ch, TextRange(ch.length))
+            if (ch.isNotEmpty()) setDigit(i, ch) else clearDigit(i)
         }
         publish()
 
-        if (incoming.length < otpLength) requestFocus(incoming.length)
-        else requestFocus(otpLength - 1)
+        requestFocus(if (incoming.length < otpLength) incoming.length else otpLength - 1)
     }
 
     Row(
@@ -133,46 +145,58 @@ fun OtpInput(
                 BasicTextField(
                     value = value,
                     onValueChange = { newValue ->
-                        val digits = newValue.text.onlyDigits(otpLength)
+                        val newText = newValue.text
+                        val newDigits = newText.replace(ZWSP, "").filter(Char::isDigit)
+                        val oldDigit = digitAt(index)
 
-                        // ✅ Paste (bir nechta raqam)
-                        if (digits.length > 1) {
-                            var write = index
-                            for (ch in digits) {
-                                if (write >= otpLength) break
-                                setCell(write, ch.toString())
-                                write++
+                        // CASE 1: Backspace holati
+                        // Yangi text ZWSP dan qisqa yoki ZWSP yo'q — bu delete bosilgan
+                        val isDelete = newText.isEmpty() ||
+                                (newDigits.isEmpty() && oldDigit.isNotEmpty()) ||
+                                (newText.length < ZWSP.length)
+
+                        if (isDelete) {
+                            if (oldDigit.isNotEmpty()) {
+                                // Shu katakda raqam bor edi — o'chiramiz, fokus shu yerda qoladi
+                                clearDigit(index)
+                                publish()
+                            } else {
+                                // Shu katak bo'sh edi — oldingi katakka o'tib, uni o'chiramiz
+                                if (index > 0) {
+                                    clearDigit(index - 1)
+                                    publish()
+                                    requestFocus(index - 1)
+                                }
+                            }
+                            return@BasicTextField
+                        }
+
+                        // CASE 2: Paste (bir nechta raqam)
+                        if (newDigits.length > 1) {
+                            var writeIndex = index
+                            for (ch in newDigits) {
+                                if (writeIndex >= otpLength) break
+                                setDigit(writeIndex, ch.toString())
+                                writeIndex++
                             }
                             publish()
-
-                            // first empty else last
-                            val nextEmpty = (0 until otpLength).firstOrNull { values[it].text.isEmpty() }
+                            val nextEmpty = (0 until otpLength).firstOrNull { digitAt(it).isEmpty() }
                             requestFocus(nextEmpty ?: (otpLength - 1))
                             return@BasicTextField
                         }
 
-                        // ✅ One digit typed => ALWAYS overwrite current cell
-                        if (digits.length == 1) {
-                            setCell(index, digits)
+                        // CASE 3: Bitta raqam kiritildi
+                        if (newDigits.length == 1) {
+                            setDigit(index, newDigits)
                             publish()
-
-                            // move next (except last)
                             if (index < otpLength - 1) requestFocus(index + 1)
-                            else requestFocus(index)
                             return@BasicTextField
-                        }
-
-                        // digits empty: IME delete case (some keyboards)
-                        // bu yerda fokusni sakratmaymiz: faqat katakni tozalaymiz
-                        if (values[index].text.isNotEmpty()) {
-                            clearCell(index)
-                            publish()
-                            requestFocus(index)
                         }
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.NumberPassword,
-                        imeAction = if (index == otpLength - 1) ImeAction.Done else ImeAction.Next
+                        imeAction = if (index == otpLength - 1) ImeAction.Done else ImeAction.Next,
+                        autoCorrectEnabled = false
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -180,33 +204,12 @@ fun OtpInput(
                         .onFocusChanged { state ->
                             if (state.isFocused) {
                                 activeIndex = index
-                                // ✅ focus olganda cursor/selectionni doim oxiriga qo'yamiz
+                                // Cursor doimo oxirida bo'lsin
                                 val t = values[index].text
                                 if (values[index].selection != TextRange(t.length)) {
                                     values[index] = TextFieldValue(t, TextRange(t.length))
                                 }
                             }
-                        }
-                        .onPreviewKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyDown && event.key == Key.Backspace) {
-                                // ✅ Full bo‘lsa ham: delete + cursor movement barqaror
-                                if (values[index].text.isNotEmpty()) {
-                                    // shu katakni o‘chir, fokus shu yerda qolsin
-                                    clearCell(index)
-                                    publish()
-                                    requestFocus(index)
-                                } else {
-                                    // bo‘sh bo‘lsa oldingiga borib o‘chir
-                                    if (index > 0) {
-                                        requestFocus(index - 1)
-                                        if (values[index - 1].text.isNotEmpty()) {
-                                            clearCell(index - 1)
-                                            publish()
-                                        }
-                                    }
-                                }
-                                true
-                            } else false
                         }
                         .background(Color.Transparent),
                     singleLine = true,
@@ -219,10 +222,10 @@ fun OtpInput(
                 )
             }
 
-            // ✅ Separator paramsiz
+            // Separator — 3-katakdan keyin
             if (index == 2) {
                 Text(
-                    "-",
+                    text = "-",
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .align(Alignment.CenterVertically),
@@ -231,5 +234,14 @@ fun OtpInput(
                 )
             }
         }
+    }
+}
+
+
+@Composable
+@Preview
+private fun Preview() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        OtpInput(onOtpUpdate = {})
     }
 }

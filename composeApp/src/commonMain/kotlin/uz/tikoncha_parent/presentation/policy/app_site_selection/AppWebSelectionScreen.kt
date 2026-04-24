@@ -73,6 +73,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class AppWebSelectionScreen(val appSiteTabIndex: Int): Screen{
@@ -277,10 +278,16 @@ fun AppWebSelectionUi(
         onDismiss = { appEvent(AppWebEvent.DismissSiteEditSheet) },
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     // ── UI ───────────────────────────────────
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.secondary),
     ) {
         // Header

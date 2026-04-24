@@ -58,6 +58,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class StatisticScreen : Screen {
@@ -155,6 +156,11 @@ fun StatisticUi(
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
@@ -170,7 +176,8 @@ fun StatisticUi(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.extendedColor.backgroundColor)
+                .then(systemBars.modifier)
+                .background(AppColors.bg.secondary)
         ) {
             CustomHeader(
                 title = stringResource(Res.string.statistika),

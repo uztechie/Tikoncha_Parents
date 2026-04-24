@@ -47,6 +47,7 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -58,9 +59,9 @@ fun ChatTextField(
     onValueChange: (String) -> Unit,
     label: String = "",
     focusRequester: FocusRequester = remember { FocusRequester() },
-    containerColor: Color = MaterialTheme.extendedColor.cardColor,
-    textColor: Color = MaterialTheme.extendedColor.textColor,
-    placeholderColor: Color = MaterialTheme.extendedColor.hintColor,
+    containerColor: Color = AppColors.bg.surface,
+    textColor: Color = AppColors.text.primary,
+    placeholderColor: Color = AppColors.text.placeholder,
     shape: RoundedCornerShape = RoundedCornerShape(ChatTextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = VisualTransformation.None,

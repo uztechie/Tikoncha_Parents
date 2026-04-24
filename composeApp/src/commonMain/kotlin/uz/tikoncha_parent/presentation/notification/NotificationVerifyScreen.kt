@@ -29,7 +29,10 @@ import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class NotificationVerifyScreen(
     private val newsId: Long
@@ -69,12 +72,16 @@ fun NotificationVerifyUi(
         uiState.items.firstOrNull { it.id == newsId }?.toUi(language)
     }
 
-
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = ui?.title?:"",
@@ -111,7 +118,9 @@ fun NotificationVerifyUi(
 @Preview
 @Composable
 private fun Preview() {
-    NotificationVerifyScreen(
-        newsId = 1
-    )
+    TikonchaParentTheme {
+        NotificationVerifyScreen(
+            newsId = 1
+        )
+    }
 }

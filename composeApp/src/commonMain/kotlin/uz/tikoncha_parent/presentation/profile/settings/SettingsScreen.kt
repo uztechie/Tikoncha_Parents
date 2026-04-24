@@ -19,9 +19,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.sozlamalar
 import uz.tikoncha_parent.presentation.profile.logout.LogoutScreen
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class SettingsScreen: Screen {
     @Composable
@@ -39,10 +41,16 @@ class SettingsScreen: Screen {
 fun SettingsUi(
     navigator: Navigator?
 ){
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.sozlamalar),
@@ -59,7 +67,6 @@ fun SettingsUi(
         ) {
 
             ProfileSettingsItem(
-                selectedSetting = SettingType.THEME,
                 onSettingSelected = {settings ->
                     when(settings){
                         SettingType.THEME -> {

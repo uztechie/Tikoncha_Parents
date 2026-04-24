@@ -210,6 +210,7 @@ fun NewHomeUi(
         statusBarColor = AppColors.bg.page,
         navigationBarColor = AppColors.bg.page
     )
+
     Column(
         modifier = Modifier
             .fillMaxSize()

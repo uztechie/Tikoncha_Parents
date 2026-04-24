@@ -67,7 +67,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class CoinPurchaseScreen(
@@ -195,10 +195,15 @@ fun CoinPurchaseUi(
         onDismiss = {}
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.page)
     ) {
 

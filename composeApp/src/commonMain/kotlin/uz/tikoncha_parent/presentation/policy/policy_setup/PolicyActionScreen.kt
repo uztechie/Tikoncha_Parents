@@ -60,6 +60,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class PolicyActionScreen : Screen {
@@ -92,10 +93,15 @@ fun PolicyActionUi(
     sharedEvent: (PolicySharedEvent) -> Unit
 ) {
     val isDENY = sharedState.policyAction == PolicyAction.DENY
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.page),
     ) {
         CustomHeader(
