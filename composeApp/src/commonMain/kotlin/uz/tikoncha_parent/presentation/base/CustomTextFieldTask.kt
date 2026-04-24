@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,12 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -36,23 +39,23 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 @Composable
 fun CustomTextFieldTask(
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
     value: String = "",
-    onValueChange: (String) -> Unit,
     label: String = "",
     enabled: Boolean = true,
-    readOnly: Boolean = false,
-    singleLine: Boolean = true,
     minLine: Boolean = true,
-    containerColor: Color = MaterialTheme.extendedColor.cardColor,
-    contentColor: Color = MaterialTheme.extendedColor.textColor,
+    onClick:() -> Unit = {},
+    readOnly: Boolean = false,
+    hasBorder: Boolean = false,
+    singleLine: Boolean = true,
+    onValueChange: (String) -> Unit,
+    contentColor: Color = AppColors.text.primary,
+    containerColor: Color = AppColors.field.page,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    textStyle: TextStyle = AppTypography.titleSmMedium,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     shape: RoundedCornerShape = RoundedCornerShape(TextFieldCornerRadius),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    onClick:() -> Unit = {},
-    hasBorder: Boolean = false,
-    fonSize: TextUnit = NormalTextSize
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -64,10 +67,10 @@ fun CustomTextFieldTask(
         }
     }
 
-    var backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    var borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    val backgroundColor = if (enabled)  containerColor else DisableButtonColor
+    val borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
 
-    var newModifier = if (hasBorder){
+    val newModifier = if (hasBorder){
         modifier
             .border(1.dp, borderColor, RoundedCornerShape(TextFieldCornerRadius))
     }else{
@@ -96,9 +99,8 @@ fun CustomTextFieldTask(
             singleLine = singleLine,
             maxLines = if (singleLine) 1 else 8,
             minLines = if (minLine) 5 else 1,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = contentColor,
-                fontSize = fonSize
+            textStyle = textStyle.copy(
+                color = contentColor
             ),
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
@@ -116,10 +118,10 @@ fun CustomTextFieldTask(
                             .weight(1f)
                     ) {
                         if (value.isEmpty()) {
-                            CustomText(
+                            Text(
                                 text = label,
-                                fontSize = fonSize,
-                                color = MaterialTheme.extendedColor.hintColor
+                                style = textStyle,
+                                color = AppColors.text.placeholder
                             )
                         }
                         innerTextField()

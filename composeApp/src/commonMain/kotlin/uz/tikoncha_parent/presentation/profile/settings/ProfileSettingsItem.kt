@@ -41,19 +41,16 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun ProfileSettingsItem(
-    selectedSetting: SettingType,
     onSettingSelected: (SettingType) -> Unit
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor),
+        modifier = Modifier.fillMaxWidth()
     ) {
 
-        SettingType.values().forEach { setting ->
+        SettingType.entries.forEach { setting ->
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +137,6 @@ private fun Preview() {
         ThemeMode.DARK
     ){
         ProfileSettingsItem(
-            selectedSetting = SettingType.THEME,
             onSettingSelected = {}
         )
     }

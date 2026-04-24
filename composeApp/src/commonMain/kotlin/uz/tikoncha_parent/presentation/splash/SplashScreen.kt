@@ -17,7 +17,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.delay
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.login.LoginScreen
-import uz.tikoncha_parent.presentation.slider.SliderScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res

@@ -65,9 +65,12 @@ import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class AddNewTaskScreen(
@@ -228,10 +231,16 @@ fun AddNewTask(
         )
     }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
             .verticalScroll(rememberScrollState())
             .pointerInput(Unit) {
                 detectTapGestures {
@@ -263,14 +272,15 @@ fun AddNewTask(
             SpaceMedium()
 
             CustomTextField(
+                value = state.title,
+                style = AppTypography.titleSmMedium,
+                label = stringResource(Res.string.vazifa_nomi),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight),
-                value = state.title,
                 onValueChange = {
                     event(TaskEvent.OnTitleChange(it))
                 },
-                label = stringResource(Res.string.vazifa_nomi),
                 leadingIcon = {
                     Image(
                         painter = painterResource(Res.drawable.note),
@@ -290,12 +300,14 @@ fun AddNewTask(
             SpaceSmall()
 
             CustomTextFieldTask(
+                minLine = true,
+                singleLine = false,
                 value = state.desc,
+                modifier = Modifier.fillMaxWidth(),
+                label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
                 onValueChange = {
                     event(TaskEvent.OnDescChange(it))
                 },
-                modifier = Modifier
-                    .fillMaxWidth(),
                 leadingIcon = {
                     Image(
                         painter = painterResource(Res.drawable.task_square2),
@@ -303,47 +315,41 @@ fun AddNewTask(
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                         modifier = Modifier.size(22.dp),
                     )
-                },
-                label = stringResource(Res.string.vazifa_haqida_qisqacha_ma_lumot),
-                fonSize = SmallTextSize,
-                minLine = true,
-                singleLine = false
+                }
             )
 
             SpaceMedium()
 
             CustomSelectionButton(
                 text = dateText,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(TextFieldHeight),
+                showTrailingIcon = false,
+                style = AppTypography.titleSmMedium,
                 label = stringResource(Res.string.tugatish_sanasi),
                 painter = painterResource(Res.drawable.calendar_2),
                 tint = MaterialTheme.extendedColor.primaryAlphaColor,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TextFieldHeight),
                 onClick = {
                     showDialogData = true
                 },
-                showTrailingIcon = false,
-                fontWeight = FontWeight.W500,
-                fonSize = SmallTextSize
             )
 
             SpaceSmall()
 
             CustomSelectionButton(
                 text = timeText,
+                style = AppTypography.titleSmMedium,
+                painter = painterResource(Res.drawable.alarm),
+                label = stringResource(Res.string.tugash_vaqti),
+                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(TextFieldHeight),
-                label = stringResource(Res.string.tugash_vaqti),
-                painter = painterResource(Res.drawable.alarm),
-                tint = MaterialTheme.extendedColor.primaryAlphaColor,
                 onClick = {
                     showDialogTime = true
                 },
                 showTrailingIcon = false,
-                fontWeight = FontWeight.W500,
-                fonSize = SmallTextSize
             )
 
             SpaceMedium()

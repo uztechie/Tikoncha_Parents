@@ -57,9 +57,11 @@ import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.tripleShadow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class PaymentTypeScreen(
     val subDuration: SubscriptionDuration,
@@ -210,11 +212,16 @@ fun PaymentTypeScreenUi(
         }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.page)
     ) {
 
         CustomHeader(

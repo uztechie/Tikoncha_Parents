@@ -29,9 +29,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class LanguageScreen: Screen {
     @Composable
@@ -54,11 +56,16 @@ fun LanguageUi(
     val current = controller.current.collectAsState().value
     var selectedLanguage by remember { mutableStateOf(current) }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.til),

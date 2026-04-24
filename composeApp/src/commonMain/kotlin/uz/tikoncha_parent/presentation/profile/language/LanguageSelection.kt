@@ -32,6 +32,8 @@ import uz.tikoncha_parent.ui.SpaceSmall
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
@@ -46,9 +48,7 @@ fun LanguageSelection(
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+        modifier = Modifier.fillMaxWidth()
     ) {
         LanguageType.values().forEach { language ->
             Row(
@@ -130,8 +130,12 @@ fun LanguageSelection(
 @Composable
 @Preview
 fun Preview(){
-    LanguageSelection(
-        selectedLanguage = LanguageType.UZ,
-        onLanguageSelected = {}
-    )
+    TikonchaParentTheme(
+        ThemeMode.LIGHT
+    ) {
+        LanguageSelection(
+            selectedLanguage = LanguageType.UZ,
+            onLanguageSelected = {}
+        )
+    }
 }

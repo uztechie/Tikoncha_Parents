@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -41,39 +45,31 @@ fun CustomSelectionButton(
     modifier: Modifier = Modifier,
     text: String,
     painter: Painter,
+    label: String = "",
     onClick: () -> Unit,
     loading: Boolean = false,
-    label: String = "",
-    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
-    fonSize: TextUnit = NormalTextSize,
-    fontWeight: FontWeight = FontWeight.Normal,
+    tint: Color = SliderPageColor,
     showLeadingIcon: Boolean = true,
     showTrailingIcon: Boolean = true,
-    background: Color = MaterialTheme.extendedColor.cardColor,
-    tint: Color = SliderPageColor
+    background: Color = AppColors.field.page,
+    style: TextStyle = AppTypography.titleLgMedium,
+    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
 ) {
 
-    val color = if (text.isEmpty()) MaterialTheme.extendedColor.hintColor else MaterialTheme.extendedColor.textColor
+    val color = if (text.isEmpty()) AppColors.text.placeholder else AppColors.text.primary
     val newText = text.ifEmpty { label }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-//            .tripleShadow(
-//                shape = RoundedCornerShape(TextFieldCornerRadius),
-//            )
             .background(background, shape)
             .padding(horizontal = TextFieldInnerPadding)
             .height(TextFieldHeight)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    if (!loading) {
-                        onClick()
-                    }
+            .singleClick {
+                if (!loading) {
+                    onClick()
                 }
-            ),
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (showLeadingIcon) {
@@ -89,14 +85,12 @@ fun CustomSelectionButton(
         }
 
 
-        CustomText(
+        Text(
             text = newText,
-            fontSize = fonSize,
-            fontWeight = fontWeight,
+            style = style,
             color = color,
             maxLines = 1,
-            modifier = Modifier
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         )
 
         if (showTrailingIcon) {
@@ -130,7 +124,7 @@ fun CustomSelectionButton(
 private fun Pre() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

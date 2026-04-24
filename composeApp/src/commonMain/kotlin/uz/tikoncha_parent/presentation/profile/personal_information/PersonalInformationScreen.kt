@@ -54,9 +54,11 @@ import uz.tikoncha_parent.presentation.profile.user_edit.UserEditScreen
 import uz.tikoncha_parent.ui.LargeIconSize
 import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.SpaceMedium
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class   PersonalInformationScreen : Screen {
     @Composable
@@ -90,11 +92,16 @@ fun PersonalInformationUi(
         imageBitmap = decodeImageBitmapOrNull(picked.bytes)
     }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.shaxsiy_malumotlar),
@@ -111,15 +118,14 @@ fun PersonalInformationUi(
         ) {
             item {
                 ProfileHeader(
+                    state = state,
                     firstName = state.userInfo?.name ?: "",
                     lastName = state.userInfo?.lastName ?: "",
                     fathersName = state.userInfo?.patronymic ?: "",
                     onSelectImageButtonClick = {
                         launchPicker()
-                    },
-                    state = state
+                    }
                 )
-
                 SpaceLarge()
             }
 

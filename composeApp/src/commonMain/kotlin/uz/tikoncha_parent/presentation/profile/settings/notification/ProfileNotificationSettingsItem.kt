@@ -41,11 +41,9 @@ fun ProfileNotificationItem(
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.backgroundColor),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        NotificationType.values().forEach { notification ->
+        NotificationType.entries.forEach { notification ->
             val isOn = notificationStates[notification] == true
 
             Row(

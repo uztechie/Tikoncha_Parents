@@ -48,9 +48,11 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class RegisterScreen : Screen {
@@ -112,15 +114,20 @@ fun Register(
         }
     }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState())
             .imePadding()
-    )
-    {
+    ) {
         LogoHeader()
         CustomText(
             text = stringResource(Res.string.xush_kelibsiz),

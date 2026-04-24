@@ -67,8 +67,10 @@ import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HeaderHeight
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalIconButtonSize
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberIsDarkTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class MapScreen : Screen {
 
@@ -255,10 +257,16 @@ class MapScreen : Screen {
 
         var lastPushedChildId by remember { mutableStateOf<String?>(null) }
 
+        val systemBars = rememberScreenSystemBars(
+            statusBarColor = AppColors.bg.secondary,
+            navigationBarColor = AppColors.bg.secondary
+        )
+
         // -------------------- UI --------------------
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .then(systemBars.modifier)
         ) {
             Logger.d("MapScreen", "jsonString=$jsonString")
 

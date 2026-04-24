@@ -47,8 +47,9 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.ShapeCornerRadius
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.extendedColor
-
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class WiFiScreen : Screen {
@@ -69,10 +70,16 @@ fun WiFiUi() {
     var check by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("") }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.wi_fi),

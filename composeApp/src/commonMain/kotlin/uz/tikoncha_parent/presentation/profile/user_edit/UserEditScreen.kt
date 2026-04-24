@@ -42,9 +42,11 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class UserEditScreen(
@@ -102,21 +104,25 @@ fun UserEditUi(
         onButtonClick = { event(UserEditEvent.ClearError) }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ){
         CustomHeader(
-            title = stringResource(Res.string.tahrirlash),
             showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            }
+            onBackClick = { navigator?.pop() },
+            title = stringResource(Res.string.tahrirlash),
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.extendedColor.backgroundColor)
                 .padding(ContainerPadding)
                 .imePadding()
         ) {
@@ -133,11 +139,9 @@ fun UserEditUi(
 
             CustomTextField(
                 value = state.firstName,
-                onValueChange = {
-                    event(UserEditEvent.OnFirstName(it))
-                },
                 modifier = Modifier.height(TextFieldHeight),
                 label = stringResource(Res.string.ismingizni_kiriting),
+                onValueChange = { event(UserEditEvent.OnFirstName(it)) },
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                 leadingIcon = {
                     Image(
@@ -153,10 +157,8 @@ fun UserEditUi(
 
             CustomTextField(
                 value = state.lastName,
-                onValueChange = {
-                    event(UserEditEvent.OnLastName(it))
-                },
                 modifier = Modifier.height(TextFieldHeight),
+                onValueChange = { event(UserEditEvent.OnLastName(it)) },
                 label = stringResource(Res.string.familiyangizni_kiriting),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
                 leadingIcon = {
@@ -173,10 +175,8 @@ fun UserEditUi(
 
             CustomTextField(
                 value = state.patronymic,
-                onValueChange = {
-                    event(UserEditEvent.OnPatronymic(it))
-                },
                 modifier = Modifier.height(TextFieldHeight),
+                onValueChange = { event(UserEditEvent.OnPatronymic(it)) },
                 label = stringResource(Res.string.otangizni_ismini_kiriting),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
                 leadingIcon = {

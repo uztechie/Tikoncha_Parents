@@ -44,6 +44,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class CoinsScreen : Screen {
     @Composable
@@ -99,9 +100,15 @@ fun CoinsUi(
         }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.surface
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .imePadding()
             .background(AppColors.bg.page)
     ) {

@@ -36,7 +36,10 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class NotificationScreen : Screen {
     @Composable
@@ -75,12 +78,16 @@ fun NotificationUi(
         items.map { it.toUi(language) }
     }
 
-
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
             title = stringResource(Res.string.notification),
@@ -134,10 +141,11 @@ fun NotificationUi(
 @Preview
 @Composable
 private fun Preview(){
-
-    NotificationUi(
-        items = listOf(),
-        navigator = null,
-        viewModel = koinViewModel()
-    )
+    TikonchaParentTheme {
+        NotificationUi(
+            items = listOf(),
+            navigator = null,
+            viewModel = koinViewModel()
+        )
+    }
 }

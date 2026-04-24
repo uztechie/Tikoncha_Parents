@@ -63,6 +63,8 @@ import ru.sulgik.mapkit.logo.LogoVerticalAlignment
 import ru.sulgik.mapkit.map.CameraPosition
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class MapScreen3 : Screen {
 
@@ -202,10 +204,15 @@ class MapScreen3 : Screen {
             }
         }
 
+        val systemBars = rememberScreenSystemBars(
+            statusBarColor = AppColors.bg.secondary,
+            navigationBarColor = AppColors.bg.secondary
+        )
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .then(systemBars.modifier)
         )
         {
             rememberAndInitializeMapKit().bindToLifecycleOwner()

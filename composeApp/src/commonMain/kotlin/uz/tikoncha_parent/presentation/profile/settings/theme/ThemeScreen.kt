@@ -38,8 +38,10 @@ import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tema
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ThemeScreen: Screen {
     @Composable
@@ -75,10 +77,16 @@ fun ThemeUi(
 //        mutableStateOf(ThemeMode.SYSTEM)
 //    }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.page)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tema),
@@ -104,13 +112,12 @@ fun ThemeUi(
                 ThemeMode.entries.filterNot { it == ThemeMode.SYSTEM }.forEach { mode ->
 
                     ThemeSelectorWithImage(
-                        modifier = Modifier
-                            .weight(1f),
                         selectedTheme = mode,
+                        modifier = Modifier.weight(1f),
+                        selected = mode == selectedTheme,
                         onThemeSelected = { theme ->
                             selectedTheme = theme
-                        },
-                        selected = mode == selectedTheme
+                        }
                     )
                 }
             }

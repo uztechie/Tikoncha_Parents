@@ -43,9 +43,11 @@ import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
     @Composable
@@ -133,11 +135,16 @@ fun SubscriptionPaymentUi(
         }
     )
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.page)
     ) {
 
         CustomHeader(

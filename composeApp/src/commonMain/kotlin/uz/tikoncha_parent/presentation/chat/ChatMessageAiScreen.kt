@@ -33,8 +33,10 @@ import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberIsDarkTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ChatMessageAiScreen(
     private val chatId: String,
@@ -64,10 +66,15 @@ class ChatMessageAiScreen(
 
         val navigator = LocalNavigator.current
 
+        val systemBars = rememberScreenSystemBars(
+            statusBarColor = AppColors.bg.secondary,
+            navigationBarColor = AppColors.bg.secondary
+        )
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .then(systemBars.modifier)
         ) {
 
             UniversalJsonWebView(

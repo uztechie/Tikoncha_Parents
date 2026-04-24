@@ -99,9 +99,11 @@ import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
 class ChatRoomScreen(
@@ -227,10 +229,16 @@ fun ChatRoomScreenUi(
             }
     }
 
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.surface
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .then(systemBars.modifier)
+            .background(AppColors.bg.secondary)
     ) {
 
         Box(
@@ -238,7 +246,7 @@ fun ChatRoomScreenUi(
                 .zIndex(1f)
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.extendedColor.backgroundColor
+                    color = AppColors.bg.elevated
                 )
 
         ) {
