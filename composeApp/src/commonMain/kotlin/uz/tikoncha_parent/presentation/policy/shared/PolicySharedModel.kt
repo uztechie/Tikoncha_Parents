@@ -141,18 +141,15 @@ class PolicySharedModel(
     private fun toggleApp(packageName: String, category: String?, categoryAppPackages: List<String>) {
         val s = _state.value
 
-        // Agar app ning kategoriyasi selected bo'lsa
+        // Agar app ning kategoriyasi selected bo'lsa — kategoriyani yechib, qolgan applarni qo'shish
         val catKey = if (category != null) {
             s.selectedCategories.firstOrNull { it.equals(category, ignoreCase = true) }
         } else null
 
         if (catKey != null) {
-            // Kategoriyadan bitta app chiqaryapti
-            // → kategoriyani olib tashla + qolgan applarni selectedPkgs ga qo'sh
             val otherApps = categoryAppPackages.filter {
                 !it.equals(packageName, ignoreCase = true)
             }.toSet()
-
             _state.update { state ->
                 state.copy(
                     selectedCategories = state.selectedCategories - catKey,
@@ -162,41 +159,16 @@ class PolicySharedModel(
             return
         }
 
-        // Oddiy toggle
+        // Oddiy toggle — FAQAT selectedPkgs, hech qachon kategoriyaga aylanmaydi
         val existing = s.selectedPkgs.firstOrNull { it.equals(packageName, ignoreCase = true) }
         if (existing != null) {
-            // Unselect
             _state.update { it.copy(selectedPkgs = it.selectedPkgs - existing) }
         } else {
-            // Select
             if (!s.canAddApp) {
                 _state.update { it.copy(showAppLimitDialog = true) }
                 return
             }
             _state.update { it.copy(selectedPkgs = it.selectedPkgs + packageName) }
-
-            // Tekshirish — shu kategoriya ichidagi hammasi selected bo'ldimi?
-            if (category != null && categoryAppPackages.isNotEmpty()) {
-                val updatedPkgs = _state.value.selectedPkgs
-                val allSelected = categoryAppPackages.all { pkg ->
-                    updatedPkgs.any { it.equals(pkg, ignoreCase = true) }
-                }
-                if (allSelected) {
-                    if (category != null && category != AppCategory.OTHER.id) {
-                        // Haqiqiy kategoriya — applarni olib tashla + kategoriyani qo'sh
-                        val appsToRemove = categoryAppPackages.flatMap { pkg ->
-                            updatedPkgs.filter { it.equals(pkg, ignoreCase = true) }
-                        }.toSet()
-                        _state.update { state ->
-                            state.copy(
-                                selectedPkgs = state.selectedPkgs - appsToRemove,
-                                selectedCategories = state.selectedCategories + category,
-                            )
-                        }
-                    }
-                    // OTHER bo'lsa — hech narsa qilmaslik, applar selectedPkgs da qoladi
-                }
-            }
         }
     }
 

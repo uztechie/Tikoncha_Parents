@@ -17,6 +17,7 @@ import uz.tikoncha_parent.presentation.policy.common.toggleDay
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupState.Companion.DEFAULT_END_TIME
 import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupState.Companion.DEFAULT_START_TIME
+import kotlin.compareTo
 
 class TimeRuleSetupViewModel : ScreenModel {
 
@@ -79,7 +80,16 @@ class TimeRuleSetupViewModel : ScreenModel {
 
     private fun save() {
         val s = _state.value
-        if (!s.canSave) return
+
+        if (!s.hasAnyDaySelected){
+            _effect.trySend(TimeRuleSetupEffect.NoDaySelectionToast)
+            return
+        }
+        if (!s.allDay && s.intervalMinutes <= 0){
+            _effect.trySend(TimeRuleSetupEffect.NoTimeIntervalSelectionToast)
+            return
+        }
+
 
         val rule = buildRule(s)
         screenModelScope.launch {

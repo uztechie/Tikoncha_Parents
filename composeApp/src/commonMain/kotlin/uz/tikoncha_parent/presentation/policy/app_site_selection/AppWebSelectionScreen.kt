@@ -50,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.kategoriya_bo_yicha_jadva
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.noto_g_ri_url_format
 import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.plus_obnuna_kerak
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sayt_limiti_plus_tavsif
 import tikoncha_parents.composeapp.generated.resources.sayt_qidirish
@@ -220,7 +221,7 @@ fun AppWebSelectionUi(
 
     SubscriptionBottomDialog(
         show = sharedState.showCategoryLimitDialog,
-        title = stringResource(Res.string.limit_tugadi),
+        title = stringResource(Res.string.plus_obnuna_kerak),
         message = stringResource(Res.string.kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring),
         onConfirm = {
             sharedEvent(PolicySharedEvent.DismissCategoryLimitDialog)

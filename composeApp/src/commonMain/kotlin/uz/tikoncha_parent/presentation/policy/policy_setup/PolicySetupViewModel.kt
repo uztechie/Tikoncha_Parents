@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.mapper.toLimitRuleDtoList
@@ -34,10 +36,28 @@ class PolicySetupViewModel(
     private val _state = MutableStateFlow(PolicySetupState())
     val state = _state.asStateFlow()
 
+    private val _effect = Channel<PolicySetupEffect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
+
 
     fun onEvent(event: PolicySetupEvent) {
         when (event) {
             is PolicySetupEvent.SavePolicy -> {
+
+                val s = event.sharedState
+                if (s.policyTitle.isEmpty()){
+                    _effect.trySend(PolicySetupEffect.NoTitleToast)
+                    return
+                }
+                if (s.timeList.isEmpty() && s.limitList.isEmpty() && s.locationRule == null){
+                    _effect.trySend(PolicySetupEffect.NoRuleSelectedToast)
+                    return
+                }
+                if (s.selectedCategories.isEmpty() && s.selectedPkgs.isEmpty() && s.selectedSites.isEmpty()){
+                    _effect.trySend(PolicySetupEffect.NoAppWebSelectedToast)
+                    return
+                }
+
                 if (event.sharedState.isEditMode) requestUpdate(event.sharedState)
                 else requestCreate(event.sharedState)
             }

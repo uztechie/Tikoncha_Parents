@@ -81,19 +81,16 @@ data class PolicySharedState(
 
     /** Kategoriya checkbox holati */
     fun categoryState(categoryName: String, appPackages: List<String>): CategorySelectionState {
-        // Kategoriya to'liq tanlangan
+        // Faqat kategoriya to'g'ridan-to'g'ri tanlangan bo'lsa — ALL
         if (selectedCategories.any { it.equals(categoryName, ignoreCase = true) }) {
             return CategorySelectionState.ALL
         }
-        // Individual applar tekshiruv
+        // Individual applar tekshiruv — faqat NONE yoki PARTIAL
         val selectedCount = appPackages.count { pkg ->
             selectedPkgs.any { it.equals(pkg, ignoreCase = true) }
         }
-        return when {
-            selectedCount == 0 -> CategorySelectionState.NONE
-            selectedCount == appPackages.size -> CategorySelectionState.ALL
-            else -> CategorySelectionState.PARTIAL
-        }
+        return if (selectedCount == 0) CategorySelectionState.NONE
+        else CategorySelectionState.PARTIAL
     }
 
     fun toSnapshot(): PolicyDraftSnapshot = PolicyDraftSnapshot(

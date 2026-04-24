@@ -23,20 +23,28 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_remove
+import tikoncha_parents.composeapp.generated.resources.kerakli_hafta_kunlarini_tanlang
+import tikoncha_parents.composeapp.generated.resources.kerakli_vaqt_oralig_ini_tanlang
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import uz.tikoncha_parent.presentation.base.WheelTimePicker
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDefaults
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
+import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.PillSegmentedButton
 import uz.tikoncha_parent.presentation.base.PillSegmentedItem
+import uz.tikoncha_parent.presentation.base.ToastData
+import uz.tikoncha_parent.presentation.base.ToastProvider
+import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.policy.common.WeekdayChips
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
@@ -73,40 +81,22 @@ class LimitRuleSetupScreen(
             )
         }
 
-        // ── Effect → shared + pop ──────────────
-        LaunchedEffect(Unit) {
-            viewModel.effect.collect { eff ->
-                when (eff) {
-                    is LimitRuleSetupEffect.Saved -> {
-                        sharedEvent(PolicySharedEvent.UpsertLimitRule(eff.rule))
-                        navigator?.pop()
-                    }
-                }
-            }
-        }
-
         LaunchedEffect(Unit) {
             val editing = ruleId?.let { id -> sharedState.limitList.find { it.id == id } }
             println("SetupScreen: ruleId=$ruleId, limitList=${sharedState.limitList}, editing=$editing")
             event(LimitRuleSetupEvent.Init(editingRule = editing, allLimitRules = sharedState.limitList))
         }
 
-// VM state kuzatuv:
-        LaunchedEffect(state.duration, state.isInitialized) {
-            println("SetupState: duration=${state.duration}, init=${state.isInitialized}, limitType=${state.limitType}")
+        ToastProvider {
+            LimitRuleSetupUi(
+                state = state,
+                event = event,
+                canUpdate = sharedState.canUpdate,
+                effect = viewModel.effect,
+                sharedEvent = sharedEvent,
+                onBack = { navigator?.pop() },
+            )
         }
-
-        LaunchedEffect(state.duration, state.isInitialized) {
-            println("SetupState: duration=${state.duration}, init=${state.isInitialized}")
-        }
-
-        // ── UI — o'zingiz yozasiz ──────────────
-        LimitRuleSetupUi(
-            state = state,
-            event = event,
-            canUpdate = sharedState.canUpdate,
-            onBack = { navigator?.pop() },
-        )
     }
 }
 
@@ -115,8 +105,42 @@ fun LimitRuleSetupUi(
     state: LimitRuleSetupState,
     event: (LimitRuleSetupEvent) -> Unit,
     canUpdate: Boolean,
+    effect: Flow<LimitRuleSetupEffect>,
+    sharedEvent: (PolicySharedEvent) -> Unit,
     onBack: () -> Unit,
 ) {
+
+    val noWeekDaySelected = stringResource(Res.string.kerakli_hafta_kunlarini_tanlang)
+    val noTimeIntervalSelected = stringResource(Res.string.kerakli_vaqt_oralig_ini_tanlang)
+    val toast = LocalToastHost.current
+
+    LaunchedEffect(Unit) {
+        effect.collect { eff ->
+            when (eff) {
+                is LimitRuleSetupEffect.Saved -> {
+                    sharedEvent(PolicySharedEvent.UpsertLimitRule(eff.rule))
+                    onBack()
+                }
+
+                LimitRuleSetupEffect.NoDaySelectionToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noWeekDaySelected
+                        )
+                    )
+                }
+                LimitRuleSetupEffect.NoTimeIntervalSelectionToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noTimeIntervalSelected
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
@@ -207,7 +231,6 @@ fun LimitRuleSetupUi(
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             CustomButtonNew(
-                enabled = state.canSave,
                 text = stringResource(Res.string.saqlash),
                 onClick = {
                     event(LimitRuleSetupEvent.Save)
@@ -231,6 +254,8 @@ fun Pre(){
             ),
             event = {},
             canUpdate = true,
+            effect = emptyFlow(),
+            sharedEvent = {},
             onBack = {},
         )
     }

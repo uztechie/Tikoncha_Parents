@@ -53,11 +53,12 @@ import tikoncha_parents.composeapp.generated.resources.yopish
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.platform.PaymentUtil
-import uz.tikoncha_parent.presentation.base.AppToast
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.ToastData
+import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentOption
@@ -92,12 +93,16 @@ class CoinPurchaseScreen(
             ))
         }
 
-        CoinPurchaseUi(
-            event = event,
-            state = state.value,
-            navigator = navigator,
-            effect = viewModel.effect
-        )
+        ToastProvider {
+            CoinPurchaseUi(
+                event = event,
+                state = state.value,
+                navigator = navigator,
+                effect = viewModel.effect
+            )
+        }
+
+
     }
 }
 @Composable
@@ -107,6 +112,8 @@ fun CoinPurchaseUi(
     event: (CoinPurchaseEvent) -> Unit,
     effect: Flow<CoinPurchaseEffect>
 ) {
+
+    val toast = LocalToastHost.current
     var promoCodeToastData by remember {
         mutableStateOf<ToastData?>(null)
     }
@@ -125,21 +132,21 @@ fun CoinPurchaseUi(
         effect.collect { eff ->
             when (eff) {
                 is CoinPurchaseEffect.ShowPromoCodeErrorToast -> {
-                    promoCodeToastData = ToastData(
-                        message = eff.message,
-                        type = ToastType.Error
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Error,
+                            title = eff.message
+                        )
                     )
-                    delay(3000)
-                    promoCodeToastData = null
                 }
 
                 CoinPurchaseEffect.ShowPromoCodeSuccessToast -> {
-                    promoCodeToastData = ToastData(
-                        message = promoCodeSuccessMessage,
-                        type = ToastType.Success
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Success,
+                            title = promoCodeSuccessMessage
+                        )
                     )
-                    delay(3000)
-                    promoCodeToastData = null
                 }
 
                 is CoinPurchaseEffect.OpenClickPayment -> {
@@ -187,12 +194,6 @@ fun CoinPurchaseUi(
             showPaymentSuccessDialog = false
             navigator?.pop()
         },
-    )
-
-
-    AppToast(
-        toastData = promoCodeToastData,
-        onDismiss = {}
     )
 
     val systemBars = rememberScreenSystemBars(

@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -42,6 +44,8 @@ import tikoncha_parents.composeapp.generated.resources.cheklov_vaqti
 import tikoncha_parents.composeapp.generated.resources.close_remove
 import tikoncha_parents.composeapp.generated.resources.dot
 import tikoncha_parents.composeapp.generated.resources.faqat_shu_vaqtda_ishlasin
+import tikoncha_parents.composeapp.generated.resources.kerakli_hafta_kunlarini_tanlang
+import tikoncha_parents.composeapp.generated.resources.kerakli_vaqt_oralig_ini_tanlang
 import tikoncha_parents.composeapp.generated.resources.kun_davomida
 import tikoncha_parents.composeapp.generated.resources.sand_time_policy
 import tikoncha_parents.composeapp.generated.resources.saqlash
@@ -49,9 +53,13 @@ import tikoncha_parents.composeapp.generated.resources.time_icon
 import tikoncha_parents.composeapp.generated.resources.timer
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomSwitch
+import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDialog
 import uz.tikoncha_parent.presentation.base.TimeRangePicker
 import uz.tikoncha_parent.presentation.base.TimeRangePickerDefaults
+import uz.tikoncha_parent.presentation.base.ToastData
+import uz.tikoncha_parent.presentation.base.ToastProvider
+import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppCheckbox
 import uz.tikoncha_parent.presentation.policy.common.WeekdayChips
 import uz.tikoncha_parent.presentation.policy.common.formatDuration
@@ -91,25 +99,17 @@ class TimeRuleSetupScreen(
             )
         }
 
-        // ── Effect → shared + pop ──────────────
-        LaunchedEffect(Unit) {
-            viewModel.effect.collect { eff ->
-                when (eff) {
-                    is TimeRuleSetupEffect.Saved -> {
-                        sharedEvent(PolicySharedEvent.UpsertTimeRule(eff.rule))
-                        navigator?.pop()
-                    }
-                }
-            }
-        }
 
-        // ── UI — o'zingiz yozasiz ──────────────
-        TimeRuleSetupUi(
-            state = state,
-            event = event,
-            canUpdate = sharedState.canUpdate,
-            onBack = { navigator?.pop() },
-        )
+        ToastProvider {
+            TimeRuleSetupUi(
+                state = state,
+                event = event,
+                effect = viewModel.effect,
+                sharedEvent = sharedEvent,
+                canUpdate = sharedState.canUpdate,
+                onBack = { navigator?.pop() },
+            )
+        }
     }
 }
 
@@ -117,12 +117,48 @@ class TimeRuleSetupScreen(
 fun TimeRuleSetupUi(
     state: TimeRuleSetupState,
     event: (TimeRuleSetupEvent) -> Unit,
+    effect: Flow<TimeRuleSetupEffect>,
+    sharedEvent: (PolicySharedEvent) -> Unit,
     canUpdate: Boolean,
     onBack: () -> Unit,
 ) {
 
     var showStartTimePickerDialog by remember { mutableStateOf(false) }
     var showEndTimePickerDialog by remember { mutableStateOf(false) }
+
+    val noWeekDaySelected = stringResource(Res.string.kerakli_hafta_kunlarini_tanlang)
+    val noTimeIntervalSelected = stringResource(Res.string.kerakli_vaqt_oralig_ini_tanlang)
+    val toast = LocalToastHost.current
+
+    // ── Effect → shared + pop ──────────────
+    LaunchedEffect(Unit) {
+        effect.collect { eff ->
+            when (eff) {
+                is TimeRuleSetupEffect.Saved -> {
+                    sharedEvent(PolicySharedEvent.UpsertTimeRule(eff.rule))
+                    onBack()
+                }
+
+                TimeRuleSetupEffect.NoDaySelectionToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noWeekDaySelected
+                        )
+                    )
+                }
+
+                TimeRuleSetupEffect.NoTimeIntervalSelectionToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noTimeIntervalSelected
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     WheelTimePickerDialog(
         show = showStartTimePickerDialog,
@@ -367,7 +403,6 @@ fun TimeRuleSetupUi(
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             CustomButtonNew(
-                enabled = state.canSave,
                 text = stringResource(Res.string.saqlash),
                 onClick = {
                     event(TimeRuleSetupEvent.Save)
@@ -416,6 +451,8 @@ fun Pre() {
                 allDay = true
             ),
             event = {},
+            sharedEvent = {},
+            effect = emptyFlow(),
             canUpdate = true,
             onBack = {},
         )

@@ -457,4 +457,11 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="sahifaga_otish">Sahifaga o‘tish</string>
     <string name="farzand_ulan_di">Farzandingiz muvaffaqiyatli ulandi, bemalol raqamli hayotini nazorat qilishingiz mumkin bo‘ladi</string>
     <string name="confirm_code_instruction">Ushbu kodni farzandingiz "Tikoncha" ilovasida "Ota-ona qo‘shish" bo‘limiga kiritishi kerak.</string>
+
+    <string name="kerakli_hafta_kunlarini_tanlang">Kerakli hafta kunlarini tanlang!</string>
+    <string name="kerakli_vaqt_oralig_ini_tanlang">Kerakli vaqt oralig'ini tanlang!</string>
+    <string name="kamida_1_ta_shart_kiriting">Kamida 1 ta shart kiriting</string>
+    <string name="kamida_1_ta_ilova_kategoriya_yoki_sayt_tanlang">Kamida 1 ta ilova, kategoriya yoki sayt tanlang</string>
+    <string name="plus_obnuna_kerak">PLUS obuna kerak</string>
+    <string name="oq_royxat_uchun_kerakli_ilovalar_va_saytlarni_tanlang">Oq ro‘yxat uchun kerakli ilovalar va saytlarni tanlang</string>
 </resources>

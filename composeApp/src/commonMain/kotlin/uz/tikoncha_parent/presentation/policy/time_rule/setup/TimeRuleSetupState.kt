@@ -29,7 +29,7 @@ data class TimeRuleSetupState(
     val canSave: Boolean get() = hasAnyDaySelected && (allDay || intervalMinutes > 0)
 
     /** start→end oralig'i minutlarda. Agar end < start bo'lsa, tungi o'tish sifatida hisoblanadi. */
-    private val intervalMinutes: Int
+    val intervalMinutes: Int
         get() {
             val s = startTime.hour * 60 + startTime.minute
             val e = endTime.hour * 60 + endTime.minute

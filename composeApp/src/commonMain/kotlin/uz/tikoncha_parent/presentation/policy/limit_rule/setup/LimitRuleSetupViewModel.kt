@@ -83,7 +83,15 @@ class LimitRuleSetupViewModel : ScreenModel {
 
     private fun save() {
         val s = _state.value
-        if (!s.canSave) return
+
+        if (!s.hasAnyDaySelected){
+            _effect.trySend(LimitRuleSetupEffect.NoDaySelectionToast)
+            return
+        }
+        if (!s.hasAnyDuration){
+            _effect.trySend(LimitRuleSetupEffect.NoTimeIntervalSelectionToast)
+            return
+        }
 
         val cleanDuration = when (s.limitType) {
             DayHour.DAY -> s.duration

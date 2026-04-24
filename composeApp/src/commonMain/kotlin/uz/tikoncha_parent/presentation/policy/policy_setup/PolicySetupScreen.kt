@@ -32,6 +32,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -54,6 +56,10 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.base.DashedBorderButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.LocalToastHost
+import uz.tikoncha_parent.presentation.base.ToastData
+import uz.tikoncha_parent.presentation.base.ToastProvider
+import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
@@ -79,12 +85,16 @@ class PolicySetupScreen : Screen {
         val sharedEvent = sharedViewModel::onEvent
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
 
-        PolicySetupUi(
-            state = state,
-            event = event,
-            sharedState = sharedState,
-            sharedEvent = sharedEvent
-        )
+        ToastProvider {
+            PolicySetupUi(
+                state = state,
+                event = event,
+                sharedState = sharedState,
+                sharedEvent = sharedEvent,
+                effect = viewModel.effect
+            )
+        }
+
     }
 
 }
@@ -95,10 +105,49 @@ fun PolicySetupUi(
     event: (PolicySetupEvent) -> Unit = {},
     sharedState: PolicySharedState,
     sharedEvent: (PolicySharedEvent) -> Unit,
+    effect: Flow<PolicySetupEffect>,
 ) {
 
     val navigator: Navigator? = LocalNavigator.current
     val cardColor = AppColors.bg.surface
+
+
+    val noTitleMessage = stringResource(Res.string.jadval_nomini_kiriting)
+    val noRuleMessage = stringResource(Res.string.kamida_1_ta_shart_kiriting)
+    val noAppWebMessage = stringResource(Res.string.kamida_1_ta_ilova_kategoriya_yoki_sayt_tanlang)
+    val toast = LocalToastHost.current
+
+    LaunchedEffect(Unit) {
+        effect.collect { eff->
+            when(eff){
+                PolicySetupEffect.NoTitleToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noTitleMessage
+                        )
+                    )
+                }
+                PolicySetupEffect.NoRuleSelectedToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noRuleMessage
+                        )
+                    )
+                }
+                PolicySetupEffect.NoAppWebSelectedToast -> {
+                    toast.show(
+                        toast = ToastData(
+                            type = ToastType.Warning,
+                            title = noAppWebMessage
+                        )
+                    )
+                }
+            }
+        }
+    }
+
 
     var showCloseConfirmDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
@@ -536,8 +585,15 @@ fun PolicySetupUi(
                 }
             }
             Space(12.dp)
+
+            val blockWhiteText = if (sharedState.policyAction == PolicyAction.DENY)
+                stringResource(Res.string.bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang)
+            else
+                stringResource(Res.string.oq_royxat_uchun_kerakli_ilovalar_va_saytlarni_tanlang)
+
+
             Text(
-                text = stringResource(Res.string.bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang),
+                text = blockWhiteText,
                 style = AppTypography.bodyLgMedium,
                 color = AppColors.text.primary,
                 modifier = Modifier
@@ -671,7 +727,6 @@ fun PolicySetupUi(
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ){
                 CustomButtonNew(
-                    enabled = sharedState.canSavePolicy,
                     text = stringResource(Res.string.saqlash),
                     onClick = { event(PolicySetupEvent.SavePolicy(sharedState)) },
                     modifier = Modifier
@@ -733,17 +788,20 @@ private fun buildLimitRuleSubtitle(sharedState: PolicySharedState): String {
 @Composable
 private fun PreviewTableScreen() {
     TikonchaParentTheme(ThemeMode.DARK) {
-        PolicySetupUi(
-            state = PolicySetupState(),
-            event = {},
-            sharedState = PolicySharedState(
-                locationRule = LocationRule(
-                    geoType = GeoType.CIRCLE,
-                    reverse = false
-                )
-            ),
-            sharedEvent = {}
-        )
+        ToastProvider {
+            PolicySetupUi(
+                state = PolicySetupState(),
+                event = {},
+                sharedState = PolicySharedState(
+                    locationRule = LocationRule(
+                        geoType = GeoType.CIRCLE,
+                        reverse = false
+                    )
+                ),
+                sharedEvent = {},
+                effect = emptyFlow()
+            )
+        }
     }
 
 }
