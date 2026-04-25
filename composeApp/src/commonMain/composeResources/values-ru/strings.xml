@@ -450,4 +450,22 @@
     <string name="tanga_s">%1$s монет</string>
     <string name="farzand_ulan_di">Ваш ребёнок успешно подключён, теперь вы можете спокойно контролировать его цифровую жизнь</string>
     <string name="confirm_code_instruction">Этот код должен быть введён вашим ребёнком в разделе «Добавить родителя» в приложении "Tikoncha".</string>
+    <string name="tikoncha_promo">Управляйте приложениями, временем и использованием с помощью Tikoncha. Используйте Plus без ограничений и включите максимальную защиту с режимом Щита.</string>
+    <string name="price_uzs">%1$s СУМ</string>
+    <string name="eng_foydali_tanlov">Лучший выбор</string>
+    <string name="cheksiz_jadval">Неограниченное расписание</string>
+    <string name="toliq_nazorat_statistika">Полный контроль и статистика</string>
+    <string name="farzand_ilova_kuzatish">Отслеживайте, какими приложениями и сколько времени пользуется ваш ребёнок в течение дня.</string>
+    <string name="uchtagacha_jadval">Создание до 3 расписаний</string>
+    <string name="jadval_cheklovlar">Устанавливайте отдельные ограничения для дня, недели или специальных периодов.</string>
+    <string name="qattiq_bloklash_qalqon">Жёсткая блокировка (режим «Щит»)</string>
+    <string name="farzand_cheklov_ozgartira_olmaydi">Ваш ребёнок не сможет отключить или изменить ограничения.</string>
+    <string name="tez_bloklash_timer">Быстрая блокировка (Таймер)</string>
+    <string name="vaqtinchalik_bloklash_tezi">При необходимости включайте временную блокировку за несколько секунд.</string>
+    <string name="hisobot_tahlil">Отчёты и аналитика</string>
+    <string name="farzand_nazorat_tavsifi">Контролируйте использование телефона вашим ребёнком. Блокируйте ненужные приложения, устанавливайте лимиты времени и создавайте безопасную среду.</string>
+    <string name="foydalanish_tahlil">Анализируйте привычки использования и помогайте их улучшать.</string>
+    <string name="istalgan_vaqtda_bekor">Можно отменить в любое время</string>
+    <string name="price_uzs_per_month">%1$s СУМ / месяц</string>
+    <string name="obuna_uchun_farzand_qoshilmagan">Подписка оформляется для вашего ребёнка. Чтобы продолжить, добавьте ребёнка.</string>
 </resources>

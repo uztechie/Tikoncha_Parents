@@ -50,6 +50,7 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.platform.isIos
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
@@ -72,7 +73,7 @@ class PaymentTypeScreen(
     override fun Content() {
 
         val navigator = LocalNavigator.current
-        
+
         val viewModel = koinScreenModel<PaymentViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
@@ -101,7 +102,6 @@ fun PaymentTypeScreenUi(
     var selectedPayment by remember { mutableStateOf("") }
 
     var isSelected by remember { mutableStateOf(false) }
-
     if (selectedPayment.isNotEmpty()) {
         isSelected = true
     }
@@ -113,18 +113,19 @@ fun PaymentTypeScreenUi(
     val applePaymentLoading = state.applePaymentResponseState is ResponseState.Loading
     val applePaymentError = state.applePaymentResponseState.errorText()
     val applePaymentSuccess = state.applePaymentResponseState is ResponseState.Success
+
     LoadingDialog(paymentLoading || applePaymentLoading)
 
 
-    var showPromoCodeDialog by remember() {
+    var showPromoCodeDialog by remember {
         mutableStateOf(false)
     }
 
-    var showCreatePaymentErrorDialog by remember() {
+    var showCreatePaymentErrorDialog by remember {
         mutableStateOf(false)
     }
 
-    var showAppleCreatePaymentErrorDialog by remember() {
+    var showAppleCreatePaymentErrorDialog by remember {
         mutableStateOf(false)
     }
 
@@ -148,11 +149,27 @@ fun PaymentTypeScreenUi(
         showPaymentCompletedDialog = state.paymentStatus == PaymentStatus.COMPLETED
     }
 
-    LaunchedEffect(applePaymentSuccess){
-        if (applePaymentSuccess && AppSettings.isTestAccount){
+    LaunchedEffect(applePaymentSuccess) {
+        if (applePaymentSuccess && AppSettings.isTestAccount) {
             navigator?.pop()
         }
     }
+
+    CustomDialog(
+        showCloseButton = true,
+        show = state.showChildSelectionDialog,
+        title = stringResource(Res.string.diqqat),
+        buttonText = stringResource(Res.string.farzand_qo_shish),
+        painter = painterResource(Res.drawable.dialog_info),
+        message = stringResource(Res.string.obuna_uchun_farzand_qoshilmagan),
+        onDismiss = {
+            event(PaymentEvent.DismissChildSelectionDialog)
+        },
+        onButtonClick = {
+            event(PaymentEvent.DismissChildSelectionDialog)
+            navigator?.push(AddChildScreen())
+        }
+    )
 
     PromoCodeDialog(
         show = showPromoCodeDialog,
@@ -270,9 +287,11 @@ fun PaymentTypeScreenUi(
 //                    paymentType = PaymentType.Click,
                     isSelected = state.selectedPaymentType == PaymentType.Click,
                     onClick = {
-                        event(PaymentEvent.SetPaymentType(
-                            PaymentType.Click
-                        ))
+                        event(
+                            PaymentEvent.SetPaymentType(
+                                PaymentType.Click
+                            )
+                        )
                     }
                 )
 
@@ -307,7 +326,7 @@ fun PaymentTypeScreenUi(
 //            }
 //            SpaceMedium()
 
-            val paymentType = when(state.selectedPaymentType){
+            val paymentType = when (state.selectedPaymentType) {
                 PaymentType.Click -> "Click"
                 PaymentType.AppStore -> "App Store"
                 null -> ""
@@ -340,10 +359,9 @@ fun PaymentTypeScreenUi(
                         fontWeight = FontWeight.SemiBold
                     )
                 ) {
-                    val text = if (state.subscriptionDuration == SubscriptionDuration.MONTHLY){
+                    val text = if (state.subscriptionDuration == SubscriptionDuration.MONTHLY) {
                         stringResource(Res.string.oylik)
-                    }
-                    else{
+                    } else {
                         stringResource(Res.string.yillik)
                     }
                     append(text = text)
@@ -358,7 +376,7 @@ fun PaymentTypeScreenUi(
                         RoundedCornerShape(TextFieldCornerRadius)
                     )
                     .padding(16.dp)
-            ){
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -389,28 +407,24 @@ fun PaymentTypeScreenUi(
 
                     Spacer(Modifier.weight(1f))
 
-                    var paymentStatus = if (state.paymentStatus == PaymentStatus.COMPLETED){
+                    var paymentStatus = if (state.paymentStatus == PaymentStatus.COMPLETED) {
                         stringResource(Res.string.tolandi)
-                    }
-                    else if (state.paymentStatus == PaymentStatus.PENDING){
+                    } else if (state.paymentStatus == PaymentStatus.PENDING) {
                         stringResource(Res.string.tolov_kutilmoqda)
-                    }
-                    else{
+                    } else {
                         stringResource(Res.string.tolanmagan)
                     }
 
-                    val paymentStatusColor = if (state.paymentStatus == PaymentStatus.COMPLETED){
+                    val paymentStatusColor = if (state.paymentStatus == PaymentStatus.COMPLETED) {
                         MaterialTheme.extendedColor.primaryColor
-                    }
-                    else if (state.paymentStatus == PaymentStatus.PENDING){
+                    } else if (state.paymentStatus == PaymentStatus.PENDING) {
                         ImportantButtonColor
 
-                    }
-                    else{
+                    } else {
                         OtpErrorColor
                     }
 
-                    if (state.paymentStatus == PaymentStatus.PENDING){
+                    if (state.paymentStatus == PaymentStatus.PENDING) {
                         CircularProgressIndicator(
                             modifier = Modifier
                                 .size(SmallIconSize),
@@ -450,7 +464,7 @@ fun PaymentTypeScreenUi(
                         stringResource(Res.string.promokodni_ishlatish)
                     }
                 }
-                val promoCodeLabelColor =  when (state.promoActivated) {
+                val promoCodeLabelColor = when (state.promoActivated) {
                     true -> {
                         MaterialTheme.extendedColor.primaryColor
                     }
@@ -473,7 +487,7 @@ fun PaymentTypeScreenUi(
                             interactionSource = null,
                             indication = null,
                             onClick = {
-                                if (!state.promoActivated){
+                                if (!state.promoActivated) {
                                     showPromoCodeDialog = true
                                 }
                             }
@@ -573,11 +587,7 @@ fun PaymentTypeScreenUi(
                             )
                         }
                     }
-
-
                 }
-
-
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -632,7 +642,7 @@ fun PaymentTypeScreenUi(
                             )
                             Spacer(Modifier.weight(1f))
                             CustomText(
-                                text =  "${state.amount.toCurrency()} ${stringResource(Res.string.som)}",
+                                text = "${state.amount.toCurrency()} ${stringResource(Res.string.som)}",
                                 fontSize = NormalTextSize,
                                 color = PrimaryColor,
                                 fontWeight = FontWeight.W600
@@ -666,7 +676,7 @@ fun PaymentTypeScreenUi(
 @Composable
 @Preview
 private fun Preview() {
-    TikonchaParentTheme(ThemeMode.LIGHT){
+    TikonchaParentTheme(ThemeMode.LIGHT) {
         PaymentTypeScreenUi(
             navigator = null,
             state = PaymentState(

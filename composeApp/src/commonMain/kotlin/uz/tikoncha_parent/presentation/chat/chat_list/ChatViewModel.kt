@@ -24,11 +24,11 @@ import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import kotlin.collections.filterNot
 import kotlin.collections.map
 
-class ChatViewModel (
+class ChatViewModel(
     private val chatListUseCase: GetChatListFromServerUseCase,
     private val observeEvents: ObserveChatEventUseCase,
     private val connectionManager: ChatConnectionManager
-): ScreenModel {
+) : ScreenModel {
 
     private var chatListJob: Job? = null
     private var eventsJob: Job? = null
@@ -38,14 +38,26 @@ class ChatViewModel (
 
     fun onEvent(event: ChatEvent) {
         when (event) {
-            ChatEvent.Refresh -> getChatList()
+            ChatEvent.Refresh -> {
+                getChatList()
+            }
+
             is ChatEvent.OnScreenOpened -> {
                 connectionManager.acquire(event.screen)
                 startObserveEvents()
                 getChatList()
             }
+
             is ChatEvent.OnScreenClosed -> {
                 connectionManager.release(event.screen)
+            }
+
+            ChatEvent.ClearError -> {
+                _state.update {
+                    it.copy(
+                        error = null
+                    )
+                }
             }
         }
     }
@@ -64,7 +76,6 @@ class ChatViewModel (
     }
 
 
-
     private fun getChatList() {
 
         _state.update { it.copy(loading = true, error = "") }
@@ -77,19 +88,21 @@ class ChatViewModel (
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            error = result.message,
-                            loading = false
+                            loading = false,
+                            hasLoadedOnce = true,
+                            error = result.message
                         )
                     }
                 }
 
                 is Resource.Success -> {
+                    val chats = result.data?.map { it.toChatUi() }.orEmpty()
                     _state.update {
                         it.copy(
                             error = "",
+                            chats = chats,
                             loading = false,
-                            chats = result.data
-                                .map { it.toChatUi() }
+                            hasLoadedOnce = true
                         )
                     }
                 }
@@ -133,6 +146,4 @@ class ChatViewModel (
             )
         }
     }
-
-
 }

@@ -15,11 +15,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +32,7 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -39,11 +42,13 @@ import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import uz.tikoncha_parent.common.Util.normalizePhone
 import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
 import uz.tikoncha_parent.presentation.profile.child_user_edit.EditScreen
 import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInfoItem
+import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.PrimaryColor
@@ -111,56 +116,71 @@ fun ChildrenUi(
         navigationBarColor = AppColors.bg.page
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.page)
-    ) {
-        CustomHeader(
-            title = stringResource(Res.string.farzandlaringiz),
-            showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            refreshScope.launch {
+                isRefreshing = true
+                event(ProfileEvent.Refresh)
+                delay(500)
+                isRefreshing = false
             }
-        )
-
-        if (state.children.isEmpty()){
-            AppEmptyList(
-                title = stringResource(Res.string.farzand_qoshilmagan),
-                message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
-            )
         }
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(ContainerPadding),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(systemBars.modifier)
+                .background(AppColors.bg.page)
         ) {
-            items(state.children, key = {it.userId}) { userInfo ->
-                val isHighlighted = userInfo.userId == highlightedUserId
-                val borderColor by animateColorAsState(
-                    targetValue = if (isHighlighted) PrimaryColor else Color.Transparent,
-                    animationSpec = tween(600),
-                    label = "highlightBorder"
-                )
+            CustomHeader(
+                title = stringResource(Res.string.farzandlaringiz),
+                showBackButton = true,
+                onBackClick = {
+                    navigator?.pop()
+                }
+            )
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            width = 2.dp,
-                            color = borderColor,
-                            shape = RoundedCornerShape(CardCornerRadius)
-                        )
-                ) {
-                    PersonalInfoItem(
-                        userInfo,
-                        onEdit = {
-                            navigator?.push(EditScreen(userInfo))
-                        }
+            if (state.children.isEmpty()) {
+                AppEmptyList(
+                    title = stringResource(Res.string.farzand_qoshilmagan),
+                    message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
+                )
+            }
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(ContainerPadding),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(state.children, key = { it.userId }) { userInfo ->
+                    val isHighlighted = userInfo.userId == highlightedUserId
+                    val borderColor by animateColorAsState(
+                        targetValue = if (isHighlighted) PrimaryColor else Color.Transparent,
+                        animationSpec = tween(600),
+                        label = "highlightBorder"
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                width = 2.dp,
+                                color = borderColor,
+                                shape = RoundedCornerShape(CardCornerRadius)
+                            )
+                    ) {
+                        PersonalInfoItem(
+                            userInfo,
+                            onEdit = {
+                                navigator?.push(EditScreen(userInfo))
+                            }
+                        )
+                    }
                 }
             }
         }

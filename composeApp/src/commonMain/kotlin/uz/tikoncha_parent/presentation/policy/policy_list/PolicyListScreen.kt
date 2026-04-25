@@ -12,11 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -29,6 +31,8 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -60,6 +64,7 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -111,9 +116,9 @@ class PolicyListScreen : Screen {
 fun PolicyListUi(
     navigator: Navigator?,
     state: PolicyState,
+    sharedState: PolicySharedState,
     event: (PolicyEvent) -> Unit = {},
     sharedEvent: (PolicySharedEvent) -> Unit = {},
-    sharedState: PolicySharedState,
 ){
     val loading = state.policyResponseState is ResponseState.Loading
     val errorText = state.policyResponseState.errorText()
@@ -162,100 +167,129 @@ fun PolicyListUi(
         navigationBarColor = AppColors.bg.secondary
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.secondary)
-    ) {
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
 
-        CustomHeader(
-            title = stringResource(Res.string.sizning_cheklovlaringiz),
-            showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentPadding = PaddingValues(10.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-
-            item {
-                if (state.policies.isEmpty() && !loading){
-                    CreatePolicyCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .simpleShadow(),
-                        onClick = {
-                            if (state.canCreatePolicy) {
-                                sharedEvent(PolicySharedEvent.ClearData)
-                                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
-                                state.selectedChild?.let { child -> sharedEvent(PolicySharedEvent.SetSelectedChild(child)) }
-                                navigator?.push(PolicySetupScreen())
-                            }
-                            else {
-                                showPolicyLimitDialog = true
-                            }
-                        }
-                    )
-                }
-
-            }
-
-            items(state.policies){
-                PolicyListItem(
-                    modifier = Modifier,
-                    policy = it,
-                    onClick = {
-                        sharedEvent(PolicySharedEvent.ClearData)
-                        state.selectedChild?.let { child -> sharedEvent(PolicySharedEvent.SetSelectedChild(child)) }
-                        sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
-                        sharedEvent(PolicySharedEvent.SetPolicy(it))
-                        navigator?.push(
-                            PolicySetupScreen(
-                            )
-                        )
-                    }
-                )
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            refreshScope.launch {
+                isRefreshing = true
+                event(PolicyEvent.RefreshPolicies)
+                delay(500)
+                isRefreshing = false
             }
         }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(systemBars.modifier)
+                .background(AppColors.bg.secondary)
+        ) {
 
-        if (state.policies.isNotEmpty()){
-            Box(
+            CustomHeader(
+                title = stringResource(Res.string.sizning_cheklovlaringiz),
+                showBackButton = true,
+                onBackClick = {
+                    navigator?.pop()
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-            ){
-                CustomButtonNew(
-                    onClick = {
-                        if (state.canCreatePolicy) {
+                    .weight(1f),
+                contentPadding = PaddingValues(10.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                item {
+                    if (state.policies.isEmpty() && !loading) {
+                        CreatePolicyCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .simpleShadow(),
+                            onClick = {
+                                if (state.canCreatePolicy) {
+                                    sharedEvent(PolicySharedEvent.ClearData)
+                                    sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
+                                    state.selectedChild?.let { child ->
+                                        sharedEvent(
+                                            PolicySharedEvent.SetSelectedChild(child)
+                                        )
+                                    }
+                                    navigator?.push(PolicySetupScreen())
+                                } else {
+                                    showPolicyLimitDialog = true
+                                }
+                            }
+                        )
+                    }
+                }
+
+                items(state.policies) {
+                    PolicyListItem(
+                        modifier = Modifier,
+                        policy = it,
+                        onClick = {
                             sharedEvent(PolicySharedEvent.ClearData)
-                            state.selectedChild?.let { child -> sharedEvent(PolicySharedEvent.SetSelectedChild(child)) }
+                            state.selectedChild?.let { child ->
+                                sharedEvent(
+                                    PolicySharedEvent.SetSelectedChild(
+                                        child
+                                    )
+                                )
+                            }
                             sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
+                            sharedEvent(PolicySharedEvent.SetPolicy(it))
                             navigator?.push(
                                 PolicySetupScreen(
                                 )
                             )
                         }
-                        else{
-                            showPolicyLimitDialog = true
-                        }
-                    },
-                    text = stringResource(Res.string.jadval_qoshish),
+                    )
+                }
+            }
+
+            if (state.policies.isNotEmpty()) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                )
+                        .background(
+                            AppColors.bg.elevated,
+                            RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ) {
+                    CustomButtonNew(
+                        onClick = {
+                            if (state.canCreatePolicy) {
+                                sharedEvent(PolicySharedEvent.ClearData)
+                                state.selectedChild?.let { child ->
+                                    sharedEvent(
+                                        PolicySharedEvent.SetSelectedChild(
+                                            child
+                                        )
+                                    )
+                                }
+                                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
+                                navigator?.push(
+                                    PolicySetupScreen(
+                                    )
+                                )
+                            } else {
+                                showPolicyLimitDialog = true
+                            }
+                        },
+                        text = stringResource(Res.string.jadval_qoshish),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
             }
+
+
         }
-
-
-
     }
 }
 

@@ -1,53 +1,56 @@
 package uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.common.*
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.add_child.AddChildScreen
-import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentTypeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
-import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
     @Composable
@@ -80,16 +83,12 @@ fun SubscriptionPaymentUi(
     event: (SubscriptionPaymentEvent) -> Unit,
 
 ) {
-
-    var showButtonSheetState by remember { mutableStateOf(false) }
     val planLoading = state.subscriptionPlanState is ResponseState.Loading
     val planErrorText = state.subscriptionPlanState.errorText()
-
+    var showPlanErrorDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     LoadingDialog(planLoading)
-    var showPlanErrorDialog by remember() {
-        mutableStateOf(false)
-    }
 
     LaunchedEffect(planErrorText) {
         if (planErrorText.isNotEmpty()) {
@@ -114,15 +113,6 @@ fun SubscriptionPaymentUi(
         }
     )
 
-
-
-
-
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-
-
     CustomListDialog(
         title = stringResource(Res.string.farzandingiz),
         items = state.children,
@@ -135,183 +125,209 @@ fun SubscriptionPaymentUi(
         }
     )
 
-    val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.page,
-        navigationBarColor = AppColors.bg.page
+    var selectedPlan by rememberSaveable { mutableIntStateOf(0) } // 0 = Yillik, 1 = Oylik
+
+    val bgGradient = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFFC3955B),
+            Color(0xFF291E0F),
+        )
     )
 
-    Column(
+    val subscription = state.subscriptionUi
+    val hasSubscription = state.currentPlan != SubscriptionType.FREE
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.page)
+            .background(brush = bgGradient)
     ) {
-
-        CustomHeader(
-            title = stringResource(Res.string.obuna),
-            showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            },
-            trailingIcon = {
-                SpaceMedium()
-
-                ChildSelectionButton(
-                    modifier = Modifier
-                        .widthIn(120.dp, 160.dp),
-                    text = state.selectedChild?.name?:"",
-                    label = stringResource(Res.string.farzandingizni_tanlang),
-                    imageUrl = state.selectedChild?.avatarUrl?:"",
-                    onClick = {
-                        if (state.children.isEmpty()) {
-                            navigator?.push(AddChildScreen())
-                        } else {
-                            showDialog = true
-                        }
-                    },
-                )
-            }
-        )
-
-
+        // ── Scrollable content ─────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(ContainerPadding)
-                .verticalScroll(rememberScrollState())
+                .statusBarsPadding()
+                .verticalScroll(rememberScrollState()),
         ) {
-
-
+            // Close button
+            Box(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.2f))
+                    .singleClick {
+                        navigator?.pop()
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.close_remove),
+                    contentDescription = "Close",
+                    tint = AppColors.icon.inverse,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        MaterialTheme.extendedColor.cardColor,
-                        RoundedCornerShape(CardCornerRadius)
-                    )
-                    .padding(ContainerPadding),
+                    .padding(top = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
+                Image(
+                    painter = painterResource(Res.drawable.tikoncha_plus_new),
+                    contentDescription = "Tikoncha mascot",
+                    modifier = Modifier.size(140.dp)
+                )
+                Space(11.dp)
+
+                Image(
+                    painter = painterResource(Res.drawable.subskription_tikoncha_plus),
+                    contentDescription = "Tikoncha PLUS",
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(188.dp)
+                        .height(42.dp)
+                )
+                Space(12.dp)
+
+                Text(
+                    text = stringResource(Res.string.farzand_nazorat_tavsifi),
+                    fontSize = 14.sp,
+                    color = AppColors.text.inverse.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 20.sp,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+            }
+            Space(27.dp)
+
+            // ── Pricing cards ──────────────────────────────
+            if (subscription != null) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    SubscriptionPlanCard(
+                        title = stringResource(Res.string.yillik),
+                        pricePerMonth = subscription.annual.price / 12,
+                        totalPrice = subscription.annual.price,
+                        badgeText = stringResource(Res.string.eng_foydali_tanlov),
+                        isSelected = selectedPlan == 0,
+                        onClick = { selectedPlan = 0 }
+                    )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(NormalIconButtonSize)
-                                .clip(RoundedCornerShape(ShapeCornerRadius))
-                                .background(MaterialTheme.extendedColor.backgroundColor),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val painter = when (state.currentPlan) {
-                                SubscriptionType.FREE -> {
-                                    painterResource(Res.drawable.telegrams_star)
-                                }
-
-                                SubscriptionType.PLUS -> {
-                                    painterResource(Res.drawable.crown)
-                                }
-
-                                SubscriptionType.PRO -> {
-                                    painterResource(Res.drawable.crown)
-                                }
-                            }
-
-                            Icon(
-                                painter = painter,
-                                contentDescription = "",
-                                tint = PrimaryColor,
-                                modifier = Modifier
-                                    .fillMaxSize(0.6f)
-                            )
-                        }
-                        SpaceSmall()
-                        Column {
-                            CustomText(
-                                text = stringResource(Res.string.xozr_sizning_obunangiz),
-                                fontSize = SmallTextSize,
-                                fontWeight = FontWeight.W500,
-                                color = MaterialTheme.extendedColor.hintColor
-                            )
-
-                            val currentPlan = when (state.currentPlan) {
-                                SubscriptionType.FREE -> {
-                                    stringResource(Res.string.standart)
-                                }
-
-                                SubscriptionType.PLUS -> {
-                                    "PLUS"
-                                }
-
-                                SubscriptionType.PRO -> {
-                                    "PRO"
-                                }
-                            }
-
-                            CustomText(
-                                text = currentPlan,
-                                fontSize = NormalTextSize,
-                                fontWeight = FontWeight.SemiBold,
-                                color = PrimaryColor
-                            )
-                        }
-                    }
-
-                    SpaceSmall()
-
-                    CustomText(
-                        text = stringResource(Res.string.ilovaning_barcha_funksiyalaridan_foydalanish_uchun_pro_versiyasini_sotib_oling),
-                        fontSize = SmallTextSize,
-                        color = MaterialTheme.extendedColor.hintColor,
-
+                    SubscriptionPlanCard(
+                        title = stringResource(Res.string.oylik),
+                        pricePerMonth = subscription.monthly.price,
+                        totalPrice = null,
+                        badgeText = null,
+                        isSelected = selectedPlan == 1,
+                        onClick = { selectedPlan = 1 }
                     )
                 }
             }
+            Space(16.dp)
 
-            SpaceMedium()
-            CustomText(
-                text = stringResource(Res.string.baxtli_foydalanuvchimisiz),
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.SemiBold,
-            )
-            SpaceMedium()
-            if (state.subscriptionUi != null) {
-                SubscriptionPaymentItem(
-                    subscriptionUi = state.subscriptionUi,
-                    onClick = {
-                        showButtonSheetState = true
-                    }
-                )
-            }
-        }
-    }
-    if (showButtonSheetState && state.subscriptionUi != null) {
-        val hasUserSubscription = AppSettings.userSubscriptionMap.get(state.selectedChild?.phoneNumber)
-        Logger.d("SubscriptionPaymentScreen", "currentPlan=${state.currentPlan}, isTestAccount=${AppSettings.isTestAccount} hasUserSubscription=${hasUserSubscription}")
-        SubscriptionBottomSheet(
-            hasSubscription = state.currentPlan == SubscriptionType.PLUS || (AppSettings.isTestAccount && hasUserSubscription == true),
-            visible = showButtonSheetState,
-            subscription = state.subscriptionUi,
-            onDismiss = {
-                showButtonSheetState = false
-            },
-            onByClick = { price, tier, planId ->
-                showButtonSheetState = false
-                navigator?.push(
-                    PaymentTypeScreen(
-                        amount = price,
-                        subDuration = tier,
-                        planId = planId
+            // ── Feature list ───────────────────────────────
+            if (subscription != null) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .background(Color.White.copy(0.05f), RoundedCornerShape(24.dp))
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    SubscriptionFeatureItem(
+                        iconRes = Res.drawable.chart_sub,
+                        title = stringResource(Res.string.toliq_nazorat_statistika),
+                        description = stringResource(Res.string.farzand_ilova_kuzatish)
                     )
-                )
+
+                    SubscriptionFeatureItem(
+                        iconRes = Res.drawable.layers_sub,
+                        title = stringResource(Res.string.uchtagacha_jadval),
+                        description = stringResource(Res.string.jadval_cheklovlar)
+                    )
+
+                    SubscriptionFeatureItem(
+                        iconRes = Res.drawable.circle_star,
+                        title = stringResource(Res.string.qattiq_bloklash_qalqon),
+                        description = stringResource(Res.string.farzand_cheklov_ozgartira_olmaydi)
+                    )
+
+                    SubscriptionFeatureItem(
+                        iconRes = Res.drawable.lock_sub,
+                        title = stringResource(Res.string.tez_bloklash_timer),
+                        description = stringResource(Res.string.vaqtinchalik_bloklash_tezi)
+                    )
+
+                    SubscriptionFeatureItem(
+                        iconRes = Res.drawable.attach_sub,
+                        title = stringResource(Res.string.hisobot_tahlil),
+                        description = stringResource(Res.string.foydalanish_tahlil)
+                    )
+                }
             }
+            Space(24.dp)
+            Space(130.dp)
+        }
+
+        // ── Bottom button ──────────────────────────────────
+        val bottomGradient = Brush.verticalGradient(
+            colors = listOf(
+                Color.Transparent,
+                Color(0xFF141A15).copy(alpha = 0.3f),
+                Color(0xFF141A15).copy(alpha = 0.7f),
+                Color(0xFF141A15).copy(alpha = 0.95f),
+                Color(0xFF141A15),
+            )
         )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(bottomGradient)
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .padding(horizontal = 18.dp)
+                .padding(top = 13.dp, bottom = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomButton(
+                enabled = !hasSubscription && subscription != null,
+                text = if (hasSubscription) stringResource(Res.string.obuna_faollashtirilgan)
+                else stringResource(Res.string.obuna_bolish),
+                onClick = {
+                    subscription?.let { sub ->
+                        val plan = if (selectedPlan == 0) sub.annual else sub.monthly
+                        val duration = if (selectedPlan == 0)
+                            SubscriptionDuration.ANNUAL
+                        else
+                            SubscriptionDuration.MONTHLY
+
+                        navigator?.push(
+                            PaymentTypeScreen(
+                                amount = plan.price,
+                                subDuration = duration,
+                                planId = sub.planId
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Space(12.dp)
+
+            Text(
+                text = stringResource(Res.string.istalgan_vaqtda_bekor),
+                style = AppTypography.bodyMdMedium,
+                color = AppColors.text.inverse,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

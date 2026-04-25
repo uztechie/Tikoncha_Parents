@@ -6,5 +6,6 @@ import uz.tikoncha_parent.presentation.model.ChatUi
 data class ChatState(
     val loading: Boolean = false,
     val error: String? = null,
-    val chats: List<ChatUi> = emptyList()
+    val chats: List<ChatUi> = emptyList(),
+    val hasLoadedOnce: Boolean = false,
 )

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.*
 import uz.tikoncha_parent.ui.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.painterResource
@@ -22,6 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.click_pay
 import uz.tikoncha_parent.presentation.base.CustomRadio
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.simpleShadow
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -38,9 +40,10 @@ fun PaymentOption(
     Box(
         modifier = modifier
             .height(64.dp)
+            .clip(RoundedCornerShape(16.dp))
             .simpleShadow(RoundedCornerShape(16.dp))
             .background(AppColors.bg.surface, RoundedCornerShape(16.dp))
-            .clickable { onClick() }
+            .singleClick { onClick() }
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -56,7 +59,7 @@ fun PaymentOption(
             )
             CustomRadio(
                 checked = isSelected,
-                onChecked = { }
+                onChecked = { onClick() }
             )
         }
     }

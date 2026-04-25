@@ -144,7 +144,7 @@ object Util {
         return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
-    fun Int.toCurrency(): String{
+    fun Int.toCurrency(divider: Char = ','): String{
         val isNegative = this < 0
         val digits = kotlin.math.abs(this).toString()
 
@@ -155,7 +155,7 @@ object Util {
             sb.append(digits[i])
             count++
             if (count == 3 && i != 0){
-                sb.append(",")
+                sb.append(divider)
                 count = 0
             }
         }

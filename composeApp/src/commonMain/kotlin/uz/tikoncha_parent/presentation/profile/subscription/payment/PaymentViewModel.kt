@@ -50,15 +50,26 @@ class PaymentViewModel(
     fun onEvent(event: PaymentEvent){
         when(event){
             PaymentEvent.Pay -> {
-                when(state.value.selectedPaymentType){
-                    PaymentType.Click -> {
-                        requestPayment()
+                if (AppSettings.selectedChild?.userId.isNullOrBlank()) {
+                    _state.update {
+                        it.copy(
+                            showChildSelectionDialog = true
+                        )
                     }
-                    PaymentType.AppStore -> {
-                        requestApplyPay()
-                    }
-                    null -> {
+                    return
+                } else {
+                    when (state.value.selectedPaymentType) {
+                        PaymentType.Click -> {
+                            requestPayment()
+                        }
 
+                        PaymentType.AppStore -> {
+                            requestApplyPay()
+                        }
+
+                        null -> {
+
+                        }
                     }
                 }
             }
@@ -123,6 +134,13 @@ class PaymentViewModel(
                 }
             }
 
+            PaymentEvent.DismissChildSelectionDialog -> {
+                _state.update {
+                    it.copy(
+                        showChildSelectionDialog = false
+                    )
+                }
+            }
         }
     }
 

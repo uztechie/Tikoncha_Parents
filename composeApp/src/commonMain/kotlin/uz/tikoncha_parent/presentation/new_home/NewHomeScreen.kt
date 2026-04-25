@@ -21,11 +21,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +42,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -52,7 +56,6 @@ import tikoncha_parents.composeapp.generated.resources.linkedin_icon
 import tikoncha_parents.composeapp.generated.resources.notification
 import tikoncha_parents.composeapp.generated.resources.profile
 import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
-import uz.tikoncha_parent.App
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
@@ -91,8 +94,6 @@ import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.Space
-import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -147,6 +148,7 @@ class NewHomeScreen : Screen {
             state = state.value,
             event = event,
             statisticState = statisticState.value,
+            statisticEvent = statisticEvent,
             appUpdateState = updateState,
             appUpdateEvent = updateEvent
         )
@@ -159,6 +161,7 @@ fun NewHomeUi(
     state: HomeState,
     event: (HomeEvent) -> Unit,
     statisticState: StatisticState,
+    statisticEvent: (StatisticEvent) -> Unit = {},
     appUpdateState: UpdateUiState = UpdateUiState(),
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
@@ -177,7 +180,7 @@ fun NewHomeUi(
     }
     val noChild = state.childrenList.isEmpty()
 
-    val tableCount = state.blockedAppCount
+    val tableCount = state.parentPolicyCount
     val taskCount = state.activeTaskCount
 
     val childrenLoading = state.childrenResponseState is ResponseState.Loading
@@ -211,361 +214,382 @@ fun NewHomeUi(
         navigationBarColor = AppColors.bg.page
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.page)
-    ) {
-        Row(
-            modifier = Modifier
-                .background(Color.Transparent)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
 
-            ChildSelectionButton(
-                text = state.selectedChild?.name ?: "",
-                imageUrl = state.selectedChild?.avatarUrl ?: "",
-                label = stringResource(Res.string.farzand_qo_shish),
-                trailingIcon = state.childrenList.isNotEmpty(),
-                modifier = Modifier
-                    .height(40.dp)
-                    .widthIn(120.dp, 160.dp),
-                onClick = {
-                    if (state.childrenList.isEmpty()) {
-                        navigator?.push(AddChildScreen())
-                    } else {
-                        showDialog = true
-                    }
-                },
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(44.dp)
-                    .background(AppColors.bg.surfaceTertiary)
-                    .clickable {
-                        navigator?.push(NotificationScreen())
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.notification),
-                    contentDescription = "",
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
-                    modifier = Modifier
-                        .size(NormalIconSize)
-                )
-            }
-            SpaceUltraSmall()
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(44.dp)
-                    .background(AppColors.bg.surfaceTertiary)
-                    .clickable {
-                        navigator?.push(ProfileScreen())
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.profile),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(NormalIconSize),
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor)
-                )
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            refreshScope.launch {
+                isRefreshing = true
+                event(HomeEvent.GetChildren)
+                statisticEvent(StatisticEvent.RefreshChild)
+                statisticEvent(StatisticEvent.GetAppUsage)
+                delay(500)
+                isRefreshing = false
             }
         }
-
-
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(systemBars.modifier)
+                .background(AppColors.bg.page)
         ) {
+            Row(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            item {
-                if (count > 0) {
+                ChildSelectionButton(
+                    text = state.selectedChild?.name ?: "",
+                    imageUrl = state.selectedChild?.avatarUrl ?: "",
+                    label = stringResource(Res.string.farzand_qo_shish),
+                    trailingIcon = state.childrenList.isNotEmpty(),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .widthIn(120.dp, 160.dp),
+                    onClick = {
+                        if (state.childrenList.isEmpty()) {
+                            navigator?.push(AddChildScreen())
+                        } else {
+                            showDialog = true
+                        }
+                    },
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(44.dp)
+                        .background(AppColors.bg.surfaceTertiary)
+                        .clickable {
+                            navigator?.push(NotificationScreen())
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.notification),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
+                        modifier = Modifier
+                            .size(NormalIconSize)
+                    )
+                }
+                SpaceUltraSmall()
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(44.dp)
+                        .background(AppColors.bg.surfaceTertiary)
+                        .clickable {
+                            navigator?.push(ProfileScreen())
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.profile),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(NormalIconSize),
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor)
+                    )
+                }
+            }
+
+
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+            ) {
+
+                item {
+                    if (count > 0) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .simpleShadow(RoundedCornerShape(CardCornerRadius))
+                                .background(
+                                    MaterialTheme.extendedColor.cardColor,
+                                    RoundedCornerShape(CardCornerRadius)
+                                )
+                                .clip(RoundedCornerShape(CardCornerRadius))
+                                .clickable {
+                                    navigator?.push(ParentRequestScreen())
+                                }
+                                .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CustomText(
+                                text = stringResource(Res.string.sorovlar),
+                                fontSize = LargeTextSize,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (count > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(OtpErrorColor, CircleShape)
+                                        .size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CustomText(
+                                        text = if (count > 99) "99" else count.toString(),
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
+                                        maxLines = 1,
+                                        fontSize = SmallTextSize
+                                    )
+                                }
+                            }
+                        }
+                        Space(12.dp)
+                    }
+                }
+
+                item {
+                    InAppUpdateCard(
+                        modifier = Modifier
+                            .padding(bottom = 16.dp),
+                        state = appUpdateState,
+                        event = appUpdateEvent
+                    )
+                }
+
+                item {
                     Row(
                         modifier = Modifier
+                            .clip(RoundedCornerShape(LargeCardCornerRadius))
                             .fillMaxWidth()
-                            .simpleShadow(RoundedCornerShape(CardCornerRadius))
+                            .height(HomeItemHeight)
                             .background(
-                                MaterialTheme.extendedColor.cardColor,
-                                RoundedCornerShape(CardCornerRadius)
+                                AppColors.section.tertiary,
+                                RoundedCornerShape(LargeCardCornerRadius)
                             )
-                            .clip(RoundedCornerShape(CardCornerRadius))
                             .clickable {
-                                navigator?.push(ParentRequestScreen())
+                                navigator?.push(StatisticScreen())
                             }
-                            .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+                            .padding(CardCornerPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        CustomText(
-                            text = stringResource(Res.string.sorovlar),
-                            fontSize = LargeTextSize,
-                            modifier = Modifier.weight(1f)
-                        )
-                        if (count > 0) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+
+                            val statUsageTime = buildString {
+                                append(
+                                    when {
+                                        statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute == 0 -> {
+                                            "0 ${stringResource(Res.string.daq)}"
+                                        }
+
+                                        statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute == 0 -> {
+                                            "${statisticState.todayUsage.hour} ${stringResource(Res.string.soat)}"
+                                        }
+
+                                        statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute > 0 -> {
+                                            "${statisticState.todayUsage.hour} ${stringResource(Res.string.s)}" +
+                                                    ", ${statisticState.todayUsage.minute} ${
+                                                        stringResource(
+                                                            Res.string.d
+                                                        )
+                                                    }"
+                                        }
+
+                                        statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute > 0 -> {
+                                            "${statisticState.todayUsage.minute} ${
+                                                stringResource(
+                                                    Res.string.daq
+                                                )
+                                            }"
+                                        }
+
+                                        else -> {
+                                            "0 ${stringResource(Res.string.daq)}"
+                                        }
+                                    }
+                                )
+                            }
+
+                            Text(
+                                text = statUsageTime,
+                                color = AppColors.text.primary,
+                                style = AppTypography.displaySmRegular
+                            )
+                            Text(
+                                text = stringResource(Res.string.bugun_sarfladi),
+                                color = AppColors.text.secondary,
+                                style = AppTypography.titleSmMedium,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
                             Box(
                                 modifier = Modifier
-                                    .background(OtpErrorColor, CircleShape)
-                                    .size(24.dp),
-                                contentAlignment = Alignment.Center
+                                    .fillMaxHeight(0.5f)
+                                    .background(
+                                        MaterialTheme.extendedColor.backgroundColor,
+                                        RoundedCornerShape(LargeCardCornerRadius)
+                                    )
+                                    .padding(6.dp),
+                                contentAlignment = Alignment.BottomCenter
                             ) {
-                                CustomText(
-                                    text = if (count > 99) "99" else count.toString(),
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
-                                    maxLines = 1,
-                                    fontSize = SmallTextSize
+                                Image(
+                                    painter = painterResource(Res.drawable.linkedin_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(SmallIconSize),
+                                    alignment = Alignment.BottomCenter,
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight(0.65f)
+                                    .background(
+                                        MaterialTheme.extendedColor.backgroundColor,
+                                        RoundedCornerShape(TextFieldCornerRadius)
+                                    )
+                                    .padding(6.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Image(
+                                    painter = painterResource(Res.drawable.whatsapp_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(SmallIconSize),
+                                    alignment = Alignment.BottomCenter,
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight(0.8f)
+                                    .background(
+                                        MaterialTheme.extendedColor.backgroundColor,
+                                        RoundedCornerShape(TextFieldCornerRadius)
+                                    )
+                                    .padding(6.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Image(
+                                    painter = painterResource(Res.drawable.instagram_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(SmallIconSize),
+                                    alignment = Alignment.BottomCenter,
                                 )
                             }
                         }
                     }
                     Space(12.dp)
                 }
-            }
 
-            item {
-                InAppUpdateCard(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp),
-                    state = appUpdateState,
-                    event = appUpdateEvent
-                )
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(LargeCardCornerRadius))
-                        .fillMaxWidth()
-                        .height(HomeItemHeight)
-                        .background(
-                            AppColors.section.tertiary,
-                            RoundedCornerShape(LargeCardCornerRadius)
-                        )
-                        .clickable {
-                            navigator?.push(StatisticScreen())
-                        }
-                        .padding(CardCornerPadding),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-
-                        val statUsageTime = buildString {
-                            append(
-                                when {
-                                    statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute == 0 -> {
-                                        "0 ${stringResource(Res.string.daq)}"
-                                    }
-
-                                    statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute == 0 -> {
-                                        "${statisticState.todayUsage.hour} ${stringResource(Res.string.soat)}"
-                                    }
-
-                                    statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute > 0 -> {
-                                        "${statisticState.todayUsage.hour} ${stringResource(Res.string.s)}" +
-                                                ", ${statisticState.todayUsage.minute} ${
-                                                    stringResource(
-                                                        Res.string.d
-                                                    )
-                                                }"
-                                    }
-
-                                    statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute > 0 -> {
-                                        "${statisticState.todayUsage.minute} ${stringResource(Res.string.daq)}"
-                                    }
-
-                                    else -> {
-                                        "0 ${stringResource(Res.string.daq)}"
-                                    }
-                                }
-                            )
-                        }
-
-                        Text(
-                            text = statUsageTime,
-                            color = AppColors.text.primary,
-                            style = AppTypography.displaySmRegular
-                        )
-                        Text(
-                            text = stringResource(Res.string.bugun_sarfladi),
-                            color = AppColors.text.secondary,
-                            style = AppTypography.titleSmMedium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-
+                item {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight(0.5f)
-                                .background(
-                                    MaterialTheme.extendedColor.backgroundColor,
-                                    RoundedCornerShape(LargeCardCornerRadius)
-                                )
-                                .padding(6.dp),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Image(
-                                painter = painterResource(Res.drawable.linkedin_icon),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(SmallIconSize),
-                                alignment = Alignment.BottomCenter,
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight(0.65f)
-                                .background(
-                                    MaterialTheme.extendedColor.backgroundColor,
-                                    RoundedCornerShape(TextFieldCornerRadius)
-                                )
-                                .padding(6.dp),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Image(
-                                painter = painterResource(Res.drawable.whatsapp_icon),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(SmallIconSize),
-                                alignment = Alignment.BottomCenter,
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight(0.8f)
-                                .background(
-                                    MaterialTheme.extendedColor.backgroundColor,
-                                    RoundedCornerShape(TextFieldCornerRadius)
-                                )
-                                .padding(6.dp),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Image(
-                                painter = painterResource(Res.drawable.instagram_icon),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(SmallIconSize),
-                                alignment = Alignment.BottomCenter,
-                            )
-                        }
-                    }
-                }
-                Space(12.dp)
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(LargeCardCornerRadius))
-                        .fillMaxWidth()
-                        .height(HomeItemHeight)
-                        .background(
-                            AppColors.section.tertiary,
-                            RoundedCornerShape(LargeCardCornerRadius)
-                        )
-                        .clickable {
-                            navigator?.push(TaskScreen())
-                        }
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
                         modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.topshiriqlar),
-                            color = AppColors.text.primary,
-                            style = AppTypography.displaySmRegular
-                        )
-                        Text(
-                            text = stringResource(Res.string.faol_vazifa, taskCount),
-                            color = AppColors.text.secondary,
-                            style = AppTypography.titleSmMedium,
-                        )
-                    }
-
-                    Image(
-                        painter = painterResource(Res.drawable.home_task),
-                        contentDescription = "",
-                        modifier = Modifier.size(HomeIconSize)
-                    )
-                }
-                Space(12.dp)
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(LargeCardCornerRadius))
-                        .fillMaxWidth()
-                        .height(HomeItemHeight)
-                        .background(
-                            AppColors.section.tertiary,
-                            RoundedCornerShape(LargeCardCornerRadius)
-                        )
-                        .clickable {
-                            navigator?.push(PolicyListScreen())
-                        }
-                        .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.jadvallar),
-                            color = AppColors.text.primary,
-                            style = AppTypography.displaySmRegular
-                        )
-                        Text(
-                            text = stringResource(Res.string.ilova_cheklangan, tableCount),
-                            color = AppColors.text.secondary,
-                            style = AppTypography.titleSmMedium,
-                        )
-                    }
-
-                    Image(
-                        painter = painterResource(Res.drawable.home_table),
-                        contentDescription = "",
-                        modifier = Modifier.size(HomeIconSize)
-                    )
-                }
-                Space(12.dp)
-            }
-
-            item {
-                NewHomeItem(
-                    onSettingSelected = { selectionItem ->
-                        when (selectionItem) {
-                            HomeSelectionItem.XARITA -> {
-                                navigator?.push(MapScreen())
+                            .clip(RoundedCornerShape(LargeCardCornerRadius))
+                            .fillMaxWidth()
+                            .height(HomeItemHeight)
+                            .background(
+                                AppColors.section.tertiary,
+                                RoundedCornerShape(LargeCardCornerRadius)
+                            )
+                            .clickable {
+                                navigator?.push(TaskScreen())
                             }
+                            .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.topshiriqlar),
+                                color = AppColors.text.primary,
+                                style = AppTypography.displaySmRegular
+                            )
+                            Text(
+                                text = stringResource(Res.string.faol_vazifa, taskCount),
+                                color = AppColors.text.secondary,
+                                style = AppTypography.titleSmMedium,
+                            )
+                        }
 
-                            HomeSelectionItem.SIHBAT -> {
-                                navigator?.push(ChatScreen())
+                        Image(
+                            painter = painterResource(Res.drawable.home_task),
+                            contentDescription = "",
+                            modifier = Modifier.size(HomeIconSize)
+                        )
+                    }
+                    Space(12.dp)
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(LargeCardCornerRadius))
+                            .fillMaxWidth()
+                            .height(HomeItemHeight)
+                            .background(
+                                AppColors.section.tertiary,
+                                RoundedCornerShape(LargeCardCornerRadius)
+                            )
+                            .clickable {
+                                navigator?.push(PolicyListScreen())
+                            }
+                            .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.jadvallar),
+                                color = AppColors.text.primary,
+                                style = AppTypography.displaySmRegular
+                            )
+                            Text(
+                                text = stringResource(Res.string.ilova_cheklangan, tableCount),
+                                color = AppColors.text.secondary,
+                                style = AppTypography.titleSmMedium,
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(Res.drawable.home_table),
+                            contentDescription = "",
+                            modifier = Modifier.size(HomeIconSize)
+                        )
+                    }
+                    Space(12.dp)
+                }
+
+                item {
+                    NewHomeItem(
+                        onSettingSelected = { selectionItem ->
+                            when (selectionItem) {
+                                HomeSelectionItem.XARITA -> {
+                                    navigator?.push(MapScreen())
+                                }
+
+                                HomeSelectionItem.SIHBAT -> {
+                                    navigator?.push(ChatScreen())
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

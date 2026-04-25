@@ -10,7 +10,7 @@ data class HomeState(
 
     val parentRequestCount: Int = 0,
     val activeTaskCount: Int = 0,
-    val blockedAppCount: Int = 0,
+    val parentPolicyCount: Int = 0,
 
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val appUsageResponseState: ResponseState<Nothing> = ResponseState.Idle,

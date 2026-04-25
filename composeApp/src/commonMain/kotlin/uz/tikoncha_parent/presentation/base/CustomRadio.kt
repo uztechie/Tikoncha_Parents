@@ -20,10 +20,12 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 fun CustomRadio(
     modifier: Modifier = Modifier,
     checked: Boolean,
-    onChecked: (Boolean) -> Unit
+    onChecked: (Boolean) -> Unit,
+    unCheckColor: Color = AppColors.icon.secondary,
+    checkColor: Color = AppColors.icon.accentPrimary,
 ) {
 
-    val color = if (checked) AppColors.icon.accentPrimary else AppColors.icon.secondary
+    val color = if (checked) checkColor else unCheckColor
 
     Box(
         modifier = modifier

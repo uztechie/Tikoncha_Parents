@@ -464,4 +464,20 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="kamida_1_ta_ilova_kategoriya_yoki_sayt_tanlang">Kamida 1 ta ilova, kategoriya yoki sayt tanlang</string>
     <string name="plus_obnuna_kerak">PLUS obuna kerak</string>
     <string name="oq_royxat_uchun_kerakli_ilovalar_va_saytlarni_tanlang">Oq ro‘yxat uchun kerakli ilovalar va saytlarni tanlang</string>
+    <string name="toliq_nazorat_statistika">To‘liq nazorat va statistika</string>
+    <string name="farzand_ilova_kuzatish">Farzandingiz kun davomida qaysi ilovalardan qancha foydalanganini kuzating.</string>
+    <string name="uchtagacha_jadval">3 tagacha jadval yaratish</string>
+    <string name="jadval_cheklovlar">Kun, hafta yoki maxsus vaqtlar uchun alohida cheklovlar belgilang.</string>
+    <string name="qattiq_bloklash_qalqon">Qattiq bloklash (Qalqon rejimi)</string>
+    <string name="farzand_cheklov_ozgartira_olmaydi">Farzandingiz cheklovlarni o‘chirib yoki o‘zgartira olmaydi.</string>
+    <string name="tez_bloklash_timer">Tez bloklash (Timer)</string>
+    <string name="vaqtinchalik_bloklash_tezi">Kerak bo‘lganda bir necha soniyada vaqtinchalik bloklashni yoqing.</string>
+    <string name="hisobot_tahlil">Hisobot va tahlil</string>
+    <string name="farzand_nazorat_tavsifi">Farzandingiz telefonidan foydalanishini nazorat qiling. Keraksiz ilovalarni bloklang, foydalanish vaqtini belgilang va xavfsiz muhit yarating.</string>
+    <string name="foydalanish_tahlil">Foydalanish odatlarini tahlil qiling va yaxshilashga yordam bering.</string>
+    <string name="istalgan_vaqtda_bekor">Istalgan vaqtda bekor qilish mumkin</string>
+    <string name="eng_foydali_tanlov">Eng foydali tanlov</string>
+    <string name="price_uzs">%1$s UZS</string>
+    <string name="price_uzs_per_month">%1$s UZS / oy</string>
+    <string name="obuna_uchun_farzand_qoshilmagan">Obuna farzandingiz uchun rasmiylashtiriladi. Davom etish uchun farzand qo'shing.</string>
 </resources>

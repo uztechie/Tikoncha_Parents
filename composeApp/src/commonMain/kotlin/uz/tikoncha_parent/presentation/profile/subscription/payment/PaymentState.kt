@@ -24,4 +24,6 @@ data class PaymentState(
     val discountAmount: Int = 0,
     val discountSaving: Int = 0,
     val discountPercentage: Int = 0,
-    )
+
+    val showChildSelectionDialog: Boolean = false
+)

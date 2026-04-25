@@ -2,7 +2,6 @@
 
 package uz.tikoncha_parent.presentation.new_home
 
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -26,7 +25,6 @@ import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
-import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
@@ -167,7 +165,9 @@ class HomeViewModel(
                     Logger.d(TAG, "AppSettings.selectedChild=${AppSettings.selectedChild}")
                     Logger.d(TAG, "AppSettings.children=${AppSettings.children}")
 
-
+                    loadParentRequestsCount()
+                    loadPolicies()
+                    loadTasks()
                 }
             }
         }
@@ -237,7 +237,7 @@ class HomeViewModel(
                             .map { it.toPolicyListUi() }
                             .sortedByDescending { it.policyType.order }
 
-                        val blockedAppCount = policies
+                        val parentPolicyCount = policies
                             .filter {
                                 it.policyType == PolicyType.PARENT_CHILD
                             }
@@ -246,7 +246,7 @@ class HomeViewModel(
                             .size
 
                         innerState.copy(
-                            blockedAppCount = blockedAppCount
+                            parentPolicyCount = parentPolicyCount
                         )
                     }
                 }

@@ -4,6 +4,7 @@ import uz.tikoncha_parent.domain.model.SubscriptionDuration
 
 sealed interface PaymentEvent {
     data object Pay: PaymentEvent
+    data object DismissChildSelectionDialog: PaymentEvent
     data class SetAmount(val amount:Int): PaymentEvent
     data class SetPaymentType(val type: PaymentType): PaymentEvent
     data object ResetPaymentResponse: PaymentEvent
