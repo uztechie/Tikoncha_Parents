@@ -25,6 +25,7 @@ import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.model.ChatType
+import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
@@ -125,7 +126,7 @@ fun App() {
                             }
                         } else {
                             Navigator(SplashScreen(), disposeBehavior) { nav ->
-                                CurrentScreen()
+                                SwipeBackContent(navigator = nav)
                                 DeepLinkEffect(nav)
                             }
                         }
