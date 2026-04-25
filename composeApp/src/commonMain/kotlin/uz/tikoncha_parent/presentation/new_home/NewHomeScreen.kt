@@ -129,6 +129,9 @@ class NewHomeScreen : Screen {
             updateEvent(UpdateEvent.ScreenStarted)
         }
 
+
+
+
         HandleUpdateEffect(updateViewModel)
 
         LaunchedEffect(state.value.selectedChild) {
@@ -165,6 +168,9 @@ fun NewHomeUi(
     appUpdateState: UpdateUiState = UpdateUiState(),
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
+
+
+    var showNoChildDialog by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -555,7 +561,7 @@ fun NewHomeUi(
                                 .weight(1f)
                         ) {
                             Text(
-                                text = stringResource(Res.string.jadvallar),
+                                text = stringResource(Res.string.cheklovlar),
                                 color = AppColors.text.primary,
                                 style = AppTypography.displaySmRegular
                             )

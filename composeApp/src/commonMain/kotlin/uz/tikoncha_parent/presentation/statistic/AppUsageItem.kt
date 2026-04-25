@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -39,6 +40,7 @@ import uz.tikoncha_parent.ui.AppIconInnerPadding
 import uz.tikoncha_parent.ui.AppIconSize
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.SmallIconSize
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -56,24 +58,21 @@ fun AppUsageItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AppIcon(iconUrl = appUsageUi.icon)
+        Space(6.dp)
 
-        Column(
+        Text(
+            text = appUsageUi.name,
+            style = AppTypography.titleSmSemiBold,
+            color = AppColors.text.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 10.dp),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = appUsageUi.name,
-                style = AppTypography.titleSmSemiBold,
-                color = AppColors.text.primary,
-                maxLines = 1,
-            )
+        )
+        Space(12.dp)
 
-            Spacer(Modifier.height(2.dp))
 
-            UsageDuration(time = appUsageUi.usageTime)
-        }
+        UsageDuration(time = appUsageUi.usageTime)
     }
 }
 
@@ -88,8 +87,8 @@ private fun AppIcon(
 ) {
     Box(
         modifier = modifier
-            .size(28.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .size(45.dp)
+            .clip(RoundedCornerShape(15.dp))
             .background(AppColors.bg.surface),
         contentAlignment = Alignment.Center,
     ) {
@@ -132,15 +131,8 @@ private fun UsageDuration(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            painter = painterResource(Res.drawable.time_icon),
-            contentDescription = null,
-            tint = AppColors.icon.accentPrimary,
-            modifier = Modifier.size(SmallIconSize),
-        )
 
         Text(
             text = formatDuration(time.toMinutes()),
