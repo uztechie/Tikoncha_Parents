@@ -281,7 +281,7 @@ fun AppWebSelectionUi(
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.elevated
     )
 
     // ── UI ───────────────────────────────────
