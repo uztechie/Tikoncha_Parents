@@ -53,6 +53,8 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -86,29 +88,23 @@ fun TaskUi(
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
-    val taskLoading = state.taskResponseState is ResponseState.Loading
-    val taskErrorText = state.taskResponseState.errorText()
-
     val enabled: Boolean = if (state.selectedChild != null) true else false
     val enabledColor =
         if (enabled) MaterialTheme.extendedColor.primaryColor else MaterialTheme.extendedColor.disabledContentColor
-    val noChild = state.childrenList.isEmpty()
 
-    CustomListDialog(
-        title = stringResource(Res.string.farzandlaringiz),
-        items = state.childrenList,
-        show = showDialog,
-        noChild = noChild,
-        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
-        loading = taskLoading,
-        errorMessage = taskErrorText,
-        onItemSelected = {
-            event(TaskEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
-        }
-    )
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(TaskEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,8 @@ import uz.tikoncha_parent.presentation.chat.ChatUtil.asText
 import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ChatTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -34,18 +37,17 @@ fun MessageDateItem(
         horizontalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .background(
-                    color = MaterialTheme.extendedColor.cardColor,
+                    color = AppColors.section.secondary,
                     shape = RoundedCornerShape(CardCornerRadius)
                 )
                 .padding(vertical = 4.dp, horizontal = 15.dp),
         ){
-            CustomText(
+            Text(
                 text = date.asText(),
-                color = MaterialTheme.extendedColor.textColor,
-                fontSize = ChatTextSize,
-                modifier = Modifier
+                style = AppTypography.bodyLgMedium,
+                color = AppColors.text.primary,
             )
         }
     }

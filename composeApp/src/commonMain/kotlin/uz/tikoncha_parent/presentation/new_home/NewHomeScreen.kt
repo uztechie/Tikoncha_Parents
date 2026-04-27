@@ -64,7 +64,6 @@ import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
-import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateCard
 import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateDialog
 import uz.tikoncha_parent.presentation.in_app_update.UpdateEvent
@@ -80,8 +79,6 @@ import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -168,11 +165,6 @@ fun NewHomeUi(
     appUpdateState: UpdateUiState = UpdateUiState(),
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
-
-
-    var showNoChildDialog by remember { mutableStateOf(false) }
-
-
     LaunchedEffect(Unit) {
         event(HomeEvent.RefreshParentRequest)
     }
@@ -184,29 +176,23 @@ fun NewHomeUi(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    val noChild = state.childrenList.isEmpty()
 
     val tableCount = state.parentPolicyCount
     val taskCount = state.activeTaskCount
 
-    val childrenLoading = state.childrenResponseState is ResponseState.Loading
-    val childrenErrorText = state.childrenResponseState.errorText()
-
-    CustomListDialog(
-        title = stringResource(Res.string.farzandlaringiz),
-        items = state.childrenList,
-        show = showDialog,
-        loading = childrenLoading,
-        noChild = noChild,
-        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
-        errorMessage = childrenErrorText,
-        onItemSelected = {
-            event(HomeEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
-        }
-    )
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(HomeEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     InAppUpdateDialog(
         show = appUpdateState.showUpdateDialog,

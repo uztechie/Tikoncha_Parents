@@ -41,6 +41,8 @@ import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.common.CustomListDialog
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -86,24 +88,21 @@ fun CoinsUi(
 ) {
     val borderColor = AppColors.border.tertiary
     var helpType by remember { mutableStateOf<CoinsHelpType?>(null) }
-
     var showDialog by remember { mutableStateOf(false) }
-    val childrenLoading = state.childrenResponseState is ResponseState.Loading
-    val childrenErrorText = state.childrenResponseState.errorText()
 
-    CustomListDialog(
-        title = stringResource(Res.string.farzandlaringiz),
-        items = state.childrenList,
-        show = showDialog,
-        loading = childrenLoading,
-        errorMessage = childrenErrorText,
-        onItemSelected = {
-            event(CoinsEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
-        }
-    )
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(CoinsEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,

@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +49,7 @@ import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -56,28 +58,29 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 fun ChatTextField(
     modifier: Modifier = Modifier,
     value: String = "",
-    onValueChange: (String) -> Unit,
     label: String = "",
-    focusRequester: FocusRequester = remember { FocusRequester() },
-    containerColor: Color = AppColors.bg.surface,
-    textColor: Color = AppColors.text.primary,
-    placeholderColor: Color = AppColors.text.placeholder,
-    shape: RoundedCornerShape = RoundedCornerShape(ChatTextFieldCornerRadius),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    fonSize: TextUnit = NormalTextSize,
+    onSend: () -> Unit,
     onFileClick: () -> Unit,
-    onSend: () -> Unit
+    onValueChange: (String) -> Unit,
+    textColor: Color = AppColors.text.primary,
+    containerColor: Color = AppColors.bg.secondarySurface,
+    placeholderColor: Color = AppColors.text.placeholder,
+    focusRequester: FocusRequester = remember { FocusRequester() },
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    shape: RoundedCornerShape = RoundedCornerShape(ChatTextFieldCornerRadius),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
 ) {
-    var texFieldValue by remember { mutableStateOf(
-        TextFieldValue(
-            text = value,
-            selection = TextRange(value.length)
+    var texFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = value,
+                selection = TextRange(value.length)
+            )
         )
-    ) }
+    }
 
-    LaunchedEffect(value){
-        if (texFieldValue.text != value){
+    LaunchedEffect(value) {
+        if (texFieldValue.text != value) {
             texFieldValue = TextFieldValue(
                 text = value,
                 selection = TextRange(value.length)
@@ -113,9 +116,8 @@ fun ChatTextField(
                     Icon(
                         painter = painterResource(Res.drawable.attach),
                         contentDescription = "",
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        tint = MaterialTheme.extendedColor.hintColor
+                        tint = AppColors.icon.secondary,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -135,12 +137,7 @@ fun ChatTextField(
                     .focusRequester(focusRequester),
                 singleLine = false,
                 maxLines = 5,
-                textStyle = MaterialTheme.typography.bodyMedium.copy(
-                    color = textColor,
-                    fontFamily = MyFontFamily(),
-                    fontSize = fonSize,
-                    lineHeight = fonSize * 1.3
-                ),
+                textStyle = AppTypography.titleSmRegular.copy(color = textColor,),
                 visualTransformation = visualTransformation,
                 keyboardOptions = keyboardOptions,
                 decorationBox = { innerTextField ->
@@ -151,9 +148,9 @@ fun ChatTextField(
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (value.isEmpty()) {
-                            CustomText(
+                            Text(
                                 text = label,
-                                fontSize = fonSize,
+                                style = AppTypography.titleSmRegular,
                                 color = placeholderColor
                             )
                         }
@@ -177,8 +174,8 @@ fun ChatTextField(
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = PrimaryColor,
                     contentColor = Color.White,
-                    disabledContainerColor = MaterialTheme.extendedColor.disabledBgColor,
-                    disabledContentColor = MaterialTheme.extendedColor.disabledContentColor
+                    disabledContainerColor = AppColors.bg.secondarySurface,
+                    disabledContentColor = AppColors.icon.secondary
                 )
 
             ) {
@@ -186,7 +183,7 @@ fun ChatTextField(
                     painter = painterResource(Res.drawable.send),
                     contentDescription = "Send",
                     modifier = Modifier.padding(TextFieldHeight * 0.25f)
-                        .fillMaxSize()
+                        .size(24.dp)
                 )
             }
         }
@@ -199,31 +196,22 @@ fun ChatTextField(
 @Composable
 private fun Preview() {
 
-    TikonchaParentTheme(mode = ThemeMode.LIGHT) {
+    TikonchaParentTheme(
+        ThemeMode.LIGHT
+    ) {
+        ChatTextField(
+            value = "",
+            onValueChange = {
 
-        Box(
+            },
+
             modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundColor)
-                .padding(horizontal = ContainerPadding),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            ChatTextField(
-                value = "",
-                onValueChange = {
-
-                },
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = TextFieldHeight, max = TextFieldHeight * 5),
-                label = stringResource(Res.string.xabar_yozish),
-                shape = RoundedCornerShape(20.dp),
-                onSend = {},
-                onFileClick = {},
-            )
-        }
-
-
+                .fillMaxWidth()
+                .heightIn(min = TextFieldHeight, max = TextFieldHeight * 5),
+            label = stringResource(Res.string.xabar_yozish),
+            shape = RoundedCornerShape(20.dp),
+            onSend = {},
+            onFileClick = {},
+        )
     }
 }

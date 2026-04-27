@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -50,6 +52,8 @@ import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.ui.ChatMessageCornerRadius
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -158,7 +162,7 @@ fun MessageReceivedItem(
             Icon(
                 painter = painterResource(Res.drawable.message_reply),
                 contentDescription = null,
-                tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = progress),
+                tint = AppColors.icon.accentPrimary.copy(alpha = progress),
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -174,7 +178,7 @@ fun MessageReceivedItem(
                             bottomEnd = ChatMessageCornerRadius
                         )
                     )
-                    .background(MaterialTheme.extendedColor.cardColor)
+                    .background(AppColors.bg.secondaryContainer)
                     .padding(horizontal = 15.dp, vertical = 8.dp)
             ) {
                 if (showSender) {
@@ -200,18 +204,18 @@ fun MessageReceivedItem(
                     Spacer(Modifier.height(5.dp))
                 }
 
-                CustomText(
+                Text(
+                    modifier = Modifier,
                     text = chatMessageUi.message,
-                    color = MaterialTheme.extendedColor.textColor,
-                    modifier = Modifier
+                    color = AppColors.text.primary,
+                    style = AppTypography.emphasizedMdRegular
                 )
 
-                CustomText(
+                Text(
                     text = chatMessageUi.time,
-                    modifier = Modifier.align(Alignment.End),
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontSize = UltraSmallTextSize,
-                    lineHeight = UltraSmallTextSize
+                    color = AppColors.text.primary,
+                    style = AppTypography.bodyMdMedium,
+                    modifier = Modifier.align(Alignment.End)
                 )
             }
 
@@ -220,10 +224,10 @@ fun MessageReceivedItem(
                 expanded = menuExpanded,
                 onDismissRequest = onDismissMenu,
                 shape = RoundedCornerShape(8.dp),
-                containerColor = MaterialTheme.extendedColor.backgroundColor,
+                containerColor = AppColors.bg.surface,
                 tonalElevation = 0.dp,
                 shadowElevation = 0.dp,
-                offset = DpOffset(x = -10.dp, y = 0.dp)
+                offset = DpOffset(x = (-10).dp, y = 0.dp)
             ){
                 DropdownMenuItem(
                     text = {
@@ -235,7 +239,7 @@ fun MessageReceivedItem(
                         Icon(
                             painter = painterResource(Res.drawable.message_reply),
                             contentDescription = null,
-                            tint = MaterialTheme.extendedColor.primaryColor,
+                            tint = AppColors.icon.accentPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     },
@@ -253,7 +257,7 @@ fun MessageReceivedItem(
                         Icon(
                             painter = painterResource(Res.drawable.message_copy),
                             contentDescription = null,
-                            tint = MaterialTheme.extendedColor.primaryColor,
+                            tint = AppColors.icon.accentPrimary,
                             modifier = Modifier.size(20.dp)
                         )
                     },
@@ -275,11 +279,11 @@ fun RepliedMessageBubble(
     text: String,
     isMine: Boolean
 ) {
-    val accentColor = MaterialTheme.extendedColor.primaryAlphaColor
+    val accentColor = AppColors.border.accentEmphasis
     val bgColor = if (isMine)
-        MaterialTheme.extendedColor.primaryColor.copy(0.12f)
+        AppColors.bg.page
     else
-        MaterialTheme.extendedColor.primaryColor.copy(0.18f)
+        AppColors.bg.page
 
     Row(
         modifier = modifier
@@ -291,9 +295,9 @@ fun RepliedMessageBubble(
     ) {
         Box(
             modifier = Modifier
-                .width(3.dp)
+                .width(2.dp)
                 .fillMaxHeight()
-                .background(accentColor, RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp))
+                .background(accentColor, RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
         )
         Spacer(Modifier.width(8.dp))
 
@@ -302,18 +306,18 @@ fun RepliedMessageBubble(
                 .padding(vertical = 4.dp, horizontal = 4.dp)
                 .weight(1f)
         ) {
-            CustomText(
+            Text(
                 text = ownerName,
-                color = accentColor,
-                fontSize = UltraSmallTextSize,
+                style = AppTypography.titleSmMedium,
+                color = AppColors.text.accentEmphasis,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(Modifier.height(2.dp))
-            CustomText(
+            Text(
                 text = text,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontSize = SmallTextSize,
+                style = AppTypography.emphasizedMdRegular,
+                color = AppColors.text.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -411,6 +415,25 @@ private fun PreviewSentMessageLongOld() {
             onOpenMenu = {},
             onDismissMenu = {},
             onMenuAction = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Sent message – long (meta below)",
+    showBackground = true,
+    backgroundColor = 0xFFF2F2F2,
+    widthDp = 360
+)
+@Composable
+private fun PreviewReplay() {
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ) {
+        RepliedMessageBubble(
+            ownerName = "Me",
+            text = "Salom",
+            isMine = false
         )
     }
 }

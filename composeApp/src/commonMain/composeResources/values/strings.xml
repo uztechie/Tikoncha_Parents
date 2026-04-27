@@ -164,8 +164,8 @@
     <string name="farzand_qoshish">Farzand qo‘shish</string>
     <string name="farzandingizni_tanlang">Farzandingizni tanlang</string>
     <string name="daqiqa">daqiqa</string>
-    <string name="bugun">bugun</string>
-    <string name="kecha">kecha</string>
+    <string name="bugun">Bugun</string>
+    <string name="kecha">Kecha</string>
     <string name="yakunlash">Yakunlash</string>
     <string name="bir_kunda_o_rtacha">Bir kunda o‘rtacha</string>
     <string name="eng_kop_foydalanilgan">Eng ko‘p foydalanilgan</string>
@@ -176,7 +176,7 @@
     <string name="server_connection_error">Server bilan bog‘lanishda xatolik!</string>
     <string name="faol">Faol</string>
     <string name="faol_emas">Faol emas</string>
-    <string name="ohirgi_faollik">Ohirgi faollik</string>
+    <string name="ohirgi_faollik">Ohirgi faollik:</string>
     <string name="qabul_qildim">Qabul qildim</string>
     <string name="azolar">A’zolar</string>
     <string name="azo">A’zo</string>
