@@ -25,6 +25,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
@@ -33,8 +34,9 @@ import tikoncha_parents.composeapp.generated.resources.limit_qoshish
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
 import tikoncha_parents.composeapp.generated.resources.time_large_icon
-import tikoncha_parents.composeapp.generated.resources.vaqt
-import tikoncha_parents.composeapp.generated.resources.vaqt_qoshish
+import uz.tikoncha_parent.domain.model.DayHour
+import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -45,6 +47,8 @@ import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class LimitRuleListScreen : Screen {
@@ -81,6 +85,7 @@ class LimitRuleListScreen : Screen {
         )
     }
 }
+
 @Composable
 fun LimitRuleListUi(
     rules: List<LimitRuleUi>,
@@ -96,6 +101,7 @@ fun LimitRuleListUi(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.secondary
     )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,7 +114,7 @@ fun LimitRuleListUi(
             onBackClick = onBack
         )
 
-        if (rules.isEmpty()){
+        if (rules.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -139,8 +145,7 @@ fun LimitRuleListUi(
                     )
                 }
             }
-        }
-        else{
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -153,8 +158,8 @@ fun LimitRuleListUi(
             ) {
                 items(
                     items = rules,
-                    key = {"${it.id}:${it.weekDays}:${it.time}"}
-                ){
+                    key = { "${it.id}:${it.weekDays}:${it.time}" }
+                ) {
                     LimitRuleItem(
                         item = it,
                         onClick = { onItemClick(it) },
@@ -163,7 +168,7 @@ fun LimitRuleListUi(
                     )
                 }
                 item {
-                    if(rules.isNotEmpty()){
+                    if (rules.isNotEmpty()) {
                         CustomButtonDash(
                             text = stringResource(Res.string.limit_qoshish),
                             onClick = onAdd,
@@ -178,9 +183,12 @@ fun LimitRuleListUi(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .background(
+                            AppColors.bg.elevated,
+                            RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
                         .padding(horizontal = 20.dp, vertical = 12.dp)
-                ){
+                ) {
                     CustomButtonNew(
                         text = stringResource(Res.string.saqlash),
                         onClick = onDone,
@@ -190,7 +198,31 @@ fun LimitRuleListUi(
                 }
             }
         }
-
     }
+}
 
+@Preview
+@Composable
+private fun Preview() {
+    TikonchaParentTheme(
+        ThemeMode.LIGHT
+    ) {
+        LimitRuleListUi(
+            rules = listOf(
+                LimitRuleUi(
+                    id = 1,
+                    limitType = DayHour.DAY,
+                    time = HourMinute(12, 0),
+                    weekDays = setOf(WeekDay.FRI, WeekDay.MON)
+                )
+            ),
+            canUpdate = false,
+            canSave = true,
+            onBack = {},
+            onAdd = {},
+            onItemClick = {},
+            onDelete = {},
+            onDone = {},
+        )
+    }
 }
