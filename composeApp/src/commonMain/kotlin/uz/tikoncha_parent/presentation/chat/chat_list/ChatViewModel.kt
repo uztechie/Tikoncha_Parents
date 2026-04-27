@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.chat.chat_list
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -16,12 +14,9 @@ import uz.tikoncha_parent.data.remote.model.ChatWsEvent
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
-import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.ChatDateTimeUtil
-import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
-import kotlin.collections.filterNot
 import kotlin.collections.map
 
 class ChatViewModel(
@@ -39,13 +34,13 @@ class ChatViewModel(
     fun onEvent(event: ChatEvent) {
         when (event) {
             ChatEvent.Refresh -> {
-                getChatList()
+                getChatList(isRefresh = true)
             }
 
             is ChatEvent.OnScreenOpened -> {
                 connectionManager.acquire(event.screen)
                 startObserveEvents()
-                getChatList()
+                getChatList(isRefresh = false)
             }
 
             is ChatEvent.OnScreenClosed -> {
@@ -76,19 +71,32 @@ class ChatViewModel(
     }
 
 
-    private fun getChatList() {
+    private fun getChatList(isRefresh: Boolean) {
 
-        _state.update { it.copy(loading = true, error = "") }
+        _state.update {
+            if (isRefresh) {
+                it.copy(
+                    isRefreshing = true,
+                    error = ""
+                )
+            }
+            else {
+                it.copy(
+                    loading = true,
+                    error = ""
+                )
+            }
+        }
 
         chatListJob?.cancel()
         chatListJob = screenModelScope.launch {
-            val result = chatListUseCase.invoke()
-            when (result) {
+            when (val result = chatListUseCase.invoke()) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
                             loading = false,
+                            isRefreshing = false,
                             hasLoadedOnce = true,
                             error = result.message
                         )
@@ -102,7 +110,8 @@ class ChatViewModel(
                             error = "",
                             chats = chats,
                             loading = false,
-                            hasLoadedOnce = true
+                            hasLoadedOnce = true,
+                            isRefreshing = false
                         )
                     }
                 }

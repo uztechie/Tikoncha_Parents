@@ -65,27 +65,22 @@ class PolicyListScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current?:return
-
-
+        val navigator = LocalNavigator.current ?: return
         val sharedViewModel = koinViewModel<PolicySharedModel>()
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
         val sharedEvent = sharedViewModel::onEvent
-
 
         val viewModel = koinScreenModel<PolicyViewModel>()
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             event(PolicyEvent.RefreshPolicies)
         }
 
-
-        BackHandler(true){
+        BackHandler(true) {
             navigator.pop()
         }
-
 
         PolicyListUi(
             navigator = navigator,
@@ -104,16 +99,22 @@ fun PolicyListUi(
     sharedState: PolicySharedState,
     event: (PolicyEvent) -> Unit = {},
     sharedEvent: (PolicySharedEvent) -> Unit = {},
-){
-    val loading = state.policyResponseState is ResponseState.Loading
+) {
     val errorText = state.policyResponseState.errorText()
+    var showErrorText by remember { mutableStateOf(false) }
+    val loading = state.policyResponseState is ResponseState.Loading
+    var showPolicyLimitDialog by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
     LoadingDialog(loading)
-    var showErrorText by remember {
-        mutableStateOf(false)
-    }
 
-    LaunchedEffect(errorText){
+    LaunchedEffect(errorText) {
         showErrorText = errorText.isNotEmpty()
     }
 
@@ -130,9 +131,6 @@ fun PolicyListUi(
         }
     )
 
-    var showPolicyLimitDialog by remember { mutableStateOf(false) }
-
-
     SubscriptionBottomDialog(
         show = showPolicyLimitDialog,
         title = stringResource(Res.string.limit_tugadi),
@@ -145,15 +143,6 @@ fun PolicyListUi(
             showPolicyLimitDialog = false
         }
     )
-
-
-    val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
-    )
-
-    var isRefreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -172,7 +161,6 @@ fun PolicyListUi(
                 .then(systemBars.modifier)
                 .background(AppColors.bg.secondary)
         ) {
-
             CustomHeader(
                 title = stringResource(Res.string.sizning_cheklovlaringiz),
                 showBackButton = true,
@@ -189,7 +177,7 @@ fun PolicyListUi(
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 item {
-                    if (state.policies.isEmpty() && !loading) {
+                    if (state.policies.isEmpty() && state.policyResponseState is ResponseState.Success) {
                         CreatePolicyCard(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -247,6 +235,8 @@ fun PolicyListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ) {
                     CustomButtonNew(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(Res.string.jadval_qoshish),
                         onClick = {
                             if (state.canCreatePolicy) {
                                 sharedEvent(PolicySharedEvent.ClearData)
@@ -266,14 +256,9 @@ fun PolicyListUi(
                                 showPolicyLimitDialog = true
                             }
                         },
-                        text = stringResource(Res.string.jadval_qoshish),
-                        modifier = Modifier
-                            .fillMaxWidth()
                     )
                 }
             }
-
-
         }
     }
 }

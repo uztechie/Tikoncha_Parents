@@ -76,7 +76,6 @@ fun ChatUi(
     state: ChatState,
     event: (ChatEvent) -> Unit,
 ) {
-    val refreshScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
@@ -113,13 +112,9 @@ fun ChatUi(
     )
 
     PullToRefreshBox(
-        isRefreshing = state.loading,
+        isRefreshing = state.isRefreshing,
         modifier = Modifier.fillMaxSize(),
-        onRefresh = {
-            refreshScope.launch {
-                event(ChatEvent.Refresh)
-            }
-        }
+        onRefresh = { event(ChatEvent.Refresh) }
     ) {
         Column(
             modifier = Modifier
