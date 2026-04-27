@@ -14,6 +14,7 @@ data class TikonchaExtendedColors(
     val section: SectionColors,
     val field: FieldColors,
     val modal: ModalColors,
+    val alpha: AlphaColors,
 )
 
 @Immutable
@@ -35,6 +36,7 @@ data class BgColors(
     val secondarySurface: Color,
     val surfaceTertiary: Color,
     val accentDanger: Color,
+    val inverse: Color,
 )
 
 @Immutable
@@ -53,6 +55,7 @@ data class TextColors(
     val strongSecondary: Color,
     val accentDanger: Color,
     val disabledTertiary: Color,
+    val accentSuccess: Color,
 )
 
 @Immutable
@@ -83,6 +86,7 @@ data class BorderColors(
     val accentWarning: Color,
     val tertiarySubtle: Color,
     val secondarySubtle: Color,
+    val accentSuccess: Color,
 )
 
 @Immutable
@@ -141,6 +145,28 @@ data class ModalColors(
     val tertiary: Color,
 )
 
+@Immutable
+data class AlphaColors(
+    val whiteOpacity10: Color,
+    val whiteOpacity20: Color,
+    val whiteOpacity30: Color,
+    val whiteOpacity40: Color,
+    val whiteOpacity50: Color,
+    val whiteOpacity60: Color,
+    val whiteOpacity70: Color,
+    val whiteOpacity80: Color,
+    val whiteOpacity90: Color,
+    val blackOpacity10: Color,
+    val blackOpacity20: Color,
+    val blackOpacity30: Color,
+    val blackOpacity40: Color,
+    val blackOpacity50: Color,
+    val blackOpacity60: Color,
+    val blackOpacity70: Color,
+    val blackOpacity80: Color,
+    val blackOpacity90: Color,
+)
+
 
 val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
     bg = BgColors(
@@ -153,7 +179,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         primaryContainer = Color(0xFFF3EADE),                   // orange.100
         secondaryBrand = Color(0xFF9C7749),                     // orange.600
         secondaryContainer = Color(0xFFF9F5EF),                 // orange.50
-        accentWarning = Color(0xFFC3955B),                      // orange.500
+        accentWarning = Color(0xFFF79009),                      // orange-variant.500
         accentWarningContainer = Color(0xFFF9F5EF),             // orange.50
         tertiary = Color(0xFFEFEFF0),                           // gray.100
         strong = Color(0xFF010D01),                             // base.black
@@ -161,6 +187,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         secondarySurface = Color(0xFFEFEFF0),                   // gray.100
         surfaceTertiary = Color(0xFFFFFFFF),                    // base.white
         accentDanger = Color(0xFFF04438),                       // red.500
+        inverse = Color(0xFFFFFFFF),                            // base.white
     ),
     text = TextColors(
         primary = Color(0xFF22262F),                            // neutral.800
@@ -177,6 +204,7 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         strongSecondary = Color(0xFF85888E),                    // neutral.500
         accentDanger = Color(0xFFF04438),                       // red.500
         disabledTertiary = Color(0xFF94979C),                   // gray.400
+        accentSuccess = Color(0xFF4BB462),                      // green.500
     ),
     icon = IconColors(
         primary = Color(0xFF121212),                            // gray.900
@@ -197,12 +225,13 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         primary = Color(0xFFCECFD2),                            // gray.300
         secondary = Color(0xFFE5E5E6),                          // gray.200
         tertiary = Color(0xFFFFFFFF),                           // base.white
+        inverse = Color(0xFFFFFFFF),                            // base.white
         accentEmphasis = Color(0xFFC3955B),                     // orange.500
-        inverse = Color(0xFFFFFFFF),                     // orange.500
         disabled = Color(0xFFEFEFF0),                           // gray.100
         accentWarning = Color(0xFFF79009),                      // orange-variant.500
         tertiarySubtle = Color(0xFFFFFFFF),                     // base.white
         secondarySubtle = Color(0xFFE5E5E6),                    // gray.200
+        accentSuccess = Color(0xFF4BB462),                      // green.500
     ),
     button = ButtonColors(
         primary = Color(0xFFC3955B),                            // orange.500
@@ -210,12 +239,12 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         tertiary = Color(0xFF85888E),                           // neutral.500
         accentEmphasis = Color(0xFFF9F5EF),                     // orange.50
         disabled = Color(0xFFEFEFF0),                           // neutral.200
-        primaryHover = Color(0xFF409452),                       // green.600
+        primaryHover = Color(0xFF9C7749),                       // orange.600
         primaryPressed = Color(0xFF755937),                     // orange.700
         secondaryPressed = Color(0xFFDCDDDF),                   // neutral.300
         accentEmphasisPressed = Color(0xFFF3EADE),              // orange.100
         accentDanger = Color(0xFFF04438),                       // red.500
-        surface = Color(0xFFFFFFFF)
+        surface = Color(0xFFFFFFFF),                            // base.white
     ),
     action = ActionColors(
         primary = Color(0xFFC3955B),                            // orange.500
@@ -250,6 +279,26 @@ val TikonchaParentLightExtendedColors = TikonchaExtendedColors(
         secondary = Color(0xFFE5E5E6),                          // gray.200
         tertiary = Color(0xFFFFFFFF),                           // base.white
     ),
+    alpha = AlphaColors(
+        whiteOpacity10 = Color(0x1AFFFFFF),                     // #ffffff1a
+        whiteOpacity20 = Color(0x33FFFFFF),                     // #ffffff33
+        whiteOpacity30 = Color(0x4DFFFFFF),                     // #ffffff4d
+        whiteOpacity40 = Color(0x66FFFFFF),                     // #ffffff66
+        whiteOpacity50 = Color(0x80FFFFFF),                     // #ffffff80
+        whiteOpacity60 = Color(0x99FFFFFF),                     // #ffffff99
+        whiteOpacity70 = Color(0xB3FFFFFF),                     // #ffffffb3
+        whiteOpacity80 = Color(0xCCFFFFFF),                     // #ffffffcc
+        whiteOpacity90 = Color(0xE6FFFFFF),                     // #ffffffe6
+        blackOpacity10 = Color(0x1A000000),                     // #0000001a
+        blackOpacity20 = Color(0x33000000),                     // #00000033
+        blackOpacity30 = Color(0x4D000000),                     // #0000004d
+        blackOpacity40 = Color(0x66000000),                     // #00000066
+        blackOpacity50 = Color(0x80000000),                     // #00000080
+        blackOpacity60 = Color(0x99000000),                     // #00000099
+        blackOpacity70 = Color(0xB3000000),                     // #000000b3
+        blackOpacity80 = Color(0xCC000000),                     // #000000cc
+        blackOpacity90 = Color(0xE6000000),                     // #000000e6
+    ),
 )
 
 
@@ -260,11 +309,11 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         surface = Color(0xFF252528),                            // gray.700
         elevated = Color(0xFF252528),                           // gray.700
         secondary = Color(0xFF010D01),                          // base.black
-        primary = Color(0xFFC3955B),                            // green.500
+        primary = Color(0xFFC3955B),                            // orange.500
         primaryContainer = Color(0xFF2C2F36),                   // gray.500
-        secondaryBrand = Color(0xFF409452),                     // green.600
+        secondaryBrand = Color(0xFF9C7749),                     // orange.600
         secondaryContainer = Color(0xFF252528),                 // gray.700
-        accentWarning = Color(0xFF9C7749),                      // orange.600
+        accentWarning = Color(0xFFF79009),                      // orange-variant.500
         accentWarningContainer = Color(0xFF2F3137),             // neutral.700
         tertiary = Color(0xFF2F3137),                           // neutral.700
         strong = Color(0xFF010D01),                             // base.black
@@ -272,6 +321,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         secondarySurface = Color(0xFF010D01),                   // base.black
         surfaceTertiary = Color(0xFF252528),                    // gray.700
         accentDanger = Color(0xFFC23931),                       // red.600
+        inverse = Color(0xFFFFFFFF),                            // base.white
     ),
     text = TextColors(
         primary = Color(0xFFFFFFFF),                            // base.white
@@ -288,6 +338,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         strongSecondary = Color(0xFF85888E),                    // neutral.500
         accentDanger = Color(0xFFF04438),                       // red.500
         disabledTertiary = Color(0xFFCECFD2),                   // gray.300
+        accentSuccess = Color(0xFF4BB462),                      // green.500
     ),
     icon = IconColors(
         primary = Color(0xFFF9FAFA),                            // gray.50
@@ -308,25 +359,26 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         primary = Color(0xFF94979C),                            // gray.400
         secondary = Color(0xFF61656C),                          // neutral.600
         tertiary = Color(0xFF61656C),                           // neutral.600
+        inverse = Color(0xFFFFFFFF),                            // base.white
         accentEmphasis = Color(0xFFC3955B),                     // orange.500
         disabled = Color(0xFF2B2B31),                           // gray.600
-        inverse = Color(0xFFFFFFFF),                           // gray.600
         accentWarning = Color(0xFFF79009),                      // orange-variant.500
         tertiarySubtle = Color(0xFF2F3137),                     // neutral.700
         secondarySubtle = Color(0xFF2F3137),                    // neutral.700
+        accentSuccess = Color(0xFF4BB462),                      // green.500
     ),
     button = ButtonColors(
-        primary = Color(0xFFC3955B),                            // green.500
+        primary = Color(0xFFC3955B),                            // orange.500
         secondary = Color(0xFF2F3137),                          // neutral.700
         tertiary = Color(0xFF22262F),                           // neutral.800
         accentEmphasis = Color(0xFF2F3137),                     // neutral.700
         disabled = Color(0xFF2B2B31),                           // gray.600
-        primaryHover = Color(0xFF409452),                       // green.600
-        primaryPressed = Color(0xFF347342),                     // green.700
+        primaryHover = Color(0xFF9C7749),                       // orange.600
+        primaryPressed = Color(0xFF755937),                     // orange.700
         secondaryPressed = Color(0xFF2B2B31),                   // gray.600
         accentEmphasisPressed = Color(0xFF2B2B31),              // gray.600
         accentDanger = Color(0xFFF04438),                       // red.500
-        surface = Color(0xFF2F3137)
+        surface = Color(0xFF2F3137),                            // neutral.700
     ),
     action = ActionColors(
         primary = Color(0xFFC3955B),                            // orange.500
@@ -341,7 +393,7 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         accentDanger = Color(0xFFF04438),                       // red.500
     ),
     section = SectionColors(
-        primary = Color(0xFFC3955B),                            // green.500
+        primary = Color(0xFFC3955B),                            // orange.500
         secondary = Color(0xFF2F3137),                          // neutral.700
         section = Color(0xFF2F3137),                            // neutral.700
         tertiary = Color(0xFF252528),                           // gray.700
@@ -360,5 +412,25 @@ val TikonchaParentDarkExtendedColors = TikonchaExtendedColors(
         primary = Color(0xFF2B2B31),                            // gray.600
         secondary = Color(0xFF2C2F36),                          // gray.500
         tertiary = Color(0xFF252528),                           // gray.700
+    ),
+    alpha = AlphaColors(
+        whiteOpacity10 = Color(0x1AFFFFFF),                     // #ffffff1a
+        whiteOpacity20 = Color(0x33FFFFFF),                     // #ffffff33
+        whiteOpacity30 = Color(0x4DFFFFFF),                     // #ffffff4d
+        whiteOpacity40 = Color(0x66FFFFFF),                     // #ffffff66
+        whiteOpacity50 = Color(0x80FFFFFF),                     // #ffffff80
+        whiteOpacity60 = Color(0x99FFFFFF),                     // #ffffff99
+        whiteOpacity70 = Color(0xB3FFFFFF),                     // #ffffffb3
+        whiteOpacity80 = Color(0xCCFFFFFF),                     // #ffffffcc
+        whiteOpacity90 = Color(0xE6000000),                     // #000000e6
+        blackOpacity10 = Color(0x1A000000),                     // #0000001a
+        blackOpacity20 = Color(0x33000000),                     // #00000033
+        blackOpacity30 = Color(0x4D000000),                     // #0000004d
+        blackOpacity40 = Color(0x66000000),                     // #00000066
+        blackOpacity50 = Color(0x80000000),                     // #00000080
+        blackOpacity60 = Color(0x99000000),                     // #00000099
+        blackOpacity70 = Color(0xB3000000),                     // #000000b3
+        blackOpacity80 = Color(0xCC000000),                     // #000000cc
+        blackOpacity90 = Color(0xE6000000),                     // #000000e6
     ),
 )
