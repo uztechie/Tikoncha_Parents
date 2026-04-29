@@ -55,7 +55,9 @@ fun PaymentOption(
             Image(
                 painter = painter,
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth(0.25f),
+                modifier = Modifier
+                    .width(63.dp)
+                    .height(16.dp),
             )
             CustomRadio(
                 checked = isSelected,

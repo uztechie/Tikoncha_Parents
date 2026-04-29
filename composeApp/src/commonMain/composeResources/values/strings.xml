@@ -441,10 +441,10 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="coins_help_earn_note">Tangachalar bosqichma-bosqich yig‘iladi va keyin istalgan vaqtda Bilimdon AI xizmatlaridan foydalanish uchun sarflanishi mumkin.</string>
     <string name="coins_help_close">Yopish</string>
     <string name="qollash">Qo‘llash</string>
-    <string name="promokod">Promokod</string>
+    <string name="promokod">Promokod:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Siz tangachalarni muvaqqiyatli sotib oldingiz.</string>
-    <string name="narx">Narx</string>
-    <string name="jami">Jami</string>
+    <string name="narx">Narx:</string>
+    <string name="jami">Jami:</string>
     <string name="bekor_qilindi">Bekor qilindi!</string>
     <string name="sorov_holati">So‘rov holati</string>
     <string name="qanday_qilib_ishlatish">Qanday qilib ishlatish</string>
@@ -482,4 +482,9 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="obuna_uchun_farzand_qoshilmagan">Obuna farzandingiz uchun rasmiylashtiriladi. Davom etish uchun farzand qo'shing.</string>
     <string name="suhbatlar_yoq">Suhbatlar mavjud emas</string>
     <string name="hozircha_suhbat_yoq">Hozircha hech qanday suhbat boshlanmagan</string>
+    <string name="tanlangan_obuna">Tanlangan obuna</string>
+    <string name="uzs_yillik">UZS/yillik</string>
+    <string name="uzs_oylik">UZS/oylik</string>
+    <string name="tolov_tafsilotlari">To‘lov tafsilotlari</string>
+    <string name="uzs">UZS</string>
 </resources>

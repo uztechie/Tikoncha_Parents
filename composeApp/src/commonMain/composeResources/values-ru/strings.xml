@@ -389,10 +389,10 @@
     <string name="coins_help_earn_note">Монеты накапливаются постепенно и в любой момент могут быть потрачены на услуги Bilimdon AI.</string>
     <string name="coins_help_close">Закрыть</string>
     <string name="qollash">Применить</string>
-    <string name="promokod">Промокод</string>
+    <string name="promokod">Промокод:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Вы успешно купили монеты.</string>
-    <string name="narx">Цена</string>
-    <string name="jami">Всего</string>
+    <string name="narx">Цена:</string>
+    <string name="jami">Всего:</string>
     <string name="bekor_qilindi">Отменено!</string>
     <string name="sorov_holati">Cтатус запроса</string>
     <string name="qanday_qilib_ishlatish">Как пользоваться</string>
@@ -470,4 +470,9 @@
     <string name="obuna_uchun_farzand_qoshilmagan">Подписка оформляется для вашего ребёнка. Чтобы продолжить, добавьте ребёнка.</string>
     <string name="suhbatlar_yoq">Чатов нет</string>
     <string name="hozircha_suhbat_yoq">Пока нет начатых чатов</string>
+    <string name="tanlangan_obuna">Выбранная подписка</string>
+    <string name="uzs_yillik">СУМ/годовой</string>
+    <string name="uzs_oylik">СУМ/месячный</string>
+    <string name="tolov_tafsilotlari">Детали оплаты</string>
+    <string name="uzs">СУМ</string>
 </resources>

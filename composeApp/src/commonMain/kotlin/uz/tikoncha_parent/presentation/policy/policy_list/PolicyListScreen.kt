@@ -107,7 +107,7 @@ fun PolicyListUi(
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.surface
     )
 
     LoadingDialog(loading)
