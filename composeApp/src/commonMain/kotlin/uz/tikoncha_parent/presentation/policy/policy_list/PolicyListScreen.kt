@@ -29,7 +29,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -45,7 +44,9 @@ import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.NoInternetDialog
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
+import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
@@ -73,10 +74,6 @@ class PolicyListScreen : Screen {
         val viewModel = koinScreenModel<PolicyViewModel>()
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
-
-        LaunchedEffect(Unit) {
-            event(PolicyEvent.RefreshPolicies)
-        }
 
         BackHandler(true) {
             navigator.pop()
@@ -106,6 +103,7 @@ fun PolicyListUi(
     var showPolicyLimitDialog by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
+    val internetCheck = rememberInternetCheck(refreshScope)
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
@@ -114,9 +112,17 @@ fun PolicyListUi(
 
     LoadingDialog(loading)
 
-    LaunchedEffect(errorText) {
-        showErrorText = errorText.isNotEmpty()
+    NoInternetDialog(internetCheck)
+
+    LaunchedEffect(Unit) {
+        if (!state.isInitialLoadDone) {
+            internetCheck.check {
+                event(PolicyEvent.RefreshPolicies)
+            }
+        }
     }
+
+    LaunchedEffect(errorText) { showErrorText = errorText.isNotEmpty() }
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -147,7 +153,7 @@ fun PolicyListUi(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            refreshScope.launch {
+            internetCheck.check {
                 isRefreshing = true
                 event(PolicyEvent.RefreshPolicies)
                 delay(500)

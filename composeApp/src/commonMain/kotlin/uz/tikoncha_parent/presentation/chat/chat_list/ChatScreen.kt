@@ -32,12 +32,16 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilgandan_keyin_korinish
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
+import tikoncha_parents.composeapp.generated.resources.hozircha_suhbat_yoq
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.suhbat
+import tikoncha_parents.composeapp.generated.resources.suhbatlar_yoq
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.NoInternetDialog
+import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.chat.ChatMessageAiScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.model.ChatType
@@ -77,6 +81,8 @@ fun ChatUi(
     event: (ChatEvent) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val internetCheck = rememberInternetCheck(scope)
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
         navigationBarColor = AppColors.bg.page
@@ -111,10 +117,16 @@ fun ChatUi(
         }
     )
 
+    NoInternetDialog(internetCheck)
+
     PullToRefreshBox(
         isRefreshing = state.isRefreshing,
         modifier = Modifier.fillMaxSize(),
-        onRefresh = { event(ChatEvent.Refresh) }
+        onRefresh = {
+            internetCheck.check {
+                event(ChatEvent.Refresh)
+            }
+        }
     ) {
         Column(
             modifier = Modifier
@@ -146,10 +158,17 @@ fun ChatUi(
                         verticalArrangement = Arrangement.Center
                     ) {
                         item {
-                            AppEmptyList(
-                                title = stringResource(Res.string.farzand_qoshilmagan),
-                                message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
-                            )
+                            if (!state.hasChild) {
+                                AppEmptyList(
+                                    title = stringResource(Res.string.farzand_qoshilmagan),
+                                    message = stringResource(Res.string.farzand_qoshilgandan_keyin_korinish),
+                                )
+                            } else {
+                                AppEmptyList(
+                                    title = stringResource(Res.string.suhbatlar_yoq),
+                                    message = stringResource(Res.string.hozircha_suhbat_yoq),
+                                )
+                            }
                         }
                     }
                 }
@@ -159,7 +178,6 @@ fun ChatUi(
                         modifier = Modifier.padding(horizontal = ContainerPadding)
                     ) {
                         LazyColumn {
-
                             items(
                                 items = state.chats,
                                 key = { it.chatId },

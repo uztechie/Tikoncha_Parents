@@ -42,8 +42,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -60,9 +62,12 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.platform.isInternetAvailable
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.NoInternetDialog
+import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
@@ -184,6 +189,9 @@ fun NewHomeUi(
         navigationBarColor = AppColors.bg.page
     )
 
+    val internetCheck = rememberInternetCheck(refreshScope)
+    NoInternetDialog(internetCheck)
+
     if (showDialog) {
         SelectionChildBottonSheet(
             navigator = navigator,
@@ -201,8 +209,8 @@ fun NewHomeUi(
     CustomDialog(
         show = showChildDialog,
         title = stringResource(Res.string.diqqat),
-        message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
         buttonText = stringResource(Res.string.farzand_qo_shish),
+        message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
         onDismiss = { showChildDialog = false },
         onButtonClick = {
             navigator?.push(AddChildScreen())
@@ -220,7 +228,7 @@ fun NewHomeUi(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            refreshScope.launch {
+            internetCheck.check {
                 isRefreshing = true
                 event(HomeEvent.GetChildren)
                 statisticEvent(StatisticEvent.RefreshChild)
@@ -372,7 +380,9 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    showChildDialog = true
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
                                 } else {
                                     navigator?.push(StatisticScreen())
                                 }
@@ -509,10 +519,13 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    showChildDialog = true
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
                                 } else {
                                     navigator?.push(TaskScreen())
                                 }
+
                             }
                             .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
                         verticalAlignment = Alignment.CenterVertically
@@ -554,7 +567,9 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    showChildDialog = true
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
                                 } else {
                                     navigator?.push(PolicyListScreen())
                                 }

@@ -9,21 +9,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicyViewModel(
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase
 ) : ScreenModel {
 
     private val TAG = "PolicyViewModel"
-    private val _state = MutableStateFlow<PolicyState>(PolicyState())
+    private val _state = MutableStateFlow(PolicyState())
     val state = _state.asStateFlow()
 
     init {
@@ -47,7 +44,6 @@ class PolicyViewModel(
 
     private fun getSubscriptionLimit() {
         screenModelScope.launch {
-            val result = subscriptionLimitUseCase.invoke()
             refreshSubscriptionLimit()
         }
     }
@@ -55,7 +51,7 @@ class PolicyViewModel(
     private fun refreshSubscriptionLimit() {
         _state.update {
             it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { limit -> limit.childId == state.value.selectedChild?.userId }
                     ?: SubscriptionLimit()
             )
         }
@@ -68,21 +64,24 @@ class PolicyViewModel(
     private fun getPolicies() {
         policyJob?.cancel()
         policyJob = screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    policyResponseState = ResponseState.Loading
-                )
+
+            if (!_state.value.isInitialLoadDone) {
+                _state.update {
+                    it.copy(
+                        policyResponseState = ResponseState.Loading
+                    )
+                }
             }
 
-            val result =
-                getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
+            val result = getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
 
             when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            policyResponseState = ResponseState.Error(message = result.message)
+                            policyResponseState = ResponseState.Error(message = result.message),
+                            isInitialLoadDone = true
                         )
                     }
                 }
@@ -96,7 +95,8 @@ class PolicyViewModel(
 
                         innerState.copy(
                             policyResponseState = ResponseState.Success(),
-                            policies = policies
+                            policies = policies,
+                            isInitialLoadDone = true
                         )
                     }
                 }

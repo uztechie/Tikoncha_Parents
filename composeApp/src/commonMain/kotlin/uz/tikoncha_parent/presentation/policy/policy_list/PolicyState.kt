@@ -10,7 +10,8 @@ data class PolicyState(
     val policyResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val policies: List<PolicyItemUi> = emptyList(),
     val selectedChild: UserInfo? = null,
-    val subscriptionLimit: SubscriptionLimit = SubscriptionLimit()
+    val subscriptionLimit: SubscriptionLimit = SubscriptionLimit(),
+    val isInitialLoadDone: Boolean = false,
 ){
     val canCreatePolicy: Boolean
         get() = subscriptionLimit.policyCount.let {

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.DateTimeUtil
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toChatUi
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
@@ -31,13 +32,19 @@ class ChatViewModel(
     private val _state = MutableStateFlow(ChatState())
     val state = _state.asStateFlow()
 
+    init {
+        syncChild()
+    }
+
     fun onEvent(event: ChatEvent) {
         when (event) {
             ChatEvent.Refresh -> {
+                syncChild()
                 getChatList(isRefresh = true)
             }
 
             is ChatEvent.OnScreenOpened -> {
+                syncChild()
                 connectionManager.acquire(event.screen)
                 startObserveEvents()
                 getChatList(isRefresh = false)
@@ -152,6 +159,14 @@ class ChatViewModel(
                 chats = s.chats.map { chat ->
                     if (chat.chatId == chatId) chat.copy(lastMessageIsRead = true) else chat
                 }
+            )
+        }
+    }
+
+    private fun syncChild() {
+        _state.update {
+            it.copy(
+                hasChild = AppSettings.children.isNotEmpty()
             )
         }
     }

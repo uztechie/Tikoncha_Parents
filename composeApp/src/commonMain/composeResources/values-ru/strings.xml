@@ -468,4 +468,6 @@
     <string name="istalgan_vaqtda_bekor">Можно отменить в любое время</string>
     <string name="price_uzs_per_month">%1$s СУМ / месяц</string>
     <string name="obuna_uchun_farzand_qoshilmagan">Подписка оформляется для вашего ребёнка. Чтобы продолжить, добавьте ребёнка.</string>
+    <string name="suhbatlar_yoq">Чатов нет</string>
+    <string name="hozircha_suhbat_yoq">Пока нет начатых чатов</string>
 </resources>

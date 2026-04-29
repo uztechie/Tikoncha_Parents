@@ -142,7 +142,6 @@ fun LogoutUi(
         buttonText = stringResource(Res.string.ha),
         buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
-        isRow = true,
         show = logoutDialog,
         onDismiss = {
             logoutDialog = false
@@ -161,7 +160,6 @@ fun LogoutUi(
         buttonText = stringResource(Res.string.ha),
         buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
-        isRow = true,
         show = deleteDialog,
         onDismiss = {
             deleteDialog = false
@@ -179,7 +177,6 @@ fun LogoutUi(
         buttonText = stringResource(Res.string.ha),
         buttonText2 = stringResource(Res.string.yoq),
         showCloseButton = true,
-        isRow = true,
         show = canselDialog,
         onDismiss = {
             canselDialog = false
