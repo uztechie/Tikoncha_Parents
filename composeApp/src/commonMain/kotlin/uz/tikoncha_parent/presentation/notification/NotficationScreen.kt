@@ -27,7 +27,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.*
 import tikoncha_parents.composeapp.generated.resources.notification
 import uz.tikoncha_parent.data.mapper.toUi
@@ -55,7 +54,12 @@ class NotificationScreen : Screen {
         NotificationUi(
             items = state.value.items,
             navigator = navigator,
-            viewModel = viewModel
+            markAll = {
+                viewModel.markAllReadOptimistic()
+            },
+            markRead = {
+                viewModel.markReadOptimistic(it)
+            }
         )
     }
 }
@@ -65,7 +69,8 @@ fun NotificationUi(
     items: List<NewsDto>,
     language: String = "uz",
     navigator: Navigator?,
-    viewModel: NotificationViewModel
+    markAll: () -> Unit,
+    markRead: (Long) -> Unit
 ) {
     val rootNavigator = navigator?.parent
     val navigator = rootNavigator ?: LocalNavigator.currentOrThrow
@@ -100,7 +105,7 @@ fun NotificationUi(
                     modifier = Modifier
                         .size(LargeIconButtonSize),
                     onClick = {
-                        viewModel.markAllReadOptimistic()
+                        markAll()
                     },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = MaterialTheme.extendedColor.cardColor,
@@ -128,7 +133,7 @@ fun NotificationUi(
                 NotificationItem(
                     item = item,
                     onClick = {
-                        viewModel.markReadOptimistic(item.id)
+                        markRead(item.id)
                         navigator.push(NotificationVerifyScreen(newsId = item.id))
                     }
                 )
@@ -145,7 +150,8 @@ private fun Preview(){
         NotificationUi(
             items = listOf(),
             navigator = null,
-            viewModel = koinViewModel()
+            markRead = {},
+            markAll = {}
         )
     }
 }

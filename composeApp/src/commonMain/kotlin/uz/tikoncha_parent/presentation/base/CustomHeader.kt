@@ -83,7 +83,7 @@ fun CustomHeader(
 
         if (trailingIcon != null) {
             trailingIcon()
-            Space(16.dp)
+//            Space(16.dp)
         }
     }
 

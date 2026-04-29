@@ -24,17 +24,17 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
+
+    val iosTargets = listOf(iosX64(), iosArm64(), iosSimulatorArm64())
+
+    iosTargets.forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
+
+
 
     cocoapods {
         // Podspec -> shared.podspec avto-generate bo‘ladi
@@ -51,7 +51,6 @@ kotlin {
         pod("YandexMapsMobile") {
             version = "4.24.0-lite"
         }
-//        pod("Firebase/Messaging")
     }
     
     sourceSets {
@@ -73,6 +72,8 @@ kotlin {
             implementation("com.google.android.play:app-update:2.1.0")
             implementation("com.google.android.play:app-update-ktx:2.1.0")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+            implementation("com.yandex.android:maps.mobile:4.24.0-lite")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -82,6 +83,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
@@ -112,10 +114,6 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation("network.chaintech:qr-kit:3.1.2")
 
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-compose:0.4.1")
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp:0.4.1")
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko:0.4.1") // optional: moko support
-            implementation("ru.sulgik.mapkit:yandex-mapkit-kmp-moko-compose:0.4.1")
 
 
             //location
@@ -154,7 +152,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-
 
     }
     sourceSets.named("commonMain").configure {

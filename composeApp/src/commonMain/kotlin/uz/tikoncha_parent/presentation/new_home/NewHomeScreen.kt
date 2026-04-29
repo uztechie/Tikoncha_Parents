@@ -80,6 +80,7 @@ import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
+import uz.tikoncha_parent.presentation.tracking.TrackingScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
@@ -580,7 +581,7 @@ fun NewHomeUi(
                         onSettingSelected = { selectionItem ->
                             when (selectionItem) {
                                 HomeSelectionItem.XARITA -> {
-                                    navigator?.push(MapScreen())
+                                    navigator?.push(TrackingScreen())
                                 }
 
                                 HomeSelectionItem.SIHBAT -> {

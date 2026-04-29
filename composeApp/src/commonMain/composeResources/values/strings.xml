@@ -220,7 +220,7 @@
     <string name="har_kuni_bloklashni_rejalashtiring">Har kuni bloklashni rejalashtiring vaqt, joy va boshqa parametrlar bo‘yicha</string>
     <string name="tangachalaringiz">Tangachalaringiz</string>
     <string name="soatbay">Soatbay</string>
-    <string name="foydalanish_chegarasi">Foydalanish chegarasi</string>
+    <string name="limit">Limit</string>
     <string name="shartlar_kiritish">Shartlar kiritish</string>
     <string name="soatlik">Soatlik</string>
     <string name="tashqarida">Tashqarida</string>
@@ -480,4 +480,30 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="price_uzs">%1$s UZS</string>
     <string name="price_uzs_per_month">%1$s UZS / oy</string>
     <string name="obuna_uchun_farzand_qoshilmagan">Obuna farzandingiz uchun rasmiylashtiriladi. Davom etish uchun farzand qo'shing.</string>
+    <string name="tanlangan_kun_va_soatlarda_avtomatik_bloklash">Tanlangan kun va soatlarda avtomatik bloklash</string>
+    <string name="kunlik_yoki_soatlik_foydalanish_vaqtini_cheklash">Kunlik yoki soatlik foydalanish vaqtini cheklash</string>
+    <string name="malum_hududga_kirilganda_ilovalarni_bloklash">Ma’lum hududga kirilganda ilovalarni bloklash</string>
+    <string name="uyqu_vaqti_rejasi">Uyqu vaqti rejasi</string>
+    <string name="farzandingiz_kun_davomida_telefondan_qancha">Farzandingiz kun davomida telefondan qancha vaqt foydalanishini belgilang.</string>
+    <string name="ilova_taymeri">Ilova taymerlari</string>
+    <string name="ilovalarni_tanlang_va_ular_uchun_umumiy">Ilovalarni tanlang va ular uchun umumiy foydalanish limitini o‘rnating</string>
+    <string name="kontent_cheklovlari">Kontent cheklovlari</string>
+    <string name="farzandingizni_nomaqbul_kontentdan_himoya_qiling">Farzandingizni nomaqbul kontentdan himoya qiling</string>
+    <string name="shablonlar">Shablonlar</string>
+    <string name="uxlash_vaqti">Uxlash vaqti</string>
+    <string name="tanlangan_ilovalar_ochiq_qoladi">Tanlangan ilovalar ochiq qoladi, qolganlari bloklanadi.</string>
+
+    <string name="tracking_permission_title">Joylashuvga ruxsat kerak</string>
+    <string name="tracking_permission_message">O'z joylashuvingizni xaritada ko'rsatish uchun ruxsat bering</string>
+    <string name="tracking_permission_grant">Ruxsat berish</string>
+
+    <string name="tracking_permission_settings_title">Sozlamalardan ruxsat bering</string>
+    <string name="tracking_permission_settings_message">Joylashuvga ruxsatni Sozlamalardan yoqishingiz mumkin. Qurilma sozlamalari → Tikoncha → Joylashuv → Ruxsat berish</string>
+    <string name="tracking_permission_settings_open">Sozlamalarni ochish</string>
+
+    <string name="tracking_gps_off_title">GPS o'chiq</string>
+    <string name="tracking_gps_off_message">Joylashuvingizni aniqlash uchun GPS xizmatini yoqing</string>
+    <string name="tracking_gps_off_enable">GPS ni yoqish</string>
+
+
 </resources>

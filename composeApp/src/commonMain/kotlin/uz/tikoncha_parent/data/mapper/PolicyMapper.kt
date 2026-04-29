@@ -18,6 +18,7 @@ import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.TimeRule
 import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
+import uz.tikoncha_parent.domain.model.policy.PolicyTemplate
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppSelectionUi
 import uz.tikoncha_parent.presentation.policy.app_site_selection.CategoryLocalizer
@@ -129,6 +130,7 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi {
         policyType = policyType,
         isMine = policyType == PolicyType.PARENT_CHILD,
         locationRule = location,
+        policyTemplate = PolicyTemplate.fromString(policy_template),
     )
 }
 

@@ -123,12 +123,14 @@ import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
+import uz.tikoncha_parent.presentation.policy.template.sleep.SleepTemplateSetupViewModel
 import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupViewModel
 import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
+import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
 val sharedModule = module {
     single {
@@ -282,6 +284,7 @@ val sharedModule = module {
     factory { PolicySetupViewModel(get(), get(), get()) }
     single { PolicySharedModel(get()) }
     factory { AppWebViewModel(get()) }
+    factory { SleepTemplateSetupViewModel(get(), get(), get()) }
 
     factory { PaymentViewModel(get(), get(), get(), get(), get(), get()) }
     factory { SubscriptionPaymentViewModel(get(), get()) }

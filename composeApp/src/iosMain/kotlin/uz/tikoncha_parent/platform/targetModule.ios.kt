@@ -9,6 +9,7 @@ import uz.tikoncha_parent.domain.service.IOSPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.platform.AppIconLoader
 import uz.tikoncha_parent.presentation.map.LocationViewModel
+import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
 actual val targetModule = module {
     single<AppIconLoader> { IosAppIconLoader() }
@@ -29,6 +30,14 @@ actual val targetModule = module {
     single {
         LocationViewModel(
             tracker = get()
+        )
+    }
+
+    factory {
+        TrackingScreenModel(
+            childrenLocationUseCase = get(),
+            locationTracker = get(),
+            permissionsController = get()
         )
     }
 }

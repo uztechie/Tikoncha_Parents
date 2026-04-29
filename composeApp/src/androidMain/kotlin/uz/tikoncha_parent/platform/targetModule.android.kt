@@ -13,6 +13,7 @@ import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.presentation.map.LocationViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
+import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
 actual val targetModule = module {
     single<AppIconLoader> { AndroidAppIconLoader(androidContext()) }
@@ -44,6 +45,14 @@ actual val targetModule = module {
         LocationViewModel(
             tracker = get(),
             childrenLocationUseCase = get()
+        )
+    }
+
+    factory {
+        TrackingScreenModel(
+            childrenLocationUseCase = get(),
+            locationTracker = get(),
+            permissionsController = get()
         )
     }
 

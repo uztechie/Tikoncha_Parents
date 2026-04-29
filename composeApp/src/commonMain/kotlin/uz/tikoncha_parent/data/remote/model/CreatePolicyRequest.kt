@@ -18,7 +18,8 @@ data class CreatePolicyRequest(
     val time_rule: List<TimeRuleDto>? = null,
     val limit_rule: List<LimitRuleDto>? = null,
     val location_rule: LocationRuleDto? = null,
-    val wifi: List<String>? = null
+    val wifi: List<String>? = null,
+    val policy_template: String? = null,
 
-)
+    )
 

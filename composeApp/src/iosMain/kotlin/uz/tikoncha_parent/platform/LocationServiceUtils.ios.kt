@@ -11,3 +11,8 @@ actual fun openLocationSettings() {
     val url = NSURL(string = UIApplicationOpenSettingsURLString)
     UIApplication.sharedApplication.openURL(url)
 }
+
+actual fun openAppSettings() {
+    val url = NSURL(string = UIApplicationOpenSettingsURLString)
+    UIApplication.sharedApplication.openURL(url)
+}

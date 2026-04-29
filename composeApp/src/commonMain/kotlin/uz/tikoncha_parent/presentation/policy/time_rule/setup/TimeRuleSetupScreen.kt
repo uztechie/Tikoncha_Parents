@@ -446,15 +446,18 @@ fun TimeRuleSetupTimeCard(
 @Composable
 fun Pre() {
     TikonchaParentTheme {
-        TimeRuleSetupUi(
-            state = TimeRuleSetupState(
-                allDay = true
-            ),
-            event = {},
-            sharedEvent = {},
-            effect = emptyFlow(),
-            canUpdate = true,
-            onBack = {},
-        )
+        ToastProvider {
+            TimeRuleSetupUi(
+                state = TimeRuleSetupState(
+                    allDay = true
+                ),
+                event = {},
+                sharedEvent = {},
+                effect = emptyFlow(),
+                canUpdate = true,
+                onBack = {},
+            )
+        }
+
     }
 }

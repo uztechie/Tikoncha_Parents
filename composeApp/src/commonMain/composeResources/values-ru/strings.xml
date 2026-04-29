@@ -185,7 +185,7 @@
     <string name="har_kuni_bloklashni_rejalashtiring">Планируйте ежедневыне блакировки по времени, месту и другим параметрам</string>
     <string name="tangachalaringiz">Ваши монеты</string>
     <string name="soatbay">Почасовой</string>
-    <string name="foydalanish_chegarasi">Лимит использования</string>
+    <string name="limit">Лимит</string>
     <string name="shartlar_kiritish">Добавить условия</string>
     <string name="soatlik">Почасовой</string>
     <string name="obuna_holati">Статус подписки</string>
@@ -468,4 +468,17 @@
     <string name="istalgan_vaqtda_bekor">Можно отменить в любое время</string>
     <string name="price_uzs_per_month">%1$s СУМ / месяц</string>
     <string name="obuna_uchun_farzand_qoshilmagan">Подписка оформляется для вашего ребёнка. Чтобы продолжить, добавьте ребёнка.</string>
+    <string name="tracking_permission_title">Требуется разрешение на местоположение</string>
+    <string name="tracking_permission_message">Разрешите доступ к местоположению, чтобы показать его на карте</string>
+    <string name="tracking_permission_grant">Разрешить</string>
+
+    <string name="tracking_permission_settings_title">Разрешите доступ в Настройках</string>
+    <string name="tracking_permission_settings_message">Разрешение можно включить в Настройках устройства. Настройки → Tikoncha → Местоположение → Разрешить</string>
+    <string name="tracking_permission_settings_open">Открыть настройки</string>
+
+    <string name="tracking_gps_off_title">GPS выключен</string>
+    <string name="tracking_gps_off_message">Включите GPS, чтобы определить ваше местоположение</string>
+    <string name="tracking_gps_off_enable">Включить GPS</string>
+
+
 </resources>

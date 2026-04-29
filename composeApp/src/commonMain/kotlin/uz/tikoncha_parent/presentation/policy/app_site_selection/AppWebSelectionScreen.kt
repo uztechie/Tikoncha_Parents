@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -77,7 +76,10 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
-class AppWebSelectionScreen(val appSiteTabIndex: Int): Screen{
+class AppWebSelectionScreen(
+    val appSiteTabIndex: Int,
+    val singleTabMode: Boolean = false,
+): Screen{
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
@@ -101,7 +103,8 @@ class AppWebSelectionScreen(val appSiteTabIndex: Int): Screen{
             appState = state,
             appEvent = event,
             sharedState = sharedState,
-            sharedEvent = sharedEvent
+            sharedEvent = sharedEvent,
+            singleTabMode = singleTabMode,
         )
 
     }
@@ -115,6 +118,7 @@ fun AppWebSelectionUi(
     appEvent: (AppWebEvent) -> Unit,
     sharedState: PolicySharedState,
     sharedEvent: (PolicySharedEvent) -> Unit,
+    singleTabMode: Boolean,
 ) {
     var isSearchMode by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -336,25 +340,29 @@ fun AppWebSelectionUi(
                 .padding(),
         ) {
             // Tab
-            SegmentedTabBar(
-                items = listOf(
-                    stringResource(Res.string.ilovalar),
-                    stringResource(Res.string.saytlar),
-                ),
-                selectedIndex = appState.tabIndex,
-                borderWidth = 2.dp,
-                textStyle = AppTypography.bodyLgMedium,
-                onSelect = { appEvent(AppWebEvent.OnTabSelected(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp)
-                    .padding(horizontal = 16.dp),
-                colors = SegmentedTabBarDefaults.colors(
-                    textColor = AppColors.text.primary,
-                    selectedBorderColor = AppColors.border.accentEmphasis,
-                    unselectedBorderColor = AppColors.border.disabled
+
+            if (!singleTabMode) {
+
+                SegmentedTabBar(
+                    items = listOf(
+                        stringResource(Res.string.ilovalar),
+                        stringResource(Res.string.saytlar),
+                    ),
+                    selectedIndex = appState.tabIndex,
+                    borderWidth = 2.dp,
+                    textStyle = AppTypography.bodyLgMedium,
+                    onSelect = { appEvent(AppWebEvent.OnTabSelected(it)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .padding(horizontal = 16.dp),
+                    colors = SegmentedTabBarDefaults.colors(
+                        textColor = AppColors.text.primary,
+                        selectedBorderColor = AppColors.border.accentEmphasis,
+                        unselectedBorderColor = AppColors.border.disabled
+                    )
                 )
-            )
+            }
 
             // Content
             Box(modifier = Modifier.weight(1f)) {
@@ -517,6 +525,7 @@ private fun Preview() {
             appEvent = {},
             sharedState = PolicySharedState(),
             sharedEvent = {},
+            singleTabMode = true
         )
     }
 }

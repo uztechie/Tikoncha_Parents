@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.firebase.messaging.FirebaseMessaging
+import com.yandex.mapkit.MapKit
 
-import ru.sulgik.mapkit.MapKit
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.presentation.push.AndroidDeepLinkParser
 import uz.tikoncha_parent.presentation.push.DeepLinkBus
@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
-        MapKit.initialize(this)
         enableEdgeToEdge()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -67,12 +66,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        MapKit.getInstance().onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        MapKit.getInstance().onStop()
     }
 
     override fun onNewIntent(intent: Intent) {

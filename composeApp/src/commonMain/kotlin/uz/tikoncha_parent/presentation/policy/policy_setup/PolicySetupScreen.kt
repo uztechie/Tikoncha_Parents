@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -46,7 +45,6 @@ import uz.tikoncha_parent.domain.model.policy.PolicyAction
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebSelectionScreen
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
-import uz.tikoncha_parent.presentation.policy.rule_type_selection.RuleTypeSelectionScreen
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.domain.model.weekdayLabel
@@ -54,7 +52,6 @@ import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomTextField
-import uz.tikoncha_parent.presentation.base.DashedBorderButton
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.ToastData
@@ -443,9 +440,8 @@ fun PolicySetupUi(
                     color = AppColors.text.primary,
                 )
 
-                if (sharedState.limitList.isNotEmpty() || sharedState.timeList.isNotEmpty() || sharedState.locationRule != null){
-                    Space(12.dp)
-                }
+                Space(12.dp)
+
 
                 // Time rule
                 if (sharedState.timeList.isNotEmpty()) {
@@ -462,14 +458,22 @@ fun PolicySetupUi(
                             navigator?.push(TimeRuleListScreen())
                         },
                     )
-                    Space(10.dp)
                 }
+                else if (sharedState.canUpdate) {
+                    EmptyPolicySetupRuleItem(
+                        title = stringResource(Res.string.vaqt),
+                        subTitle = stringResource(Res.string.tanlangan_kun_va_soatlarda_avtomatik_bloklash),
+                        painter = painterResource(Res.drawable.time_square),
+                        onItemClick = { navigator?.push(TimeRuleListScreen()) },
+                    )
+                }
+                Space(10.dp)
 
                 // Limit rule
                 if (sharedState.limitList.isNotEmpty()) {
                     val subTitle = buildLimitRuleSubtitle(sharedState)
                     PolicySetupRuleItem(
-                        title = stringResource(Res.string.foydalanish_chegarasi),
+                        title = stringResource(Res.string.limit),
                         painter = painterResource(Res.drawable.per_time_enabled),
                         subTitle = subTitle,
                         canRemove = sharedState.canUpdate,
@@ -480,8 +484,15 @@ fun PolicySetupUi(
                             navigator?.push(LimitRuleListScreen())
                         },
                     )
-                    Space(10.dp)
+                } else if (sharedState.canUpdate) {
+                    EmptyPolicySetupRuleItem(
+                        title = stringResource(Res.string.limit),
+                        subTitle = stringResource(Res.string.kunlik_yoki_soatlik_foydalanish_vaqtini_cheklash),
+                        painter = painterResource(Res.drawable.locked),
+                        onItemClick = {  navigator?.push(LimitRuleListScreen()) },
+                    )
                 }
+                Space(10.dp)
 
                 // Location rule
                 if (sharedState.locationRule != null) {
@@ -502,26 +513,12 @@ fun PolicySetupUi(
                         },
                     )
                 }
-
-                // Shart qo'shish tugmasi
-                if (sharedState.showAddRuleButton) {
-                    Space(12.dp)
-                    DashedBorderButton(
-                        text = stringResource(Res.string.shartlar_kiritish),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(DialogButtonHeight),
-                        onClick = {
-                            navigator?.push(RuleTypeSelectionScreen())
-                                  },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                                tint = AppColors.text.accentEmphasis,
-                            )
-                        }
+                else if (sharedState.canUpdate) {
+                    EmptyPolicySetupRuleItem(
+                        title = stringResource(Res.string.joylashuv),
+                        subTitle = stringResource(Res.string.malum_hududga_kirilganda_ilovalarni_bloklash),
+                        painter = painterResource(Res.drawable.per_location_enable),
+                        onItemClick = { navigator?.push(LocationRuleScreen()) },
                     )
                 }
             }

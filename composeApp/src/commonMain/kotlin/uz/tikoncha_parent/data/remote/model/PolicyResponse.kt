@@ -34,7 +34,8 @@ data class PolicyDto(
     val limit_rule: List<LimitRuleDto>? = emptyList(),
     val location_rule: LocationRuleDto? = null,
     val wifi: List<String>? = null,
-    val reason: String? = null
+    val reason: String? = null,
+    val policy_template: String? = null,
 )
 
 @Serializable

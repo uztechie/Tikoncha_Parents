@@ -19,11 +19,11 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import ru.sulgik.mapkit.MapKit
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
+import uz.tikoncha_parent.presentation.map2.MapKitInitializer
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
@@ -157,7 +157,8 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
 
 fun initMapKit() {
     val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
-    MapKit.setApiKey(MAP_KEY)
+//    MapKitInitializer.initialize(MAP_KEY)
+
 }
 
 

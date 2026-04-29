@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,11 +37,22 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_kun_davomida_telefondan_qancha
+import tikoncha_parents.composeapp.generated.resources.farzandingizni_nomaqbul_kontentdan_himoya_qiling
+import tikoncha_parents.composeapp.generated.resources.ilova_taymeri
+import tikoncha_parents.composeapp.generated.resources.ilovalarni_tanlang_va_ular_uchun_umumiy
+import tikoncha_parents.composeapp.generated.resources.internet
 import tikoncha_parents.composeapp.generated.resources.jadval_limit_tugadi_plus
 import tikoncha_parents.composeapp.generated.resources.jadval_qoshish
+import tikoncha_parents.composeapp.generated.resources.kontent_cheklovlari
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
+import tikoncha_parents.composeapp.generated.resources.shablonlar
 import tikoncha_parents.composeapp.generated.resources.sizning_cheklovlaringiz
+import tikoncha_parents.composeapp.generated.resources.time_large_icon
+import tikoncha_parents.composeapp.generated.resources.timer_policy
+import tikoncha_parents.composeapp.generated.resources.uyqu_vaqti_rejasi
 import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.domain.model.policy.PolicyAction
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -51,10 +63,14 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.policy.template.PolicyTemplateEmptyItem
+import uz.tikoncha_parent.presentation.policy.template.sleep.SleepTemplateSetupScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
@@ -232,6 +248,48 @@ fun PolicyListUi(
                                 )
                             )
                         }
+                    )
+                }
+
+                item {
+                    Space(16.dp)
+                    Text(
+                        text = stringResource(Res.string.shablonlar),
+                        color = AppColors.text.primary,
+                        style = AppTypography.titleLgSemiBold
+                    )
+                    Space(12.dp)
+                    PolicyTemplateEmptyItem(
+                        icon = painterResource(Res.drawable.time_large_icon),
+                        title = stringResource(Res.string.uyqu_vaqti_rejasi),
+                        desc = stringResource(Res.string.farzandingiz_kun_davomida_telefondan_qancha),
+                        onClick = {
+                            if (state.canCreatePolicy) {
+                                sharedEvent(PolicySharedEvent.ClearData)
+                                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
+                                state.selectedChild?.let { child ->
+                                    sharedEvent(PolicySharedEvent.SetSelectedChild(child))
+                                    sharedEvent(PolicySharedEvent.SetPolicyAction(PolicyAction.ALLOW))
+                                }
+                                navigator?.push(SleepTemplateSetupScreen())
+                            } else {
+                                showPolicyLimitDialog = true
+                            }
+                        }
+                    )
+                    Space(8.dp)
+                    PolicyTemplateEmptyItem(
+                        icon = painterResource(Res.drawable.timer_policy),
+                        title = stringResource(Res.string.ilova_taymeri),
+                        desc = stringResource(Res.string.ilovalarni_tanlang_va_ular_uchun_umumiy),
+                        onClick = {}
+                    )
+                    Space(8.dp)
+                    PolicyTemplateEmptyItem(
+                        icon = painterResource(Res.drawable.internet),
+                        title = stringResource(Res.string.kontent_cheklovlari),
+                        desc = stringResource(Res.string.farzandingizni_nomaqbul_kontentdan_himoya_qiling),
+                        onClick = {}
                     )
                 }
             }

@@ -31,7 +31,7 @@ import tikoncha_parents.composeapp.generated.resources.bloklash_wifi_tarmogida
 import tikoncha_parents.composeapp.generated.resources.chegaralash_ishlatish_marta
 import tikoncha_parents.composeapp.generated.resources.chegaralash_kun_soat_va_daqiqa
 import tikoncha_parents.composeapp.generated.resources.clock
-import tikoncha_parents.composeapp.generated.resources.foydalanish_chegarasi
+import tikoncha_parents.composeapp.generated.resources.limit
 import tikoncha_parents.composeapp.generated.resources.icon_of
 import tikoncha_parents.composeapp.generated.resources.ishga_tushirishlar_soni
 import tikoncha_parents.composeapp.generated.resources.joylashuv
@@ -41,7 +41,6 @@ import tikoncha_parents.composeapp.generated.resources.qachon_va_qanday_holatlar
 import tikoncha_parents.composeapp.generated.resources.shartlar
 import tikoncha_parents.composeapp.generated.resources.vaqt
 import tikoncha_parents.composeapp.generated.resources.wi_fi
-import tikoncha_parents.composeapp.generated.resources.wi_fi as wiFiLabel
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
@@ -90,7 +89,7 @@ fun RuleTypeSelectionUi(
         RuleTypeUi(
             type = RuleType.USAGE_LIMIT,
             icon = painterResource(Res.drawable.locked),
-            title = stringResource(Res.string.foydalanish_chegarasi),
+            title = stringResource(Res.string.limit),
             subtitle = stringResource(Res.string.chegaralash_kun_soat_va_daqiqa),
             enabled = true,
             hasItems = state.limitList.isNotEmpty(),
