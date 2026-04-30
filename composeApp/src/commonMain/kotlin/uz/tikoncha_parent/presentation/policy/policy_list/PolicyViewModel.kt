@@ -9,17 +9,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
+import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
+import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicyViewModel(
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase
+    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
+    private val permissionStatusUseCase: PermissionStatusUseCase
 ) : ScreenModel {
 
     private val TAG = "PolicyViewModel"
@@ -32,6 +36,8 @@ class PolicyViewModel(
                 selectedChild = AppSettings.selectedChild
             )
         }
+
+        loadPermissionStatus()
     }
 
 
@@ -100,6 +106,35 @@ class PolicyViewModel(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun loadPermissionStatus() {
+        screenModelScope.launch {
+            val res = permissionStatusUseCase.invoke(
+                PermissionStatusRequest(
+                    userId = _state.value.selectedChild?.userId?:"",
+                    state = PermissionStatusType.POLICY.name
+                )
+            )
+            when (res) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            permissionIssueList = res.data.issues
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    // Xato — issue ko'rsatmaymiz, loading'ni yopamiz
+                    _state.update {
+                        it.copy(
+                            permissionIssueList = emptyList()
+                        )
+                    }
+                }
+                else -> Unit
             }
         }
     }

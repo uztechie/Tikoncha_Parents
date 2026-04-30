@@ -80,7 +80,7 @@ fun CustomBottomDialog(
                 Card(
                     shape = RoundedCornerShape(CardCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
+                        containerColor = AppColors.bg.surface
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ){

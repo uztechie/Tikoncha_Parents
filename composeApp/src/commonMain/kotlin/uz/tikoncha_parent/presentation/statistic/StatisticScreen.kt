@@ -47,10 +47,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.PermissionWarningCard
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -70,10 +72,6 @@ class StatisticScreen : Screen {
         val viewModel = navigator.koinNavigatorScreenModel<StatisticViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
-
-        LaunchedEffect(Unit) {
-            event(StatisticEvent.GetChildren)
-        }
 
         StatisticUi(
             navigator = navigator,
@@ -211,7 +209,25 @@ fun StatisticUi(
                     )
                     .verticalScroll(rememberScrollState())
             ) {
-                SpaceMedium()
+
+                if (state.permissionIssueList.isNotEmpty()) {
+                    Space(12.dp)
+                    state.permissionIssueList.forEach {
+                        PermissionWarningCard(
+                            title = it.title,
+                            body = it.body,
+                            videoUrl = it.video_url,
+                            onVideoClick = {
+                                openUrl(it)
+                            }
+                        )
+                        Space(12.dp)
+                    }
+                }
+                else{
+                    Space(12.dp)
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

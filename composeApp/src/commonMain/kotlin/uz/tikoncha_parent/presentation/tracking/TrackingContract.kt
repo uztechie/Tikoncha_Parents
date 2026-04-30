@@ -1,6 +1,8 @@
 package uz.tikoncha_parent.presentation.tracking
 
 import androidx.compose.runtime.Immutable
+import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.presentation.map2.LatLng
 
 
@@ -27,7 +29,14 @@ data class TrackingState(
     val permissionDeniedAlways: Boolean = false,    // "Don't ask again" yoki Settings'dan
     val showGpsDialog: Boolean = false,             // GPS o'chiq — dialog ko'rsatish
     val showPermissionRationale: Boolean = false,    // permissio
-    val userLocationEnabled: Boolean = false
+    val userLocationEnabled: Boolean = false,
+    val subscriptionLimits: List<SubscriptionLimit> = emptyList(),  // ⬅️ YANGI
+    val showSubscriptionDialog: Boolean = false,
+    val sheetPerson: Person? = null,             // ⬅️ YANGI — sheet ichidagi bola
+    val showPersonSheet: Boolean = false,           // ⬅️ YANGI
+
+    val sheetIssues: List<PermissionStatusIssus> = emptyList(),
+    val isCheckingPermissionStatus: Boolean = false,
 ) {
 
 }
@@ -48,12 +57,17 @@ sealed interface TrackingEvent {
     data object OpenAppSettings : TrackingEvent
     data object DismissPermissionDialog : TrackingEvent
     data object RecheckPermission : TrackingEvent
+    data object DismissSubscriptionDialog : TrackingEvent
+    data object DismissPersonSheet : TrackingEvent           // ⬅️ YANGI
+    data object RetryLocation : TrackingEvent
+    data class OpenYoutubeUrl(val url: String) : TrackingEvent
 }
 
 sealed interface TrackingEffect {
     data class MoveCamera(val target: LatLng, val zoom: Float = 16f) : TrackingEffect
     data class FitBounds(val points: List<LatLng>) : TrackingEffect
     data class ShowError(val message: String) : TrackingEffect
+    data class OpenUrl(val url: String) : TrackingEffect
 
     data object RequestPermission : TrackingEffect       // UI permission dialog ochishi kerak
     data object OpenAppSettings : TrackingEffect         // Settings ekraniga o'tkazish

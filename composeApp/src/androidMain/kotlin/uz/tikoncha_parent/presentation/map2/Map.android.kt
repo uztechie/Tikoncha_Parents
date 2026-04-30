@@ -1,17 +1,14 @@
 package uz.tikoncha_parent.presentation.map2
 
 import android.graphics.PointF
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -39,7 +36,10 @@ import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.mapkit.geometry.Circle as YCircle
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.AppHolder
+
+// ============================================================
+// MAP KIT INITIALIZER
+// ============================================================
 
 actual object MapKitInitializer {
     @Volatile
@@ -48,10 +48,13 @@ actual object MapKitInitializer {
     actual fun initialize(apiKey: String) {
         if (initialized) return
         MapKitFactory.setApiKey(apiKey)
-        MapKitFactory.initialize(AppHolder.app)
         initialized = true
     }
 }
+
+// ============================================================
+// MAP CONTROLLER
+// ============================================================
 
 @Stable
 actual class MapController actual constructor() {
@@ -87,12 +90,7 @@ actual class MapController actual constructor() {
     }
 
     actual fun moveToUserLocation(animated: Boolean) {
-        val map = mapView?.mapWindow?.map ?: return
-        val layer = userLocationLayer ?: return
-        val pos = layer.cameraPosition() ?: return
-        val target = YCameraPosition(pos.target, 16f, 0f, 0f)
-        if (animated) map.move(target, Animation(Animation.Type.SMOOTH, 0.4f), null)
-        else map.move(target)
+        tryMoveToUserLocation(animated)
     }
 
     actual fun tryMoveToUserLocation(animated: Boolean): Boolean {
@@ -108,8 +106,26 @@ actual class MapController actual constructor() {
 @Composable
 actual fun rememberMapController(): MapController = remember { MapController() }
 
-private fun MarkerStyle.cacheKey(): String =
-    "${backgroundColor}_${isSelected}_${avatarUrl ?: text}_${showText}"
+// ============================================================
+// USER LOCATION HELPER
+// ============================================================
+
+private fun applyUserLocationIcon(
+    view: UserLocationView,
+    icon: NativeMarkerIcon?
+) {
+    if (icon == null) return
+    val style = IconStyle().apply {
+        anchor = PointF(MarkerDimensions.ANCHOR_X, MarkerDimensions.ANCHOR_Y)
+    }
+    view.pin.setIcon(icon.provider, style)
+    view.arrow.setIcon(icon.provider, style)
+    view.accuracyCircle.fillColor = android.graphics.Color.TRANSPARENT
+}
+
+// ============================================================
+// COMPOSABLE — YandexMap
+// ============================================================
 
 @Composable
 actual fun YandexMap(
@@ -122,6 +138,7 @@ actual fun YandexMap(
     showUserLocation: Boolean,
     userLocationIcon: NativeMarkerIcon?,
     onUserLocationChanged: ((LatLng) -> Unit)?,
+    isDark: Boolean,
     modifier: Modifier
 ) {
     val context = LocalContext.current
@@ -138,22 +155,48 @@ actual fun YandexMap(
     val placemarks = remember { mutableMapOf<String, PlacemarkMapObject>() }
     val placemarkListeners = remember { mutableMapOf<String, MapObjectTapListener>() }
     val circleObjects = remember { mutableMapOf<String, CircleMapObject>() }
-    val iconCache = remember { mutableMapOf<String, NativeMarkerIcon>() }
-    val markerKeys = remember { mutableMapOf<String, String>() }
+
+    // ⬇️ ASOSIY: STATE map — yangi key qo'shilganda recomposition triggerlanadi
+    val iconCache = remember { mutableStateMapOf<String, NativeMarkerIcon>() }
 
     val userLocationListener = remember {
         object : UserLocationObjectListener {
             override fun onObjectAdded(view: UserLocationView) {
-                Log.d("YandexMap", "🟢 onObjectAdded — JOYLASHUV ANIQLANDI!")
                 applyUserLocationIcon(view, userLocationIconState.value)
             }
+
             override fun onObjectRemoved(view: UserLocationView) {}
+
             override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
                 view.pin.geometry?.let { point ->
-                    Log.d("YandexMap", "🟡 onObjectUpdated lat=${point.latitude}")
-                    onUserLocationChangedState.value?.invoke(LatLng(point.latitude, point.longitude))
+                    onUserLocationChangedState.value?.invoke(
+                        LatLng(point.latitude, point.longitude)
+                    )
                 }
                 applyUserLocationIcon(view, userLocationIconState.value)
+            }
+        }
+    }
+
+    // ============================================================
+    // ICON YARATISH — markerlar o'zgarganda async cache to'ldirish
+    // ============================================================
+    LaunchedEffect(markers) {
+        markers.forEach { marker ->
+            val key = marker.style.cacheKey()
+            if (iconCache.containsKey(key)) return@forEach
+
+            scope.launch {
+                try {
+                    val icon = createMarkerIcon(
+                        style = marker.style,
+                        density = density,
+                        textMeasurer = textMeasurer
+                    )
+                    iconCache[key] = icon
+                } catch (e: Throwable) {
+                    android.util.Log.e("YMK_MARK", "icon failed for ${marker.id}", e)
+                }
             }
         }
     }
@@ -161,7 +204,6 @@ actual fun YandexMap(
     AndroidView(
         modifier = modifier,
         factory = { ctx ->
-            Log.d("YandexMap", "📍 MapView FACTORY")
             MapView(ctx).also { view ->
                 controller.mapView = view
                 view.mapWindow.map.move(
@@ -181,24 +223,32 @@ actual fun YandexMap(
             }
         },
         update = { view ->
-            Log.d("YandexMap", "📍 update — showUserLocation=$showUserLocation, layer=${controller.userLocationLayer != null}")
             val map = view.mapWindow.map
 
-            // ---- MARKERS sinxron ----
+            // Dark mode
+            map.isNightModeEnabled = isDark
+
+            // -------- MARKERS sinxron --------
             val incoming = markers.associateBy { it.id }
+
+            // Olib tashlash
             (placemarks.keys - incoming.keys).toList().forEach { id ->
                 placemarks.remove(id)?.let { pm ->
                     placemarkListeners.remove(id)?.let { pm.removeTapListener(it) }
                     map.mapObjects.remove(pm)
                 }
-                markerKeys.remove(id)
             }
+
+            // Qo'shish/yangilash
             incoming.forEach { (id, marker) ->
                 val pm = placemarks[id] ?: map.mapObjects.addPlacemark(
                     Point(marker.position.lat, marker.position.lon)
                 ).also { placemarks[id] = it }
+
                 pm.geometry = Point(marker.position.lat, marker.position.lon)
                 pm.zIndex = marker.zIndex
+
+                // Tap listener
                 if (placemarkListeners[id] == null) {
                     val listener = MapObjectTapListener { _, _ ->
                         onMarkerClickState.value(id); true
@@ -206,9 +256,25 @@ actual fun YandexMap(
                     pm.addTapListener(listener)
                     placemarkListeners[id] = listener
                 }
+
+                // ⬇️ ASOSIY: Icon cache'da bo'lsa darhol o'rnatamiz.
+                // Cache'da hali yo'q bo'lsa — LaunchedEffect tayyorlagach,
+                // iconCache STATE o'zgaradi → recomposition → bu blok yana ishlaydi.
+                val key = marker.style.cacheKey()
+                iconCache[key]?.let { icon ->
+                    pm.setIcon(
+                        icon.provider,
+                        IconStyle().apply {
+                            anchor = PointF(
+                                MarkerDimensions.ANCHOR_X,
+                                MarkerDimensions.ANCHOR_Y
+                            )
+                        }
+                    )
+                }
             }
 
-            // ---- CIRCLES sinxron ----
+            // -------- CIRCLES sinxron --------
             val inCircles = circles.associateBy { it.id }
             (circleObjects.keys - inCircles.keys).toList().forEach { id ->
                 circleObjects.remove(id)?.let { map.mapObjects.remove(it) }
@@ -226,17 +292,15 @@ actual fun YandexMap(
                 obj.strokeWidth = c.strokeWidthDp
             }
 
-            // ---- USER LOCATION LAYER (update blokida — avvalgi ishlagan holat) ----
+            // -------- USER LOCATION LAYER --------
             if (showUserLocation) {
                 if (controller.userLocationLayer == null) {
-                    Log.d("YandexMap", "📍 UserLocationLayer YARATILMOQDA")
                     controller.userLocationLayer = MapKitFactory.getInstance()
                         .createUserLocationLayer(view.mapWindow).apply {
                             isVisible = true
                             isHeadingModeActive = true
                             setObjectListener(userLocationListener)
                         }
-                    Log.d("YandexMap", "✅ UserLocationLayer YARATILDI")
                 }
             } else {
                 controller.userLocationLayer?.let { layer ->
@@ -247,29 +311,6 @@ actual fun YandexMap(
             }
         }
     )
-
-    // ---- MARKER ICONS (async load) ----
-    LaunchedEffect(markers) {
-        markers.forEach { marker ->
-            val newKey = marker.style.cacheKey()
-            if (markerKeys[marker.id] == newKey) return@forEach
-            markerKeys[marker.id] = newKey
-
-            scope.launch {
-                val icon = iconCache[newKey] ?: run {
-                    val newIcon = createMarkerIcon(marker.style, density, textMeasurer)
-                    iconCache[newKey] = newIcon
-                    newIcon
-                }
-                placemarks[marker.id]?.setIcon(
-                    icon.provider,
-                    IconStyle().apply {
-                        anchor = PointF(MarkerDimensions.ANCHOR_X, MarkerDimensions.ANCHOR_Y)
-                    }
-                )
-            }
-        }
-    }
 
     DisposableEffect(lifecycleOwner) {
         val obs = LifecycleEventObserver { _, event ->
@@ -292,23 +333,9 @@ actual fun YandexMap(
             placemarkListeners.clear()
             circleObjects.clear()
             iconCache.clear()
-            markerKeys.clear()
             controller.userLocationLayer?.setObjectListener(null)
             controller.userLocationLayer = null
             controller.mapView = null
         }
     }
-}
-
-private fun applyUserLocationIcon(
-    view: UserLocationView,
-    icon: NativeMarkerIcon?
-) {
-    if (icon == null) return
-    val style = IconStyle().apply {
-        anchor = PointF(MarkerDimensions.ANCHOR_X, MarkerDimensions.ANCHOR_Y)
-    }
-    view.pin.setIcon(icon.provider, style)
-    view.arrow.setIcon(icon.provider, style)
-    view.accuracyCircle.fillColor = android.graphics.Color.TRANSPARENT
 }

@@ -26,11 +26,14 @@ import uz.tikoncha_parent.data.mapper.toUsageUi
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.mapper.toWeeklyAverage
 import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
+import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
 import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
+import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
 import uz.tikoncha_parent.presentation.new_home.HomeEvent
@@ -44,6 +47,7 @@ class StatisticViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
     private val childrenUseCase: ChildrenUseCase,
+    private val permissionStatusUseCase: PermissionStatusUseCase
 ) : ScreenModel
 {
 
@@ -270,12 +274,42 @@ class StatisticViewModel(
                         _state.update { it.copy(selectedChild = AppSettings.selectedChild) }
                     }
                     loadAppUsages()
+                    loadPermissionStatus()
 
 //                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
 //                    if (AppSettings.selectedChild == null){
 //                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
 //                    }
                 }
+            }
+        }
+    }
+
+    private fun loadPermissionStatus() {
+        screenModelScope.launch {
+            val res = permissionStatusUseCase.invoke(
+                PermissionStatusRequest(
+                    userId = _state.value.selectedChild?.userId?:"",
+                    state = PermissionStatusType.STATISTICS.name
+                )
+            )
+            when (res) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            permissionIssueList = res.data.issues
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    // Xato — issue ko'rsatmaymiz, loading'ni yopamiz
+                    _state.update {
+                        it.copy(
+                            permissionIssueList = emptyList()
+                        )
+                    }
+                }
+                else -> Unit
             }
         }
     }

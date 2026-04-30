@@ -52,7 +52,9 @@ actual val targetModule = module {
         TrackingScreenModel(
             childrenLocationUseCase = get(),
             locationTracker = get(),
-            permissionsController = get()
+            permissionsController = get(),
+            subscriptionLimitUseCase = get(),
+            permissionStatusUseCase = get()
         )
     }
 

@@ -30,5 +30,9 @@ expect fun YandexMap(
     showUserLocation: Boolean = false,                                  // YOQISH/O'CHIRISH
     userLocationIcon: NativeMarkerIcon? = null,                          // ← YANGI: custom icon
     onUserLocationChanged: ((LatLng) -> Unit)? = null,                   // ← YANGI: callback
+    isDark: Boolean = false,
     modifier: Modifier = Modifier
 )
+
+internal fun MarkerStyle.cacheKey(): String =
+    "${backgroundColor}_${isSelected}_${avatarUrl ?: text}_${showText}"

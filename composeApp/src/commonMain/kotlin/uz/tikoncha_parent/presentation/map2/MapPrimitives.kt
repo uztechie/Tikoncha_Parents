@@ -25,52 +25,50 @@ data class MapMarker(
 
 data class MarkerStyle(
     val label: String,
-    val backgroundColor: Long = 0xFF22C55E,
+    val backgroundColor: Long = 0xFF4BB462,   // ← bitta rang: border, pin, indikator hammasi shu
     val borderColor: Long = 0xFFFFFFFF,
     val textColor: Long = 0xFFFFFFFF,
     val showPersonIcon: Boolean = false,
     val avatarUrl: String? = null,
     val isSelected: Boolean = false,
     val placeholderBitmap: ImageBitmap? = null,
-    val showText: Boolean = false,         // ← rasm o'rniga matn chizish
-    val text: String = ""                   // ← chiziladigan matn (masalan "Siz")
+    val showText: Boolean = false,
+    val text: String = ""
 ) {
     companion object {
-        // SELF — matn bilan, jigarrang
-        fun Self(
-            text: String,
-            placeholderBitmap: ImageBitmap? = null
-        ) = MarkerStyle(
+        fun Self(text: String, placeholderBitmap: ImageBitmap? = null) = MarkerStyle(
             label = text,
-            backgroundColor = 0xFFB8916F,   // ← jigarrang/altin
-            avatarUrl = null,                // self uchun rasm yo'q
+            backgroundColor = 0xFFC3955B,   // jigarrang
+            avatarUrl = null,
             placeholderBitmap = placeholderBitmap,
-            showText = true,                 // ← matn ko'rsatish
+            showText = true,
             text = text
         )
 
-        // CHILD — rasm bilan, yashil
+        // CHILD — yashil
         fun Child(
             label: String,
             avatarUrl: String? = null,
             placeholderBitmap: ImageBitmap? = null
         ) = MarkerStyle(
             label = label,
-            backgroundColor = 0xFF4BB462,
+            backgroundColor = 0xFF4BB462,   // ← yashil
             avatarUrl = avatarUrl,
-            placeholderBitmap = placeholderBitmap
+            placeholderBitmap = placeholderBitmap,
+            isSelected = false
         )
 
+        // CHILD SELECTED — olov rang (jigarrang/altin)
         fun ChildSelected(
             label: String,
             avatarUrl: String? = null,
             placeholderBitmap: ImageBitmap? = null
         ) = MarkerStyle(
             label = label,
-            backgroundColor = 0xFF4BB462,
+            backgroundColor = 0xFFFF8A00,   // ← OLOV RANG (to'q sariq)
             avatarUrl = avatarUrl,
-            isSelected = true,
-            placeholderBitmap = placeholderBitmap
+            placeholderBitmap = placeholderBitmap,
+            isSelected = true
         )
     }
 }

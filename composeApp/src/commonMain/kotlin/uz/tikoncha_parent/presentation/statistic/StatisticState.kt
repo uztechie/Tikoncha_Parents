@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.statistic
 
 import kotlinx.datetime.LocalTime
 import uz.tikoncha_parent.data.remote.model.GetRuleItem
+import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
 import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
@@ -39,4 +40,5 @@ data class StatisticState(
 
     val showBlur: Boolean = false,
     val selectedPeriod: UsagePeriod? = null,
+    val permissionIssueList: List<PermissionStatusIssus> = emptyList(),
 )

@@ -504,6 +504,31 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="tracking_gps_off_title">GPS o'chiq</string>
     <string name="tracking_gps_off_message">Joylashuvingizni aniqlash uchun GPS xizmatini yoqing</string>
     <string name="tracking_gps_off_enable">GPS ni yoqish</string>
+    <string name="farzandingizni_qayerda_ekanini_kuzatish">Farzandingizni qayerda ekanini kuzatish uchun PLUS obunasini faollashtiring</string>
+
+    <string name="tracking_just_now">Hozir</string>
+    <string name="tracking_minutes_ago">daqiqa oldin</string>
+    <string name="tracking_hours_ago">soat oldin</string>
+    <string name="tracking_days_ago">kun oldin</string>
+    <string name="tracking_last_update">Oxirgi yangilanish:</string>
+    <string name="tracking_location_unavailable">Joylashuv mavjud emas</string>
+    <string name="tracking_retry">Qayta urinib ko'rish</string>
+
+    <string name="month_january">Yanvar</string>
+    <string name="month_february">Fevral</string>
+    <string name="month_march">Mart</string>
+    <string name="month_april">Aprel</string>
+    <string name="month_may">May</string>
+    <string name="month_june">Iyun</string>
+    <string name="month_july">Iyul</string>
+    <string name="month_august">Avgust</string>
+    <string name="month_september">Sentabr</string>
+    <string name="month_october">Oktabr</string>
+    <string name="month_november">Noyabr</string>
+    <string name="month_december">Dekabr</string>
+
+    <string name="tracking_checking_settings">Farzand sozlamalari tekshirilmoqda...</string>
+    <string name="tracking_watch_video">Video ko'rish</string>
 
 
 </resources>

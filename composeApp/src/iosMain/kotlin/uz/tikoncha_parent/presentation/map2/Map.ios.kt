@@ -4,16 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.interop.UIKitView
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.viewinterop.UIKitInteropInteractionMode
+import androidx.compose.ui.viewinterop.UIKitInteropProperties
+import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.YandexMapsMobile.YMKAnimation
 import cocoapods.YandexMapsMobile.YMKAnimationType
 import cocoapods.YandexMapsMobile.YMKCameraPosition
@@ -47,7 +47,7 @@ import platform.darwin.NSObject
 import kotlin.concurrent.Volatile
 
 // ============================================================
-// HELPER funksiyalar
+// HELPER FUNKSIYALAR
 // ============================================================
 
 @OptIn(ExperimentalForeignApi::class)
@@ -210,24 +210,13 @@ actual class MapController actual constructor() {
     }
 
     actual fun moveToUserLocation(animated: Boolean) {
-        val map = mapView?.mapWindow?.map ?: return
-        val layer = userLocationLayer ?: return
-        val pos = layer.cameraPosition() ?: return
-        val target = ymkCameraPosition(target = pos.target, zoom = 16f)
-        if (animated) {
-            map.moveWithCameraPosition(
-                cameraPosition = target,
-                animation = smoothAnimation(),
-                cameraCallback = null
-            )
-        } else {
-            map.moveWithCameraPosition(target)
-        }
+        tryMoveToUserLocation(animated)
     }
 
     actual fun tryMoveToUserLocation(animated: Boolean): Boolean {
         val map = mapView?.mapWindow?.map ?: return false
-        val pos = userLocationLayer?.cameraPosition() ?: return false
+        val layer = userLocationLayer ?: return false
+        val pos = layer.cameraPosition() ?: return false
         val target = ymkCameraPosition(target = pos.target, zoom = 16f)
         if (animated) {
             map.moveWithCameraPosition(
@@ -240,14 +229,13 @@ actual class MapController actual constructor() {
         }
         return true
     }
-
 }
 
 @Composable
 actual fun rememberMapController(): MapController = remember { MapController() }
 
 // ============================================================
-// LISTENERS — kuchli reference saqlash
+// LISTENERS
 // ============================================================
 
 @OptIn(ExperimentalForeignApi::class)
@@ -300,7 +288,6 @@ private class UserLocationListener(
         view.pin().setIconStyleWithStyle(style)
         view.arrow().setIconWithImage(icon.image)
         view.arrow().setIconStyleWithStyle(style)
-        // Aniqlik aylanasi (atrofdagi ko'k bulut) — shaffof qilish
         view.accuracyCircle().setFillColor(UIColor.clearColor)
     }
 }
@@ -308,9 +295,6 @@ private class UserLocationListener(
 // ============================================================
 // COMPOSABLE — YandexMap
 // ============================================================
-
-private fun MarkerStyle.cacheKey(): String =
-    "${backgroundColor}_${isSelected}_${avatarUrl ?: text}_${showText}"
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -324,6 +308,7 @@ actual fun YandexMap(
     showUserLocation: Boolean,
     userLocationIcon: NativeMarkerIcon?,
     onUserLocationChanged: ((LatLng) -> Unit)?,
+    isDark: Boolean,
     modifier: Modifier
 ) {
     val density = LocalDensity.current
@@ -340,7 +325,9 @@ actual fun YandexMap(
     val circleObjects = remember { mutableMapOf<String, YMKCircleMapObject>() }
     val mapInputListener = remember { MapInputListener { onMapTapState.value(it) } }
 
-    // User location listener — ichida getIcon orqali eng so'nggi icon olinadi
+    // ⬇️ ASOSIY: STATE map — yangi key qo'shilganda recomposition triggerlanadi
+    val iconCache = remember { mutableStateMapOf<String, NativeMarkerIcon>() }
+
     val userLocationListener = remember {
         UserLocationListener(
             getIcon = { userLocationIconState.value },
@@ -350,8 +337,28 @@ actual fun YandexMap(
         )
     }
 
-    val iconCache = remember { mutableMapOf<String, NativeMarkerIcon>() }
-    val markerKeys = remember { mutableMapOf<String, String>() }
+    // ============================================================
+    // ICON YARATISH — markerlar o'zgarganda async cache to'ldirish
+    // ============================================================
+    LaunchedEffect(markers) {
+        markers.forEach { marker ->
+            val key = marker.style.cacheKey()
+            if (iconCache.containsKey(key)) return@forEach
+
+            scope.launch {
+                try {
+                    val icon = createMarkerIcon(
+                        style = marker.style,
+                        density = density,
+                        textMeasurer = textMeasurer
+                    )
+                    iconCache[key] = icon
+                } catch (e: Throwable) {
+                    println("YMK_MARK: ❌ icon failed for ${marker.id}: ${e.message}")
+                }
+            }
+        }
+    }
 
     UIKitView(
         modifier = modifier,
@@ -359,7 +366,6 @@ actual fun YandexMap(
             val view = YMKMapView(frame = CGRectZero.readValue())
             controller.mapView = view
 
-            // Boshlang'ich kamera
             view.mapWindow?.map?.moveWithCameraPosition(
                 ymkCameraPosition(
                     target = initialCamera.target.toYMK(),
@@ -368,19 +374,20 @@ actual fun YandexMap(
                     tilt = initialCamera.tilt
                 )
             )
-
-            // Map tap listener
             view.mapWindow?.map?.addInputListenerWithInputListener(mapInputListener)
-
             view as UIView
         },
         update = { uiView ->
             val view = uiView as YMKMapView
             val map = view.mapWindow?.map ?: return@UIKitView
 
-            // -------- MARKERS sinxron (struktura) --------
+            // Dark mode
+            map.setNightModeEnabled(isDark)
+
+            // -------- MARKERS sinxron --------
             val incoming = markers.associateBy { it.id }
 
+            // Olib tashlash
             (placemarks.keys - incoming.keys).toList().forEach { id ->
                 placemarks.remove(id)?.let { pm ->
                     listeners.remove(id)?.let { listener ->
@@ -388,9 +395,9 @@ actual fun YandexMap(
                     }
                     map.mapObjects.removeWithMapObject(pm)
                 }
-                markerKeys.remove(id)
             }
 
+            // Qo'shish/yangilash
             incoming.forEach { (id, marker) ->
                 val point = marker.position.toYMK()
 
@@ -401,10 +408,20 @@ actual fun YandexMap(
                 pm.setGeometry(point)
                 pm.setZIndex(marker.zIndex)
 
+                // Tap listener
                 if (listeners[id] == null) {
                     val listener = PlacemarkTapListener(id) { onMarkerClickState.value(it) }
                     pm.addTapListenerWithTapListener(listener)
                     listeners[id] = listener
+                }
+
+                // ⬇️ ASOSIY: Icon cache'da bo'lsa darhol o'rnatamiz.
+                // Cache'da hali yo'q bo'lsa — LaunchedEffect tayyorlagach,
+                // iconCache STATE o'zgaradi → recomposition → bu blok yana ishlaydi.
+                val key = marker.style.cacheKey()
+                iconCache[key]?.let { icon ->
+                    pm.setIconWithImage(icon.image)
+                    pm.setIconStyleWithStyle(anchorIconStyle())
                 }
             }
 
@@ -450,29 +467,12 @@ actual fun YandexMap(
                     controller.userLocationLayer = null
                 }
             }
-        }
+        },
+        properties = UIKitInteropProperties(
+            interactionMode = UIKitInteropInteractionMode.NonCooperative,
+            isNativeAccessibilityEnabled = false
+        )
     )
-
-    // ============================================================
-    // MARKER ICON YUKLASH (async)
-    // ============================================================
-    LaunchedEffect(markers) {
-        markers.forEach { marker ->
-            val newKey = marker.style.cacheKey()
-            val oldKey = markerKeys[marker.id]
-            if (oldKey == newKey) return@forEach
-            markerKeys[marker.id] = newKey
-
-            scope.launch {
-                val icon = iconCache.getOrPut(newKey) {
-                    createMarkerIcon(marker.style, density, textMeasurer = textMeasurer)
-                }
-
-                val pm = placemarks[marker.id] ?: return@launch
-                pm.setIconWithImage(icon.image, style = anchorIconStyle())
-            }
-        }
-    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -480,7 +480,6 @@ actual fun YandexMap(
             listeners.clear()
             circleObjects.clear()
             iconCache.clear()
-            markerKeys.clear()
             controller.userLocationLayer?.setObjectListenerWithObjectListener(null)
             controller.userLocationLayer = null
             controller.mapView = null

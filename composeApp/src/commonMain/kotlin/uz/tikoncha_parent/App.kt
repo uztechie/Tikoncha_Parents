@@ -156,8 +156,14 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
 }
 
 fun initMapKit() {
-    val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
-//    MapKitInitializer.initialize(MAP_KEY)
+    try {
+        val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
+        MapKitInitializer.initialize(MAP_KEY)
+        println("✅ MAPKIT_OK initialized")
+    } catch (e: Throwable) {
+        println("❌ MAPKIT_ERROR: ${e::class.simpleName}: ${e.message}")
+        e.printStackTrace()
+    }
 
 }
 

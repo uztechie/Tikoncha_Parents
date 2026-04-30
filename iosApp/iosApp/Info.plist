@@ -11,8 +11,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Joylashuvingizni xaritada ko'rsatish uchun</string>
+    <string>Bolaning va o'z joylashuvingizni xaritada ko'rish uchun joylashuvga ruxsat kerak</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Bolaning va o'z joylashuvingizni xaritada ko'rish uchun joylashuvga ruxsat kerak</string>
+
 </dict>
 </plist>

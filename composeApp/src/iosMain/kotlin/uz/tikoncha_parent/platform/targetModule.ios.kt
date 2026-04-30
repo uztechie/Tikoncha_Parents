@@ -2,6 +2,8 @@ package uz.tikoncha_parent.platform
 
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.permissions.ios.PermissionsController
+import dev.icerock.moko.permissions.ios.PermissionsControllerProtocol
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import platform.CoreLocation.kCLLocationAccuracyBest
 import uz.tikoncha_parent.data.in_app_update.InAppUpdateDataSource
@@ -16,9 +18,7 @@ actual val targetModule = module {
     single<PaymentService> { IOSPaymentService() }
     single<InAppUpdateDataSource> { IosInAppUpdateDataSource() }
 
-    single {
-        PermissionsController()
-    }
+    single { PermissionsController() } bind PermissionsControllerProtocol::class
 
     single {
         LocationTracker(
@@ -37,7 +37,8 @@ actual val targetModule = module {
         TrackingScreenModel(
             childrenLocationUseCase = get(),
             locationTracker = get(),
-            permissionsController = get()
+            permissionsController = get(),
+            subscriptionLimitUseCase = get()
         )
     }
 }

@@ -49,6 +49,7 @@ import uz.tikoncha_parent.data.remote.ParentRequestsApiService
 import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.remote.PaymentApiService
+import uz.tikoncha_parent.data.remote.PermissionStatusApiService
 import uz.tikoncha_parent.data.remote.PolicyApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
@@ -57,6 +58,7 @@ import uz.tikoncha_parent.data.repository.ParentRequestsRepositoryImpl
 import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
 import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
+import uz.tikoncha_parent.data.repository.PermissionStatusRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
 import uz.tikoncha_parent.data.repository.UpdateRepositoryImpl
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -68,6 +70,7 @@ import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.repository.NewsRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
+import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
@@ -105,6 +108,7 @@ import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
+import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
@@ -130,7 +134,6 @@ import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewMod
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
-import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
 val sharedModule = module {
     single {
@@ -161,6 +164,7 @@ val sharedModule = module {
     single { PaymentApiService(get()) }
     single { GetCoinPackageApiService(get()) }
     single { ParentRequestsApiService(get()) }
+    single { PermissionStatusApiService(get()) }
 
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
@@ -177,6 +181,7 @@ val sharedModule = module {
     single< PaymentRepository> { PaymentRepositoryImpl(get()) }
     single< ParentRequestsRepository> { ParentRequestsRepositoryImpl(get()) }
     single< UpdateRepository> { UpdateRepositoryImpl(get()) }
+    single< PermissionStatusRepository> { PermissionStatusRepositoryImpl(get()) }
 
 
 
@@ -239,6 +244,7 @@ val sharedModule = module {
     single { ObserveInstallEventsUseCase(get()) }
     single { CompleteFlexibleUpdateUseCase(get()) }
     single { LogoutUseCase(get()) }
+    single { PermissionStatusUseCase(get()) }
 
 
 
@@ -252,7 +258,7 @@ val sharedModule = module {
     factory { ChildViewmodel(get(), get()) }
     factory { ChildConfirmViewModel() }
     factory { TaskViewModel(get (), get(), get(), get(), get()) }
-    factory { StatisticViewModel(get(), get(), get()) }
+    factory { StatisticViewModel(get(), get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
 
     factory {
@@ -277,7 +283,7 @@ val sharedModule = module {
     }
 
     factory { NotificationViewModel(get(), get()) }
-    factory { PolicyViewModel(get(), get()) }
+    factory { PolicyViewModel(get(), get(), get()) }
     factory { TimeRuleSetupViewModel() }
     factory { LimitRuleSetupViewModel() }
 

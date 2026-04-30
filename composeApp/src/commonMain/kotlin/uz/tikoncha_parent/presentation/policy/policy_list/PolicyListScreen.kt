@@ -53,10 +53,12 @@ import tikoncha_parents.composeapp.generated.resources.timer_policy
 import tikoncha_parents.composeapp.generated.resources.uyqu_vaqti_rejasi
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
+import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.PermissionWarningCard
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
@@ -81,7 +83,7 @@ class PolicyListScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current?:return
+        val navigator = LocalNavigator.current ?: return
 
 
         val sharedViewModel = koinViewModel<PolicySharedModel>()
@@ -93,12 +95,12 @@ class PolicyListScreen : Screen {
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             event(PolicyEvent.RefreshPolicies)
         }
 
 
-        BackHandler(true){
+        BackHandler(true) {
             navigator.pop()
         }
 
@@ -120,7 +122,7 @@ fun PolicyListUi(
     sharedState: PolicySharedState,
     event: (PolicyEvent) -> Unit = {},
     sharedEvent: (PolicySharedEvent) -> Unit = {},
-){
+) {
     val loading = state.policyResponseState is ResponseState.Loading
     val errorText = state.policyResponseState.errorText()
 
@@ -129,7 +131,7 @@ fun PolicyListUi(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(errorText){
+    LaunchedEffect(errorText) {
         showErrorText = errorText.isNotEmpty()
     }
 
@@ -204,7 +206,24 @@ fun PolicyListUi(
                 contentPadding = PaddingValues(10.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
+
+
                 item {
+
+                    if (state.permissionIssueList.isNotEmpty()) {
+                        state.permissionIssueList.forEach {
+                            PermissionWarningCard(
+                                title = it.title,
+                                body = it.body,
+                                videoUrl = it.video_url,
+                                onVideoClick = {
+                                    openUrl(it)
+                                }
+                            )
+                            Space(12.dp)
+                        }
+                    }
+
                     if (state.policies.isEmpty() && !loading) {
                         CreatePolicyCard(
                             modifier = Modifier
@@ -251,47 +270,47 @@ fun PolicyListUi(
                     )
                 }
 
-                item {
-                    Space(16.dp)
-                    Text(
-                        text = stringResource(Res.string.shablonlar),
-                        color = AppColors.text.primary,
-                        style = AppTypography.titleLgSemiBold
-                    )
-                    Space(12.dp)
-                    PolicyTemplateEmptyItem(
-                        icon = painterResource(Res.drawable.time_large_icon),
-                        title = stringResource(Res.string.uyqu_vaqti_rejasi),
-                        desc = stringResource(Res.string.farzandingiz_kun_davomida_telefondan_qancha),
-                        onClick = {
-                            if (state.canCreatePolicy) {
-                                sharedEvent(PolicySharedEvent.ClearData)
-                                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
-                                state.selectedChild?.let { child ->
-                                    sharedEvent(PolicySharedEvent.SetSelectedChild(child))
-                                    sharedEvent(PolicySharedEvent.SetPolicyAction(PolicyAction.ALLOW))
-                                }
-                                navigator?.push(SleepTemplateSetupScreen())
-                            } else {
-                                showPolicyLimitDialog = true
-                            }
-                        }
-                    )
-                    Space(8.dp)
-                    PolicyTemplateEmptyItem(
-                        icon = painterResource(Res.drawable.timer_policy),
-                        title = stringResource(Res.string.ilova_taymeri),
-                        desc = stringResource(Res.string.ilovalarni_tanlang_va_ular_uchun_umumiy),
-                        onClick = {}
-                    )
-                    Space(8.dp)
-                    PolicyTemplateEmptyItem(
-                        icon = painterResource(Res.drawable.internet),
-                        title = stringResource(Res.string.kontent_cheklovlari),
-                        desc = stringResource(Res.string.farzandingizni_nomaqbul_kontentdan_himoya_qiling),
-                        onClick = {}
-                    )
-                }
+//                item {
+//                    Space(16.dp)
+//                    Text(
+//                        text = stringResource(Res.string.shablonlar),
+//                        color = AppColors.text.primary,
+//                        style = AppTypography.titleLgSemiBold
+//                    )
+//                    Space(12.dp)
+//                    PolicyTemplateEmptyItem(
+//                        icon = painterResource(Res.drawable.time_large_icon),
+//                        title = stringResource(Res.string.uyqu_vaqti_rejasi),
+//                        desc = stringResource(Res.string.farzandingiz_kun_davomida_telefondan_qancha),
+//                        onClick = {
+//                            if (state.canCreatePolicy) {
+//                                sharedEvent(PolicySharedEvent.ClearData)
+//                                sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
+//                                state.selectedChild?.let { child ->
+//                                    sharedEvent(PolicySharedEvent.SetSelectedChild(child))
+//                                    sharedEvent(PolicySharedEvent.SetPolicyAction(PolicyAction.ALLOW))
+//                                }
+//                                navigator?.push(SleepTemplateSetupScreen())
+//                            } else {
+//                                showPolicyLimitDialog = true
+//                            }
+//                        }
+//                    )
+//                    Space(8.dp)
+//                    PolicyTemplateEmptyItem(
+//                        icon = painterResource(Res.drawable.timer_policy),
+//                        title = stringResource(Res.string.ilova_taymeri),
+//                        desc = stringResource(Res.string.ilovalarni_tanlang_va_ular_uchun_umumiy),
+//                        onClick = {}
+//                    )
+//                    Space(8.dp)
+//                    PolicyTemplateEmptyItem(
+//                        icon = painterResource(Res.drawable.internet),
+//                        title = stringResource(Res.string.kontent_cheklovlari),
+//                        desc = stringResource(Res.string.farzandingizni_nomaqbul_kontentdan_himoya_qiling),
+//                        onClick = {}
+//                    )
+//                }
             }
 
             if (state.policies.isNotEmpty()) {
