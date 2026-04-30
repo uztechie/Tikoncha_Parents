@@ -42,10 +42,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -62,7 +59,7 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.platform.isInternetAvailable
+import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -267,7 +264,6 @@ fun NewHomeUi(
                         }
                     },
                 )
-
                 Spacer(Modifier.weight(1f))
 
                 Box(
@@ -275,7 +271,26 @@ fun NewHomeUi(
                         .clip(CircleShape)
                         .size(44.dp)
                         .background(AppColors.bg.surfaceTertiary)
-                        .clickable {
+                        .singleClick {
+                            openUrl("https://t.me/tikoncha_support")
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.support_icon),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
+                        modifier = Modifier
+                            .size(NormalIconSize)
+                    )
+                }
+                SpaceUltraSmall()
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(44.dp)
+                        .background(AppColors.bg.surfaceTertiary)
+                        .singleClick {
                             navigator?.push(NotificationScreen())
                         },
                     contentAlignment = Alignment.Center
@@ -294,7 +309,7 @@ fun NewHomeUi(
                         .clip(CircleShape)
                         .size(44.dp)
                         .background(AppColors.bg.surfaceTertiary)
-                        .clickable {
+                        .singleClick {
                             navigator?.push(ProfileScreen())
                         },
                     contentAlignment = Alignment.Center

@@ -37,12 +37,14 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.platform.getAppVersion
+import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
+import uz.tikoncha_parent.presentation.profile.about_us.AboutUsScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
@@ -330,13 +332,25 @@ fun ProfileUi(
                 ProfileSectionItem(
                     title = stringResource(Res.string.biz_haqimizda),
                     icon = painterResource(Res.drawable.info_profile_us),
-                    onItemClick = { }
+                    onItemClick = {
+                        navigator?.push(AboutUsScreen())
+                    }
+                )
+
+                ProfileSectionItem(
+                    title = stringResource(Res.string.biz_bilan_aloqa),
+                    icon = painterResource(Res.drawable.support_icon),
+                    onItemClick = {
+                        openUrl("https://t.me/tikoncha_support")
+                    }
                 )
 
                 ProfileSectionItem(
                     divider = false,
                     title = stringResource(Res.string.chiqish),
                     icon = painterResource(Res.drawable.logout),
+                    iconColor = AppColors.icon.accentDanger,
+                    textColor = AppColors.text.accentDanger,
                     onItemClick = {
                         showLogoutDialog = true
                     }

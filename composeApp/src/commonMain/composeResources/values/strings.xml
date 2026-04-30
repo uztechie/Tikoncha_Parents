@@ -487,4 +487,25 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="uzs_oylik">UZS/oylik</string>
     <string name="tolov_tafsilotlari">To‘lov tafsilotlari</string>
     <string name="uzs">UZS</string>
+    <string name="about_text_html">
+        <![CDATA[
+        <strong>Tikoncha</strong> — bolalar va o‘smirlar uchun xavfsiz raqamli muhit yaratishga qaratilgan zamonaviy texnologik platforma.<br/><br/>
+
+        Biz ota-onalar, maktablar va jamiyat bilan hamkorlikda bolalarning smartfon va internetdan <b>me’yorida</b>, <b>ongli</b> va <b>foydali</b> foydalanishiga yordam beramiz.<br/>
+        Tikoncha orqali farzandingizning raqamli faoliyati nazorat ostida bo‘ladi, lekin <b>ishonch</b> va <b>hurmat</b> saqlanib qoladi.<br/><br/>
+
+        <b>Ilovamiz yordamida:</b><br/>
+        • chalg‘ituvchi ilovalar va kontent cheklanadi,<br/>
+        • ta’lim va rivojlanishga xizmat qiluvchi imkoniyatlar qo‘llab-quvvatlanadi,<br/>
+        • bolaning xavfsizligi va kundalik muvozanati ta’minlanadi.<br/><br/>
+
+        <b>Tikoncha</b> — bu faqat nazorat vositasi emas.<br/>
+        Bu farzand tarbiyasida raqamli madaniyatni shakllantirish, mas’uliyatli texnologiya va sog‘lom kelajak sari qadamdir.<br/><br/>
+
+        <i>Biz ishonamiz:</i><br/>
+        <b>Texnologiya bolani cheklash uchun emas, uni to‘g‘ri yo‘naltirish uchun xizmat qilishi kerak.</b>
+        ]]>
+    </string>
+    <string name="biz_bilan_aloqa">Biz bilan aloqa</string>
+
 </resources>
