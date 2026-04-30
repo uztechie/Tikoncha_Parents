@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
@@ -33,6 +34,8 @@ fun ProfileSectionItem(
     title: String,
     onItemClick: () -> Unit,
     divider: Boolean = true,
+    textColor: Color = AppColors.text.primary,
+    iconColor: Color = AppColors.icon.accentPrimary
 ) {
     Box(
         modifier = Modifier
@@ -51,7 +54,7 @@ fun ProfileSectionItem(
             Icon(
                 painter = icon,
                 contentDescription = "",
-                tint = AppColors.icon.accentPrimary,
+                tint = iconColor,
                 modifier = Modifier
                     .padding(start = 7.dp)
                     .size(SmallIconSize)
@@ -60,8 +63,8 @@ fun ProfileSectionItem(
 
             Text(
                 text = title,
-                style = AppTypography.titleSmMedium,
-                color = AppColors.text.primary
+                color = textColor,
+                style = AppTypography.titleSmMedium
             )
         }
 

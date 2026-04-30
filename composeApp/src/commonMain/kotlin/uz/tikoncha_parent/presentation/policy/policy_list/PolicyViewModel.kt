@@ -53,7 +53,6 @@ class PolicyViewModel(
 
     private fun getSubscriptionLimit() {
         screenModelScope.launch {
-            val result = subscriptionLimitUseCase.invoke()
             refreshSubscriptionLimit()
         }
     }
@@ -61,7 +60,7 @@ class PolicyViewModel(
     private fun refreshSubscriptionLimit() {
         _state.update {
             it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { it.childId == state.value.selectedChild?.userId }
+                subscriptionLimit = AppSettings.subscriptionLimitList.find { limit -> limit.childId == state.value.selectedChild?.userId }
                     ?: SubscriptionLimit()
             )
         }
@@ -74,21 +73,24 @@ class PolicyViewModel(
     private fun getPolicies() {
         policyJob?.cancel()
         policyJob = screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    policyResponseState = ResponseState.Loading
-                )
+
+            if (!_state.value.isInitialLoadDone) {
+                _state.update {
+                    it.copy(
+                        policyResponseState = ResponseState.Loading
+                    )
+                }
             }
 
-            val result =
-                getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
+            val result = getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
 
             when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            policyResponseState = ResponseState.Error(message = result.message)
+                            policyResponseState = ResponseState.Error(message = result.message),
+                            isInitialLoadDone = true
                         )
                     }
                 }
@@ -102,7 +104,8 @@ class PolicyViewModel(
 
                         innerState.copy(
                             policyResponseState = ResponseState.Success(),
-                            policies = policies
+                            policies = policies,
+                            isInitialLoadDone = true
                         )
                     }
                 }

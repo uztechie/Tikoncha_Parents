@@ -43,7 +43,6 @@ import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -60,11 +59,15 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.NoInternetDialog
+import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
-import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateCard
 import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateDialog
 import uz.tikoncha_parent.presentation.in_app_update.UpdateEvent
@@ -130,6 +133,9 @@ class NewHomeScreen : Screen {
             updateEvent(UpdateEvent.ScreenStarted)
         }
 
+
+
+
         HandleUpdateEffect(updateViewModel)
 
         LaunchedEffect(state.value.selectedChild) {
@@ -166,40 +172,49 @@ fun NewHomeUi(
     appUpdateState: UpdateUiState = UpdateUiState(),
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
-
-
     LaunchedEffect(Unit) {
         event(HomeEvent.RefreshParentRequest)
     }
 
     val count = state.parentRequestCount
-
-    Logger.d("NewHomeScreen", "NewHomeUi")
-
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-    val noChild = state.childrenList.isEmpty()
-
-    val tableCount = state.parentPolicyCount
     val taskCount = state.activeTaskCount
+    val tableCount = state.parentPolicyCount
+    val refreshScope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    var showChildDialog by remember { mutableStateOf(false) }
 
-    val childrenLoading = state.childrenResponseState is ResponseState.Loading
-    val childrenErrorText = state.childrenResponseState.errorText()
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
+    )
 
-    CustomListDialog(
-        title = stringResource(Res.string.farzandlaringiz),
-        items = state.childrenList,
-        show = showDialog,
-        loading = childrenLoading,
-        noChild = noChild,
-        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
-        errorMessage = childrenErrorText,
-        onItemSelected = {
-            event(HomeEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
+    val internetCheck = rememberInternetCheck(refreshScope)
+    NoInternetDialog(internetCheck)
+
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(HomeEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
+
+    CustomDialog(
+        show = showChildDialog,
+        title = stringResource(Res.string.diqqat),
+        buttonText = stringResource(Res.string.farzand_qo_shish),
+        message = stringResource(Res.string.farzand_malumotlari_keyin_korinadi),
+        onDismiss = { showChildDialog = false },
+        onButtonClick = {
+            navigator?.push(AddChildScreen())
+            showChildDialog = false
         }
     )
 
@@ -210,18 +225,10 @@ fun NewHomeUi(
         onConfirm = { type -> appUpdateEvent(UpdateEvent.StartUpdateClicked(type)) }
     )
 
-    val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.page,
-        navigationBarColor = AppColors.bg.page
-    )
-
-    var isRefreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
-
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            refreshScope.launch {
+            internetCheck.check {
                 isRefreshing = true
                 event(HomeEvent.GetChildren)
                 statisticEvent(StatisticEvent.RefreshChild)
@@ -260,7 +267,6 @@ fun NewHomeUi(
                         }
                     },
                 )
-
                 Spacer(Modifier.weight(1f))
 
                 Box(
@@ -268,7 +274,26 @@ fun NewHomeUi(
                         .clip(CircleShape)
                         .size(44.dp)
                         .background(AppColors.bg.surfaceTertiary)
-                        .clickable {
+                        .singleClick {
+                            openUrl("https://t.me/tikoncha_support")
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.support_icon),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
+                        modifier = Modifier
+                            .size(NormalIconSize)
+                    )
+                }
+                SpaceUltraSmall()
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(44.dp)
+                        .background(AppColors.bg.surfaceTertiary)
+                        .singleClick {
                             navigator?.push(NotificationScreen())
                         },
                     contentAlignment = Alignment.Center
@@ -287,7 +312,7 @@ fun NewHomeUi(
                         .clip(CircleShape)
                         .size(44.dp)
                         .background(AppColors.bg.surfaceTertiary)
-                        .clickable {
+                        .singleClick {
                             navigator?.push(ProfileScreen())
                         },
                     contentAlignment = Alignment.Center
@@ -371,8 +396,14 @@ fun NewHomeUi(
                                 AppColors.section.tertiary,
                                 RoundedCornerShape(LargeCardCornerRadius)
                             )
-                            .clickable {
-                                navigator?.push(StatisticScreen())
+                            .singleClick {
+                                if (state.childrenList.isEmpty()) {
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
+                                } else {
+                                    navigator?.push(StatisticScreen())
+                                }
                             }
                             .padding(CardCornerPadding),
                         verticalAlignment = Alignment.CenterVertically
@@ -504,8 +535,15 @@ fun NewHomeUi(
                                 AppColors.section.tertiary,
                                 RoundedCornerShape(LargeCardCornerRadius)
                             )
-                            .clickable {
-                                navigator?.push(TaskScreen())
+                            .singleClick {
+                                if (state.childrenList.isEmpty()) {
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
+                                } else {
+                                    navigator?.push(TaskScreen())
+                                }
+
                             }
                             .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
                         verticalAlignment = Alignment.CenterVertically
@@ -545,8 +583,14 @@ fun NewHomeUi(
                                 AppColors.section.tertiary,
                                 RoundedCornerShape(LargeCardCornerRadius)
                             )
-                            .clickable {
-                                navigator?.push(PolicyListScreen())
+                            .singleClick {
+                                if (state.childrenList.isEmpty()) {
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
+                                } else {
+                                    navigator?.push(PolicyListScreen())
+                                }
                             }
                             .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
                         verticalAlignment = Alignment.CenterVertically
@@ -556,7 +600,7 @@ fun NewHomeUi(
                                 .weight(1f)
                         ) {
                             Text(
-                                text = stringResource(Res.string.jadvallar),
+                                text = stringResource(Res.string.cheklovlar),
                                 color = AppColors.text.primary,
                                 style = AppTypography.displaySmRegular
                             )

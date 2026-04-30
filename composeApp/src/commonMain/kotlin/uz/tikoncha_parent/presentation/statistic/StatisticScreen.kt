@@ -53,6 +53,8 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.PermissionWarningCard
+import uz.tikoncha_parent.presentation.new_home.HomeEvent
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
@@ -90,19 +92,22 @@ fun StatisticUi(
     event: (StatisticEvent) -> Unit
 ) {
 
-    val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
-    val appUsageErrorText = state.appUsageResponseState.errorText()
-
+    val refreshScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
-    val childrenLoading = state.childrenResponseState is ResponseState.Loading
-    val childrenErrorText = state.childrenResponseState.errorText()
-    val noChild = state.childrenList.isEmpty()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val appUsageErrorText = state.appUsageResponseState.errorText()
+    var selectionTypeIndex by remember { mutableIntStateOf(0) }
+    var showAppUsageErrorDialog by remember { mutableStateOf(false) }
+    val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
+    var selectionType by remember { mutableStateOf(DateSelectionType.WEEK) }
 
-    LoadingDialog(appUsageLoading)
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
 
-    var showAppUsageErrorDialog by remember {
-        mutableStateOf(false)
-    }
+    LoadingDialog(appUsageLoading && !isRefreshing)
+
 
     LaunchedEffect(Unit) {
         event(StatisticEvent.GetChildren)
@@ -117,21 +122,19 @@ fun StatisticUi(
         }
     }
 
-    CustomListDialog(
-        title = stringResource(Res.string.farzandlaringiz),
-        items = state.childrenList,
-        show = showDialog,
-        loading = childrenLoading,
-        noChild = noChild,
-        emptyText = stringResource(Res.string.hozircha_farzand_qoshilmagan),
-        errorMessage = childrenErrorText,
-        onItemSelected = {
-            event(StatisticEvent.OnChildSelected(it))
-        },
-        onDismiss = {
-            showDialog = false
-        }
-    )
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(StatisticEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -142,21 +145,6 @@ fun StatisticUi(
         onButtonClick = {
             showAppUsageErrorDialog = false
         }
-    )
-
-    var selectionTypeIndex by remember {
-        mutableIntStateOf(0)
-    }
-    var selectionType by remember {
-        mutableStateOf(DateSelectionType.WEEK)
-    }
-
-    var isRefreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
-
-    val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
     )
 
     PullToRefreshBox(

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -182,13 +183,29 @@ fun SubscriptionPaymentUi(
                 )
                 Space(11.dp)
 
-                Image(
-                    painter = painterResource(Res.drawable.subskription_tikoncha_plus),
-                    contentDescription = "Tikoncha PLUS",
-                    modifier = Modifier
-                        .width(188.dp)
-                        .height(42.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.tikoncha_logo),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(AppColors.text.inverse),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(30.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+
+                    Image(
+                        painter = painterResource(Res.drawable.plus_sub),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(64.dp)
+                            .height(34.dp)
+                    )
+                }
                 Space(12.dp)
 
                 Text(

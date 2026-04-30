@@ -119,10 +119,10 @@ fun SubscriptionPlanCard(
 
         if (isSelected) {
             if (badgeText != null) {
-                val badgeGradient = Brush.horizontalGradient(
+                val badgeGradient = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFFC9924),
-                        Color(0xFFF04438),
+                        Color(0xFFBA8837),
+                        Color(0xFF906019),
                     )
                 )
 

@@ -8,4 +8,6 @@ data class ChatState(
     val error: String? = null,
     val chats: List<ChatUi> = emptyList(),
     val hasLoadedOnce: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val hasChild: Boolean = false,
 )

@@ -164,8 +164,8 @@
     <string name="farzand_qoshish">Farzand qo‘shish</string>
     <string name="farzandingizni_tanlang">Farzandingizni tanlang</string>
     <string name="daqiqa">daqiqa</string>
-    <string name="bugun">bugun</string>
-    <string name="kecha">kecha</string>
+    <string name="bugun">Bugun</string>
+    <string name="kecha">Kecha</string>
     <string name="yakunlash">Yakunlash</string>
     <string name="bir_kunda_o_rtacha">Bir kunda o‘rtacha</string>
     <string name="eng_kop_foydalanilgan">Eng ko‘p foydalanilgan</string>
@@ -176,7 +176,7 @@
     <string name="server_connection_error">Server bilan bog‘lanishda xatolik!</string>
     <string name="faol">Faol</string>
     <string name="faol_emas">Faol emas</string>
-    <string name="ohirgi_faollik">Ohirgi faollik</string>
+    <string name="ohirgi_faollik">Ohirgi faollik:</string>
     <string name="qabul_qildim">Qabul qildim</string>
     <string name="azolar">A’zolar</string>
     <string name="azo">A’zo</string>
@@ -441,10 +441,10 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="coins_help_earn_note">Tangachalar bosqichma-bosqich yig‘iladi va keyin istalgan vaqtda Bilimdon AI xizmatlaridan foydalanish uchun sarflanishi mumkin.</string>
     <string name="coins_help_close">Yopish</string>
     <string name="qollash">Qo‘llash</string>
-    <string name="promokod">Promokod</string>
+    <string name="promokod">Promokod:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Siz tangachalarni muvaqqiyatli sotib oldingiz.</string>
-    <string name="narx">Narx</string>
-    <string name="jami">Jami</string>
+    <string name="narx">Narx:</string>
+    <string name="jami">Jami:</string>
     <string name="bekor_qilindi">Bekor qilindi!</string>
     <string name="sorov_holati">So‘rov holati</string>
     <string name="qanday_qilib_ishlatish">Qanday qilib ishlatish</string>
@@ -480,6 +480,34 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="price_uzs">%1$s UZS</string>
     <string name="price_uzs_per_month">%1$s UZS / oy</string>
     <string name="obuna_uchun_farzand_qoshilmagan">Obuna farzandingiz uchun rasmiylashtiriladi. Davom etish uchun farzand qo'shing.</string>
+    <string name="suhbatlar_yoq">Suhbatlar mavjud emas</string>
+    <string name="hozircha_suhbat_yoq">Hozircha hech qanday suhbat boshlanmagan</string>
+    <string name="tanlangan_obuna">Tanlangan obuna</string>
+    <string name="uzs_yillik">UZS/yillik</string>
+    <string name="uzs_oylik">UZS/oylik</string>
+    <string name="tolov_tafsilotlari">To‘lov tafsilotlari</string>
+    <string name="uzs">UZS</string>
+    <string name="about_text_html">
+        <![CDATA[
+        <strong>Tikoncha</strong> — bolalar va o‘smirlar uchun xavfsiz raqamli muhit yaratishga qaratilgan zamonaviy texnologik platforma.<br/><br/>
+
+        Biz ota-onalar, maktablar va jamiyat bilan hamkorlikda bolalarning smartfon va internetdan <b>me’yorida</b>, <b>ongli</b> va <b>foydali</b> foydalanishiga yordam beramiz.<br/>
+        Tikoncha orqali farzandingizning raqamli faoliyati nazorat ostida bo‘ladi, lekin <b>ishonch</b> va <b>hurmat</b> saqlanib qoladi.<br/><br/>
+
+        <b>Ilovamiz yordamida:</b><br/>
+        • chalg‘ituvchi ilovalar va kontent cheklanadi,<br/>
+        • ta’lim va rivojlanishga xizmat qiluvchi imkoniyatlar qo‘llab-quvvatlanadi,<br/>
+        • bolaning xavfsizligi va kundalik muvozanati ta’minlanadi.<br/><br/>
+
+        <b>Tikoncha</b> — bu faqat nazorat vositasi emas.<br/>
+        Bu farzand tarbiyasida raqamli madaniyatni shakllantirish, mas’uliyatli texnologiya va sog‘lom kelajak sari qadamdir.<br/><br/>
+
+        <i>Biz ishonamiz:</i><br/>
+        <b>Texnologiya bolani cheklash uchun emas, uni to‘g‘ri yo‘naltirish uchun xizmat qilishi kerak.</b>
+        ]]>
+    </string>
+    <string name="biz_bilan_aloqa">Biz bilan aloqa</string>
+
     <string name="tanlangan_kun_va_soatlarda_avtomatik_bloklash">Tanlangan kun va soatlarda avtomatik bloklash</string>
     <string name="kunlik_yoki_soatlik_foydalanish_vaqtini_cheklash">Kunlik yoki soatlik foydalanish vaqtini cheklash</string>
     <string name="malum_hududga_kirilganda_ilovalarni_bloklash">Ma’lum hududga kirilganda ilovalarni bloklash</string>

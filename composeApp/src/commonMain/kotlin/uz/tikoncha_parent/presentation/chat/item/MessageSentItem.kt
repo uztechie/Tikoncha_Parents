@@ -3,7 +3,6 @@ package uz.tikoncha_parent.presentation.chat.item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -41,21 +40,22 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.window.PopupProperties
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -169,7 +169,7 @@ fun MessageSentItem(
                 Icon(
                     painter = painterResource(Res.drawable.message_reply),
                     contentDescription = null,
-                    tint = MaterialTheme.extendedColor.primaryColor.copy(alpha = progress),
+                    tint = AppColors.icon.accentPrimary.copy(alpha = progress),
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -185,8 +185,8 @@ fun MessageSentItem(
                             bottomStart = ChatMessageCornerRadius
                         )
                     )
-                    .background(MaterialTheme.extendedColor.cardColor)
-                    .padding(horizontal = 15.dp, vertical = 8.dp)
+                    .background(AppColors.bg.secondaryContainer)
+                    .padding(start = 15.dp, top = 15.dp, end = 8.dp, bottom = 4.dp)
             ) {
                 if (
                     chatMessageUi.replyToId != null &&
@@ -201,9 +201,10 @@ fun MessageSentItem(
                     Spacer(Modifier.height(5.dp))
                 }
 
-                CustomText(
+                Text(
                     text = chatMessageUi.message,
-                    color = MaterialTheme.extendedColor.textColor,
+                    style = AppTypography.emphasizedMdMedium,
+                    color = AppColors.text.primary,
                     modifier = Modifier
                 )
 
@@ -223,7 +224,7 @@ fun MessageSentItem(
                 containerColor = MaterialTheme.extendedColor.cardColor,
                 tonalElevation = 0.dp,
                 shadowElevation = 0.dp,
-                offset = DpOffset(x = -10.dp, y = 0.dp)
+                offset = DpOffset(x = (-10).dp, y = 0.dp)
             ){
                 if (menuExpanded) {
                     DropdownMenuItem(

@@ -12,6 +12,7 @@ data class PolicyState(
     val policies: List<PolicyItemUi> = emptyList(),
     val selectedChild: UserInfo? = null,
     val subscriptionLimit: SubscriptionLimit = SubscriptionLimit(),
+    val isInitialLoadDone: Boolean = false,
     val permissionIssueList: List<PermissionStatusIssus> = emptyList()
 ){
     val canCreatePolicy: Boolean

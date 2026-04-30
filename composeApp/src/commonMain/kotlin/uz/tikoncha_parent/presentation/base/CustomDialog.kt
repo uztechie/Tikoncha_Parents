@@ -40,13 +40,12 @@ fun CustomDialog(
     title: String,
     message: String,
     show: Boolean = true,
-    painter: Painter = painterResource(Res.drawable.dialog_info),
-    buttonText: String = "Ok",
-    buttonText2: String = stringResource(Res.string.bekor_qilish),
-    showCloseButton: Boolean = false,
-    onButtonClick: () -> Unit,
     onDismiss: () -> Unit,
-    isRow: Boolean = false
+    buttonText: String = "Ok",
+    onButtonClick: () -> Unit,
+    showCloseButton: Boolean = false,
+    painter: Painter = painterResource(Res.drawable.dialog_info),
+    buttonText2: String = stringResource(Res.string.bekor_qilish),
 ) {
 
     val dialogIcon = if (message == stringResource(Res.string.iltimos_internetga_ulang)) {
@@ -71,8 +70,6 @@ fun CustomDialog(
         Dialog(
             onDismissRequest = onDismiss
         ) {
-
-
             Card(
                 modifier = modifier
                     .fillMaxWidth(),
@@ -80,15 +77,13 @@ fun CustomDialog(
                     containerColor = AppColors.bg.surface
                 ),
                 shape = RoundedCornerShape(CardCornerRadius)
-            )
-            {
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     SpaceLarge()
                     Image(
                         painter = dialogIcon,
@@ -152,14 +147,13 @@ private fun Preview() {
         ThemeMode.DARK
     ){
         CustomDialog(
-            title = "Titel",
-            message = "Message",
             show = true,
-            buttonText = "Ok",
-            showCloseButton = false,
-            onButtonClick = {},
             onDismiss = {},
-            isRow = true
+            title = "Titel",
+            buttonText = "Ok",
+            onButtonClick = {},
+            message = "Message",
+            showCloseButton = false,
         )
     }
 }

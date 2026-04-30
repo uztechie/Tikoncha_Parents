@@ -30,7 +30,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -58,8 +57,10 @@ import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.NoInternetDialog
 import uz.tikoncha_parent.presentation.base.PermissionWarningCard
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
+import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
@@ -83,7 +84,7 @@ class PolicyListScreen : Screen {
     @Composable
     override fun Content() {
 
-        val navigator = LocalNavigator.current ?: return
+        val navigator = LocalNavigator.current?:return
 
 
         val sharedViewModel = koinViewModel<PolicySharedModel>()
@@ -123,17 +124,32 @@ fun PolicyListUi(
     event: (PolicyEvent) -> Unit = {},
     sharedEvent: (PolicySharedEvent) -> Unit = {},
 ) {
-    val loading = state.policyResponseState is ResponseState.Loading
     val errorText = state.policyResponseState.errorText()
+    var showErrorText by remember { mutableStateOf(false) }
+    val loading = state.policyResponseState is ResponseState.Loading
+    var showPolicyLimitDialog by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+    val internetCheck = rememberInternetCheck(refreshScope)
+
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.surface
+    )
 
     LoadingDialog(loading)
-    var showErrorText by remember {
-        mutableStateOf(false)
+
+    NoInternetDialog(internetCheck)
+
+    LaunchedEffect(Unit) {
+        if (!state.isInitialLoadDone) {
+            internetCheck.check {
+                event(PolicyEvent.RefreshPolicies)
+            }
+        }
     }
 
-    LaunchedEffect(errorText) {
-        showErrorText = errorText.isNotEmpty()
-    }
+    LaunchedEffect(errorText) { showErrorText = errorText.isNotEmpty() }
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -148,9 +164,6 @@ fun PolicyListUi(
         }
     )
 
-    var showPolicyLimitDialog by remember { mutableStateOf(false) }
-
-
     SubscriptionBottomDialog(
         show = showPolicyLimitDialog,
         title = stringResource(Res.string.limit_tugadi),
@@ -164,19 +177,10 @@ fun PolicyListUi(
         }
     )
 
-
-    val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
-    )
-
-    var isRefreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
-
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            refreshScope.launch {
+            internetCheck.check {
                 isRefreshing = true
                 event(PolicyEvent.RefreshPolicies)
                 delay(500)
@@ -324,6 +328,8 @@ fun PolicyListUi(
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ) {
                     CustomButtonNew(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(Res.string.jadval_qoshish),
                         onClick = {
                             if (state.canCreatePolicy) {
                                 sharedEvent(PolicySharedEvent.ClearData)
@@ -343,9 +349,6 @@ fun PolicyListUi(
                                 showPolicyLimitDialog = true
                             }
                         },
-                        text = stringResource(Res.string.jadval_qoshish),
-                        modifier = Modifier
-                            .fillMaxWidth()
                     )
                 }
             }

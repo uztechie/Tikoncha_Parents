@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -51,14 +55,20 @@ import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.platform.isIos
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
+import uz.tikoncha_parent.presentation.base.DashedDivider
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.base.tripleShadow
+import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
+import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -234,48 +244,42 @@ fun PaymentTypeScreenUi(
         navigationBarColor = AppColors.bg.page
     )
 
+    val bgGradient = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFFBA8837),
+            Color(0xFF906019),
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
             .background(AppColors.bg.page)
     ) {
-
         CustomHeader(
-            title = stringResource(Res.string.tasdiqlash),
             showBackButton = true,
             onBackClick = {
                 navigator?.pop()
             }
         )
 
-        SpaceMedium()
-
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-
-            CustomText(
-                text = stringResource(Res.string.tolov_turini_tanlang),
-                fontSize = UltraLargeTextSize,
-                fontWeight = FontWeight.W600
-            )
-
-            SpaceMedium()
-
+            Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(72.dp),
+                    .height(58.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (isIos() && state.isTestAccount) {
                     PaymentOption(
-                        modifier = Modifier.weight(1f),
-//                        paymentType = PaymentType.AppStore,
                         isSelected = state.selectedPaymentType == PaymentType.AppStore,
                         onClick = {
                             event(PaymentEvent.SetPaymentType(PaymentType.AppStore))
@@ -283,8 +287,6 @@ fun PaymentTypeScreenUi(
                     )
                 }
                 PaymentOption(
-                    modifier = Modifier.weight(1f),
-//                    paymentType = PaymentType.Click,
                     isSelected = state.selectedPaymentType == PaymentType.Click,
                     onClick = {
                         event(
@@ -302,373 +304,334 @@ fun PaymentTypeScreenUi(
                 }
 
             }
-
-            SpaceMedium()
-
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(72.dp),
-//                horizontalArrangement = Arrangement.spacedBy(12.dp)
-//            ) {
-//                PaymentOption(
-//                    modifier = Modifier.weight(1f),
-//                    painter = painterResource(Res.drawable.paynet),
-//                    isSelected = false,
-//                    onClick = { selectedPayment = "paynet" }
-//                )
-//                PaymentOption(
-//                    modifier = Modifier.weight(1f),
-//                    painter = painterResource(Res.drawable.uzum),
-//                    isSelected = false,
-//                    onClick = { selectedPayment = "uzum" }
-//                )
-//            }
-//            SpaceMedium()
+            Spacer(Modifier.height(16.dp))
 
             val paymentType = when (state.selectedPaymentType) {
                 PaymentType.Click -> "Click"
                 PaymentType.AppStore -> "App Store"
                 null -> ""
             }
-            CustomText(
+            Text(
                 text = stringResource(Res.string.payment_type_text, paymentType),
-                fontSize = NormalTextSize,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontWeight = FontWeight.W500
+                style = AppTypography.bodyMdMedium,
+                color = AppColors.text.primary,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-
-            SpaceMedium()
+            Spacer(Modifier.height(29.dp))
 
 
             val priceText = buildAnnotatedString {
                 withStyle(
                     SpanStyle(
-                        color = MaterialTheme.extendedColor.primaryColor,
-                        fontSize = NormalTextSize,
-                        fontWeight = FontWeight.SemiBold
+                        color = AppColors.text.inverse,
                     )
                 ) {
                     append(state.amount.toCurrency())
                 }
-                append(" /")
+                append(" ")
                 withStyle(
                     SpanStyle(
-                        color = MaterialTheme.extendedColor.textColor,
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.SemiBold
+                        color = AppColors.text.inverse,
                     )
                 ) {
                     val text = if (state.subscriptionDuration == SubscriptionDuration.MONTHLY) {
-                        stringResource(Res.string.oylik)
+                        stringResource(Res.string.uzs_oylik)
                     } else {
-                        stringResource(Res.string.yillik)
+                        stringResource(Res.string.uzs_yillik)
                     }
                     append(text = text)
                 }
             }
 
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        MaterialTheme.extendedColor.cardColor,
-                        RoundedCornerShape(TextFieldCornerRadius)
+                        brush = bgGradient,
+                        RoundedCornerShape(24.dp)
                     )
-                    .padding(16.dp)
+                    .padding(start = 24.dp, end = 25.dp, top = 27.dp, bottom = 7.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.tikoncha_plus),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(0.5f)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(Res.drawable.tikoncha_logo),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(AppColors.text.inverse),
+                            modifier = Modifier
+                                .width(124.dp)
+                                .height(25.dp)
+                        )
+                        Spacer(Modifier.width(7.dp))
+
+                        Image(
+                            painter = painterResource(Res.drawable.plus_sub),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(54.dp)
+                                .height(28.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(40.dp))
+
+                    Text(
+                        text = stringResource(Res.string.tanlangan_obuna),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.inverse
                     )
+                    Spacer(Modifier.height(8.dp))
 
-                    Spacer(Modifier.weight(1f))
-
-                    CustomText(
+                    Text(
                         text = priceText,
+                        style = AppTypography.titleLgSemiBold,
+                        color = AppColors.text.inverse
                     )
-                }
-                SpaceMedium()
-                DividerHorizontal()
-                SpaceMedium()
+                    Spacer(Modifier.height(16.dp))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CustomText(
-                        text = stringResource(Res.string.obuna_holati),
-                        color = MaterialTheme.extendedColor.hintColor,
-                        fontSize = NormalTextSize
-                    )
 
-                    Spacer(Modifier.weight(1f))
-
-                    var paymentStatus = if (state.paymentStatus == PaymentStatus.COMPLETED) {
-                        stringResource(Res.string.tolandi)
-                    } else if (state.paymentStatus == PaymentStatus.PENDING) {
-                        stringResource(Res.string.tolov_kutilmoqda)
+                    val paymentStatusColor = if (state.paymentStatus == PaymentStatus.PENDING) {
+                        AppColors.bg.primary
                     } else {
-                        stringResource(Res.string.tolanmagan)
+                        AppColors.bg.accentDanger
                     }
 
-                    val paymentStatusColor = if (state.paymentStatus == PaymentStatus.COMPLETED) {
-                        MaterialTheme.extendedColor.primaryColor
-                    } else if (state.paymentStatus == PaymentStatus.PENDING) {
-                        ImportantButtonColor
-
-                    } else {
-                        OtpErrorColor
-                    }
-
-                    if (state.paymentStatus == PaymentStatus.PENDING) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(SmallIconSize),
-                            color = PrimaryColor,
-                            trackColor = PrimaryColor.copy(alpha = 0.3f),
-                        )
-                        SpaceUltraSmall()
-                    }
-
-                    CustomText(
-                        text = paymentStatus,
-                        color = paymentStatusColor,
-                        fontSize = NormalTextSize
-                    )
-                }
-            }
-
-
-            SpaceLarge()
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .tripleShadow(RoundedCornerShape(CardCornerRadius))
-                    .background(
-                        MaterialTheme.extendedColor.backgroundColor,
-                        RoundedCornerShape(CardCornerRadius)
-                    )
-            ) {
-
-
-                val promoCodeLabel = when (state.promoActivated) {
-                    true -> {
-                        stringResource(Res.string.promokod_tasdiqlandi)
-                    }
-
-                    false -> {
-                        stringResource(Res.string.promokodni_ishlatish)
-                    }
-                }
-                val promoCodeLabelColor = when (state.promoActivated) {
-                    true -> {
-                        MaterialTheme.extendedColor.primaryColor
-                    }
-
-                    false -> {
-                        MaterialTheme.extendedColor.textColor
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                        .background(
-                            MaterialTheme.extendedColor.cardColor,
-                            RoundedCornerShape(CardCornerRadius)
-                        )
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = {
-                                if (!state.promoActivated) {
-                                    showPromoCodeDialog = true
-                                }
-                            }
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .size(30.dp)
-                            .background(
-                                MaterialTheme.extendedColor.backgroundColor,
-                                CircleShape
-                            )
-                            .padding(5.dp)
+                            .background(paymentStatusColor, CircleShape)
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ConfirmationNumber,
-                            contentDescription = "",
-                            tint = MaterialTheme.extendedColor.primaryColor,
-                            modifier = Modifier
-                                .fillMaxSize()
+                        val paymentStatus = if (state.paymentStatus == PaymentStatus.COMPLETED) {
+                            stringResource(Res.string.tolandi)
+                        } else if (state.paymentStatus == PaymentStatus.PENDING) {
+                            stringResource(Res.string.tolov_kutilmoqda)
+                        } else {
+                            stringResource(Res.string.tolanmagan)
+                        }
 
-                        )
 
-                    }
-                    SpaceSmall()
-
-                    CustomText(
-                        text = promoCodeLabel,
-                        modifier = Modifier
-                            .weight(1f),
-                        fontWeight = FontWeight.SemiBold,
-                        color = promoCodeLabelColor
-                    )
-                    SpaceMedium()
-
-                    if (!state.promoActivated) {
-                        Box(
-                            modifier = Modifier
-                                .size(30.dp)
-                                .background(
-                                    MaterialTheme.extendedColor.backgroundColor,
-                                    CircleShape
-                                )
-                                .padding(5.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                contentDescription = "",
-                                tint = MaterialTheme.extendedColor.textColor,
+                        if (state.paymentStatus == PaymentStatus.PENDING) {
+                            CircularProgressIndicator(
                                 modifier = Modifier
-                                    .fillMaxSize()
-
-                            )
-
-                        }
-                    }
-                }
-                if (state.promoActivated) {
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 10.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CustomText(
-                                text = "${stringResource(Res.string.chegirma)}:",
-                                fontSize = SmallTextSize
-                            )
-                            Spacer(Modifier.weight(1f))
-                            CustomText(
-                                text = "${state.discountPercentage}%",
-                                fontSize = NormalTextSize,
-                                fontWeight = FontWeight.Bold,
-                                color = PrimaryColor
-                            )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CustomText(
-                                text = "${stringResource(Res.string.foyda)}:",
-                                fontSize = SmallTextSize
-                            )
-                            Spacer(Modifier.weight(1f))
-                            CustomText(
-                                text = "${state.discountSaving.toCurrency()} ${stringResource(Res.string.som)}",
-                                fontSize = NormalTextSize,
-                                fontWeight = FontWeight.Bold,
-                                color = PrimaryColor
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.extendedColor.cardColor, CircleShape)
-                    .padding(6.dp)
-            ) {
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.backgroundColor),
-                )
-                {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        MaterialTheme.extendedColor.cardColor,
-                                        CircleShape
-                                    )
-                                    .padding(10.dp)
-                            ) {
-                                Image(
-                                    painter = painterResource(Res.drawable.money_light),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(NormalIconSize)
-                                )
-                            }
-
-                            SpaceMedium()
-
-                            CustomText(
-                                text = stringResource(Res.string.tolov_summasi),
-                                fontSize = NormalTextSize,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Spacer(Modifier.weight(1f))
-                            CustomText(
-                                text = "${state.amount.toCurrency()} ${stringResource(Res.string.som)}",
-                                fontSize = NormalTextSize,
+                                    .size(SmallIconSize),
                                 color = PrimaryColor,
-                                fontWeight = FontWeight.W600
+                                trackColor = PrimaryColor.copy(alpha = 0.3f),
                             )
+                            SpaceUltraSmall()
                         }
+
+                        Icon(
+                            painter = painterResource(Res.drawable.dot),
+                            contentDescription = "",
+                            tint = AppColors.text.inverse,
+                            modifier = Modifier.size(8.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+
+                        Text(
+                            text = paymentStatus,
+                            style = AppTypography.bodyMdMedium,
+                            color = AppColors.text.inverse,
+                        )
                     }
-
                 }
+
+                Image(
+                    painter = painterResource(Res.drawable.tikoncha_plus_new),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(165.dp)
+                )
             }
+            Spacer(Modifier.height(12.dp))
 
-
-
-            SpaceLarge()
-            CustomButton(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight),
+                    .background(AppColors.bg.surface, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = stringResource(Res.string.tolov_tafsilotlari),
+                    style = AppTypography.titleMdSemiBold,
+                    color = AppColors.text.primary
+                )
+                Spacer(Modifier.height(12.dp))
+
+                DashedDivider()
+                Spacer(Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val priceText2 = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.primary,
+                            )
+                        ) {
+                            append(state.amount.toCurrency())
+                        }
+                        append(" ")
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.primary,
+                            )
+                        ) {
+                            val text = stringResource(Res.string.uzs)
+                            append(text = text)
+                        }
+                    }
+                    Text(
+                        text = stringResource(Res.string.narx),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.secondary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = priceText2,
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.primary
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val priceText2 = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.accentEmphasis,
+                            )
+                        ) {
+                            append(state.discountAmount.toCurrency())
+                        }
+                        append(" ")
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.accentEmphasis,
+                            )
+                        ) {
+                            val text = stringResource(Res.string.uzs)
+                            append(text = text)
+                        }
+                    }
+                    Text(
+                        text = stringResource(Res.string.promokod),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.secondary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = priceText2,
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.accentEmphasis
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
+
+                DashedDivider()
+                Spacer(Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val amount = (state.amount - state.discountAmount).toCurrency()
+                    val priceText3 = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.accentEmphasis,
+                            )
+                        ) {
+                            append(amount)
+                        }
+                        append(" ")
+                        withStyle(
+                            SpanStyle(
+                                color = AppColors.text.accentEmphasis,
+                            )
+                        ) {
+                            val text = stringResource(Res.string.uzs)
+                            append(text = text)
+                        }
+                    }
+                    Text(
+                        text = stringResource(Res.string.jami),
+                        style = AppTypography.titleLgSemiBold,
+                        color = AppColors.text.primary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = priceText3,
+                        style = AppTypography.titleLgSemiBold,
+                        color = AppColors.text.accentEmphasis
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .background(
+                        AppColors.bg.surface,
+                        RoundedCornerShape(22.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .singleClick {
+                        if (!state.promoActivated) {
+                            showPromoCodeDialog = true
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = stringResource(Res.string.promokod),
+                    style = AppTypography.titleMdMedium,
+                    color = AppColors.text.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                SpaceMedium()
+
+                Icon(
+                    painter = painterResource(Res.drawable.arrow_down_reg),
+                    contentDescription = "",
+                    tint = AppColors.icon.secondary,
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    AppColors.bg.elevated,
+                    RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                )
+                .padding(horizontal = 20.dp, vertical = 12.dp)
+        ) {
+            CustomButtonNew(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.sotib_olish),
                 enabled = state.paymentStatus != PaymentStatus.PENDING && state.selectedPaymentType != null,
                 onClick = {
                     event(PaymentEvent.Pay)
-                }
+                },
             )
-            SpaceLarge()
             LegalLinksRow()
-            SpaceUltraSmall()
         }
     }
 }

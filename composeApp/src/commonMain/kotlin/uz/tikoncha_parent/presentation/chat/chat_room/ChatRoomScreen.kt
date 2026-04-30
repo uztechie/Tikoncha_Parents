@@ -18,12 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,13 +32,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,7 +69,6 @@ import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.domain.model.ChatMessageItem
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.topShadow
 import uz.tikoncha_parent.presentation.chat.ChatTextField
 import uz.tikoncha_parent.presentation.chat.ChatUtil
 import uz.tikoncha_parent.presentation.chat.ChatUtil.asText
@@ -92,14 +87,11 @@ import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.HeaderHeight
 import uz.tikoncha_parent.ui.NormalIconButtonPadding
 import uz.tikoncha_parent.ui.NormalIconButtonSize
-import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.ShapeCornerRadius
-import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.TextFieldHeight
-import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -230,7 +222,7 @@ fun ChatRoomScreenUi(
     }
 
     val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
+        statusBarColor = AppColors.bg.elevated,
         navigationBarColor = AppColors.bg.surface
     )
 
@@ -238,17 +230,13 @@ fun ChatRoomScreenUi(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
-            .background(AppColors.bg.secondary)
+            .background(AppColors.bg.page)
     ) {
-
         Box(
             Modifier
                 .zIndex(1f)
                 .fillMaxWidth()
-                .background(
-                    color = AppColors.bg.elevated
-                )
-
+                .background(color = AppColors.bg.elevated)
         ) {
             Row(
                 modifier = Modifier
@@ -257,7 +245,6 @@ fun ChatRoomScreenUi(
                     .padding(horizontal = ContainerPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 IconButton(
                     modifier = Modifier.size(NormalIconButtonSize),
                     onClick = {
@@ -265,7 +252,7 @@ fun ChatRoomScreenUi(
                     },
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.extendedColor.textColor
+                        contentColor = AppColors.icon.primary,
                     ),
                 ) {
                     Icon(
@@ -284,8 +271,8 @@ fun ChatRoomScreenUi(
                         model = state.chatAvatar,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(ChatHeaderAvatarSize)
-                            .border(1.dp, MaterialTheme.extendedColor.hintColor, CircleShape)
+                        modifier = Modifier
+                            .size(ChatHeaderAvatarSize)
                             .clip(CircleShape),
                         error = painterResource(Res.drawable.chat_icon),
                         placeholder = painterResource(Res.drawable.chat_icon)
@@ -295,16 +282,16 @@ fun ChatRoomScreenUi(
                     Box(
                         modifier = Modifier
                             .size(ChatHeaderAvatarSize)
-                            .background(MaterialTheme.extendedColor.cardColor, CircleShape)
-                            .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
+                            .background(AppColors.bg.primaryContainer, CircleShape)
+                            .border(1.dp, AppColors.bg.surface, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        CustomText(
+                        Text(
                             text = ChatUtil.getInitials(
                                 fullName = state.chatTitle
                             ),
-                            color = PrimaryColor,
-                            fontWeight = FontWeight.W500
+                            style = AppTypography.titleLgMedium,
+                            color = AppColors.text.accentEmphasis,
                         )
                     }
                 }
@@ -330,12 +317,11 @@ fun ChatRoomScreenUi(
                             }
                         )
                 ) {
-                    CustomText(
-                        text = state.chatTitle,
-                        fontSize = SmallTextSize,
+                    Text(
                         maxLines = 1,
-                        lineHeight = SmallTextSize,
-                        fontWeight = FontWeight.W500,
+                        text = state.chatTitle,
+                        style = AppTypography.titleMdSemiBold,
+                        color = AppColors.text.primary
                     )
 
                     val status = when (state.chatType) {
@@ -363,18 +349,16 @@ fun ChatRoomScreenUi(
 
                     val headerTextColor =
                         if (state.isUserOnline && state.chatType != ChatType.CLASS) {
-                            MaterialTheme.extendedColor.primaryColor
+                            AppColors.text.accentEmphasis
                         } else {
-                            MaterialTheme.extendedColor.hintColor
+                            AppColors.text.placeholder
                         }
 
-                    CustomText(
-                        text = status,
-                        fontSize = UltraSmallTextSize,
+                    Text(
                         maxLines = 1,
+                        text = status,
+                        style = AppTypography.bodyMdMedium,
                         color = headerTextColor,
-                        lineHeight = SmallTextSize,
-                        fontWeight = FontWeight.W500
                     )
                 }
             }
@@ -384,8 +368,7 @@ fun ChatRoomScreenUi(
             modifier = Modifier
                 .fillMaxSize()
                 .imePadding(),
-            contentAlignment = Alignment
-                .BottomStart
+            contentAlignment = Alignment.BottomStart
         ) {
             LazyColumn(
                 state = listState,
@@ -520,7 +503,7 @@ fun ChatRoomScreenUi(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.extendedColor.cardColor),
+                    .background(AppColors.bg.surface),
             ) {
                 HorizontalDivider(thickness = 1.dp)
 
@@ -570,6 +553,7 @@ fun ChatRoomScreenUi(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(AppColors.bg.surface)
                         .padding(horizontal = ContainerPadding, vertical = 10.dp)
                 ) {
                     val focusRequester = remember { FocusRequester() }
@@ -584,19 +568,19 @@ fun ChatRoomScreenUi(
                     }
 
                     ChatTextField(
+                        onFileClick = {},
                         value = state.text,
-                        onValueChange = { event(ChatRoomEvent.OnTextChange(it)) },
                         focusRequester = focusRequester,
+                        onSend = { event(ChatRoomEvent.SendMessage) },
+                        label = stringResource(Res.string.xabar_yozish),
+                        onValueChange = { event(ChatRoomEvent.OnTextChange(it)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = TextFieldHeight, max = TextFieldHeight * 5)
                             .onSizeChanged { size ->
                                 // px -> dp
                                 inputHeightDp = with(density) { size.height.toDp() }
-                            },
-                        label = stringResource(Res.string.xabar_yozish),
-                        onFileClick = {},
-                        onSend = { event(ChatRoomEvent.SendMessage) }
+                            }
                     )
                 }
             }
@@ -654,7 +638,7 @@ fun ReplyMessageUi(
         Icon(
             painter = painterResource(Res.drawable.message_reply),
             contentDescription = null,
-            tint = MaterialTheme.extendedColor.primaryColor,
+            tint = AppColors.icon.accentPrimary,
             modifier = Modifier.size(24.dp)
         )
         SpaceSmall()
@@ -662,28 +646,29 @@ fun ReplyMessageUi(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            CustomText(
+            Text(
                 text = messageUi.senderName,
-                color = MaterialTheme.extendedColor.primaryColor
+                style = AppTypography.titleSmSemiBold,
+                color = AppColors.text.accentEmphasis
             )
-            CustomText(
-                text = messageUi.message,
-                color = MaterialTheme.extendedColor.hintColor,
+            Text(
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                text = messageUi.message,
+                color = AppColors.text.primary,
+                overflow = TextOverflow.Ellipsis,
+                style = AppTypography.titleSmMedium
             )
         }
         SpaceSmall()
 
         IconButton(
             onClick = onDismiss,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(20.dp)
         ) {
             Icon(
                 painter = painterResource(Res.drawable.close),
                 contentDescription = null,
-                tint = MaterialTheme.extendedColor.primaryColor,
-                modifier = Modifier.size(12.dp)
+                tint = AppColors.icon.primary
             )
         }
     }
@@ -701,7 +686,7 @@ private fun PRe() {
                     isMine = true,
                     message = "Salom",
                     messageType = ChatMessageType.TEXT,
-                    senderName = "",
+                    senderName = "Dilshod",
                     senderAvatar = "",
                     status = DeliveryStatus.READ,
                     clientMsgId = "",

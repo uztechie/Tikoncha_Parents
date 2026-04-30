@@ -57,6 +57,8 @@ import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -90,7 +92,7 @@ fun ChatListItem(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(52.dp)
-                    .border(1.dp, MaterialTheme.extendedColor.hintColor, CircleShape)
+                    .border(1.dp, AppColors.bg.surface, CircleShape)
                     .clip(CircleShape),
                 error = painterResource(Res.drawable.chat_icon),
                 placeholder = painterResource(Res.drawable.chat_icon)
@@ -100,20 +102,19 @@ fun ChatListItem(
         else{
             Box(
                 modifier = Modifier.size(52.dp)
-                    .background(MaterialTheme.extendedColor.cardColor, CircleShape)
-                    .border(1.dp, MaterialTheme.extendedColor.cardColor, CircleShape),
+                    .background(AppColors.bg.primaryContainer, CircleShape)
+                    .border(1.dp, AppColors.bg.surface, CircleShape),
                 contentAlignment = Alignment.Center
             ){
-                CustomText(
+                Text(
                     text = ChatUtil.getInitials(
                         fullName = chatUi.title
                     ),
-                    color = PrimaryColor,
-                    fontWeight = FontWeight.W500
+                    style = AppTypography.titleLgMedium,
+                    color = AppColors.text.accentEmphasis,
                 )
             }
         }
-
         Spacer(Modifier.width(12.dp))
 
         Column(Modifier.weight(1f)) {
@@ -131,57 +132,56 @@ fun ChatListItem(
                     painter = icon,
                     contentDescription = "",
                     modifier = Modifier.size(SmallIconSize),
-                    tint = MaterialTheme.extendedColor.textColor
+                    tint = AppColors.icon.primary
                 )
                 SpaceUltraSmall()
-                CustomText(
-                    text = chatUi.title,
-                    fontWeight = FontWeight.W500,
-                    fontSize = NormalTextSize,
+
+                Text(
                     maxLines = 1,
+                    text = chatUi.title,
+                    color = AppColors.text.primary,
                     overflow = TextOverflow.Ellipsis,
+                    style = AppTypography.titleMdMedium,
                     modifier = Modifier
                         .weight(1f)
+                        .padding(bottom = 4.dp)
                 )
                 SpaceMedium()
-                CustomText(
+
+                Text(
                     text = chatUi.dateTime.asText(),
-                    fontWeight = FontWeight.W500,
-                    fontSize = SmallTextSize,
+                    style = AppTypography.titleSmMedium,
+                    color = AppColors.text.secondary,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomText(
-                    text = chatUi.lastMessage,
-                    fontWeight = FontWeight.W500,
+                Text(
                     maxLines = 1,
-                    fontSize = SmallTextSize,
-                    color = MaterialTheme.extendedColor.hintColor,
+                    text = chatUi.lastMessage,
+                    style = AppTypography.titleSmMedium,
+                    color = AppColors.text.secondary,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
                 if (chatUi.unreadCount > 0 && !chatUi.lastMessageIsMine) {
                     SpaceMedium()
                     BadgedBox(
-                        modifier = Modifier
-                            .height(24.dp),
-                        badge = {}
+                        badge = {},
+                        modifier = Modifier.height(24.dp)
                     ) {
                         Badge(
-                            containerColor = PrimaryColor,
-                            modifier = Modifier
+                            modifier = Modifier,
+                            containerColor = AppColors.bg.primary
                         ) {
                             Text(
                                 text = chatUi.unreadCount.toString(),
-                                fontWeight = FontWeight.W500,
-                                color = Color.White,
-                                fontSize = SmallTextSize,
-                                modifier = Modifier
-                                    .padding(4.dp)
+                                style = AppTypography.bodyMdMedium,
+                                color = AppColors.text.inverse,
+                                modifier = Modifier.padding(4.dp)
                             )
                         }
                     }
@@ -197,8 +197,8 @@ fun ChatListItem(
                     Icon(
                         painter = icon,
                         contentDescription = "",
-                        modifier = Modifier.size(SmallIconSize),
-                        tint = MaterialTheme.extendedColor.primaryColor
+                        modifier = Modifier.size(20.dp),
+                        tint = AppColors.icon.accentPrimary
                     )
                 }
             }
@@ -220,7 +220,7 @@ private fun Preview() {
             chatUi = ChatUi(
                 title = "Tikoncha",
                 lastMessage = "Barcha savollaringizga javob beraman",
-                unreadCount =10,
+                unreadCount = 8,
                 chatId = "",
                 dateTime = ChatDateLabel.Yesterday,
                 type = ChatType.BOT,

@@ -1,47 +1,43 @@
 package uz.tikoncha_parent.presentation.navigation
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
-/**
- * iOS-style swipe back gesture wrapper for Voyager Navigator.
- *
- * Usage in App.kt:
- *   Navigator(SplashScreen()) { nav ->
- *       SwipeBackContent(navigator = nav)
- *   }
- *
- * Faqat iOS da ishlaydi (Android da oddiy CurrentScreen ko'rsatadi).
- */
-
-// ── expect/actual — faqat iOS da swipe ishlaydi ──
 expect val isSwipeBackEnabled: Boolean
 
 @Composable
 fun SwipeBackContent(navigator: Navigator) {
     if (!isSwipeBackEnabled || !navigator.canPop) {
-        // Android yoki root screen — oddiy ko'rsatish
         navigator.lastItem.Content()
         return
     }
@@ -49,26 +45,25 @@ fun SwipeBackContent(navigator: Navigator) {
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     var screenWidth by remember { mutableStateOf(1f) }
-    val density = LocalDensity.current
-    val edgeThresholdPx = with(density) { 20.dp.toPx() }
 
-    // Swipe boshlangan x pozitsiyasi
-    var startX by remember { mutableStateOf(0f) }
     var isSwiping by remember { mutableStateOf(false) }
+    var gestureStarted by remember { mutableStateOf(false) }
 
-    // Oldingi screen
     val previousScreen = remember(navigator.items) {
         if (navigator.items.size >= 2) navigator.items[navigator.items.size - 2] else null
     }
+
+    val progress = if (screenWidth > 0f) (offsetX.value / screenWidth).coerceIn(0f, 1f) else 0f
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .onSizeChanged { screenWidth = it.width.toFloat() }
     ) {
-        // ── Oldingi screen (orqa fonda) ──
+        // ── Oldingi screen (parallax) ──
         if (isSwiping && previousScreen != null) {
-            val prevOffset = (-screenWidth * 0.3f * (1f - offsetX.value / screenWidth)).roundToInt()
+            val prevOffset = (-screenWidth * 0.3f * (1f - progress)).roundToInt()
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -77,15 +72,13 @@ fun SwipeBackContent(navigator: Navigator) {
                 previousScreen.Content()
             }
 
-            // Qorong'u overlay
-            val shadowAlpha = 0.1f * (1f - offsetX.value / screenWidth)
+            // Qorong'ulashish overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .offset { IntOffset(prevOffset, 0) }
                     .drawWithContent {
                         drawContent()
-                        drawRect(Color.Black.copy(alpha = shadowAlpha))
+                        drawRect(Color.Black.copy(alpha = 0.15f * (1f - progress)))
                     }
             )
         }
@@ -95,42 +88,91 @@ fun SwipeBackContent(navigator: Navigator) {
             modifier = Modifier
                 .fillMaxSize()
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                .then(
+                    if (isSwiping) {
+                        Modifier.shadow(
+                            elevation = (8.dp * (1f - progress)),
+                            ambientColor = Color.Black.copy(alpha = 0.2f)
+                        )
+                    } else Modifier
+                )
                 .pointerInput(navigator.lastItem.key) {
-                    detectHorizontalDragGestures(
-                        onDragStart = { offset ->
-                            startX = offset.x
-                            isSwiping = startX < edgeThresholdPx
-                        },
-                        onDragEnd = {
-                            if (!isSwiping) return@detectHorizontalDragGestures
-                            val threshold = screenWidth * 0.35f
-                            scope.launch {
-                                if (offsetX.value > threshold) {
-                                    // Swipe yakunlandi — orqaga qaytish
-                                    offsetX.animateTo(screenWidth, tween(250))
-                                    navigator.pop()
-                                    offsetX.snapTo(0f)
-                                } else {
-                                    // Bekor qilindi — qaytish
-                                    offsetX.animateTo(0f, tween(250))
+                    awaitEachGesture {
+                        val down = awaitFirstDown(pass = PointerEventPass.Initial)
+                        val startX = down.position.x
+
+                        // ── Edge zone: ekranning chap 15% qismi (kamida 50dp) ──
+                        val edgeZone = maxOf(screenWidth * 0.15f, 50.dp.toPx())
+                        if (startX > edgeZone) return@awaitEachGesture
+
+                        gestureStarted = true
+                        var totalDragX = 0f
+                        var totalDragY = 0f
+                        var directionDecided = false
+
+                        try {
+                            while (true) {
+                                val event = awaitPointerEvent(PointerEventPass.Initial)
+                                val change = event.changes.firstOrNull() ?: break
+
+                                if (!change.pressed) {
+                                    // Barmoq ko'tarildi
+                                    if (isSwiping) {
+                                        val threshold = screenWidth * 0.3f
+                                        scope.launch {
+                                            if (offsetX.value > threshold) {
+                                                offsetX.animateTo(
+                                                    screenWidth,
+                                                    tween(200, easing = FastOutSlowInEasing)
+                                                )
+                                                navigator.pop()
+                                                offsetX.snapTo(0f)
+                                            } else {
+                                                offsetX.animateTo(
+                                                    0f,
+                                                    tween(250, easing = FastOutSlowInEasing)
+                                                )
+                                            }
+                                            isSwiping = false
+                                        }
+                                    }
+                                    gestureStarted = false
+                                    break
                                 }
-                                isSwiping = false
+
+                                val delta = change.positionChange()
+                                totalDragX += delta.x
+                                totalDragY += delta.y
+
+                                // Yo'nalishni aniqlash — 10px dan keyin
+                                if (!directionDecided && (abs(totalDragX) > 10f || abs(totalDragY) > 10f)) {
+                                    directionDecided = true
+                                    if (abs(totalDragX) < abs(totalDragY) || totalDragX < 0) {
+                                        // Vertikal yoki chapga — swipe emas
+                                        gestureStarted = false
+                                        break
+                                    }
+                                    isSwiping = true
+                                }
+
+                                if (isSwiping) {
+                                    change.consume()
+                                    scope.launch {
+                                        val newVal = (offsetX.value + delta.x).coerceIn(0f, screenWidth)
+                                        offsetX.snapTo(newVal)
+                                    }
+                                }
                             }
-                        },
-                        onDragCancel = {
+                        } catch (_: Exception) {
                             scope.launch {
-                                offsetX.animateTo(0f, tween(250))
-                                isSwiping = false
+                                if (isSwiping) {
+                                    offsetX.animateTo(0f, tween(250))
+                                    isSwiping = false
+                                }
                             }
-                        },
-                        onHorizontalDrag = { _, dragAmount ->
-                            if (!isSwiping) return@detectHorizontalDragGestures
-                            scope.launch {
-                                val newValue = (offsetX.value + dragAmount).coerceIn(0f, screenWidth)
-                                offsetX.snapTo(newValue)
-                            }
+                            gestureStarted = false
                         }
-                    )
+                    }
                 }
         ) {
             navigator.lastItem.Content()

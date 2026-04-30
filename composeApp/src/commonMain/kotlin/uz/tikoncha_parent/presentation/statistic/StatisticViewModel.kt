@@ -150,7 +150,7 @@ class StatisticViewModel(
 
     private fun loadAppUsages() {
         val childId = state.value.selectedChild?.userId
-        if (childId.isNullOrEmpty()){
+        if (childId.isNullOrEmpty()) {
             return
         }
         appUsageJob?.cancel()

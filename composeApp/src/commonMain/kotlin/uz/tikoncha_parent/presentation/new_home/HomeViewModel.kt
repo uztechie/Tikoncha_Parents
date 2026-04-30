@@ -128,8 +128,7 @@ class HomeViewModel(
                 )
             }
 
-            val response = childrenUseCase.invoke()
-            when (response) {
+            when (val response = childrenUseCase.invoke()) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {

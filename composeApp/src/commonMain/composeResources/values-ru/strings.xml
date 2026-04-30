@@ -232,7 +232,7 @@
     <string name="ilovani_ochirishni_tasdiqlaysizmi">Вы подтверждаете удаление приложения?</string>
     <string name="farzand_ilovani_ochirmoqchi">Ваш ребёнок хочет удалить приложение Tikoncha. Если вы дадите разрешение, ограничения и защита в приложении будут временно отключены, и появится возможность удалить приложение. Подтверждаете разрешение?</string>
     <string name="ilovani_ochirish_uchun_sorov_kerak">Для удаления приложения необходимо отправить запрос</string>
-    <string name="ohirgi_faollik">был(а)</string>
+    <string name="ohirgi_faollik">был(а):</string>
     <string name="location_permission_request_message">Данные о местоположении используются для отображения вашего текущего положения на карте и задания зоны для вашего ребёнка.
 Эта информация используется только для этих функций и не передаётся третьим лицам.</string>
     <string name="iltimos_internetga_ulang">Пожалуйста, подключите ваш телефон к интернету!</string>
@@ -389,10 +389,10 @@
     <string name="coins_help_earn_note">Монеты накапливаются постепенно и в любой момент могут быть потрачены на услуги Bilimdon AI.</string>
     <string name="coins_help_close">Закрыть</string>
     <string name="qollash">Применить</string>
-    <string name="promokod">Промокод</string>
+    <string name="promokod">Промокод:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Вы успешно купили монеты.</string>
-    <string name="narx">Цена</string>
-    <string name="jami">Всего</string>
+    <string name="narx">Цена:</string>
+    <string name="jami">Всего:</string>
     <string name="bekor_qilindi">Отменено!</string>
     <string name="sorov_holati">Cтатус запроса</string>
     <string name="qanday_qilib_ishlatish">Как пользоваться</string>
@@ -468,6 +468,30 @@
     <string name="istalgan_vaqtda_bekor">Можно отменить в любое время</string>
     <string name="price_uzs_per_month">%1$s СУМ / месяц</string>
     <string name="obuna_uchun_farzand_qoshilmagan">Подписка оформляется для вашего ребёнка. Чтобы продолжить, добавьте ребёнка.</string>
+    <string name="suhbatlar_yoq">Чатов нет</string>
+    <string name="hozircha_suhbat_yoq">Пока нет начатых чатов</string>
+    <string name="tanlangan_obuna">Выбранная подписка</string>
+    <string name="uzs_yillik">СУМ/годовой</string>
+    <string name="uzs_oylik">СУМ/месячный</string>
+    <string name="tolov_tafsilotlari">Детали оплаты</string>
+    <string name="uzs">СУМ</string>
+    <string name="about_text_html">
+    <![CDATA[
+    <strong>Tikoncha</strong> — современная технологическая платформа, направленная на создание безопасной цифровой среды для детей и подростков.<br/><br/>
+    Мы сотрудничаем с родителями, школами и обществом, помогая детям использовать смартфоны и интернет <b>умеренно</b>, <b>осознанно</b> и <b>с пользой</b>.<br/>
+    С Tikoncha цифровая активность вашего ребенка находится под контролем, при этом сохраняются <b>доверие</b> и <b>уважение</b>.<br/><br/>
+    <b>С помощью нашего приложения:</b><br/>
+    • ограничиваются отвлекающие приложения и контент,<br/>
+    • поддерживаются возможности для обучения и развития,<br/>
+    • обеспечиваются безопасность ребенка и ежедневный баланс.<br/><br/>
+    <b>Tikoncha</b> — это не просто инструмент контроля.<br/>
+    Это шаг к формированию цифровой культуры в воспитании детей, ответственного отношения к технологиям и здорового будущего.<br/><br/>
+    <i>Мы верим:</i><br/>
+    <b>Технологии должны служить не для ограничения ребенка, а для его правильного направления.</b>
+    ]]>
+    </string>
+    <string name="biz_bilan_aloqa">Связаться с нами</string>
+
     <string name="tracking_permission_title">Требуется разрешение на местоположение</string>
     <string name="tracking_permission_message">Разрешите доступ к местоположению, чтобы показать его на карте</string>
     <string name="tracking_permission_grant">Разрешить</string>
