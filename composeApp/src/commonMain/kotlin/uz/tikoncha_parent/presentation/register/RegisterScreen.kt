@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,9 +47,11 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -110,7 +113,7 @@ fun Register(
     LaunchedEffect(registerSuccess) {
         if (registerSuccess) {
             event.invoke(RegisterEvent.Reset)
-           navigator?.replaceAll(AddChildRegisterScreen())
+           navigator?.replaceAll(NewHomeScreen())
         }
     }
 
@@ -124,105 +127,115 @@ fun Register(
             .fillMaxSize()
             .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
-            .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState())
             .imePadding()
     ) {
-        LogoHeader()
-        CustomText(
-            text = stringResource(Res.string.xush_kelibsiz),
-            fontSize = LargeTextSize,
-            fontWeight = FontWeight.W600,
-        )
-        SpaceMedium()
-        CustomText(
-            text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring),
-            fontSize = NormalTextSize,
-            fontStyle = FontStyle.Normal,
-            color = MaterialTheme.extendedColor.hintColor,
-            fontWeight = FontWeight.W500,
-        )
-
-        SpaceMedium()
-
-        CustomTextField(
-            value = state.name,
-            onValueChange = { event(RegisterEvent.OnNameInsert(it)) },
-            modifier = Modifier.height(TextFieldHeight),
-            label = stringResource(Res.string.ismingizni_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
-            leadingIcon = {
-                Image(
-                    painter = painterResource(Res.drawable.parent),
-                    contentDescription = "Parent",
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                    modifier = Modifier.size(NormalIconSize)
-                )
-            }
-        )
-
-        SpaceMedium()
-
-        CustomTextField(
-            value = state.lastName,
-            onValueChange = { event(RegisterEvent.OnLastNameInsert(it)) },
-            modifier = Modifier.height(TextFieldHeight),
-            label = stringResource(Res.string.familiyangizni_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
-            leadingIcon = {
-                Image(
-                    painter = painterResource(Res.drawable.parent),
-                    contentDescription = "Parent",
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                    modifier = Modifier.size(NormalIconSize)
-                )
-            }
-        )
-
-        SpaceMedium()
-
-        CustomTextField(
-            value = state.middleName,
-            onValueChange = { event(RegisterEvent.OnMiddleNameInsert(it)) },
-            modifier = Modifier.height(TextFieldHeight),
-            label = stringResource(Res.string.otangizni_ismini_kiriting),
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
-            leadingIcon = {
-                Image(
-                    painter = painterResource(Res.drawable.parent),
-                    contentDescription = "Parent",
-                    colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                    modifier = Modifier.size(NormalIconSize)
-                )
-            }
-        )
-
-        SpaceMedium()
-
-
-        SegmentedToggle(
-            options = listOf(
-                stringResource(Res.string.ota) to painterResource(Res.drawable.father_icon),
-                stringResource(Res.string.ona) to painterResource(Res.drawable.mather_icon),
-            ),
-            selectedIndex = state.genderIndex,
-            onOptionSelected = {
-                event(RegisterEvent.OnGenderSelected(it))
-            },
+        Column(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .height(ButtonHeight)
-        )
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+        ) {
+            LogoHeader()
+
+            Text(
+                text = stringResource(Res.string.ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring),
+                style = AppTypography.titleMdSemiBold,
+                color = AppColors.text.primary,
+            )
+
+            SpaceMedium()
+
+            CustomTextField(
+                value = state.name,
+                style = AppTypography.titleSmMedium,
+                onValueChange = { event(RegisterEvent.OnNameInsert(it)) },
+                modifier = Modifier.height(TextFieldHeight),
+                label = stringResource(Res.string.ismingizni_kiriting),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(Res.drawable.parent),
+                        contentDescription = "Parent",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            )
+
+            SpaceMedium()
+
+            CustomTextField(
+                value = state.lastName,
+                style = AppTypography.titleSmMedium,
+                onValueChange = { event(RegisterEvent.OnLastNameInsert(it)) },
+                modifier = Modifier.height(TextFieldHeight),
+                label = stringResource(Res.string.familiyangizni_kiriting),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(Res.drawable.parent),
+                        contentDescription = "Parent",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            )
+
+            SpaceMedium()
+
+            CustomTextField(
+                value = state.middleName,
+                style = AppTypography.titleSmMedium,
+                onValueChange = { event(RegisterEvent.OnMiddleNameInsert(it)) },
+                modifier = Modifier.height(TextFieldHeight),
+                label = stringResource(Res.string.otangizni_ismini_kiriting),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Done
+                ),
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(Res.drawable.parent),
+                        contentDescription = "Parent",
+                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            )
+
+            SpaceMedium()
 
 
+            SegmentedToggle(
+                options = listOf(
+                    stringResource(Res.string.ota) to painterResource(Res.drawable.father_icon),
+                    stringResource(Res.string.ona) to painterResource(Res.drawable.mather_icon),
+                ),
+                selectedIndex = state.genderIndex,
+                onOptionSelected = {
+                    event(RegisterEvent.OnGenderSelected(it))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight)
+            )
+            SpaceMedium()
+        }
 
-        Spacer(modifier = Modifier.weight(1f))
         CustomButton(
             onClick = {
                 event(RegisterEvent.OnConfirmClicked)
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = ContainerPadding)
                 .height(ButtonHeight),
             enabled = isOtpCodeValid,
             text = stringResource(Res.string.keyingisi),

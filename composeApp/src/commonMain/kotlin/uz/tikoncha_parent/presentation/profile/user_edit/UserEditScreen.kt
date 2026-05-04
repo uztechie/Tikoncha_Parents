@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -20,6 +23,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -43,6 +47,7 @@ import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -114,6 +119,7 @@ fun UserEditUi(
             .fillMaxSize()
             .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
+            .imePadding()
     ){
         CustomHeader(
             showBackButton = true,
@@ -122,23 +128,23 @@ fun UserEditUi(
         )
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(ContainerPadding)
-                .imePadding()
         ) {
             SpaceMedium()
-            CustomText(
+            Text(
                 text = stringResource(Res.string.malumotlarni_tahrirlash),
-                fontSize = NormalTextSize,
-                fontStyle = FontStyle.Normal,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontWeight = FontWeight.W500,
+                style = AppTypography.titleMdSemiBold,
+                color = AppColors.text.primary,
             )
 
             SpaceMedium()
 
             CustomTextField(
                 value = state.firstName,
+                style = AppTypography.titleSmMedium,
                 modifier = Modifier.height(TextFieldHeight),
                 label = stringResource(Res.string.ismingizni_kiriting),
                 onValueChange = { event(UserEditEvent.OnFirstName(it)) },
@@ -148,7 +154,7 @@ fun UserEditUi(
                         painter = painterResource(Res.drawable.parent),
                         contentDescription = "Parent",
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             )
@@ -157,6 +163,7 @@ fun UserEditUi(
 
             CustomTextField(
                 value = state.lastName,
+                style = AppTypography.titleSmMedium,
                 modifier = Modifier.height(TextFieldHeight),
                 onValueChange = { event(UserEditEvent.OnLastName(it)) },
                 label = stringResource(Res.string.familiyangizni_kiriting),
@@ -166,7 +173,7 @@ fun UserEditUi(
                         painter = painterResource(Res.drawable.parent),
                         contentDescription = "Parent",
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             )
@@ -175,6 +182,7 @@ fun UserEditUi(
 
             CustomTextField(
                 value = state.patronymic,
+                style = AppTypography.titleSmMedium,
                 modifier = Modifier.height(TextFieldHeight),
                 onValueChange = { event(UserEditEvent.OnPatronymic(it)) },
                 label = stringResource(Res.string.otangizni_ismini_kiriting),
@@ -184,7 +192,7 @@ fun UserEditUi(
                         painter = painterResource(Res.drawable.parent),
                         contentDescription = "Parent",
                         colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             )
@@ -204,19 +212,20 @@ fun UserEditUi(
                     .fillMaxWidth()
                     .height(ButtonHeight)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-            CustomButton(
-                onClick = {
-                    event(UserEditEvent.OnSave)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                enabled = isValid,
-                text = stringResource(Res.string.saqlash),
-            )
         }
+
+        CustomButton(
+            onClick = {
+                event(UserEditEvent.OnSave)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ContainerPadding)
+                .height(ButtonHeight),
+            enabled = isValid,
+            text = stringResource(Res.string.saqlash),
+        )
+        Space(12.dp)
     }
 }
 
