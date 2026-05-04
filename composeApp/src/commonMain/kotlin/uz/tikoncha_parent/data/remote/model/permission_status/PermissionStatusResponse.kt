@@ -13,9 +13,9 @@ data class PermissionStatusResponse(
 
 @Serializable
 data class PermissionStatusData(
-    val user_id: String,
-    val last_reported_at: String,
-    val current_mode: String,
+    val user_id: String?,
+    val last_reported_at: String?,
+    val current_mode: String?,
     val issues: List<PermissionStatusIssus>,
 
     )

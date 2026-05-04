@@ -38,7 +38,8 @@ actual val targetModule = module {
             childrenLocationUseCase = get(),
             locationTracker = get(),
             permissionsController = get(),
-            subscriptionLimitUseCase = get()
+            subscriptionLimitUseCase = get(),
+            permissionStatusUseCase = get()
         )
     }
 }

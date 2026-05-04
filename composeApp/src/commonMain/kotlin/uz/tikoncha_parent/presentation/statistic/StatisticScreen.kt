@@ -174,6 +174,7 @@ fun StatisticUi(
                 trailingIcon = {
                     ChildSelectionButton(
                         modifier = Modifier
+                            .padding(end = 8.dp)
                             .widthIn(120.dp, 160.dp),
                         text = state.selectedChild?.name ?: "",
                         imageUrl = state.selectedChild?.avatarUrl ?: "",

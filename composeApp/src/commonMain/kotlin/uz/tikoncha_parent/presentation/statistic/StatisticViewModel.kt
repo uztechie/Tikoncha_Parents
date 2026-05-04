@@ -84,6 +84,7 @@ class StatisticViewModel(
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
                 loadAppUsages()
+                loadPermissionStatus()
 
                 Logger.d(TAG, "Statistics-OnChildSelected after AppSettings.selectedChild=${AppSettings.selectedChild}")
                 Logger.d(TAG, "Statistics-OnChildSelected after event.child=${event.child}")
