@@ -559,6 +559,36 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="tracking_watch_video">Video ko'rish</string>
     <string name="radius">Radius</string>
     <string name="teskari_radius">Teskari radius</string>
+    <string name="farzandim">Farzandim</string>
+    <string name="ozim">O‘zim</string>
+    <string name="faol_vazifa_yo_q">Faol vazifa yo'q</string>
+    <string name="farzandingiz_uchun_vazifa_yo_q">Farzandiningiz uchun vazifa yo'q</string>
+    <string name="limit_yoq">Sizda limit yo‘q</string>
+    <string name="web_ilova_limit">Websayt va ilovalarga kunlik yoki soatlik limit qo‘yish.</string>
 
+    <string name="about_intro">Tikoncha — bolalar va o'smirlar uchun xavfsiz raqamli muhit yaratishga qaratilgan zamonaviy texnologik platforma.</string>
+    <string name="about_body">Biz ota-onalar, maktablar va jamiyat bilan hamkorlikda bolalarning smartfon va internetdan me'yorida, ongli va foydali foydalanishiga yordam beramiz. Tikoncha orqali farzandingizning raqamli faoliyati nazorat ostida bo'ladi, lekin ishonch va hurmat saqlanib qoladi.</string>
+    <string name="about_features_title">Ilovamiz yordamida:</string>
+    <string name="about_feature_1">chalg'ituvchi ilovalar va kontent cheklanadi</string>
+    <string name="about_feature_2">ta'lim va rivojlanishga xizmat qiluvchi imkoniyatlar qo'llab-quvvatlanadi</string>
+    <string name="about_feature_3">bolaning xavfsizligi va kundalik muvozanati ta'minlanadi</string>
+    <string name="about_mission">Tikoncha — bu faqat nazorat vositasi emas. Bu farzand tarbiyasida raqamli madaniyatni shakllantirish, mas'uliyatli texnologiya va sog'lom kelajak sari qadamdir.</string>
+    <string name="about_belief">Texnologiya bolani cheklash uchun emas, uni to'g'ri yo'naltirish uchun xizmat qilishi kerak.</string>
+    <string name="hali_vazifa_yoq">Hali vazifa bermagansiz</string>
+    <string name="ota_ona_vazifalari_desc">Bu yerda siz farzandingiz uchun bergan vazifalaringiz chiqadi</string>
+    <string name="farzand_vazifalari_desc">Bu yerda farzandingiz o‘zi uchun yaratgan vazifalar chiqadi</string>
 
+    <string name="weekday_monday">Dushanba</string>
+    <string name="weekday_tuesday">Seshanba</string>
+    <string name="weekday_wednesday">Chorshanba</string>
+    <string name="weekday_thursday">Payshanba</string>
+    <string name="weekday_friday">Juma</string>
+    <string name="weekday_saturday">Shanba</string>
+    <string name="weekday_sunday">Yakshanba</string>
+
+    <string name="juda_muhim">Juda muhim</string>
+    <string name="tekshirildi">Tekshirildi</string>
+    <string name="ko_rish">Ko'rish</string>
+    <string name="vazifa_ochirilsinmi">Vazifa o‘chirilsinmi?</string>
+    <string name="vazifa_ochirish_tasdiq">Siz rostdan ham ushbu vazifani o‘chirmoqchimisiz?</string>
 </resources>

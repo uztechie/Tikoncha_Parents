@@ -10,4 +10,6 @@ data class RegisterState(
     val genderIndex: Int = 0,
     val accept: Boolean = false,
     val registerResponseState: ResponseState<Nothing> = ResponseState.Idle
-)
+) {
+    val isFromValid: Boolean get() = name.trim().length >= 2 && registerResponseState !is ResponseState.Loading
+}

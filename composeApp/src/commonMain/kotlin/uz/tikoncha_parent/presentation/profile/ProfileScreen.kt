@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -29,7 +30,6 @@ import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInfo
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import qrgenerator.qrkitpainter.rememberQrKitPainter
 import tikoncha_parents.composeapp.generated.resources.*
@@ -46,6 +46,7 @@ import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.about_us.AboutUsScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
+import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
@@ -81,14 +82,20 @@ class ProfileScreen : Screen {
                 childrenUseCase = childCase
             )
         }
+        LaunchedEffect(state.value.userInfo) {
+            viewModel.onEvent(ProfileEvent.Refresh)
+        }
+
         LaunchedEffect(Unit) {
             coinsViewModel.load()
         }
+
         val ui by coinsViewModel.state.collectAsStateWithLifecycle()
         val aiTokens = ui.myCoins
 
         val taskViewModel = koinScreenModel<TaskViewModel>()
         val taskState by taskViewModel.state.collectAsStateWithLifecycle()
+
         LaunchedEffect(Unit) {
             taskViewModel.onEvent(TaskEvent.LoadAllChildrenActiveTasks)
         }
@@ -144,11 +151,7 @@ fun ProfileUi(
         }
     }
 
-
-
-    LoadingDialog(
-        logoutLoading
-    )
+    LoadingDialog(logoutLoading)
 
     CustomDialog(
         show = showLogoutErrorDialog,
@@ -293,7 +296,7 @@ fun ProfileUi(
                     title = stringResource(Res.string.farzandlaringiz),
                     icon = painterResource(Res.drawable.person),
                     onItemClick = {
-                        navigator?.push(ChildrenScreen())
+                        navigator?.push(ChildrenSelectScreen())
                     }
                 )
 

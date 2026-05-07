@@ -42,9 +42,6 @@ class TaskViewModel(
 
     private var requestTodoJob: Job? = null
     private var updateTodoJob: Job? = null
-
-    private var childrenJob: Job? = null
-
     private var listJob: Job? = null
 
 
@@ -114,8 +111,7 @@ class TaskViewModel(
 
             TaskEvent.LoadParentCoins -> {
                 screenModelScope.launch {
-                    val request = coinsUseCase()
-                    when (request) {
+                    when (val request = coinsUseCase()) {
                         is Resource.Success -> {
                             _state.update {
                                 it.copy(
@@ -152,6 +148,15 @@ class TaskViewModel(
                     )
                 }
                 recomputeSelectedCompleted()
+            }
+
+            is TaskEvent.OnTaskSelected -> {
+                _state.update {
+                    it.copy(
+                        taskIndex = event.taskIndex
+                    )
+                }
+                taskIndexSelected()
             }
 
             TaskEvent.OnConfirmClicked -> {
@@ -247,9 +252,7 @@ class TaskViewModel(
                 coin = _state.value.coin
             )
 
-            val result = todoUseCase(request)
-
-            when (result) {
+            when (val result = todoUseCase(request)) {
 
                 is Resource.Loading -> {}
 
@@ -271,7 +274,7 @@ class TaskViewModel(
                     val childId = selectedChildUserId.orEmpty()
                     val availableCoins = state.value.availableCoins
 
-                    if (gift > 0 && gift <= availableCoins && childId.isNotEmpty()) {
+                    if (gift in 1..availableCoins && childId.isNotEmpty()) {
                         val giftCoins = coinsUseCase()
                         when (giftCoins) {
                             is Resource.Success -> {
@@ -331,9 +334,7 @@ class TaskViewModel(
                 is_completed = task.isCompleted
             )
 
-            val result = updateTodoUseCase(request)
-
-            when (result) {
+            when (val result = updateTodoUseCase(request)) {
 
                 is Resource.Loading -> {
 
@@ -379,7 +380,7 @@ class TaskViewModel(
             dateTime = dueMillis,
             createdAt = editedNowMillis,
             targetUserId = state.selectedChild?.userId ?: "",
-            authorId = AppSettings.userId ?: "",
+            authorId = AppSettings.userId,
             isMine = true,
         )
     }
@@ -394,16 +395,14 @@ class TaskViewModel(
             if (selectedId == null) {
                 _state.update {
                     it.copy(
-                        listResponseState = ResponseState.Loading,
+                        listResponseState = ResponseState.Idle,
                         allTaskList = emptyList()
                     )
                 }
                 return@launch
             }
 
-            val result = todoListUseCase.invoke(selectedId)
-
-            when (result) {
+            when (val result = todoListUseCase.invoke(selectedId)) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -423,8 +422,8 @@ class TaskViewModel(
                         it.copy(
                             listResponseState = ResponseState.Success(),
                             allTaskList = result.data,
-                            activeTaskCount = result.data.count {
-                                it.is_completed
+                            activeTaskCount = result.data.count { task ->
+                                task.is_completed
                             }
                         )
                     }
@@ -441,12 +440,12 @@ class TaskViewModel(
 
         _state.update {
             it.copy(
-                childrenTaskList = allList.filter { it.author_id != AppSettings.userId && !it.is_completed }
-                    .map { it.toTask() }
-                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
-                parentTaskList = allList.filter { it.author_id == AppSettings.userId && !it.is_completed }
-                    .map { it.toTask() }
-                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                childrenTaskList = allList.filter { task -> task.author_id != AppSettings.userId && !task.is_completed }
+                    .map { task -> task.toTask() }
+                    .sortedBy { priorityCondition -> priorityCondition.importance == ImportanceType.MOST_IMPORTANT },
+                parentTaskList = allList.filter { task -> task.author_id == AppSettings.userId && !task.is_completed }
+                    .map { task -> task.toTask() }
+                    .sortedBy { importantCondition -> importantCondition.importance == ImportanceType.MOST_IMPORTANT },
             )
         }
     }
@@ -456,12 +455,12 @@ class TaskViewModel(
 
         _state.update {
             it.copy(
-                childrenCompletedTaskList = allList.filter { it.author_id != AppSettings.userId && it.is_completed }
-                    .map { it.toTask() }
-                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
-                parentCompletedTaskList = allList.filter { it.author_id == AppSettings.userId && it.is_completed }
-                    .map { it.toTask() }
-                    .sortedBy { it.importance == ImportanceType.MOST_IMPORTANT },
+                childrenCompletedTaskList = allList.filter { todo -> todo.author_id != AppSettings.userId && todo.is_completed }
+                    .map { task -> task.toTask() }
+                    .sortedBy { importantItem -> importantItem.importance == ImportanceType.MOST_IMPORTANT },
+                parentCompletedTaskList = allList.filter { task -> task.author_id == AppSettings.userId && task.is_completed }
+                    .map { task -> task.toTask() }
+                    .sortedBy { isImportant -> isImportant.importance == ImportanceType.MOST_IMPORTANT },
             )
         }
         recomputeSelectedCompleted()
@@ -481,17 +480,29 @@ class TaskViewModel(
         }
     }
 
+    private fun taskIndexSelected() {
+        val taskIndex = state.value.taskIndex
+        val selected = if (taskIndex == 0)
+            state.value.parentTaskList
+        else
+            state.value.childrenTaskList
+
+        _state.update {
+            it.copy(
+                selectedTaskList = selected
+            )
+        }
+    }
+
     private fun loadAllChildrenActiveTasks() {
         screenModelScope.launch {
-            val childrenRes = childrenUseCase.invoke()
-            when (childrenRes) {
+            when (val childrenRes = childrenUseCase.invoke()) {
                 is Resource.Success -> {
                     val children = childrenRes.data.map { it.toUserInfo() }
                     var total = 0
 
                     for (child in children) {
-                        val todosRes = todoListUseCase.invoke(child.userId)
-                        when (todosRes) {
+                        when (val todosRes = todoListUseCase.invoke(child.userId)) {
                             is Resource.Success -> {
                                 total += todosRes.data.count { !it.is_completed }
                             }

@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -34,7 +34,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
@@ -42,20 +41,17 @@ import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import uz.tikoncha_parent.common.Util.normalizePhone
 import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
-import uz.tikoncha_parent.presentation.profile.child_user_edit.EditScreen
+import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildEditScreen
 import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInfoItem
-import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
@@ -177,7 +173,7 @@ fun ChildrenUi(
                         PersonalInfoItem(
                             userInfo,
                             onEdit = {
-                                navigator?.push(EditScreen(userInfo))
+                                navigator?.push(ChildEditScreen(userInfo))
                             }
                         )
                     }

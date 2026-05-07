@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -45,7 +46,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
@@ -73,7 +73,6 @@ import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateDialog
 import uz.tikoncha_parent.presentation.in_app_update.UpdateEvent
 import uz.tikoncha_parent.presentation.in_app_update.UpdateUiState
 import uz.tikoncha_parent.presentation.in_app_update.UpdateViewModel
-import uz.tikoncha_parent.presentation.map.MapScreen
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyListScreen
@@ -84,8 +83,6 @@ import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.tracking.TrackingScreen
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -541,54 +538,6 @@ fun NewHomeUi(
                                         showChildDialog = true
                                     }
                                 } else {
-                                    navigator?.push(TaskScreen())
-                                }
-
-                            }
-                            .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.topshiriqlar),
-                                color = AppColors.text.primary,
-                                style = AppTypography.displaySmRegular
-                            )
-                            Text(
-                                text = stringResource(Res.string.faol_vazifa, taskCount),
-                                color = AppColors.text.secondary,
-                                style = AppTypography.titleSmMedium,
-                            )
-                        }
-
-                        Image(
-                            painter = painterResource(Res.drawable.home_task),
-                            contentDescription = "",
-                            modifier = Modifier.size(HomeIconSize)
-                        )
-                    }
-                    Space(12.dp)
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(LargeCardCornerRadius))
-                            .fillMaxWidth()
-                            .height(HomeItemHeight)
-                            .background(
-                                AppColors.section.tertiary,
-                                RoundedCornerShape(LargeCardCornerRadius)
-                            )
-                            .singleClick {
-                                if (state.childrenList.isEmpty()) {
-                                    internetCheck.check {
-                                        showChildDialog = true
-                                    }
-                                } else {
                                     navigator?.push(PolicyListScreen())
                                 }
                             }
@@ -634,6 +583,54 @@ fun NewHomeUi(
                             }
                         }
                     )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(LargeCardCornerRadius))
+                            .fillMaxWidth()
+                            .height(HomeItemHeight)
+                            .background(
+                                AppColors.section.tertiary,
+                                RoundedCornerShape(LargeCardCornerRadius)
+                            )
+                            .singleClick {
+                                if (state.childrenList.isEmpty()) {
+                                    internetCheck.check {
+                                        showChildDialog = true
+                                    }
+                                } else {
+                                    navigator?.push(TaskScreen())
+                                }
+
+                            }
+                            .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.topshiriqlar),
+                                color = AppColors.text.primary,
+                                style = AppTypography.displaySmRegular
+                            )
+                            Text(
+                                text = stringResource(Res.string.faol_vazifa, taskCount),
+                                color = AppColors.text.secondary,
+                                style = AppTypography.titleSmMedium,
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(Res.drawable.home_task),
+                            contentDescription = "",
+                            modifier = Modifier.size(HomeIconSize)
+                        )
+                    }
+                    Space(12.dp)
                 }
             }
         }

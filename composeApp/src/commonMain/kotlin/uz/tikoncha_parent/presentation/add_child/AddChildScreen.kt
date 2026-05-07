@@ -63,6 +63,7 @@ import uz.tikoncha_parent.common.Util.format6DigitCode
 import uz.tikoncha_parent.platform.copyPlainText
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
+import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -131,18 +132,19 @@ fun AddChildUi(
     )
 
     CustomDialog(
-        painter = painterResource(Res.drawable.dialog_success),
         show = state.childJoined,
-        title = stringResource(Res.string.muvaffaqiyatli),
         buttonText = stringResource(Res.string.ok),
+        title = stringResource(Res.string.muvaffaqiyatli),
         message = stringResource(Res.string.farzand_ulan_di),
+        painter = painterResource(Res.drawable.dialog_success),
         onDismiss = {
             event(ChildEvent.OnSuccessDismissed)
         },
         onButtonClick = {
-            val addedPhone = state.fullNumber
+//            val addedPhone = state.fullNumber
             event(ChildEvent.OnSuccessDismissed)
-            navigator?.replace(ChildrenScreen(highlightPhone = addedPhone))
+            navigator?.replace(ChildrenSelectScreen())
+//            navigator?.replace(ChildrenScreen(highlightPhone = addedPhone))
         }
     )
 

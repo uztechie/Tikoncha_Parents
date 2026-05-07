@@ -29,6 +29,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
 import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -44,7 +45,7 @@ fun PersonalInformationItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(ShapeCornerRadius))
-            .background(MaterialTheme.extendedColor.backgroundColor)
+            .background(AppColors.field.page)
             .padding(horizontal = ContainerPadding, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

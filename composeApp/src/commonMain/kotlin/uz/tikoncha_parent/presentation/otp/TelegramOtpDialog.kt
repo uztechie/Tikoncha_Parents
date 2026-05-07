@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,7 +72,7 @@ fun TelegramOtpDialog(
                 Card(
                     shape = RoundedCornerShape(CardCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
+                        containerColor = AppColors.bg.surface
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -89,22 +90,25 @@ fun TelegramOtpDialog(
                                 .width(36.dp),
                         )
 
-                        CustomText(
+                        Text(
                             text = stringResource(Res.string.kod_telegramga_yuboriladi),
+                            style = AppTypography.titleLgSemiBold,
+                            color = AppColors.text.primary
                         )
                         SpaceMedium()
 
-                        CustomText(
+                        Text(
                             text = stringResource(Res.string.tasdiqlash_kodi_telegram),
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
+                            style = AppTypography.emphasizedMdMedium,
+                            color = AppColors.text.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         SpaceLarge()
 
                         CustomButton(
                             text = stringResource(Res.string.telegramga_otish),
-                            textColor = OnPrimaryColor,
+                            textColor = AppColors.text.inverse,
                             onClick = {
                                 onConfirm()
                             },
@@ -124,8 +128,8 @@ fun TelegramOtpDialog(
                         CustomButton(
                             text = stringResource(Res.string.raqamda_telegram_mavjud_emas),
                             onClick = onDismiss,
-                            color = MaterialTheme.extendedColor.disabledContentColor,
-                            textColor = MaterialTheme.extendedColor.textColor,
+                            color = AppColors.button.secondary,
+                            textColor = AppColors.text.primary,
                             modifier = Modifier
                                 .fillMaxWidth()
                         )

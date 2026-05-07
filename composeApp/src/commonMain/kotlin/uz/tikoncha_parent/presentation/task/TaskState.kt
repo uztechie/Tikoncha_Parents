@@ -23,6 +23,7 @@ data class TaskState(
     val childrenList: List<UserInfo> = emptyList(),
     val selectedChild: UserInfo? = null,
     val genderIndex: Int = 0,
+    val taskIndex: Int = 0,
 
     val taskResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,

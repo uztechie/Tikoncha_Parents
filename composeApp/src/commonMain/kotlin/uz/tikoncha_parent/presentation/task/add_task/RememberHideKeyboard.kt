@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task
+package uz.tikoncha_parent.presentation.task.add_task
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalFocusManager

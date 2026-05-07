@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 
 /**
@@ -209,15 +210,19 @@ private fun SegmentedTabBarPreview_Three() {
 private fun SegmentedTabBarPreview_CustomColors() {
     var selected by remember { mutableStateOf(0) }
 
-    PreviewSurfaceTab {
-        SegmentedTabBar(
-            items = listOf("Kunlik", "Haftalik", "Oylik"),
-            selectedIndex = selected,
-            onSelect = { selected = it },
-            colors = SegmentedTabBarDefaults.colors(
-                selectedBorderColor = Color(0xFF7B61FF)
-            ),
-        )
+    TikonchaParentTheme {
+
+
+        PreviewSurfaceTab {
+            SegmentedTabBar(
+                items = listOf("Kunlik", "Haftalik", "Oylik", "Maktab", "Kitob"),
+                selectedIndex = selected,
+                onSelect = { selected = it },
+                colors = SegmentedTabBarDefaults.colors(
+                    selectedBorderColor = Color(0xFF7B61FF)
+                ),
+            )
+        }
     }
 }
 
