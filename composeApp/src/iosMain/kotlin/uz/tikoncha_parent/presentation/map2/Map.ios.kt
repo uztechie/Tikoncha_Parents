@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalForeignApi::class)
+
 package uz.tikoncha_parent.presentation.map2
 
 import androidx.compose.runtime.Composable
@@ -17,10 +19,13 @@ import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.YandexMapsMobile.YMKAnimation
 import cocoapods.YandexMapsMobile.YMKAnimationType
 import cocoapods.YandexMapsMobile.YMKCameraPosition
+import cocoapods.YandexMapsMobile.YMKCameraUpdateReason
 import cocoapods.YandexMapsMobile.YMKCircle
 import cocoapods.YandexMapsMobile.YMKCircleMapObject
 import cocoapods.YandexMapsMobile.YMKIconStyle
+import cocoapods.YandexMapsMobile.YMKLinearRing
 import cocoapods.YandexMapsMobile.YMKMap
+import cocoapods.YandexMapsMobile.YMKMapCameraListenerProtocol
 import cocoapods.YandexMapsMobile.YMKMapInputListenerProtocol
 import cocoapods.YandexMapsMobile.YMKMapKit
 import cocoapods.YandexMapsMobile.YMKMapObject
@@ -29,6 +34,8 @@ import cocoapods.YandexMapsMobile.YMKMapView
 import cocoapods.YandexMapsMobile.YMKObjectEvent
 import cocoapods.YandexMapsMobile.YMKPlacemarkMapObject
 import cocoapods.YandexMapsMobile.YMKPoint
+import cocoapods.YandexMapsMobile.YMKPolygon
+import cocoapods.YandexMapsMobile.YMKPolygonMapObject
 import cocoapods.YandexMapsMobile.YMKUserLocationLayer
 import cocoapods.YandexMapsMobile.YMKUserLocationObjectListenerProtocol
 import cocoapods.YandexMapsMobile.YMKUserLocationView
@@ -47,7 +54,7 @@ import platform.darwin.NSObject
 import kotlin.concurrent.Volatile
 
 // ============================================================
-// HELPER FUNKSIYALAR
+// HELPERS
 // ============================================================
 
 @OptIn(ExperimentalForeignApi::class)
@@ -79,10 +86,7 @@ private fun ymkCameraPosition(
     tilt: Float = 0f
 ): YMKCameraPosition =
     YMKCameraPosition.cameraPositionWithTarget(
-        target = target,
-        zoom = zoom,
-        azimuth = azimuth,
-        tilt = tilt
+        target = target, zoom = zoom, azimuth = azimuth, tilt = tilt
     )
 
 @OptIn(ExperimentalForeignApi::class)
@@ -111,13 +115,12 @@ private fun zoomForSpan(maxSpanDegrees: Double): Float = when {
     else -> 16f
 }
 
-@OptIn(ExperimentalForeignApi::class)
-private fun anchorIconStyle(): YMKIconStyle = YMKIconStyle().apply {
+private fun anchorIconStyle(style: MarkerStyle): YMKIconStyle = YMKIconStyle().apply {
     setAnchor(
         NSValue.valueWithCGPoint(
             CGPointMake(
-                MarkerDimensions.ANCHOR_X.toDouble(),
-                MarkerDimensions.ANCHOR_Y.toDouble()
+                style.anchorX.toDouble(),
+                style.anchorY.toDouble()
             )
         )
     )
@@ -148,7 +151,7 @@ actual object MapKitInitializer {
 @Stable
 actual class MapController actual constructor() {
     internal var mapView: YMKMapView? = null
-    internal var userLocationLayer: YMKUserLocationLayer? = null
+    actual val isReady: Boolean get() = mapView != null
 
     actual fun moveTo(position: CameraPosition, animated: Boolean) {
         val map = mapView?.mapWindow?.map ?: return
@@ -174,10 +177,7 @@ actual class MapController actual constructor() {
         val map = mapView?.mapWindow?.map ?: return
 
         if (points.size == 1) {
-            moveTo(
-                position = CameraPosition(target = points.first(), zoom = 16f),
-                animated = animated
-            )
+            moveTo(CameraPosition(target = points.first(), zoom = 16f), animated)
             return
         }
 
@@ -209,25 +209,22 @@ actual class MapController actual constructor() {
         }
     }
 
-    actual fun moveToUserLocation(animated: Boolean) {
-        tryMoveToUserLocation(animated)
+
+    actual fun getCameraTarget(): LatLng? {
+        val pos = mapView?.mapWindow?.map?.cameraPosition ?: return null
+        val t = pos.target
+        return LatLng(t.latitude, t.longitude)
     }
 
-    actual fun tryMoveToUserLocation(animated: Boolean): Boolean {
-        val map = mapView?.mapWindow?.map ?: return false
-        val layer = userLocationLayer ?: return false
-        val pos = layer.cameraPosition() ?: return false
-        val target = ymkCameraPosition(target = pos.target, zoom = 16f)
-        if (animated) {
-            map.moveWithCameraPosition(
-                cameraPosition = target,
-                animation = smoothAnimation(),
-                cameraCallback = null
-            )
-        } else {
-            map.moveWithCameraPosition(target)
-        }
-        return true
+    actual fun getCameraPosition(): CameraPosition? {
+        val pos = mapView?.mapWindow?.map?.cameraPosition ?: return null
+        val t = pos.target
+        return CameraPosition(
+            target = LatLng(t.latitude, t.longitude),
+            zoom = pos.zoom,
+            azimuth = pos.azimuth,
+            tilt = pos.tilt
+        )
     }
 }
 
@@ -263,34 +260,23 @@ private class MapInputListener(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private class UserLocationListener(
-    private val getIcon: () -> NativeMarkerIcon?,
-    private val onLocationChanged: (LatLng) -> Unit
-) : NSObject(), YMKUserLocationObjectListenerProtocol {
-
-    override fun onObjectAddedWithView(view: YMKUserLocationView) {
-        applyIcon(view)
-    }
-
-    override fun onObjectRemovedWithView(view: YMKUserLocationView) {}
-
-    override fun onObjectUpdatedWithView(view: YMKUserLocationView, event: YMKObjectEvent) {
-        view.pin().geometry.let { point ->
-            onLocationChanged(LatLng(point.latitude, point.longitude))
+private class CameraIdleListener(
+    private val onIdle: (LatLng) -> Unit
+) : NSObject(), YMKMapCameraListenerProtocol {
+    override fun onCameraPositionChangedWithMap(
+        map: YMKMap,
+        cameraPosition: YMKCameraPosition,
+        cameraUpdateReason: YMKCameraUpdateReason,
+        finished: Boolean
+    ) {
+        if (finished) {
+            val t = cameraPosition.target
+            onIdle(LatLng(t.latitude, t.longitude))
         }
-        applyIcon(view)
-    }
-
-    private fun applyIcon(view: YMKUserLocationView) {
-        val icon = getIcon() ?: return
-        val style = anchorIconStyle()
-        view.pin().setIconWithImage(icon.image)
-        view.pin().setIconStyleWithStyle(style)
-        view.arrow().setIconWithImage(icon.image)
-        view.arrow().setIconStyleWithStyle(style)
-        view.accuracyCircle().setFillColor(UIColor.clearColor)
     }
 }
+
+
 
 // ============================================================
 // COMPOSABLE — YandexMap
@@ -303,11 +289,10 @@ actual fun YandexMap(
     initialCamera: CameraPosition,
     markers: List<MapMarker>,
     circles: List<MapCircle>,
+    polygons: List<MapPolygon>,
     onMarkerClick: (String) -> Unit,
     onMapTap: (LatLng) -> Unit,
-    showUserLocation: Boolean,
-    userLocationIcon: NativeMarkerIcon?,
-    onUserLocationChanged: ((LatLng) -> Unit)?,
+    onCameraIdle: (LatLng) -> Unit,
     isDark: Boolean,
     modifier: Modifier
 ) {
@@ -317,34 +302,22 @@ actual fun YandexMap(
 
     val onMarkerClickState = rememberUpdatedState(onMarkerClick)
     val onMapTapState = rememberUpdatedState(onMapTap)
-    val onUserLocationChangedState = rememberUpdatedState(onUserLocationChanged)
-    val userLocationIconState = rememberUpdatedState(userLocationIcon)
+    val onCameraIdleState = rememberUpdatedState(onCameraIdle)
 
     val placemarks = remember { mutableMapOf<String, YMKPlacemarkMapObject>() }
     val listeners = remember { mutableMapOf<String, PlacemarkTapListener>() }
     val circleObjects = remember { mutableMapOf<String, YMKCircleMapObject>() }
-    val mapInputListener = remember { MapInputListener { onMapTapState.value(it) } }
-
-    // ⬇️ ASOSIY: STATE map — yangi key qo'shilganda recomposition triggerlanadi
+    val polygonObjects = remember { mutableMapOf<String, YMKPolygonMapObject>() }
     val iconCache = remember { mutableStateMapOf<String, NativeMarkerIcon>() }
 
-    val userLocationListener = remember {
-        UserLocationListener(
-            getIcon = { userLocationIconState.value },
-            onLocationChanged = { latLng ->
-                onUserLocationChangedState.value?.invoke(latLng)
-            }
-        )
-    }
+    val mapInputListener = remember { MapInputListener { onMapTapState.value(it) } }
+    val cameraListener = remember { CameraIdleListener { onCameraIdleState.value(it) } }
 
-    // ============================================================
-    // ICON YARATISH — markerlar o'zgarganda async cache to'ldirish
-    // ============================================================
+
     LaunchedEffect(markers) {
         markers.forEach { marker ->
             val key = marker.style.cacheKey()
             if (iconCache.containsKey(key)) return@forEach
-
             scope.launch {
                 try {
                     val icon = createMarkerIcon(
@@ -375,19 +348,18 @@ actual fun YandexMap(
                 )
             )
             view.mapWindow?.map?.addInputListenerWithInputListener(mapInputListener)
+            view.mapWindow?.map?.addCameraListenerWithCameraListener(cameraListener)
             view as UIView
         },
         update = { uiView ->
             val view = uiView as YMKMapView
             val map = view.mapWindow?.map ?: return@UIKitView
 
-            // Dark mode
             map.setNightModeEnabled(isDark)
 
-            // -------- MARKERS sinxron --------
+            // -------- MARKERS --------
             val incoming = markers.associateBy { it.id }
 
-            // Olib tashlash
             (placemarks.keys - incoming.keys).toList().forEach { id ->
                 placemarks.remove(id)?.let { pm ->
                     listeners.remove(id)?.let { listener ->
@@ -397,7 +369,6 @@ actual fun YandexMap(
                 }
             }
 
-            // Qo'shish/yangilash
             incoming.forEach { (id, marker) ->
                 val point = marker.position.toYMK()
 
@@ -408,25 +379,22 @@ actual fun YandexMap(
                 pm.setGeometry(point)
                 pm.setZIndex(marker.zIndex)
 
-                // Tap listener
                 if (listeners[id] == null) {
                     val listener = PlacemarkTapListener(id) { onMarkerClickState.value(it) }
                     pm.addTapListenerWithTapListener(listener)
                     listeners[id] = listener
                 }
 
-                // ⬇️ ASOSIY: Icon cache'da bo'lsa darhol o'rnatamiz.
-                // Cache'da hali yo'q bo'lsa — LaunchedEffect tayyorlagach,
-                // iconCache STATE o'zgaradi → recomposition → bu blok yana ishlaydi.
                 val key = marker.style.cacheKey()
                 iconCache[key]?.let { icon ->
                     pm.setIconWithImage(icon.image)
-                    pm.setIconStyleWithStyle(anchorIconStyle())
+                    pm.setIconStyleWithStyle(anchorIconStyle(marker.style))
                 }
             }
 
-            // -------- CIRCLES sinxron --------
-            val inCircles = circles.associateBy { it.id }
+            // -------- CIRCLES --------
+            val nonReverseCircles = circles.filter { !it.reverse }
+            val inCircles = nonReverseCircles.associateBy { it.id }
 
             (circleObjects.keys - inCircles.keys).toList().forEach { id ->
                 circleObjects.remove(id)?.let { map.mapObjects.removeWithMapObject(it) }
@@ -449,24 +417,56 @@ actual fun YandexMap(
                 obj.setStrokeWidth(c.strokeWidthDp)
             }
 
-            // -------- USER LOCATION LAYER --------
-            if (showUserLocation) {
-                if (controller.userLocationLayer == null) {
-                    val window = view.mapWindow ?: return@UIKitView
-                    controller.userLocationLayer = YMKMapKit.sharedInstance()
-                        .createUserLocationLayerWithMapWindow(window).apply {
-                            setVisibleWithOn(true)
-                            setHeadingModeActive(true)
-                            setObjectListenerWithObjectListener(userLocationListener)
-                        }
-                }
-            } else {
-                controller.userLocationLayer?.let { layer ->
-                    layer.setVisibleWithOn(false)
-                    layer.setObjectListenerWithObjectListener(null)
-                    controller.userLocationLayer = null
+            // -------- POLYGONS (asl + reverse=true circles) --------
+            val combinedPolygons = buildList {
+                addAll(polygons)
+                circles.filter { it.reverse }.forEach { c ->
+                    add(
+                        MapPolygon(
+                            id = "__circle_${c.id}",
+                            points = circleToPolygonPoints(c.center, c.radiusMeters),
+                            reverse = true,
+                            fillColor = c.fillColor,
+                            strokeColor = c.strokeColor,
+                            strokeWidthDp = c.strokeWidthDp,
+                        )
+                    )
                 }
             }
+
+            val inPolys = combinedPolygons.associateBy { it.id }
+            (polygonObjects.keys - inPolys.keys).toList().forEach { id ->
+                polygonObjects.remove(id)?.let { map.mapObjects.removeWithMapObject(it) }
+            }
+
+            inPolys.forEach { (id, p) ->
+                if (p.points.size < 3) return@forEach
+
+                val outerPts = if (p.reverse) WORLD_OUTER_RING else p.points
+                val innerRingsPts = if (p.reverse) listOf(p.points) else emptyList()
+
+                val outer = YMKLinearRing.linearRingWithPoints(
+                    outerPts.map { it.toYMK() }
+                )
+                val inners = innerRingsPts.map { ring ->
+                    YMKLinearRing.linearRingWithPoints(ring.map { it.toYMK() })
+                }
+                val geom = YMKPolygon.polygonWithOuterRing(
+                    outerRing = outer,
+                    innerRings = inners
+                )
+
+                val obj = polygonObjects[id]
+                    ?: map.mapObjects.addPolygonWithPolygon(geom).also {
+                        polygonObjects[id] = it
+                    }
+
+                obj.setGeometry(geom)
+                obj.setFillColor(p.fillColor.toUIColor())
+                obj.setStrokeColor(p.strokeColor.toUIColor())
+                obj.setStrokeWidth(p.strokeWidthDp)
+            }
+
         },
         properties = UIKitInteropProperties(
             interactionMode = UIKitInteropInteractionMode.NonCooperative,
@@ -479,9 +479,8 @@ actual fun YandexMap(
             placemarks.clear()
             listeners.clear()
             circleObjects.clear()
+            polygonObjects.clear()
             iconCache.clear()
-            controller.userLocationLayer?.setObjectListenerWithObjectListener(null)
-            controller.userLocationLayer = null
             controller.mapView = null
         }
     }

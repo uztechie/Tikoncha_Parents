@@ -29,10 +29,16 @@
             android:name="isMonitoringTool"
             android:value="child_monitoring" />
         <activity
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity,DiscouragedApi"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:name=".MainActivity">
+
+            <property
+                android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
+                android:value="true" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

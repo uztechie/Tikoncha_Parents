@@ -19,6 +19,7 @@ data class ChildrenLocationItemDto(
     val child_user_id: String?,
     val first_name: String?,
     val last_name: String?,
+    val avatar_url: String?,
     val lat: Double?,
     val lng: Double?,
     val updated_at: String?,

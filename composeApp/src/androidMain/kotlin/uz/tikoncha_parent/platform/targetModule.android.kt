@@ -1,5 +1,7 @@
 package uz.tikoncha_parent.platform
 
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.Priority
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.permissions.PermissionsController
 import kotlinx.coroutines.flow.emptyFlow
@@ -12,6 +14,7 @@ import uz.tikoncha_parent.domain.model.in_app_update.UpdateType
 import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.presentation.map.LocationViewModel
+import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
@@ -37,7 +40,9 @@ actual val targetModule = module {
 
     single {
         LocationTracker(
-            permissionsController = get()
+            permissionsController = get(),
+            interval = 10000L,
+            priority = Priority.PRIORITY_BALANCED_POWER_ACCURACY
         )
     }
 
@@ -57,5 +62,7 @@ actual val targetModule = module {
             permissionStatusUseCase = get()
         )
     }
+
+    factory { LocationRuleScreenModel(get(), get()) }
 
 }

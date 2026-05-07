@@ -9,7 +9,9 @@ import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionState
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.location.LOCATION
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,223 +25,132 @@ import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
+import uz.tikoncha_parent.presentation.map2.LatLng
+import kotlin.math.PI
+import kotlin.math.asin
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class TrackingScreenModel(
     private val childrenLocationUseCase: ChildrenLocationUseCase,
     private val locationTracker: LocationTracker,
     private val permissionsController: PermissionsController,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-    private val permissionStatusUseCase: PermissionStatusUseCase
+    private val permissionStatusUseCase: PermissionStatusUseCase,
 ) : StateScreenModel<TrackingState>(TrackingState()) {
 
     private val _effect = Channel<TrackingEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
+    private var trackingJob: Job? = null
+    private var idleStopJob: Job? = null
+    private var lastLocation: LatLng? = null
+
     init {
         loadChildren()
-        loadSubscriptionLimits()  // ⬅️ YANGI
+        loadSubscriptionLimits()
+        ensureLocation()                    // ⬅️ init'da boshlash
     }
 
     fun onEvent(event: TrackingEvent) {
         when (event) {
-            TrackingEvent.Refresh -> {
-                loadChildren()
-                loadSubscriptionLimits()
-            }
-
-            TrackingEvent.SelfClicked -> startSelfLocationFlow()
-            is TrackingEvent.PersonClicked -> handlePersonClicked(event.personId)
-            is TrackingEvent.MarkerClicked -> handleMarkerClicked(event.markerId)
-            TrackingEvent.FitAll -> fitAll()
-
-            TrackingEvent.RequestLocationPermission -> requestPermission()
+            // ── Location lifecycle (umumiy nuqta) ──
+            TrackingEvent.SelfClicked,
+            TrackingEvent.RecheckPermission -> ensureLocation(focusSelf = true)
 
             TrackingEvent.GpsEnabledByUser -> {
                 mutableState.update { it.copy(showGpsDialog = false) }
-                checkGpsAndStart(focusOnSelf = true)
+                ensureLocation(focusSelf = true)
             }
-            TrackingEvent.DismissGpsDialog -> {
+
+            TrackingEvent.RequestLocationPermission -> requestPermission()
+
+            // ── Refresh ──
+            TrackingEvent.Refresh -> {
+                loadChildren()
+                loadSubscriptionLimits()
+                ensureLocation()
+            }
+            TrackingEvent.RetryLocation -> loadChildren()
+
+            // ── Dialog/sheet dismisses ──
+            TrackingEvent.DismissGpsDialog ->
                 mutableState.update { it.copy(showGpsDialog = false) }
-            }
-            TrackingEvent.OpenAppSettings -> {
-                screenModelScope.launch {
-                    _effect.send(TrackingEffect.OpenAppSettings)
-                }
-            }
-            TrackingEvent.PermissionGranted,
-            TrackingEvent.PermissionDenied,
-            TrackingEvent.PermissionDeniedAlways -> Unit
-
-            TrackingEvent.DismissPermissionDialog -> {
+            TrackingEvent.DismissPermissionDialog ->
                 mutableState.update {
-                    it.copy(
-                        permissionDenied = false,
-                        permissionDeniedAlways = false
-                    )
+                    it.copy(permissionDenied = false, permissionDeniedAlways = false)
                 }
-            }
-            TrackingEvent.RecheckPermission -> recheckPermissionAfterSettings()
-
-            // ⬇️ YANGI
-            TrackingEvent.DismissSubscriptionDialog -> {
+            TrackingEvent.DismissSubscriptionDialog ->
                 mutableState.update { it.copy(showSubscriptionDialog = false) }
-            }
-
-            TrackingEvent.DismissPersonSheet -> {
+            TrackingEvent.DismissPersonSheet ->
                 mutableState.update {
                     it.copy(
                         showPersonSheet = false,
                         sheetPerson = null,
                         sheetIssues = emptyList(),
-                        isCheckingPermissionStatus = false
+                        isCheckingPermissionStatus = false,
                     )
                 }
+
+            TrackingEvent.OpenAppSettings -> screenModelScope.launch {
+                _effect.send(TrackingEffect.OpenAppSettings)
             }
 
+            // ── Person/marker click ──
+            is TrackingEvent.PersonClicked -> handlePersonClicked(event.personId)
+            is TrackingEvent.MarkerClicked -> handleMarkerClicked(event.markerId)
+            TrackingEvent.FitAll -> fitAll()
 
-
-            TrackingEvent.RetryLocation -> {
-                loadChildren()
-            }
-
-            is TrackingEvent.OpenYoutubeUrl -> {
+            // ── Misc ──
+            is TrackingEvent.OpenYoutubeUrl ->
                 _effect.trySend(TrackingEffect.OpenUrl(event.url))
-            }
+            is TrackingEvent.SetSelfText ->
+                mutableState.update { it.copy(selfText = event.text) }
+
+            TrackingEvent.PermissionGranted,
+            TrackingEvent.PermissionDenied,
+            TrackingEvent.PermissionDeniedAlways -> Unit
         }
     }
 
-    private fun handlePersonClicked(id: String) {
-        val person = state.value.people.firstOrNull { it.id == id } ?: return
-
-        if (person.isSelf) {
-            startSelfLocationFlow()
-            return
-        }
-
-        // FREE — subscription dialog
-        if (!hasPlusSubscription(id)) {
-            mutableState.update { it.copy(showSubscriptionDialog = true) }
-            return
-        }
-
-        // PLUS — sheet ochiladi (location bor yoki yo'q — sheet ichida hal qilinadi)
-        mutableState.update {
-            it.copy(
-                selectedPersonId = id,
-                sheetPerson = person,
-                showPersonSheet = true,
-                isCheckingPermissionStatus = true,
-            )
-        }
-
-        // Location bor bo'lsa kamerani zoom qilamiz
-        if (person.location != null) {
-            screenModelScope.launch {
-                _effect.send(TrackingEffect.MoveCamera(person.location, zoom = 16f))
-            }
-        }
-
-        loadPermissionStatus(person.id)
-    }
-
-    private fun handleMarkerClicked(id: String) {
-        handlePersonClicked(id)  // bir xil mantiq
-    }
-
-
-    private fun loadPermissionStatus(childUserId: String) {
-        screenModelScope.launch {
-            val res = permissionStatusUseCase.invoke(
-                PermissionStatusRequest(
-                    userId = childUserId,
-                    state = PermissionStatusType.LOCATION.name
-                )
-            )
-            when (res) {
-                is Resource.Success -> {
-                    mutableState.update {
-                        it.copy(
-                            isCheckingPermissionStatus = false,
-                            sheetIssues = res.data.issues
-                        )
-                    }
-                }
-                is Resource.Error -> {
-                    // Xato — issue ko'rsatmaymiz, loading'ni yopamiz
-                    mutableState.update {
-                        it.copy(
-                            isCheckingPermissionStatus = false,
-                            sheetIssues = emptyList()
-                        )
-                    }
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    fun openUrl(url: String) {
-        screenModelScope.launch {
-            _effect.send(TrackingEffect.OpenUrl(url))
-        }
-    }
     /**
-     * Bola PLUS obunaga ega ekanligini tekshiradi.
+     * Asosiy mantiq.
+     * - permission tekshir
+     * - GPS tekshir
+     * - tracker.start (idempotent)
+     * - focusSelf=true bo'lsa kamerani Self'ga move
+     *
+     * focusSelf=false (init/silent): hech qanday dialog ko'rsatmaydi, faqat tracker boshlanadi.
+     * focusSelf=true (user explicit): permission/GPS yo'q bo'lsa dialog ko'rsatadi.
      */
-    private fun hasPlusSubscription(childId: String): Boolean {
-        val limit = state.value.subscriptionLimits.firstOrNull { it.childId == childId }
-            ?: return false  // limit topilmasa — FREE deb hisoblanadi
+    private fun ensureLocation(focusSelf: Boolean = false) {
+        scheduleIdleStop()
 
-        return limit.subscriptionType != SubscriptionType.FREE
-    }
-
-    private fun loadSubscriptionLimits() {
         screenModelScope.launch {
-            // 1. Server'dan yangilash
-            subscriptionLimitUseCase.invoke()
-
-            // 2. AppSettings'dan o'qish (use case yangilangandan keyin)
-            mutableState.update {
-                it.copy(subscriptionLimits = AppSettings.subscriptionLimitList)
-            }
-            Logger.d(
-                "TrackingScreenModel",
-                "subscriptionLimits = ${state.value.subscriptionLimits}"
-            )
-        }
-    }
-
-    // ... qolgan kod o'zgarmaydi (recheckPermissionAfterSettings, startSelfLocationFlow, etc) ...
-
-    private fun recheckPermissionAfterSettings() {
-        screenModelScope.launch {
-            val ps = permissionsController.getPermissionState(Permission.LOCATION)
-            Logger.d("TrackingScreenModel", "recheck after settings: $ps")
-            when (ps) {
+            when (permissionsController.getPermissionState(Permission.LOCATION)) {
                 PermissionState.Granted -> {
-                    mutableState.update {
-                        it.copy(permissionDenied = false, permissionDeniedAlways = false)
+                    if (!isLocationServiceEnabled()) {
+                        if (focusSelf) mutableState.update { it.copy(showGpsDialog = true) }
+                        return@launch
                     }
-                    checkGpsAndStart(focusOnSelf = true)
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    private fun startSelfLocationFlow() {
-        screenModelScope.launch {
-            val ps = permissionsController.getPermissionState(Permission.LOCATION)
-            when (ps) {
-                PermissionState.Granted -> checkGpsAndStart(focusOnSelf = true)
-                PermissionState.NotDetermined -> requestPermission()
-                PermissionState.Denied, PermissionState.NotGranted -> {
                     mutableState.update {
+                        it.copy(showGpsDialog = false, userLocationEnabled = true)
+                    }
+                    startTrackingIfNeeded()
+                    if (focusSelf) moveCameraToSelf()
+                }
+                PermissionState.NotDetermined -> {
+                    if (focusSelf) requestPermission()
+                }
+                PermissionState.Denied, PermissionState.NotGranted -> {
+                    if (focusSelf) mutableState.update {
                         it.copy(permissionAsked = true, permissionDenied = true)
                     }
                 }
                 PermissionState.DeniedAlways -> {
-                    mutableState.update {
+                    if (focusSelf) mutableState.update {
                         it.copy(permissionAsked = true, permissionDeniedAlways = true)
                     }
                 }
@@ -254,12 +165,12 @@ class TrackingScreenModel(
                 mutableState.update {
                     it.copy(permissionDenied = false, permissionDeniedAlways = false)
                 }
-                checkGpsAndStart(focusOnSelf = true)
-            } catch (e: DeniedAlwaysException) {
+                ensureLocation(focusSelf = true)
+            } catch (_: DeniedAlwaysException) {
                 mutableState.update {
                     it.copy(permissionAsked = true, permissionDeniedAlways = true)
                 }
-            } catch (e: DeniedException) {
+            } catch (_: DeniedException) {
                 mutableState.update {
                     it.copy(permissionAsked = true, permissionDenied = true)
                 }
@@ -267,38 +178,148 @@ class TrackingScreenModel(
         }
     }
 
-    private fun checkGpsAndStart(focusOnSelf: Boolean) {
-        screenModelScope.launch {
-            val gpsOn = isLocationServiceEnabled()
-            if (gpsOn) {
-                mutableState.update {
-                    it.copy(showGpsDialog = false, userLocationEnabled = true)
+    private fun startTrackingIfNeeded() {
+        if (trackingJob?.isActive == true) return
+        trackingJob = screenModelScope.launch {
+            runCatching {
+                locationTracker.startTracking()
+                locationTracker.getLocationsFlow().collect { loc ->
+                    val newLoc = LatLng(loc.latitude, loc.longitude)
+                    val last = lastLocation
+                    if (last != null && haversineMeters(last, newLoc) < 15.0) return@collect
+                    lastLocation = newLoc
+
+                    mutableState.update { s ->
+                        val newSelf = s.self?.copy(location = newLoc)
+                            ?: Person(
+                                id = "self",
+                                name = s.selfText,
+                                avatarUrl = null,
+                                location = newLoc,
+                                isSelf = true,
+                            )
+                        s.copy(self = newSelf)
+                    }
                 }
-                if (focusOnSelf) {
-                    _effect.send(TrackingEffect.MoveToUserLocation)
+            }.onFailure { Logger.e("TrackingScreenModel", "GPS error: ${it.message}") }
+        }
+    }
+
+    private suspend fun moveCameraToSelf() {
+        mutableState.update { it.copy(selectedPersonId = "self") }
+
+        val current = state.value.self?.location
+        if (current != null) {
+            _effect.send(TrackingEffect.MoveCamera(current, zoom = 16f))
+            return
+        }
+
+        // location null → loading + GPS kut
+        mutableState.update { it.copy(isLocatingSelf = true) }
+        try {
+            for (i in 0 until 20) {
+                delay(500)
+                val loc = state.value.self?.location
+                if (loc != null) {
+                    _effect.send(TrackingEffect.MoveCamera(loc, zoom = 16f))
+                    return
                 }
-            } else {
-                mutableState.update { it.copy(showGpsDialog = true) }
             }
+        } finally {
+            mutableState.update { it.copy(isLocatingSelf = false) }
+        }
+    }
+
+    private fun scheduleIdleStop() {
+        idleStopJob?.cancel()
+        idleStopJob = screenModelScope.launch {
+            delay(5 * 60 * 1000L)
+            runCatching { locationTracker.stopTracking() }
+            trackingJob?.cancel()
+            trackingJob = null
+        }
+    }
+
+    // ── Person/marker click (o'zgarmaydi, faqat self click ensureLocation chaqiradi) ──
+
+    private fun handlePersonClicked(id: String) {
+        val person = state.value.people.firstOrNull { it.id == id } ?: return
+
+        if (person.isSelf) {
+            ensureLocation(focusSelf = true)
+            return
+        }
+        if (!hasPlusSubscription(id)) {
+            mutableState.update { it.copy(showSubscriptionDialog = true) }
+            return
+        }
+        mutableState.update {
+            it.copy(
+                selectedPersonId = id,
+                sheetPerson = person,
+                showPersonSheet = true,
+                isCheckingPermissionStatus = true,
+            )
+        }
+        if (person.location != null) {
+            screenModelScope.launch {
+                _effect.send(TrackingEffect.MoveCamera(person.location, zoom = 16f))
+            }
+        }
+        loadPermissionStatus(person.id)
+    }
+
+    private fun handleMarkerClicked(id: String) {
+        if (id == "self" || state.value.self?.id == id) {
+            ensureLocation(focusSelf = true)
+            return
+        }
+        handlePersonClicked(id)
+    }
+
+    private fun loadPermissionStatus(childUserId: String) {
+        screenModelScope.launch {
+            when (val res = permissionStatusUseCase.invoke(
+                PermissionStatusRequest(
+                    userId = childUserId,
+                    state = PermissionStatusType.LOCATION.name,
+                )
+            )) {
+                is Resource.Success -> mutableState.update {
+                    it.copy(isCheckingPermissionStatus = false, sheetIssues = res.data.issues)
+                }
+                is Resource.Error -> mutableState.update {
+                    it.copy(isCheckingPermissionStatus = false, sheetIssues = emptyList())
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    private fun hasPlusSubscription(childId: String): Boolean {
+        val limit = state.value.subscriptionLimits.firstOrNull { it.childId == childId }
+            ?: return false
+        return limit.subscriptionType != SubscriptionType.FREE
+    }
+
+    private fun loadSubscriptionLimits() {
+        screenModelScope.launch {
+            subscriptionLimitUseCase.invoke()
+            mutableState.update { it.copy(subscriptionLimits = AppSettings.subscriptionLimitList) }
         }
     }
 
     private fun loadChildren() {
         screenModelScope.launch {
             mutableState.update { it.copy(isLoading = true, errorMessage = null) }
-
             when (val res = childrenLocationUseCase()) {
                 is Resource.Success -> {
                     val children = res.data.orEmpty().mapNotNull { it.toPerson() }
-                    mutableState.update { state ->
-                        state.copy(people = children, isLoading = false)
-                    }
+                    mutableState.update { it.copy(people = children, isLoading = false) }
                 }
                 is Resource.Error -> {
                     val msg = res.message ?: "Xatolik"
-                    mutableState.update {
-                        it.copy(isLoading = false, errorMessage = msg)
-                    }
+                    mutableState.update { it.copy(isLoading = false, errorMessage = msg) }
                     _effect.send(TrackingEffect.ShowError(msg))
                 }
                 else -> Unit
@@ -306,26 +327,30 @@ class TrackingScreenModel(
         }
     }
 
-    private fun selectPerson(id: String) {
-        val person = state.value.people.firstOrNull { it.id == id } ?: return
-        val location = person.location ?: return
-        if (!hasPlusSubscription(id)) return
-        mutableState.update { it.copy(selectedPersonId = id) }
-        screenModelScope.launch {
-            _effect.send(TrackingEffect.MoveCamera(location, zoom = 16f))
-        }
-    }
-
     private fun fitAll() {
         val points = state.value.people.mapNotNull { it.location }
         if (points.isEmpty()) return
-        screenModelScope.launch {
-            _effect.send(TrackingEffect.FitBounds(points))
-        }
+        screenModelScope.launch { _effect.send(TrackingEffect.FitBounds(points)) }
+    }
+
+    fun openUrl(url: String) {
+        screenModelScope.launch { _effect.send(TrackingEffect.OpenUrl(url)) }
+    }
+
+    private fun haversineMeters(a: LatLng, b: LatLng): Double {
+        val earthR = 6371000.0
+        val lat1 = a.lat * PI / 180.0
+        val lat2 = b.lat * PI / 180.0
+        val dLat = (b.lat - a.lat) * PI / 180.0
+        val dLon = (b.lon - a.lon) * PI / 180.0
+        val h = sin(dLat / 2).pow(2) + sin(dLon / 2).pow(2) * cos(lat1) * cos(lat2)
+        return 2 * earthR * asin(sqrt(h))
     }
 
     override fun onDispose() {
-        locationTracker.stopTracking()
+        trackingJob?.cancel()
+        idleStopJob?.cancel()
+        runCatching { locationTracker.stopTracking() }
         super.onDispose()
     }
 }

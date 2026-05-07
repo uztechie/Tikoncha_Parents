@@ -96,9 +96,6 @@ class PolicyListScreen : Screen {
         val event = viewModel::onEvent
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit) {
-            event(PolicyEvent.RefreshPolicies)
-        }
 
 
         BackHandler(true) {
@@ -136,6 +133,14 @@ fun PolicyListUi(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.surface
     )
+
+    LaunchedEffect(Unit) {
+        if (!state.isInitialLoadDone) {
+            internetCheck.check {
+                event(PolicyEvent.RefreshPolicies)  // ← yana ishga tushadi
+            }
+        }
+    }
 
     LoadingDialog(loading)
 
@@ -251,7 +256,10 @@ fun PolicyListUi(
                     }
                 }
 
-                items(state.policies) {
+                items(
+                    items = state.policies,
+                    key = { it.ruleId }
+                ) {
                     PolicyListItem(
                         modifier = Modifier,
                         policy = it,

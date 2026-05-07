@@ -124,7 +124,7 @@ import uz.tikoncha_parent.presentation.policy.policy_list.PolicyViewModel
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupViewModel
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
-import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleViewModel
+import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.template.sleep.SleepTemplateSetupViewModel
@@ -295,7 +295,6 @@ val sharedModule = module {
     factory { PaymentViewModel(get(), get(), get(), get(), get(), get()) }
     factory { SubscriptionPaymentViewModel(get(), get()) }
     factory { ParentRequestViewModel(get(), get()) }
-    factory { LocationRuleViewModel() }
     factory { CoinsViewModel(get(), get(), get()) }
     factory { (child: UserInfo) ->
         ChildInfoEditViewModel(

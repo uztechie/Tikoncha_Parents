@@ -1,18 +1,25 @@
 package uz.tikoncha_parent.presentation.policy.location_rule
 
-import uz.tikoncha_parent.domain.model.LocationData
 import uz.tikoncha_parent.domain.model.LocationRule
+import uz.tikoncha_parent.presentation.map2.LatLng
 
+sealed interface LocationRuleEvent {
+    data class Init(
+        val rule: LocationRule?,
+        val canUpdate: Boolean,
+    ) : LocationRuleEvent
+    data class CameraIdle(val latLng: LatLng) : LocationRuleEvent
+    data class RadiusChanged(val meters: Int) : LocationRuleEvent
+    data class ReverseChanged(val reverse: Boolean) : LocationRuleEvent
+    data object LocateMe : LocationRuleEvent
+    data object Save : LocationRuleEvent
+    data object Back : LocationRuleEvent
 
-sealed class LocationRuleEvent {
-    data class SetLocation(
-        val locationData: LocationData?,
-        val locationRule: LocationRule?,
-        val editable: Boolean,
-        val policyName: String,
-        val isDark: Boolean
-    ): LocationRuleEvent()
-
-
-    data class SetJsonString(val json: String?): LocationRuleEvent()
+    object RequestLocationPermission : LocationRuleEvent
+    object RecheckPermission : LocationRuleEvent
+    object GpsEnabledByUser : LocationRuleEvent
+    object OpenAppSettings : LocationRuleEvent
+    object DismissGpsDialog : LocationRuleEvent
+    object DismissPermissionDialog : LocationRuleEvent
+    object AutoFocusConsumed : LocationRuleEvent
 }

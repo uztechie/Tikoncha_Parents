@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
@@ -45,7 +46,9 @@ class PolicyViewModel(
         when (event) {
             PolicyEvent.RefreshPolicies -> {
                 getSubscriptionLimit()
+                loadPermissionStatus()
                 getPolicies()
+
             }
         }
     }
@@ -58,14 +61,13 @@ class PolicyViewModel(
     }
 
     private fun refreshSubscriptionLimit() {
-        _state.update {
-            it.copy(
-                subscriptionLimit = AppSettings.subscriptionLimitList.find { limit -> limit.childId == state.value.selectedChild?.userId }
-                    ?: SubscriptionLimit()
-            )
+        _state.update { current ->
+            val childId = current.selectedChild?.userId
+            val limit = AppSettings.subscriptionLimitList
+                .find { it.childId == childId }
+                ?: SubscriptionLimit()
+            current.copy(subscriptionLimit = limit)
         }
-        Logger.d(TAG, " subscriptionLimit=${_state.value.subscriptionLimit}")
-
     }
 
 
@@ -99,7 +101,7 @@ class PolicyViewModel(
 
                     _state.update { innerState ->
                         val policies = result.data
-                            .map { it.toPolicyListUi() }
+                            .map { it.toPolicyListUi().copy(isActive = innerState.permissionIssueList.isEmpty()) }
                             .sortedByDescending { it.policyType.order }
 
                         innerState.copy(
@@ -113,8 +115,10 @@ class PolicyViewModel(
         }
     }
 
+    private var permissionJob: Job? = null
     private fun loadPermissionStatus() {
-        screenModelScope.launch {
+        permissionJob?.cancel()
+        permissionJob = screenModelScope.launch {
             val res = permissionStatusUseCase.invoke(
                 PermissionStatusRequest(
                     userId = _state.value.selectedChild?.userId?:"",
@@ -123,9 +127,15 @@ class PolicyViewModel(
             )
             when (res) {
                 is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            permissionIssueList = res.data.issues
+                    val issues = res.data.issues
+                    val hasIssues = issues.isNotEmpty()
+
+                    _state.update { currentState ->                    // ← har doim CURRENT state
+                        currentState.copy(
+                            permissionIssueList = issues,
+                            policies = currentState.policies.map {     // ← shu yerda hisoblanadi
+                                it.copy(isActive = !hasIssues)
+                            }
                         )
                     }
                 }

@@ -3,36 +3,59 @@ package uz.tikoncha_parent.presentation.map2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 
 expect object MapKitInitializer {
     fun initialize(apiKey: String)
 }
 
+// ============================================================
+// EXPECT — CONTROLLER
+// ============================================================
+
 @Stable
 expect class MapController() {
+    val isReady: Boolean
     fun moveTo(position: CameraPosition, animated: Boolean = true)
     fun fitBounds(points: List<LatLng>, paddingDp: Float = 48f, animated: Boolean = true)
-    fun moveToUserLocation(animated: Boolean = true)
-    fun tryMoveToUserLocation(animated: Boolean = true): Boolean   // ← QO'SHING
+    fun getCameraTarget(): LatLng?
+
+    fun getCameraPosition(): CameraPosition?
+
+}
+
+suspend fun MapController.awaitReady(maxWaitMs: Long = 5_000L) {
+    val intervalMs = 50L
+    val maxAttempts = (maxWaitMs / intervalMs).toInt()
+    repeat(maxAttempts) {
+        if (isReady) return
+        delay(intervalMs)
+    }
 }
 
 @Composable
 expect fun rememberMapController(): MapController
 
+// ============================================================
+// EXPECT — COMPOSABLE
+// ============================================================
+
 @Composable
 expect fun YandexMap(
     controller: MapController,
     initialCamera: CameraPosition,
-    markers: List<MapMarker>,
+    markers: List<MapMarker> = emptyList(),
     circles: List<MapCircle> = emptyList(),
+    polygons: List<MapPolygon> = emptyList(),
     onMarkerClick: (String) -> Unit = {},
     onMapTap: (LatLng) -> Unit = {},
-    showUserLocation: Boolean = false,                                  // YOQISH/O'CHIRISH
-    userLocationIcon: NativeMarkerIcon? = null,                          // ← YANGI: custom icon
-    onUserLocationChanged: ((LatLng) -> Unit)? = null,                   // ← YANGI: callback
+    onCameraIdle: (LatLng) -> Unit = {},
     isDark: Boolean = false,
     modifier: Modifier = Modifier
 )
 
-internal fun MarkerStyle.cacheKey(): String =
-    "${backgroundColor}_${isSelected}_${avatarUrl ?: text}_${showText}"
+
+internal fun MarkerStyle.cacheKey(): String = when (this) {
+    is MarkerStyle.Self -> "self_${accentColor}_${borderColor}"
+    else -> "${backgroundColor}_${isSelected}_${avatarUrl ?: text}_${showText}"
+}

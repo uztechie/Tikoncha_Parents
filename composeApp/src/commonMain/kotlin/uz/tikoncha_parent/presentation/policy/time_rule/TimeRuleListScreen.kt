@@ -171,7 +171,7 @@ fun TimeRuleListUi(
                     )
                 }
                 item {
-                    if(rules.isNotEmpty()){
+                    if(rules.isNotEmpty() && canUpdate){
                         CustomButtonDash(
                             text = stringResource(Res.string.vaqt_qoshish),
                             onClick = onAdd,

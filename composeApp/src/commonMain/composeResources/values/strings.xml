@@ -557,6 +557,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
 
     <string name="tracking_checking_settings">Farzand sozlamalari tekshirilmoqda...</string>
     <string name="tracking_watch_video">Video ko'rish</string>
+    <string name="radius">Radius</string>
+    <string name="teskari_radius">Teskari radius</string>
 
 
 </resources>

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -39,7 +40,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -83,6 +86,7 @@ import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.map.OnScreenActive
 import uz.tikoncha_parent.presentation.map2.CameraPosition
 import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.map2.MapCircle
 import uz.tikoncha_parent.presentation.map2.MapController
 import uz.tikoncha_parent.presentation.map2.MapMarker
 import uz.tikoncha_parent.presentation.map2.MarkerStyle
@@ -98,7 +102,7 @@ import uz.tikoncha_parent.ui.theme.rememberIsDarkTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 private val ANDIJAN_CENTER = LatLng(40.7821, 72.3442)
-
+private fun Color.toArgbLong(): Long = this.toArgb().toLong() and 0xFFFFFFFFL
 class TrackingScreen : Screen {
 
     @Composable
@@ -118,7 +122,6 @@ class TrackingScreen : Screen {
 
         var cameFromSettings by remember { mutableStateOf(false) }
 
-
         OnScreenActive(
             launchedToSettings = cameFromSettings,
             onReturned = {
@@ -131,24 +134,15 @@ class TrackingScreen : Screen {
         var showPermissionAlwaysDialog by remember { mutableStateOf(false) }
         var showGpsDialog by remember { mutableStateOf(false) }
 
-        // ⬇️ YANGI — Self uchun custom icon (Yandex UserLocationLayer'ga uzatiladi)
-        val density = LocalDensity.current
-        val textMeasurer = rememberTextMeasurer()
         val placeholderBitmap = imageResource(Res.drawable.profile_hedgehog_img)
         val selfText = stringResource(Res.string.siz)
 
-        var userLocationIcon by remember { mutableStateOf<NativeMarkerIcon?>(null) }
-
-        // Self icon'ni bir marta yaratamiz (lokalizatsiya o'zgarsa qayta yaratiladi)
+        // ⬇️ Self text'ni ScreenModel'ga uzatamiz
         LaunchedEffect(selfText) {
-            userLocationIcon = createMarkerIcon(
-                style = MarkerStyle.Self(text = selfText),
-                density = density,
-                textMeasurer = textMeasurer
-            )
+            screenModel.onEvent(TrackingEvent.SetSelfText(selfText))
         }
 
-        // Effect collect — TUZATILGAN versiya
+        // Effects
         LaunchedEffect(Unit) {
             screenModel.effect.collect { eff ->
                 when (eff) {
@@ -162,21 +156,18 @@ class TrackingScreen : Screen {
                     TrackingEffect.OpenLocationSettings -> openLocationSettings()
                     TrackingEffect.RequestPermission -> Unit
 
-                    // ⬇️ TUZATILGAN — for + break ishlaydi (return@repeat ishlamaydi)
                     TrackingEffect.MoveToUserLocation -> {
-                        // Yandex GPS aniqlashi 1-3 soniya olishi mumkin
-                        // Muvaffaqiyatli bo'lguncha urinish, keyin TO'XTAYDI
                         for (attempt in 0 until 10) {
                             delay(500)
-                            if (mapController.tryMoveToUserLocation(animated = true)) {
-                                break  // ⬅️ MUHIM: birinchi muvaffaqiyatda chiqamiz
+                            val selfLoc = screenModel.state.value.self?.location  // ← state.self
+                            if (selfLoc != null) {
+                                mapController.moveTo(CameraPosition(selfLoc, 16f), animated = true)
+                                break
                             }
                         }
                     }
 
-                    is TrackingEffect.OpenUrl -> {
-                        openUrl(eff.url)
-                    }
+                    is TrackingEffect.OpenUrl -> openUrl(eff.url)
                 }
             }
         }
@@ -193,16 +184,13 @@ class TrackingScreen : Screen {
         TrackingContent(
             state = state,
             mapController = mapController,
-            snackbarHostState = snackbarHostState,
             placeholderBitmap = placeholderBitmap,
-            userLocationIcon = userLocationIcon,  // ⬅️ UZATAMIZ
+            selfText = selfText,
             onEvent = event,
-            onBack = {
-                navigator?.pop()
-            }
+            onBack = { navigator?.pop() }
         )
 
-        // ============== DIALOGLAR (avvalgidek o'zgarmaydi) ==============
+        // ============== DIALOGLAR ==============
 
         CustomDialog(
             show = showPermissionDialog,
@@ -262,9 +250,11 @@ class TrackingScreen : Screen {
             }
         )
 
+        // ============== BOTTOM SHEET ==============
+
         PersonInfoSheet(
             show = state.showPersonSheet,
-            onDismiss = {event(TrackingEvent.DismissPersonSheet)},
+            onDismiss = { event(TrackingEvent.DismissPersonSheet) },
             person = state.sheetPerson,
             issues = state.sheetIssues,
             isCheckingStatus = state.isCheckingPermissionStatus,
@@ -275,8 +265,8 @@ class TrackingScreen : Screen {
 
         SubscriptionBottomDialog(
             show = state.showSubscriptionDialog,
-            title = stringResource(Res.string.plus_obnuna_kerak),  // yoki boshqa string
-            message = stringResource(Res.string.farzandingizni_qayerda_ekanini_kuzatish), // yangi string
+            title = stringResource(Res.string.plus_obnuna_kerak),
+            message = stringResource(Res.string.farzandingizni_qayerda_ekanini_kuzatish),
             onConfirm = {
                 screenModel.onEvent(TrackingEvent.DismissSubscriptionDialog)
                 navigator?.push(SubscriptionPaymentScreen())
@@ -292,64 +282,102 @@ class TrackingScreen : Screen {
 fun TrackingContent(
     state: TrackingState,
     mapController: MapController,
-    snackbarHostState: SnackbarHostState,
     onEvent: (TrackingEvent) -> Unit,
     placeholderBitmap: ImageBitmap,
-    userLocationIcon: NativeMarkerIcon?,
+    selfText: String,                    // ⬅️ YANGI
     onBack: () -> Unit
 ) {
     val isDark = rememberIsDarkTheme()
-    val initialCenter = remember(state.self, state.people) {
+
+    val initialCenter = remember(state.people, state.self) {
         state.self?.location
             ?: state.people.firstNotNullOfOrNull { it.location }
             ?: ANDIJAN_CENTER
     }
 
-    val initialZoom = remember(state.self, state.people) {
+    val initialZoom = remember(state.people) {
         when {
-            state.self?.location != null -> 14f
+            state.people.firstOrNull { it.isSelf }?.location != null -> 14f
             state.people.any { it.location != null } -> 13f
             else -> 11f
         }
     }
 
-    // ⬇️ TUZATILGAN — Self markerini OLIB TASHLAYMIZ
-    // Self'ni Yandex UserLocationLayer chizadi (real-time GPS bilan)
 
-    val markers = remember(
-        state.people,
-        state.selectedPersonId,
-        state.subscriptionLimits,         // ⬅️ YANGI
-        placeholderBitmap
+    val dangerColor = AppColors.icon.accentDanger
+    val accuracyFillColor = dangerColor.copy(alpha = 0.20f).toArgbLong()
+    val accuracyStrokeColor = dangerColor.copy(alpha = 0.40f).toArgbLong()
+
+    val userAccuracyCircle = remember(
+        state.self?.location,
+        accuracyFillColor,
+        accuracyStrokeColor,
     ) {
-        state.people
-            .filter { !it.isSelf }
-            .filter { person ->            // ⬅️ YANGI: faqat PLUS bolalar
-                val limit = state.subscriptionLimits.firstOrNull { it.childId == person.id }
-                limit != null && limit.subscriptionType != SubscriptionType.FREE
-            }
-            .mapNotNull { person ->
-                val loc = person.location ?: return@mapNotNull null
-                val style = if (person.id == state.selectedPersonId) {
-                    MarkerStyle.ChildSelected(
-                        label = person.name,
-                        avatarUrl = person.avatarUrl,
-                        placeholderBitmap = placeholderBitmap
-                    )
-                } else {
-                    MarkerStyle.Child(
-                        label = person.name,
-                        avatarUrl = person.avatarUrl,
-                        placeholderBitmap = placeholderBitmap
+        val loc = state.self?.location
+        if (loc != null) {
+            listOf(
+                MapCircle(
+                    id = "user_accuracy",
+                    center = loc,
+                    radiusMeters = 30.0,
+                    reverse = false,
+                    fillColor = accuracyFillColor,
+                    strokeColor = accuracyStrokeColor,
+                    strokeWidthDp = 1f,
+                )
+            )
+        } else emptyList()
+    }
+
+    // ⬇️ YANGI — Self ham MapMarker bo'ldi
+    val markers = remember(
+        state.people, state.self, state.selectedPersonId,
+        state.subscriptionLimits, placeholderBitmap, selfText,
+    ) {
+        buildList {
+            state.people
+                .filter { person ->
+                    person.location ?: return@filter false
+                    val limit = state.subscriptionLimits.firstOrNull { it.childId == person.id }
+                    limit != null && limit.subscriptionType != SubscriptionType.FREE
+                }
+                .forEach { person ->
+                    val isSelected = person.id == state.selectedPersonId
+                    val style = if (isSelected) {
+                        MarkerStyle.ChildSelected(
+                            label = person.name,
+                            avatarUrl = person.avatarUrl,
+                            placeholderBitmap = placeholderBitmap,
+                        )
+                    } else {
+                        MarkerStyle.Child(
+                            label = person.name,
+                            avatarUrl = person.avatarUrl,
+                            placeholderBitmap = placeholderBitmap,
+                        )
+                    }
+                    add(
+                        MapMarker(
+                            id = person.id,
+                            position = person.location!!,
+                            style = style,
+                            zIndex = if (isSelected) 100f else 0f,
+                        )
                     )
                 }
-                MapMarker(
-                    id = person.id,
-                    position = loc,
-                    style = style,
-                    zIndex = if (person.id == state.selectedPersonId) 1f else 0f
+
+            // Self alohida marker
+            state.self?.location?.let { selfLoc ->
+                add(
+                    MapMarker(
+                        id = "self",
+                        position = selfLoc,
+                        style = MarkerStyle.Self(),
+                        zIndex = 50f,
+                    )
                 )
             }
+        }
     }
 
     val systemBars = rememberScreenSystemBars(
@@ -363,46 +391,49 @@ fun TrackingContent(
             controller = mapController,
             initialCamera = CameraPosition(initialCenter, zoom = initialZoom),
             markers = markers,
+            circles = userAccuracyCircle,
             onMarkerClick = { id -> onEvent(TrackingEvent.MarkerClicked(id)) },
-            showUserLocation = state.userLocationEnabled,
-            userLocationIcon = userLocationIcon,    // ⬅️ MUHIM — custom indicator
             modifier = Modifier.fillMaxSize(),
-            isDark = isDark
+            isDark = isDark,
         )
 
+        // ── Back FAB (TopStart) ──
         FloatingActionButton(
-            onClick = {
-                onBack()
-            },
+            onClick = onBack,
             shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(top = 8.dp, start = 16.dp)
                 .size(52.dp),
             containerColor = AppColors.modal.primary,
-            contentColor = AppColors.icon.primary
+            contentColor = AppColors.icon.primary,
         ) {
-            Icon(
-                painter = painterResource(Res.drawable.arrow_back),
-                contentDescription = ""
-            )
+            Icon(painter = painterResource(Res.drawable.arrow_back), contentDescription = null)
         }
 
+        // ⬇️ Self FAB (TopEnd — LocationRule kabi)
         FloatingActionButton(
-            onClick = { onEvent(TrackingEvent.SelfClicked) },
+            onClick = { if (!state.isLocatingSelf) onEvent(TrackingEvent.SelfClicked) },
             shape = CircleShape,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 70.dp)
+                .align(Alignment.TopEnd)                   // ⬅️ BottomEnd → TopEnd
+                .padding(top = 8.dp, end = 16.dp)          // ⬅️ LocationRule kabi
                 .size(52.dp),
             containerColor = AppColors.modal.primary,
-            contentColor = AppColors.icon.primary
+            contentColor = AppColors.icon.primary,
         ) {
-            Icon(Icons.Default.MyLocation, contentDescription = "Self")
+            if (state.isLocatingSelf) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    strokeWidth = 2.dp,
+                    color = AppColors.icon.primary,
+                )
+            } else {
+                Icon(Icons.Default.MyLocation, contentDescription = null)
+            }
         }
 
-
-
+        // ── PeopleStrip (BottomCenter) — o'zgarmaydi ──
         PeopleStrip(
             people = state.people,
             selectedId = state.selectedPersonId,
@@ -410,7 +441,7 @@ fun TrackingContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp),
         )
 
         if (state.isLoading) {
@@ -420,6 +451,7 @@ fun TrackingContent(
         }
     }
 }
+
 
 @Composable
 private fun PeopleStrip(

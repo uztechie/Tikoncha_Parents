@@ -27,6 +27,6 @@ internal fun ChildrenLocationItemDto.toPerson(): Person? {
         isSelf = false,
         lastSeen = this.updated_at?:"",
         lastSeenEpochMs = DateTimeUtil.toMillis(this.updated_at),
-        avatarUrl = ""
+        avatarUrl = avatar_url
     )
 }

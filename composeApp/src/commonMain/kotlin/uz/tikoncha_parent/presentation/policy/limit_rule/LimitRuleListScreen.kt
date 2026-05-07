@@ -168,7 +168,7 @@ fun LimitRuleListUi(
                     )
                 }
                 item {
-                    if (rules.isNotEmpty()) {
+                    if (rules.isNotEmpty() && canUpdate) {
                         CustomButtonDash(
                             text = stringResource(Res.string.limit_qoshish),
                             onClick = onAdd,

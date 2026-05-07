@@ -9,5 +9,6 @@ actual class NativeMarkerIcon(val provider: ImageProvider)
 
 actual fun ImageBitmap.toNativeMarkerIcon(): NativeMarkerIcon {
     val bmp = this.asAndroidBitmap()
+    android.util.Log.d("MARKER_DBG", "android bmp=${bmp.width}x${bmp.height} config=${bmp.config} hasAlpha=${bmp.hasAlpha()}")
     return NativeMarkerIcon(ImageProvider.fromBitmap(bmp))
 }

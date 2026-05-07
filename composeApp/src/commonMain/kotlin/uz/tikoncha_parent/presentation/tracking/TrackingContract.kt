@@ -37,6 +37,9 @@ data class TrackingState(
 
     val sheetIssues: List<PermissionStatusIssus> = emptyList(),
     val isCheckingPermissionStatus: Boolean = false,
+
+    val selfText: String = "",
+    val isLocatingSelf: Boolean = false,
 ) {
 
 }
@@ -61,6 +64,8 @@ sealed interface TrackingEvent {
     data object DismissPersonSheet : TrackingEvent           // ⬅️ YANGI
     data object RetryLocation : TrackingEvent
     data class OpenYoutubeUrl(val url: String) : TrackingEvent
+
+    data class SetSelfText(val text: String) : TrackingEvent
 }
 
 sealed interface TrackingEffect {

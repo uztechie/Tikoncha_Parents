@@ -21,8 +21,10 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition as YCameraPosition
 import com.yandex.mapkit.map.CircleMapObject
 import com.yandex.mapkit.map.IconStyle
@@ -30,11 +32,13 @@ import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map as YMap
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.map.PolygonMapObject
+import com.yandex.mapkit.geometry.Circle as YCircle
+import com.yandex.mapkit.geometry.Polygon as YPolygon
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.mapkit.geometry.Circle as YCircle
 import kotlinx.coroutines.launch
 
 // ============================================================
@@ -59,7 +63,8 @@ actual object MapKitInitializer {
 @Stable
 actual class MapController actual constructor() {
     internal var mapView: MapView? = null
-    internal var userLocationLayer: UserLocationLayer? = null
+
+    actual val isReady: Boolean get() = mapView != null
 
     actual fun moveTo(position: CameraPosition, animated: Boolean) {
         val map = mapView?.mapWindow?.map ?: return
@@ -89,17 +94,21 @@ actual class MapController actual constructor() {
         else map.move(padded)
     }
 
-    actual fun moveToUserLocation(animated: Boolean) {
-        tryMoveToUserLocation(animated)
+
+
+    actual fun getCameraTarget(): LatLng? {
+        val pos = mapView?.mapWindow?.map?.cameraPosition ?: return null
+        return LatLng(pos.target.latitude, pos.target.longitude)
     }
 
-    actual fun tryMoveToUserLocation(animated: Boolean): Boolean {
-        val map = mapView?.mapWindow?.map ?: return false
-        val pos = userLocationLayer?.cameraPosition() ?: return false
-        val target = YCameraPosition(pos.target, 16f, 0f, 0f)
-        if (animated) map.move(target, Animation(Animation.Type.SMOOTH, 0.5f), null)
-        else map.move(target)
-        return true
+    actual fun getCameraPosition(): CameraPosition? {
+        val pos = mapView?.mapWindow?.map?.cameraPosition ?: return null
+        return CameraPosition(
+            target = LatLng(pos.target.latitude, pos.target.longitude),
+            zoom = pos.zoom,
+            azimuth = pos.azimuth,
+            tilt = pos.tilt
+        )
     }
 }
 
@@ -110,10 +119,7 @@ actual fun rememberMapController(): MapController = remember { MapController() }
 // USER LOCATION HELPER
 // ============================================================
 
-private fun applyUserLocationIcon(
-    view: UserLocationView,
-    icon: NativeMarkerIcon?
-) {
+private fun applyUserLocationIcon(view: UserLocationView, icon: NativeMarkerIcon?) {
     if (icon == null) return
     val style = IconStyle().apply {
         anchor = PointF(MarkerDimensions.ANCHOR_X, MarkerDimensions.ANCHOR_Y)
@@ -133,11 +139,10 @@ actual fun YandexMap(
     initialCamera: CameraPosition,
     markers: List<MapMarker>,
     circles: List<MapCircle>,
+    polygons: List<MapPolygon>,
     onMarkerClick: (String) -> Unit,
     onMapTap: (LatLng) -> Unit,
-    showUserLocation: Boolean,
-    userLocationIcon: NativeMarkerIcon?,
-    onUserLocationChanged: ((LatLng) -> Unit)?,
+    onCameraIdle: (LatLng) -> Unit,
     isDark: Boolean,
     modifier: Modifier
 ) {
@@ -149,43 +154,29 @@ actual fun YandexMap(
 
     val onMarkerClickState = rememberUpdatedState(onMarkerClick)
     val onMapTapState = rememberUpdatedState(onMapTap)
-    val onUserLocationChangedState = rememberUpdatedState(onUserLocationChanged)
-    val userLocationIconState = rememberUpdatedState(userLocationIcon)
+    val onCameraIdleState = rememberUpdatedState(onCameraIdle)
 
     val placemarks = remember { mutableMapOf<String, PlacemarkMapObject>() }
     val placemarkListeners = remember { mutableMapOf<String, MapObjectTapListener>() }
     val circleObjects = remember { mutableMapOf<String, CircleMapObject>() }
-
-    // ⬇️ ASOSIY: STATE map — yangi key qo'shilganda recomposition triggerlanadi
+    val polygonObjects = remember { mutableMapOf<String, PolygonMapObject>() }
     val iconCache = remember { mutableStateMapOf<String, NativeMarkerIcon>() }
 
-    val userLocationListener = remember {
-        object : UserLocationObjectListener {
-            override fun onObjectAdded(view: UserLocationView) {
-                applyUserLocationIcon(view, userLocationIconState.value)
-            }
 
-            override fun onObjectRemoved(view: UserLocationView) {}
-
-            override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
-                view.pin.geometry?.let { point ->
-                    onUserLocationChangedState.value?.invoke(
-                        LatLng(point.latitude, point.longitude)
-                    )
-                }
-                applyUserLocationIcon(view, userLocationIconState.value)
+    val cameraListener = remember {
+        CameraListener { _, position, _, finished ->
+            if (finished) {
+                onCameraIdleState.value(
+                    LatLng(position.target.latitude, position.target.longitude)
+                )
             }
         }
     }
 
-    // ============================================================
-    // ICON YARATISH — markerlar o'zgarganda async cache to'ldirish
-    // ============================================================
     LaunchedEffect(markers) {
         markers.forEach { marker ->
             val key = marker.style.cacheKey()
             if (iconCache.containsKey(key)) return@forEach
-
             scope.launch {
                 try {
                     val icon = createMarkerIcon(
@@ -220,18 +211,16 @@ actual fun YandexMap(
                     }
                     override fun onMapLongTap(map: YMap, point: Point) {}
                 })
+                view.mapWindow.map.addCameraListener(cameraListener)
             }
         },
         update = { view ->
             val map = view.mapWindow.map
-
-            // Dark mode
             map.isNightModeEnabled = isDark
 
-            // -------- MARKERS sinxron --------
+            // -------- MARKERS --------
             val incoming = markers.associateBy { it.id }
 
-            // Olib tashlash
             (placemarks.keys - incoming.keys).toList().forEach { id ->
                 placemarks.remove(id)?.let { pm ->
                     placemarkListeners.remove(id)?.let { pm.removeTapListener(it) }
@@ -239,7 +228,6 @@ actual fun YandexMap(
                 }
             }
 
-            // Qo'shish/yangilash
             incoming.forEach { (id, marker) ->
                 val pm = placemarks[id] ?: map.mapObjects.addPlacemark(
                     Point(marker.position.lat, marker.position.lon)
@@ -248,7 +236,6 @@ actual fun YandexMap(
                 pm.geometry = Point(marker.position.lat, marker.position.lon)
                 pm.zIndex = marker.zIndex
 
-                // Tap listener
                 if (placemarkListeners[id] == null) {
                     val listener = MapObjectTapListener { _, _ ->
                         onMarkerClickState.value(id); true
@@ -257,25 +244,23 @@ actual fun YandexMap(
                     placemarkListeners[id] = listener
                 }
 
-                // ⬇️ ASOSIY: Icon cache'da bo'lsa darhol o'rnatamiz.
-                // Cache'da hali yo'q bo'lsa — LaunchedEffect tayyorlagach,
-                // iconCache STATE o'zgaradi → recomposition → bu blok yana ishlaydi.
                 val key = marker.style.cacheKey()
                 iconCache[key]?.let { icon ->
                     pm.setIcon(
                         icon.provider,
                         IconStyle().apply {
                             anchor = PointF(
-                                MarkerDimensions.ANCHOR_X,
-                                MarkerDimensions.ANCHOR_Y
+                                marker.style.anchorX,
+                                marker.style.anchorY
                             )
                         }
                     )
                 }
             }
 
-            // -------- CIRCLES sinxron --------
-            val inCircles = circles.associateBy { it.id }
+            // -------- CIRCLES --------
+            val nonReverseCircles = circles.filter { !it.reverse }
+            val inCircles = nonReverseCircles.associateBy { it.id }
             (circleObjects.keys - inCircles.keys).toList().forEach { id ->
                 circleObjects.remove(id)?.let { map.mapObjects.remove(it) }
             }
@@ -292,23 +277,44 @@ actual fun YandexMap(
                 obj.strokeWidth = c.strokeWidthDp
             }
 
-            // -------- USER LOCATION LAYER --------
-            if (showUserLocation) {
-                if (controller.userLocationLayer == null) {
-                    controller.userLocationLayer = MapKitFactory.getInstance()
-                        .createUserLocationLayer(view.mapWindow).apply {
-                            isVisible = true
-                            isHeadingModeActive = true
-                            setObjectListener(userLocationListener)
-                        }
-                }
-            } else {
-                controller.userLocationLayer?.let { layer ->
-                    layer.isVisible = false
-                    layer.setObjectListener(null)
-                    controller.userLocationLayer = null
+            // -------- POLYGONS (asl + reverse=true circles) --------
+            val combinedPolygons = buildList {
+                addAll(polygons)
+                circles.filter { it.reverse }.forEach { c ->
+                    add(
+                        MapPolygon(
+                            id = "__circle_${c.id}",
+                            points = circleToPolygonPoints(c.center, c.radiusMeters),
+                            reverse = true,
+                            fillColor = c.fillColor,
+                            strokeColor = c.strokeColor,
+                            strokeWidthDp = c.strokeWidthDp,
+                        )
+                    )
                 }
             }
+
+            val inPolys = combinedPolygons.associateBy { it.id }
+            (polygonObjects.keys - inPolys.keys).toList().forEach { id ->
+                polygonObjects.remove(id)?.let { map.mapObjects.remove(it) }
+            }
+            inPolys.forEach { (id, p) ->
+                if (p.points.size < 3) return@forEach
+                val outerPts = if (p.reverse) WORLD_OUTER_RING else p.points
+                val innerRingsPts = if (p.reverse) listOf(p.points) else emptyList()
+                val outer = LinearRing(outerPts.map { Point(it.lat, it.lon) })
+                val inners = innerRingsPts.map { ring ->
+                    LinearRing(ring.map { Point(it.lat, it.lon) })
+                }
+                val geom = YPolygon(outer, inners)
+                val obj = polygonObjects[id]
+                    ?: map.mapObjects.addPolygon(geom).also { polygonObjects[id] = it }
+                obj.geometry = geom
+                obj.fillColor = p.fillColor.toInt()
+                obj.strokeColor = p.strokeColor.toInt()
+                obj.strokeWidth = p.strokeWidthDp
+            }
+
         }
     )
 
@@ -329,12 +335,12 @@ actual fun YandexMap(
         lifecycleOwner.lifecycle.addObserver(obs)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(obs)
+            controller.mapView?.mapWindow?.map?.removeCameraListener(cameraListener)
             placemarks.clear()
             placemarkListeners.clear()
             circleObjects.clear()
+            polygonObjects.clear()
             iconCache.clear()
-            controller.userLocationLayer?.setObjectListener(null)
-            controller.userLocationLayer = null
             controller.mapView = null
         }
     }

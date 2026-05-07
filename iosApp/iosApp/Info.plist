@@ -17,5 +17,14 @@
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Bolaning va o'z joylashuvingizni xaritada ko'rish uchun joylashuvga ruxsat kerak</string>
 
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+
 </dict>
 </plist>

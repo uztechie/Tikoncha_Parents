@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import uz.tikoncha_parent.platform.Logger
 
 object MarkerDimensions {
     const val WIDTH_DP = 74f
@@ -51,6 +52,12 @@ fun renderMarkerBitmap(
     avatarBitmap: ImageBitmap? = null,
     textMeasurer: TextMeasurer? = null  // ← matn uchun
 ): ImageBitmap {
+
+
+    if (style is MarkerStyle.Self) {
+        return renderUserLocationBitmap(style, density)
+    }
+
     val scale = if (style.isSelected) 1.15f else 1.0f
     val widthPx = with(density) { (MarkerDimensions.WIDTH_DP * scale).dp.toPx() }.toInt()
     val heightPx = with(density) { (MarkerDimensions.HEIGHT_DP * scale).dp.toPx() }.toInt()
@@ -183,23 +190,85 @@ fun renderMarkerBitmap(
     return image
 }
 
+private fun renderUserLocationBitmap(
+    style: MarkerStyle.Self,
+    density: Density,
+): ImageBitmap {
+    val sizeDp = 60f
+    val sizePx = with(density) { sizeDp.dp.toPx() }.toInt()
+
+    val image = ImageBitmap(sizePx, sizePx)
+    val canvas = Canvas(image)
+    val drawScope = CanvasDrawScope()
+
+    drawScope.draw(
+        density = density,
+        layoutDirection = LayoutDirection.Ltr,
+        canvas = canvas,
+        size = Size(sizePx.toFloat(), sizePx.toFloat())
+    ) {
+        val cx = sizePx / 2f
+        val dotR = with(density) { 14f.dp.toPx() }
+        val borderPx = with(density) { 5f.dp.toPx() }
+        val gap = with(density) { 4f.dp.toPx() }
+        val dotCy = sizePx - dotR - gap
+
+        val accentColor = Color(style.accentColor)
+        val borderColor = Color(style.borderColor)
+
+        // Outer white circle (border)
+        drawCircle(
+            color = borderColor,
+            radius = dotR,
+            center = Offset(cx, dotCy)
+        )
+
+        // Inner accent dot
+        drawCircle(
+            color = accentColor,
+            radius = dotR - borderPx,
+            center = Offset(cx, dotCy)
+        )
+
+        // Top arrow (qizil chevron)
+        val arrowH = with(density) { 14f.dp.toPx() }
+        val arrowW = with(density) { 12f.dp.toPx() }
+        val arrowGap = with(density) { 2f.dp.toPx() }
+        val arrowBottomY = dotCy - dotR - arrowGap
+        val arrowTopY = arrowBottomY - arrowH
+
+        val path = Path().apply {
+            moveTo(cx, arrowTopY)
+            lineTo(cx - arrowW / 2f, arrowBottomY)
+            lineTo(cx + arrowW / 2f, arrowBottomY)
+            close()
+        }
+        drawPath(path, color = accentColor)
+    }
+
+    return image
+}
+
 suspend fun createMarkerIcon(
     style: MarkerStyle,
     density: Density,
-    textMeasurer: TextMeasurer? = null  // ← yangi parametr
+    textMeasurer: TextMeasurer? = null
 ): NativeMarkerIcon {
     var avatar: ImageBitmap? = null
 
-    // Faqat matn bo'lmasa avatar yuklash
     if (!style.showText) {
         avatar = style.avatarUrl?.let { url ->
-            runCatching { loadImageBitmap(url) }.getOrNull()
+            val loaded = runCatching { loadImageBitmap(url) }.getOrNull()
+            Logger.d("MARKER_DBG", "url=$url loaded=${loaded != null} size=${loaded?.width}x${loaded?.height}")
+            loaded
         }
         if (avatar == null) {
             avatar = style.placeholderBitmap
+            Logger.d("MARKER_DBG", "PLACEHOLDER size=${avatar?.width}x${avatar?.height}")
         }
     }
 
     val imageBitmap = renderMarkerBitmap(style, density, avatar, textMeasurer)
+    Logger.d("MARKER_DBG", "rendered=${imageBitmap.width}x${imageBitmap.height}")
     return imageBitmap.toNativeMarkerIcon()
 }
