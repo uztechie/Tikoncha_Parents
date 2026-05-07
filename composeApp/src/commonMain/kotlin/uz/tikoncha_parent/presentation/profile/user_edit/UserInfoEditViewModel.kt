@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.profile.user_edit
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,20 +20,27 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class UserInfoEditViewModel(
     private val userInfoEditUseCase: UserInfoEditUseCase,
     private val userInfo: UserInfo
-): ScreenModel {
+) : ScreenModel {
 
+    private var saveJob: Job? = null
     private val _state = MutableStateFlow(
         UserEditState(
             firstName = userInfo.name,
             lastName = userInfo.lastName,
             patronymic = userInfo.patronymic,
-            genderType = userInfo.genderType
+            genderType = userInfo.genderType,
+
+            // Original qiymatlar — dirty check uchun
+            originalFirstName = userInfo.name,
+            originalLastName = userInfo.lastName,
+            originalPatronymic = userInfo.patronymic,
+            originalGenderType = userInfo.genderType
         )
     )
     val state = _state.asStateFlow()
 
-    fun onEvent(event: UserEditEvent){
-        when(event){
+    fun onEvent(event: UserEditEvent) {
+        when (event) {
             is UserEditEvent.OnFirstName -> {
                 _state.update {
                     it.copy(
@@ -40,6 +48,7 @@ class UserInfoEditViewModel(
                     )
                 }
             }
+
             is UserEditEvent.OnLastName -> {
                 _state.update {
                     it.copy(
@@ -47,6 +56,7 @@ class UserInfoEditViewModel(
                     )
                 }
             }
+
             is UserEditEvent.OnPatronymic -> {
                 _state.update {
                     it.copy(
@@ -54,6 +64,7 @@ class UserInfoEditViewModel(
                     )
                 }
             }
+
             is UserEditEvent.OnGender -> {
                 _state.update {
                     it.copy(
@@ -61,6 +72,7 @@ class UserInfoEditViewModel(
                     )
                 }
             }
+
             UserEditEvent.ClearError -> {
                 _state.update {
                     it.copy(
@@ -68,49 +80,37 @@ class UserInfoEditViewModel(
                     )
                 }
             }
+
             UserEditEvent.OnSave -> {
-                save()
+                if (state.value.isFormValid) save()
             }
         }
     }
 
-    private fun save(){
-
-        val current = state.value
-
-        if (current.firstName.isBlank() || current.lastName.isBlank() || current.patronymic.isBlank()){
-            _state.update {
-                it.copy(
-                    saveState = ResponseState.Error(res = Res.string.maydonlar_toliq_toldirilmagan),
-                )
-            }
-            return
-        }
-
-        val age = current.age.toIntOrNull()
-
-        val request = RegisterUserRequest(
-            user_id = userInfo.userId,
-            first_name = current.firstName,
-            last_name = current.lastName,
-            patronymic = current.patronymic,
-            age = age ?: userInfo.age,
-            gender = when (current.genderType) {
-                GenderType.MALE -> "male"
-                GenderType.FEMALE -> "female"
-            },
-            passport_id = userInfo.passportId ?: ""
-        )
-
-        screenModelScope.launch {
+    private fun save() {
+        saveJob?.cancel()
+        saveJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     saveState = ResponseState.Loading
                 )
             }
 
-            val req = userInfoEditUseCase.invoke(request)
-            when (req) {
+            val current = state.value
+            val request = RegisterUserRequest(
+                user_id = userInfo.userId,
+                last_name = current.lastName.trim(),
+                first_name = current.firstName.trim(),
+                patronymic = current.patronymic.trim(),
+                passport_id = userInfo.passportId ?: "",
+                age = current.age.toIntOrNull() ?: userInfo.age,
+                gender = when (current.genderType) {
+                    GenderType.MALE -> "male"
+                    GenderType.FEMALE -> "female"
+                }
+            )
+
+            when (val req = userInfoEditUseCase.invoke(request)) {
                 is Resource.Success -> {
                     AppSettings.userInfo = userInfo.copy(
                         name = current.firstName,
@@ -128,7 +128,11 @@ class UserInfoEditViewModel(
 
                 is Resource.Error -> {
                     val message = req.message ?: "Xatolik"
-                    _state.update { it.copy(saveState = ResponseState.Error(message = message)) }
+                    _state.update {
+                        it.copy(
+                            saveState = ResponseState.Error(message = message)
+                        )
+                    }
                 }
 
                 is Resource.Loading -> {

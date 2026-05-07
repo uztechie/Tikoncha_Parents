@@ -549,6 +549,33 @@
     <string name="tracking_last_update">Последнее обновление:</string>
     <string name="tracking_location_unavailable">Местоположение недоступно</string>
     <string name="tracking_retry">Повторить попытку</string>
+    <string name="farzandim">Мой ребёнок</string>
+    <string name="ozim">Я сам</string>
+    <string name="limit_yoq">У вас нет лимита</string>
+    <string name="web_ilova_limit">Установка дневных или почасовых лимитов для сайтов и приложений.</string>
+    <string name="about_intro">Tikoncha — это современная технологическая платформа, направленная на создание безопасной цифровой среды для детей и подростков.</string>
+    <string name="about_body">Мы сотрудничаем с родителями, школами и обществом, помогая детям использовать смартфоны и интернет осознанно, умеренно и с пользой. С Tikoncha цифровая активность вашего ребёнка находится под контролем, при этом сохраняются доверие и уважение.</string>
+    <string name="about_features_title">С помощью нашего приложения:</string>
+    <string name="about_feature_1">ограничиваются отвлекающие приложения и контент</string>
+    <string name="about_feature_2">поддерживаются возможности для обучения и развития</string>
+    <string name="about_feature_3">обеспечивается безопасность ребёнка и ежедневный баланс</string>
+    <string name="about_mission">Tikoncha — это не просто инструмент контроля. Это шаг к формированию цифровой культуры, ответственного использования технологий и здорового будущего для вашего ребёнка.</string>
+    <string name="about_belief">Технологии должны служить не ограничению ребёнка, а его правильному направлению.</string>
+    <string name="hali_vazifa_yoq">Вы ещё не добавили задания</string>
+    <string name="ota_ona_vazifalari_desc">Здесь будут отображаться задания, которые вы дали своему ребёнку</string>
+    <string name="farzand_vazifalari_desc">Здесь будут отображаться задания, которые ваш ребёнок создал для себя</string>
 
+    <string name="weekday_monday">Понедельник</string>
+    <string name="weekday_tuesday">Вторник</string>
+    <string name="weekday_wednesday">Среда</string>
+    <string name="weekday_thursday">Четверг</string>
+    <string name="weekday_friday">Пятница</string>
+    <string name="weekday_saturday">Суббота</string>
+    <string name="weekday_sunday">Воскресенье</string>
 
+    <string name="juda_muhim">Очень важно</string>
+    <string name="tekshirildi">Проверено</string>
+    <string name="ko_rish">Просмотр</string>
+    <string name="vazifa_ochirilsinmi">Удалить задачу?</string>
+    <string name="vazifa_ochirish_tasdiq">Вы действительно хотите удалить эту задачу?</string>
 </resources>

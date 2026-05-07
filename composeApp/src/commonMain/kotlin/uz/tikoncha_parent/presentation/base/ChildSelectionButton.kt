@@ -32,6 +32,7 @@ import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_down_reg
 import tikoncha_parents.composeapp.generated.resources.arrows_vertical_expand
 import tikoncha_parents.composeapp.generated.resources.plus_symbol
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
@@ -65,7 +66,7 @@ fun ChildSelectionButton(
         val isCompact = maxWidth < 360.dp
         val buttonHeight =
             if (isCompact) DialogButtonHeight.coerceAtMost(48.dp) else DialogButtonHeight
-        val avatarSize = if (isCompact) 28.dp else 32.dp
+        val avatarSize = if (isCompact) 28.dp else 36.dp
         val paddingH = if (isCompact) 10.dp else 12.dp
 
         Row(
@@ -86,7 +87,7 @@ fun ChildSelectionButton(
         ) {
             Box(
                 modifier = Modifier
-                    .size(avatarSize)
+                    .size(36.dp)
                     .border(1.dp, AppColors.bg.surface, CircleShape)
                     .background(AppColors.bg.primaryContainer, CircleShape),
                 contentAlignment = Alignment.Center
@@ -138,7 +139,7 @@ fun ChildSelectionButton(
 
             if (trailingIcon) {
                 Icon(
-                    painter = painterResource(Res.drawable.arrows_vertical_expand),
+                    painter = painterResource(Res.drawable.arrow_down_reg),
                     contentDescription = "",
                     modifier = Modifier.size(16.dp),
                     tint = color,

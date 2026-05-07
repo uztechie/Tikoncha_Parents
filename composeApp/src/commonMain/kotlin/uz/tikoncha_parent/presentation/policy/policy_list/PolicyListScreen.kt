@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
@@ -32,27 +33,19 @@ import cafe.adriel.voyager.navigator.internal.BackHandler
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
-import tikoncha_parents.composeapp.generated.resources.farzandingiz_kun_davomida_telefondan_qancha
-import tikoncha_parents.composeapp.generated.resources.farzandingizni_nomaqbul_kontentdan_himoya_qiling
-import tikoncha_parents.composeapp.generated.resources.ilova_taymeri
-import tikoncha_parents.composeapp.generated.resources.ilovalarni_tanlang_va_ular_uchun_umumiy
-import tikoncha_parents.composeapp.generated.resources.internet
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.jadval_limit_tugadi_plus
 import tikoncha_parents.composeapp.generated.resources.jadval_qoshish
-import tikoncha_parents.composeapp.generated.resources.kontent_cheklovlari
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
-import tikoncha_parents.composeapp.generated.resources.shablonlar
 import tikoncha_parents.composeapp.generated.resources.sizning_cheklovlaringiz
-import tikoncha_parents.composeapp.generated.resources.time_large_icon
-import tikoncha_parents.composeapp.generated.resources.timer_policy
-import tikoncha_parents.composeapp.generated.resources.uyqu_vaqti_rejasi
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.domain.model.policy.PolicyAction
 import uz.tikoncha_parent.platform.openUrl
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
@@ -62,18 +55,16 @@ import uz.tikoncha_parent.presentation.base.PermissionWarningCard
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
-import uz.tikoncha_parent.presentation.policy.template.PolicyTemplateEmptyItem
-import uz.tikoncha_parent.presentation.policy.template.sleep.SleepTemplateSetupScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
@@ -98,8 +89,8 @@ class PolicyListScreen : Screen {
 
         LaunchedEffect(Unit) {
             event(PolicyEvent.RefreshPolicies)
+            event(PolicyEvent.GetChildren)
         }
-
 
         BackHandler(true) {
             navigator.pop()
@@ -131,6 +122,7 @@ fun PolicyListUi(
     var isRefreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
     val internetCheck = rememberInternetCheck(refreshScope)
+    var showDialog by remember { mutableStateOf(false) }
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
@@ -150,6 +142,20 @@ fun PolicyListUi(
     }
 
     LaunchedEffect(errorText) { showErrorText = errorText.isNotEmpty() }
+
+    if (showDialog) {
+        SelectionChildBottonSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            onDismiss = { showDialog = false },
+            selectedItem = state.selectedChild,
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(PolicyEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -203,6 +209,25 @@ fun PolicyListUi(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            ChildSelectionButton(
+                text = state.selectedChild?.name ?: "",
+                imageUrl = state.selectedChild?.avatarUrl ?: "",
+                label = stringResource(Res.string.farzand_qo_shish),
+                trailingIcon = state.childrenList.isNotEmpty(),
+                onClick = {
+                    if (state.childrenList.isEmpty()) {
+                        navigator?.push(AddChildScreen())
+                    } else {
+                        showDialog = true
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp)
+                    .padding(horizontal = 5.dp)
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,8 +235,6 @@ fun PolicyListUi(
                 contentPadding = PaddingValues(10.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-
-
                 item {
 
                     if (state.permissionIssueList.isNotEmpty()) {
@@ -220,8 +243,8 @@ fun PolicyListUi(
                                 title = it.title,
                                 body = it.body,
                                 videoUrl = it.video_url,
-                                onVideoClick = {
-                                    openUrl(it)
+                                onVideoClick = { url ->
+                                    openUrl(url)
                                 }
                             )
                             Space(12.dp)
@@ -258,18 +281,11 @@ fun PolicyListUi(
                         onClick = {
                             sharedEvent(PolicySharedEvent.ClearData)
                             state.selectedChild?.let { child ->
-                                sharedEvent(
-                                    PolicySharedEvent.SetSelectedChild(
-                                        child
-                                    )
-                                )
+                                sharedEvent(PolicySharedEvent.SetSelectedChild(child))
                             }
                             sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
                             sharedEvent(PolicySharedEvent.SetPolicy(it))
-                            navigator?.push(
-                                PolicySetupScreen(
-                                )
-                            )
+                            navigator?.push(PolicySetupScreen())
                         }
                     )
                 }
@@ -334,17 +350,10 @@ fun PolicyListUi(
                             if (state.canCreatePolicy) {
                                 sharedEvent(PolicySharedEvent.ClearData)
                                 state.selectedChild?.let { child ->
-                                    sharedEvent(
-                                        PolicySharedEvent.SetSelectedChild(
-                                            child
-                                        )
-                                    )
+                                    sharedEvent(PolicySharedEvent.SetSelectedChild(child))
                                 }
                                 sharedEvent(PolicySharedEvent.SetSubscriptionLimit(state.subscriptionLimit))
-                                navigator?.push(
-                                    PolicySetupScreen(
-                                    )
-                                )
+                                navigator?.push(PolicySetupScreen())
                             } else {
                                 showPolicyLimitDialog = true
                             }
@@ -352,8 +361,6 @@ fun PolicyListUi(
                     )
                 }
             }
-
-
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,7 +20,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import org.jetbrains.compose.resources.stringResource
@@ -32,7 +30,6 @@ import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class LanguageScreen: Screen {
@@ -54,7 +51,8 @@ fun LanguageUi(
 ){
     val controller = remember { LocalLanguageController }.current
     val current = controller.current.collectAsState().value
-    var selectedLanguage by remember { mutableStateOf(current) }
+    var draftLanguage by remember(current) { mutableStateOf(current) }
+    val hasChanged = draftLanguage != current
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
@@ -71,7 +69,7 @@ fun LanguageUi(
             title = stringResource(Res.string.til),
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                navigator?.pop()
             }
         )
         SpaceMedium()
@@ -83,25 +81,22 @@ fun LanguageUi(
         ) {
 
             LanguageSelection(
-                selectedLanguage = selectedLanguage,
+                selectedLanguage = draftLanguage,
                 onLanguageSelected = { type ->
-                    selectedLanguage = type
+                    draftLanguage = type
                 }
             )
 
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-            )
+            Spacer(modifier = Modifier.weight(1f))
 
             CustomButton(
                 text = stringResource(Res.string.saqlash),
-                enabled = true,
+                enabled = hasChanged,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 onClick = {
-                    controller.select(selectedLanguage)
+                    controller.select(draftLanguage)
                     navigator?.pop()
                 }
             )

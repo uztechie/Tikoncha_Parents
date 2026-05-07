@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -52,7 +54,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
-class EditScreen(
+class ChildEditScreen(
     private val child: UserInfo
 ) : Screen {
 
@@ -70,7 +72,7 @@ class EditScreen(
                 navigator?.pop()
         }
 
-        EditUi(
+        ChildEditUi(
             navigator = navigator,
             state = state.value,
             event = event
@@ -79,14 +81,11 @@ class EditScreen(
 }
 
 @Composable
-fun EditUi(
+fun ChildEditUi(
     navigator: Navigator?,
     state: ChildEditState,
     event: (ChildEditEvent) -> Unit
 ) {
-    val isValid = (state.firstName.isNotBlank()
-            && state.lastName.isNotBlank()
-            && state.patronymic.isNotBlank())
     val selectedGenderIndex = when(state.genderType){
         GenderType.MALE -> 0
         GenderType.FEMALE -> 1
@@ -115,7 +114,7 @@ fun EditUi(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
-            .background(AppColors.bg.surface)
+            .background(AppColors.bg.secondary)
     ){
         CustomHeader(
             title = stringResource(Res.string.tahrirlash),
@@ -139,102 +138,114 @@ fun EditUi(
                 color = MaterialTheme.extendedColor.hintColor,
                 fontWeight = FontWeight.W500,
             )
-
             SpaceMedium()
 
-            CustomTextField(
-                value = state.firstName,
-                onValueChange = {
-                    event(ChildEditEvent.OnFirstName(it))
-                },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.ismingizni_kiriting),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            CustomTextField(
-                value = state.lastName,
-                onValueChange = {
-                    event(ChildEditEvent.OnLastName(it))
-                },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.familiyangizni_kiriting),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            CustomTextField(
-                value = state.patronymic,
-                onValueChange = {
-                    event(ChildEditEvent.OnPatronymic(it))
-                },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.otangizni_ismini_kiriting),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            CustomTextField(
-                value = state.age,
-                onValueChange = {
-                    event(ChildEditEvent.OnAge(it))
-                },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.yosh),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.id_card),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(NormalIconSize)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            SegmentedToggle(
-                options = listOf(
-                    stringResource(Res.string.ogil_bola) to null,
-                    stringResource(Res.string.qiz_bola) to null,
-                ),
-                selectedIndex = selectedGenderIndex,
-                onOptionSelected = {index->
-                    val gender = if (index == 0) GenderType.MALE else GenderType.FEMALE
-                    event(ChildEditEvent.OnGender(gender))
-                },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight)
-            )
+                    .background(AppColors.bg.surfaceTertiary, RoundedCornerShape(24.dp))
+                    .padding(12.dp)
+            ) {
+                CustomTextField(
+                    value = state.firstName,
+                    onValueChange = {
+                        event(ChildEditEvent.OnFirstName(it))
+                    },
+                    modifier = Modifier.height(TextFieldHeight),
+                    label = stringResource(Res.string.ismingizni_kiriting),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(Res.drawable.parent),
+                            contentDescription = "Parent",
+                            colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                            modifier = Modifier.size(NormalIconSize)
+                        )
+                    }
+                )
+                SpaceMedium()
+
+                CustomTextField(
+                    value = state.lastName,
+                    onValueChange = {
+                        event(ChildEditEvent.OnLastName(it))
+                    },
+                    modifier = Modifier.height(TextFieldHeight),
+                    label = stringResource(Res.string.familiyangizni_kiriting),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(Res.drawable.parent),
+                            contentDescription = "Parent",
+                            colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                            modifier = Modifier.size(NormalIconSize)
+                        )
+                    }
+                )
+                SpaceMedium()
+
+                CustomTextField(
+                    value = state.patronymic,
+                    onValueChange = {
+                        event(ChildEditEvent.OnPatronymic(it))
+                    },
+                    modifier = Modifier.height(TextFieldHeight),
+                    label = stringResource(Res.string.otangizni_ismini_kiriting),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(Res.drawable.parent),
+                            contentDescription = "Parent",
+                            colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                            modifier = Modifier.size(NormalIconSize)
+                        )
+                    }
+                )
+                SpaceMedium()
+
+                CustomTextField(
+                    value = state.age,
+                    onValueChange = {
+                        event(ChildEditEvent.OnAge(it))
+                    },
+                    modifier = Modifier.height(TextFieldHeight),
+                    label = stringResource(Res.string.yosh),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(Res.drawable.id_card),
+                            contentDescription = "Parent",
+                            colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                            modifier = Modifier.size(NormalIconSize)
+                        )
+                    }
+                )
+                SpaceMedium()
+
+                SegmentedToggle(
+                    selectedIndex = selectedGenderIndex,
+                    containerColor = AppColors.bg.secondarySurface,
+                    options = listOf(
+                        stringResource(Res.string.ogil_bola) to null,
+                        stringResource(Res.string.qiz_bola) to null,
+                    ),
+                    onOptionSelected = { index ->
+                        val gender = if (index == 0) GenderType.MALE else GenderType.FEMALE
+                        event(ChildEditEvent.OnGender(gender))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight)
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
@@ -244,7 +255,7 @@ fun EditUi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                enabled = isValid,
+                enabled = state.isFormValid,
                 text = stringResource(Res.string.saqlash)
             )
         }
@@ -258,7 +269,7 @@ private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.DARK
     ){
-        EditUi(
+        ChildEditUi(
             navigator = null,
             state = ChildEditState(),
             event = {}

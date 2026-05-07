@@ -19,21 +19,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.faol_vaqtni_qoshing
 import tikoncha_parents.composeapp.generated.resources.foydalanish_limiti
 import tikoncha_parents.composeapp.generated.resources.limit_qoshish
+import tikoncha_parents.composeapp.generated.resources.limit_yoq
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sizda_faol_vaqt_yoq
 import tikoncha_parents.composeapp.generated.resources.time_large_icon
+import tikoncha_parents.composeapp.generated.resources.web_ilova_limit
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.WeekDay
@@ -130,16 +132,24 @@ fun LimitRuleListUi(
                 )
                 Space(27.dp)
                 Text(
-                    text = stringResource(Res.string.sizda_faol_vaqt_yoq),
+                    text = stringResource(Res.string.limit_yoq),
                     style = AppTypography.titleMdMedium,
                     color = AppColors.text.primary,
                     textAlign = TextAlign.Center,
                 )
+                Space(12.dp)
+
+                Text(
+                    text = stringResource(Res.string.web_ilova_limit),
+                    style = AppTypography.titleSmMedium,
+                    color = AppColors.text.placeholder,
+                    textAlign = TextAlign.Center,
+                )
 
                 if (canUpdate) {
-                    Space(20.dp)
+                    Space(8.dp)
                     CustomButtonNew(
-                        text = stringResource(Res.string.faol_vaqtni_qoshing),
+                        text = stringResource(Res.string.limit_qoshish),
                         onClick = onAdd,
                         modifier = Modifier.fillMaxWidth(),
                     )

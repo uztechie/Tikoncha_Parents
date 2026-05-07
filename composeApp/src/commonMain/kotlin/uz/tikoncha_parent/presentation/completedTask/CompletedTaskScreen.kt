@@ -64,7 +64,7 @@ fun CompletedTaskUi(
     val today = getCurrentDate()
 
     val showTaskRes = if (state.genderIndex == 0) {
-        Res.string.shaxsiy_vazifalar
+        Res.string.farzandingiz_vazifalari
     } else {
         Res.string.sizdan_vazifalar
     }
@@ -81,8 +81,7 @@ fun CompletedTaskUi(
             .fillMaxSize()
             .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
-    )
-    {
+    ) {
 
         CustomHeader(
             title = stringResource(Res.string.bajarilgan_vazifalar),
@@ -135,7 +134,7 @@ fun CompletedTaskUi(
 
             SegmentedToggle(
                 options = listOf(
-                    stringResource(Res.string.shaxsiy_vazifalar) to null,
+                    stringResource(Res.string.farzandingiz_vazifalari) to null,
                     stringResource(Res.string.sizdan_vazifalar) to null,
                 ),
                 selectedIndex = state.genderIndex,
@@ -154,6 +153,7 @@ fun CompletedTaskUi(
                 fontSize = SmallTextSize,
                 fontWeight = FontWeight.W600,
             )
+            Space(12.dp)
 
             LazyColumn(
                 modifier = Modifier

@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.profile.settings.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -24,15 +25,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.ContainerPadding
-import uz.tikoncha_parent.ui.NormalLargeTextSize
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.ThemeController
-import uz.tikoncha_parent.ui.theme.ThemeController.mode
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.ThemeSelectorWithImage
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.tema
@@ -40,43 +38,34 @@ import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
-class ThemeScreen: Screen {
+class ThemeScreen : Screen {
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.current
-
-        ThemeUi(
-            navigator = navigator
-        )
+        ThemeUi(navigator = navigator)
     }
 }
 
 @Composable
 fun ThemeUi(
     navigator: Navigator?
-){
-//    val mode: ThemeMode = ThemeMode.SYSTEM
-//
-//    val dark = when (mode) {
-//        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-//        ThemeMode.DARK   -> true
-//        ThemeMode.LIGHT  -> false
-//    }
+) {
+    val savedMode by ThemeController.mode.collectAsState()
+    val isSystemDark = isSystemInDarkTheme()
+    var draftMode by remember(savedMode) { mutableStateOf(savedMode) }
+    val highlightedMode = remember(draftMode, isSystemDark) {
+        when (draftMode) {
+            ThemeMode.SYSTEM -> {
+                if (isSystemDark) ThemeMode.DARK else ThemeMode.LIGHT
+            }
 
-    val current by mode.collectAsState()
-
-    var selectedTheme by remember(current) {
-        mutableStateOf(current)
+            else -> draftMode
+        }
     }
 
-//    var selectedTheme by remember {
-//        mutableStateOf(ThemeMode.SYSTEM)
-//    }
-
+    val hasChanged = highlightedMode != savedMode
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
         navigationBarColor = AppColors.bg.page
@@ -92,10 +81,9 @@ fun ThemeUi(
             title = stringResource(Res.string.tema),
             showBackButton = true,
             onBackClick = {
-                navigator!!.pop()
+                navigator?.pop()
             }
         )
-
         SpaceMedium()
 
         Column(
@@ -104,39 +92,31 @@ fun ThemeUi(
                 .padding(horizontal = ContainerPadding)
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
 
                 ThemeMode.entries.filterNot { it == ThemeMode.SYSTEM }.forEach { mode ->
-
                     ThemeSelectorWithImage(
                         selectedTheme = mode,
                         modifier = Modifier.weight(1f),
-                        selected = mode == selectedTheme,
+                        selected = mode == highlightedMode,
                         onThemeSelected = { theme ->
-                            selectedTheme = theme
+                            draftMode = theme
                         }
                     )
                 }
             }
-
-
-
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-            )
+            Spacer(modifier = Modifier.weight(1f))
 
             CustomButton(
                 text = stringResource(Res.string.saqlash),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
-                enabled = true,
+                enabled = hasChanged,
                 onClick = {
-                    ThemeController.setMode(selectedTheme)
+                    ThemeController.setMode(draftMode)
                     navigator?.replaceAll(NewHomeScreen())
                 }
             )
@@ -147,12 +127,10 @@ fun ThemeUi(
 
 @Preview
 @Composable
-private fun PreviewThemeScreen(){
+private fun PreviewThemeScreen() {
     TikonchaParentTheme(
         ThemeMode.DARK
     ) {
-        ThemeUi(
-            navigator = null
-        )
+        ThemeUi(navigator = null)
     }
 }

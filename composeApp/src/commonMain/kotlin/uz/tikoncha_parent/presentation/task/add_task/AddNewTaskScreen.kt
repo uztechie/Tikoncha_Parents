@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task
+package uz.tikoncha_parent.presentation.task.add_task
 
 import TimePickerDialog
 import androidx.compose.foundation.Image
@@ -63,6 +63,11 @@ import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthForTask
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.coins.CoinAmountTextField
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
+import uz.tikoncha_parent.presentation.task.ImportanceType
+import uz.tikoncha_parent.presentation.task.Task
+import uz.tikoncha_parent.presentation.task.TaskEvent
+import uz.tikoncha_parent.presentation.task.TaskState
+import uz.tikoncha_parent.presentation.task.TaskViewModel
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors

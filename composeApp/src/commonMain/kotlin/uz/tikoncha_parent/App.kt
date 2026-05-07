@@ -46,7 +46,7 @@ fun App() {
 
     val langController = remember { LanguageController() }
 
-    val mode by ThemeController.mode.collectAsState(initial = ThemeMode.LIGHT)
+    val mode by ThemeController.mode.collectAsState()
 
     val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
     if (!inPreview) {

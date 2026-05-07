@@ -86,8 +86,7 @@ fun ProfileHeader(
                     painter = painterResource(Res.drawable.camera),
                     contentDescription = "",
                     tint = AppColors.icon.accentPrimary,
-                    modifier = Modifier
-                        .size(NormalIconSize)
+                    modifier = Modifier.size(NormalIconSize)
                 )
             }
         }
@@ -97,10 +96,9 @@ fun ProfileHeader(
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "$lastName  $firstName  $fathersName",
+                text = "$firstName  $lastName  $fathersName",
                 style = AppTypography.emphasizedXlSemiBold,
                 color = AppColors.text.primary,
             )

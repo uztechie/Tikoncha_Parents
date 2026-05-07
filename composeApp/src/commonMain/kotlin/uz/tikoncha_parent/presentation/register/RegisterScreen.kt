@@ -3,7 +3,6 @@ package uz.tikoncha_parent.presentation.register
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -23,8 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -33,7 +31,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.presentation.add_child.AddChildRegisterScreen
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.base.LoadingDialog
@@ -45,7 +42,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -83,9 +79,6 @@ fun Register(
     state: RegisterState,
     event: (RegisterEvent) -> Unit
 ) {
-
-    val isOtpCodeValid = state.name != "" && state.lastName != "" && state.middleName != ""
-
     val registerLoading = state.registerResponseState is ResponseState.Loading
     val registerErrorText = state.registerResponseState.errorText()
     val registerSuccess = state.registerResponseState is ResponseState.Success
@@ -134,7 +127,7 @@ fun Register(
                 .weight(1f)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 10.dp)
         ) {
             LogoHeader()
 
@@ -143,90 +136,50 @@ fun Register(
                 style = AppTypography.titleMdSemiBold,
                 color = AppColors.text.primary,
             )
-
             SpaceMedium()
 
-            CustomTextField(
-                value = state.name,
-                style = AppTypography.titleSmMedium,
-                onValueChange = { event(RegisterEvent.OnNameInsert(it)) },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.ismingizni_kiriting),
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Next
-                ),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            CustomTextField(
-                value = state.lastName,
-                style = AppTypography.titleSmMedium,
-                onValueChange = { event(RegisterEvent.OnLastNameInsert(it)) },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.familiyangizni_kiriting),
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Next
-                ),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-            CustomTextField(
-                value = state.middleName,
-                style = AppTypography.titleSmMedium,
-                onValueChange = { event(RegisterEvent.OnMiddleNameInsert(it)) },
-                modifier = Modifier.height(TextFieldHeight),
-                label = stringResource(Res.string.otangizni_ismini_kiriting),
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Done
-                ),
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(Res.drawable.parent),
-                        contentDescription = "Parent",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            )
-
-            SpaceMedium()
-
-
-            SegmentedToggle(
-                options = listOf(
-                    stringResource(Res.string.ota) to painterResource(Res.drawable.father_icon),
-                    stringResource(Res.string.ona) to painterResource(Res.drawable.mather_icon),
-                ),
-                selectedIndex = state.genderIndex,
-                onOptionSelected = {
-                    event(RegisterEvent.OnGenderSelected(it))
-                },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(ButtonHeight)
-            )
-            SpaceMedium()
+                    .background(AppColors.bg.surfaceTertiary, RoundedCornerShape(24.dp))
+                    .padding(12.dp)
+            ) {
+                CustomTextField(
+                    value = state.name,
+                    style = AppTypography.titleSmMedium,
+                    onValueChange = { event(RegisterEvent.OnNameInsert(it)) },
+                    modifier = Modifier.height(TextFieldHeight),
+                    label = stringResource(Res.string.ismingizni_kiriting),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(Res.drawable.parent),
+                            contentDescription = "Parent",
+                            colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryColor),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+                SpaceMedium()
+
+                SegmentedToggle(
+                    selectedIndex = state.genderIndex,
+                    containerColor = AppColors.bg.secondarySurface,
+                    options = listOf(
+                        stringResource(Res.string.ota) to painterResource(Res.drawable.father_icon),
+                        stringResource(Res.string.ona) to painterResource(Res.drawable.mather_icon),
+                    ),
+                    onOptionSelected = {
+                        event(RegisterEvent.OnGenderSelected(it))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight)
+                )
+            }
         }
 
         CustomButton(
@@ -237,7 +190,7 @@ fun Register(
                 .fillMaxWidth()
                 .padding(horizontal = ContainerPadding)
                 .height(ButtonHeight),
-            enabled = isOtpCodeValid,
+            enabled = state.isFromValid,
             text = stringResource(Res.string.keyingisi),
         )
         SpaceSmall()

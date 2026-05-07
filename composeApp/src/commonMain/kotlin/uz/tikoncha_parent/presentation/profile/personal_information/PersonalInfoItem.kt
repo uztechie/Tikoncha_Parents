@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import org.jetbrains.compose.resources.painterResource
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -49,6 +50,7 @@ import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallButtonHeight
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -62,7 +64,7 @@ fun PersonalInfoItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(CardCornerRadius))
-            .background(MaterialTheme.extendedColor.tonalButtonColor)
+            .background(AppColors.bg.surface)
             .padding(horizontal = AppIconInnerPadding, vertical = ContainerPadding)
     ) {
         PersonalInformationItemRow(
@@ -133,6 +135,7 @@ fun PersonalInfoItem(
 
         CustomOutlinedButton(
             text = stringResource(Res.string.tahrirlash),
+            backgroundColor = Color.Transparent,
             fontSize = SmallTextSize,
             onClick = { onEdit() },
             leadingIcon = {

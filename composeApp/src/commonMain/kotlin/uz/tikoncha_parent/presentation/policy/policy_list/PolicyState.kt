@@ -13,7 +13,9 @@ data class PolicyState(
     val selectedChild: UserInfo? = null,
     val subscriptionLimit: SubscriptionLimit = SubscriptionLimit(),
     val isInitialLoadDone: Boolean = false,
-    val permissionIssueList: List<PermissionStatusIssus> = emptyList()
+    val permissionIssueList: List<PermissionStatusIssus> = emptyList(),
+    val childrenList: List<UserInfo> = emptyList(),
+    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
 ){
     val canCreatePolicy: Boolean
         get() = subscriptionLimit.policyCount.let {

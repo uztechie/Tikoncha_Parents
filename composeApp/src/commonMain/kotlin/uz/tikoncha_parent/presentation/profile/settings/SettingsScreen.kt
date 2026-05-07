@@ -28,12 +28,8 @@ import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 class SettingsScreen: Screen {
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.current
-
-        SettingsUi(
-            navigator = navigator
-        )
+        SettingsUi(navigator = navigator)
     }
 }
 
@@ -78,7 +74,6 @@ fun SettingsUi(
                     }
                 }
             )
-            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,7 +70,7 @@ fun OtpMethodSelectionDialog(
                 Card(
                     shape = RoundedCornerShape(CardCornerRadius),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.extendedColor.cardColor
+                        containerColor = AppColors.bg.surface
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -87,15 +88,18 @@ fun OtpMethodSelectionDialog(
                                 .width(36.dp),
                         )
 
-                        CustomText(
-                            text = stringResource(Res.string.tasdiqlash_kodini_olish)
+                        Text(
+                            text = stringResource(Res.string.tasdiqlash_kodini_olish),
+                            style = AppTypography.titleLgSemiBold,
+                            color = AppColors.text.primary
                         )
                         SpaceMedium()
 
-                        CustomText(
+                        Text(
                             text = stringResource(Res.string.tasdiqlash_kodi_usulini_tanlash),
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            style = AppTypography.emphasizedMdMedium,
+                            color = AppColors.text.primary,
+                            modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
                         SpaceLarge()
@@ -122,7 +126,7 @@ fun OtpMethodSelectionDialog(
                         CustomButton(
                             text = stringResource(Res.string.sms_orqali),
                             onClick = onConfirmSMS,
-                            color = MaterialTheme.extendedColor.primaryColor,
+                            color = AppColors.section.primary,
                             textColor = OnPrimaryColor,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -131,7 +135,7 @@ fun OtpMethodSelectionDialog(
 
                         CustomButton(
                             onClick = onOtherNumber,
-                            color = AppColors.action.section,
+                            color = AppColors.button.secondary,
                             modifier = Modifier.fillMaxWidth(),
                             textColor = AppColors.text.primary,
                             text = stringResource(Res.string.boshqa_raqamga_ozgartish)
