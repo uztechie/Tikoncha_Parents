@@ -129,25 +129,11 @@ fun PolicyListUi(
         navigationBarColor = AppColors.bg.surface
     )
 
-    LaunchedEffect(Unit) {
-        if (!state.isInitialLoadDone) {
-            internetCheck.check {
-                event(PolicyEvent.RefreshPolicies)  // ← yana ishga tushadi
-            }
-        }
-    }
 
     LoadingDialog(loading)
 
     NoInternetDialog(internetCheck)
 
-    LaunchedEffect(Unit) {
-        if (!state.isInitialLoadDone) {
-            internetCheck.check {
-                event(PolicyEvent.RefreshPolicies)
-            }
-        }
-    }
 
     LaunchedEffect(errorText) { showErrorText = errorText.isNotEmpty() }
 
