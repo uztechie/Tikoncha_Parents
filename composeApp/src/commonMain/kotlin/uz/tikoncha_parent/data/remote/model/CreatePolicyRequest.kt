@@ -15,6 +15,7 @@ data class CreatePolicyRequest(
     val packages: List<String>,
     val categories: List<String>,
     val sites: List<String>,
+    val features: List<String>,
     val time_rule: List<TimeRuleDto>? = null,
     val limit_rule: List<LimitRuleDto>? = null,
     val location_rule: LocationRuleDto? = null,

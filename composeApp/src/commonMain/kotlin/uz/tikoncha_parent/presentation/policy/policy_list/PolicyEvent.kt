@@ -7,4 +7,5 @@ sealed class PolicyEvent {
     data object RefreshPolicies: PolicyEvent()
     data class OnChildSelected(val child: UserInfo): PolicyEvent()
     data object GetChildren: PolicyEvent()
+    data class OnTypeSelected(val index: Int): PolicyEvent()
 }

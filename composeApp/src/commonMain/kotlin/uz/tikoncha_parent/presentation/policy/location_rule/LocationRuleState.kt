@@ -2,7 +2,7 @@ package uz.tikoncha_parent.presentation.policy.location_rule
 
 import uz.tikoncha_parent.domain.model.GeoType
 import uz.tikoncha_parent.domain.model.LocationData
-import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.map.LatLng
 
 data class LocationRuleState(
     val isLoading: Boolean = false,

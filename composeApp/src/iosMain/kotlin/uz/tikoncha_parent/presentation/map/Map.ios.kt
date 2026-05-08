@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,14 +31,10 @@ import cocoapods.YandexMapsMobile.YMKMapKit
 import cocoapods.YandexMapsMobile.YMKMapObject
 import cocoapods.YandexMapsMobile.YMKMapObjectTapListenerProtocol
 import cocoapods.YandexMapsMobile.YMKMapView
-import cocoapods.YandexMapsMobile.YMKObjectEvent
 import cocoapods.YandexMapsMobile.YMKPlacemarkMapObject
 import cocoapods.YandexMapsMobile.YMKPoint
 import cocoapods.YandexMapsMobile.YMKPolygon
 import cocoapods.YandexMapsMobile.YMKPolygonMapObject
-import cocoapods.YandexMapsMobile.YMKUserLocationLayer
-import cocoapods.YandexMapsMobile.YMKUserLocationObjectListenerProtocol
-import cocoapods.YandexMapsMobile.YMKUserLocationView
 import cocoapods.YandexMapsMobile.setApiKey
 import cocoapods.YandexMapsMobile.sharedInstance
 import kotlinx.cinterop.ExperimentalForeignApi

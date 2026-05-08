@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.map
+package uz.tikoncha_parent.presentation.base
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

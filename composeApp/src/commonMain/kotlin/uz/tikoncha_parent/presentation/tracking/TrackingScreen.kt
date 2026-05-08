@@ -1,9 +1,5 @@
 package uz.tikoncha_parent.presentation.tracking
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,9 +20,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,8 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -78,22 +69,23 @@ import tikoncha_parents.composeapp.generated.resources.tracking_permission_setti
 import tikoncha_parents.composeapp.generated.resources.tracking_permission_settings_title
 import tikoncha_parents.composeapp.generated.resources.tracking_permission_title
 import uz.tikoncha_parent.domain.model.SubscriptionType
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.openAppSettings
+import uz.tikoncha_parent.platform.openInExternalMaps
 import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.platform.openUrl
+import uz.tikoncha_parent.platform.shareLocation
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
-import uz.tikoncha_parent.presentation.map.OnScreenActive
-import uz.tikoncha_parent.presentation.map2.CameraPosition
-import uz.tikoncha_parent.presentation.map2.LatLng
-import uz.tikoncha_parent.presentation.map2.MapCircle
-import uz.tikoncha_parent.presentation.map2.MapController
-import uz.tikoncha_parent.presentation.map2.MapMarker
-import uz.tikoncha_parent.presentation.map2.MarkerStyle
-import uz.tikoncha_parent.presentation.map2.NativeMarkerIcon
-import uz.tikoncha_parent.presentation.map2.YandexMap
-import uz.tikoncha_parent.presentation.map2.createMarkerIcon
-import uz.tikoncha_parent.presentation.map2.rememberMapController
+import uz.tikoncha_parent.presentation.base.OnScreenActive
+import uz.tikoncha_parent.presentation.map.CameraPosition
+import uz.tikoncha_parent.presentation.map.LatLng
+import uz.tikoncha_parent.presentation.map.MapCircle
+import uz.tikoncha_parent.presentation.map.MapController
+import uz.tikoncha_parent.presentation.map.MapMarker
+import uz.tikoncha_parent.presentation.map.MarkerStyle
+import uz.tikoncha_parent.presentation.map.YandexMap
+import uz.tikoncha_parent.presentation.map.rememberMapController
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -260,6 +252,18 @@ class TrackingScreen : Screen {
             isCheckingStatus = state.isCheckingPermissionStatus,
             onWatchVideo = {
                 event(TrackingEvent.OpenYoutubeUrl(it))
+            },
+            onOpenInMaps = { person ->
+                Logger.d("TrackingScreen", "person = $person")
+                person.location?.let { loc ->
+                    openInExternalMaps(loc.lat, loc.lon, person.name)
+                }
+            },
+            onShare = { person ->
+                Logger.d("TrackingScreen", "person = $person")
+                person.location?.let { loc ->
+                    shareLocation(loc.lat, loc.lon, person.name)
+                }
             },
         )
 

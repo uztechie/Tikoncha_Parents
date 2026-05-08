@@ -1,8 +1,8 @@
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.ImageBitmap
-import org.jetbrains.compose.resources.DrawableResource
+
 @Immutable
 data class LatLng(val lat: Double, val lon: Double)
 

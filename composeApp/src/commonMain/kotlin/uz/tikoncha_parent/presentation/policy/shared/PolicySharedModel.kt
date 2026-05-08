@@ -13,6 +13,7 @@ import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.apps.AppCategory
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.policy.app_site_selection.AppFeatures
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicyDraftSnapshot
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
@@ -61,6 +62,13 @@ class PolicySharedModel(
             is PolicySharedEvent.SetSelectedSites ->
                 _state.update { it.copy(selectedSites = event.sites) }
 
+            is PolicySharedEvent.ToggleFeature -> toggleFeature(event.key)
+            is PolicySharedEvent.SetSelectedFeatures ->
+                _state.update { it.copy(selectedFeatures = event.features) }
+
+            PolicySharedEvent.DismissFeatureLimitDialog ->
+                _state.update { it.copy(showFeatureLimitDialog = false) }
+
             // ── Tab ──────────────────────────
             is PolicySharedEvent.SetAppWebTabIndex ->
                 _state.update { it.copy(appWebTabIndex = event.index) }
@@ -84,6 +92,7 @@ class PolicySharedModel(
                         selectedPkgs = policy.packages.toSet(),
                         selectedCategories = policy.categories.toSet(),
                         selectedSites = policy.sites.toSet(),
+                        selectedFeatures = policy.features.toSet(),         // YANGI — PolicyItemUi ga features field qo'shing
                         policyTitle = policy.policyName,
                         policyAction = policy.action,
                         selectedPolicy = policy,
@@ -141,7 +150,6 @@ class PolicySharedModel(
     private fun toggleApp(packageName: String, category: String?, categoryAppPackages: List<String>) {
         val s = _state.value
 
-        // Agar app ning kategoriyasi selected bo'lsa — kategoriyani yechib, qolgan applarni qo'shish
         val catKey = if (category != null) {
             s.selectedCategories.firstOrNull { it.equals(category, ignoreCase = true) }
         } else null
@@ -159,23 +167,44 @@ class PolicySharedModel(
             return
         }
 
-        // Oddiy toggle — FAQAT selectedPkgs, hech qachon kategoriyaga aylanmaydi
         val existing = s.selectedPkgs.firstOrNull { it.equals(packageName, ignoreCase = true) }
         if (existing != null) {
+            // Olib tashlash — feature larga tegmaydi (mustaqil qoladi)
             _state.update { it.copy(selectedPkgs = it.selectedPkgs - existing) }
         } else {
             if (!s.canAddApp) {
                 _state.update { it.copy(showAppLimitDialog = true) }
                 return
             }
-            _state.update { it.copy(selectedPkgs = it.selectedPkgs + packageName) }
+
+            // Auto-add features (faqat plus user va limitga sig'sa)
+            val featuresToAutoAdd: List<String> = if (s.canSelectFeature) {
+                val maxApps = s.subscriptionLimitEntity?.appCount ?: Int.MAX_VALUE
+                val slotsLeft = (maxApps - (s.selectedAppCount + 1)).coerceAtLeast(0)
+                AppFeatures.featuresFor(packageName)
+                    .filter { feat ->
+                        s.selectedFeatures.none { it.equals(feat.key, ignoreCase = true) }
+                    }
+                    .take(slotsLeft)
+                    .map { it.key }
+            } else emptyList()
+
+            _state.update {
+                it.copy(
+                    selectedPkgs = it.selectedPkgs + packageName,
+                    selectedFeatures = it.selectedFeatures + featuresToAutoAdd,
+                )
+            }
         }
     }
 
     private fun toggleCategory(categoryName: String, appPackages: List<String>) {
         val s = _state.value
         val isOther = categoryName == AppCategory.OTHER.id
-        val catState = s.categoryState(categoryName, appPackages)
+        val featureKeys = appPackages.flatMap { pkg ->                // YANGI
+            AppFeatures.featuresFor(pkg).map { it.key }
+        }
+        val catState = s.categoryState(categoryName, appPackages, featureKeys)
 
         when (catState) {
             CategorySelectionState.NONE,
@@ -248,6 +277,28 @@ class PolicySharedModel(
                 return
             }
             _state.update { it.copy(selectedSites = it.selectedSites + url) }
+        }
+    }
+
+    private fun toggleFeature(key: String) {
+        val s = _state.value
+        val existing = s.selectedFeatures.firstOrNull { it.equals(key, ignoreCase = true) }
+
+        if (existing != null) {
+            // Olib tashlash — limit yo'q
+            _state.update { it.copy(selectedFeatures = it.selectedFeatures - existing) }
+        } else {
+            // Plus obuna shart
+            if (!s.canSelectFeature) {
+                _state.update { it.copy(showFeatureLimitDialog = true) }
+                return
+            }
+            // Feature ham app_count ga kiradi
+            if (!s.canAddApp) {
+                _state.update { it.copy(showAppLimitDialog = true) }
+                return
+            }
+            _state.update { it.copy(selectedFeatures = it.selectedFeatures + key) }
         }
     }
 

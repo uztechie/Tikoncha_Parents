@@ -591,4 +591,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="ko_rish">Ko'rish</string>
     <string name="vazifa_ochirilsinmi">Vazifa o‘chirilsinmi?</string>
     <string name="vazifa_ochirish_tasdiq">Siz rostdan ham ushbu vazifani o‘chirmoqchimisiz?</string>
+    <string name="qanday_faollashtiriladi">Qanday faollashtiriladi?</string>
+    <string name="xaritadan_ochish">Xaritadan ochish</string>
+    <string name="ulashish">Ulashish</string>
 </resources>

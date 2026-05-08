@@ -69,6 +69,14 @@ class PolicyViewModel(
                 getSubscriptionLimit()
                 getPolicies()
             }
+
+            is PolicyEvent.OnTypeSelected -> {
+                _state.update {
+                    it.copy(
+                        selectedTypeIndex = event.index
+                    )
+                }
+            }
         }
     }
 

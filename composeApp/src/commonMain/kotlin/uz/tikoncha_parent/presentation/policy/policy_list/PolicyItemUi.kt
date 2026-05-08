@@ -25,6 +25,7 @@ data class PolicyItemUi(
     val packages: List<String>,
     val categories: List<String>,
     val sites: List<String>,
+    val features: List<String>,
     val timeRule: List<TimeRuleUi>,
     val limitRule: List<LimitRuleUi>,
     val locationRule: LocationRule?,

@@ -154,9 +154,8 @@ fun AppWebSelectionUi(
 
     val filteredApps = remember(sortedApps, appState.searchQuery) {
         if (appState.searchQuery.isBlank()) sortedApps
-        else sortedApps.filter { it.name.contains(appState.searchQuery, ignoreCase = true) }
+        else sortedApps.filter { AppFeatures.matchesSearch(it, appState.searchQuery) }
     }
-
     // ── Sites sort ───────────────────────────
     val sortedSites = remember(appState.sites) {
         val selected = sharedState.selectedSites
@@ -176,7 +175,7 @@ fun AppWebSelectionUi(
     val visibleGroups = remember(appState.categoryGroups, appState.searchQuery) {
         if (appState.searchQuery.isBlank()) appState.categoryGroups
         else appState.categoryGroups.filter { group ->
-            group.apps.any { it.name.contains(appState.searchQuery, ignoreCase = true) }
+            group.apps.any { AppFeatures.matchesSearch(it, appState.searchQuery) }
         }
     }
 
@@ -235,6 +234,20 @@ fun AppWebSelectionUi(
             sharedEvent(PolicySharedEvent.DismissCategoryLimitDialog)
         }
     )
+
+    SubscriptionBottomDialog(
+        show = sharedState.showFeatureLimitDialog,
+        title = stringResource(Res.string.plus_obnuna_kerak),
+        message = stringResource(Res.string.kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring),
+        onConfirm = {
+            sharedEvent(PolicySharedEvent.DismissFeatureLimitDialog)
+            navigator?.push(SubscriptionPaymentScreen())
+        },
+        onDismiss = {
+            sharedEvent(PolicySharedEvent.DismissFeatureLimitDialog)
+        }
+    )
+
     val errorText = when (appState.siteInputError) {
         SiteError.INVALID_URL -> stringResource(Res.string.noto_g_ri_url_format)
         SiteError.ALREADY_EXISTS -> stringResource(Res.string.bu_sayt_allaqachon_ro_yxatda)
@@ -382,28 +395,32 @@ fun AppWebSelectionUi(
                                 }
 
                             } else if (!appState.hasCategoryData) {
-                                // ── Kategoriya yo'q — flat list ──
                                 items(
                                     items = filteredApps,
                                     key = { it.packageName },
                                 ) { app ->
-                                    AppRowItem(
+                                    val visibleFeatures = AppFeatures.visibleFeaturesFor(app, appState.searchQuery)
+                                    AppRowWithFeatures(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .background(AppColors.bg.surface)
                                             .padding(horizontal = 16.dp),
                                         app = app,
-                                        isSelected = sharedState.isAppSelected(app.packageName, null),
+                                        features = visibleFeatures,
+                                        isAppSelected = sharedState.isAppSelected(app.packageName, null),
+                                        selectedFeatureKeys = sharedState.selectedFeatures,
                                         enabled = sharedState.canUpdate,
-                                        onToggle = {
+                                        onAppToggle = {
                                             sharedEvent(PolicySharedEvent.ToggleApp(
                                                 packageName = app.packageName,
                                                 category = null,
                                             ))
                                         },
+                                        onFeatureToggle = { feature ->
+                                            sharedEvent(PolicySharedEvent.ToggleFeature(feature.key))
+                                        },
                                     )
                                 }
-
                             } else {
                                 // ── Kategoriyali ro'yxat ─────
                                 visibleGroups.forEach { group ->
@@ -413,7 +430,7 @@ fun AppWebSelectionUi(
                                         } else {
                                             group.copy(
                                                 apps = group.apps.filter {
-                                                    it.name.contains(appState.searchQuery, ignoreCase = true)
+                                                    AppFeatures.matchesSearch(it, appState.searchQuery)
                                                 }
                                             )
                                         }
@@ -423,6 +440,7 @@ fun AppWebSelectionUi(
                                             sharedState = sharedState,
                                             expanded = effectiveExpanded.contains(group.id),
                                             enabled = sharedState.canUpdate,
+                                            searchQuery = appState.searchQuery,                   // YANGI
                                             onToggleExpand = {
                                                 expandedCategories = if (expandedCategories.contains(group.id))
                                                     expandedCategories - group.id
@@ -430,19 +448,20 @@ fun AppWebSelectionUi(
                                                     expandedCategories + group.id
                                             },
                                             onToggleCategory = {
-                                                // ← DOIM asl group.apps (search filtrsiz)
                                                 sharedEvent(PolicySharedEvent.ToggleCategory(
                                                     categoryName = group.id,
                                                     appPackages = group.apps.map { it.packageName },
                                                 ))
                                             },
                                             onToggleApp = { app ->
-                                                // ← group.id ishlatish (app.category emas)
                                                 sharedEvent(PolicySharedEvent.ToggleApp(
                                                     packageName = app.packageName,
                                                     category = group.id,
                                                     categoryAppPackages = group.apps.map { it.packageName },
                                                 ))
+                                            },
+                                            onToggleFeature = { feature ->                        // YANGI
+                                                sharedEvent(PolicySharedEvent.ToggleFeature(feature.key))
                                             },
                                         )
                                     }

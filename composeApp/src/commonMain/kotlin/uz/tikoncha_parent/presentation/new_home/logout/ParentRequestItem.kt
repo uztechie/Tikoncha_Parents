@@ -156,9 +156,9 @@ fun ParentRequestItem(
 
                 CustomOutlinedButton(
                     text = stringResource(Res.string.bekor_qilish),
-                    backgroundColor = Color.Transparent,
+                    containerColor = Color.Transparent,
                     borderColor = OtpErrorColor,
-                    textColor = OtpErrorColor,
+                    contentColor = OtpErrorColor,
                     onClick = onCancelRequestClick,
                     modifier = Modifier
                         .weight(1f)
@@ -167,8 +167,8 @@ fun ParentRequestItem(
                 SpaceSmall()
                 CustomOutlinedButton(
                     borderColor = SuccessColor,
-                    textColor = SuccessColor,
-                    backgroundColor = Color.Transparent,
+                    contentColor = SuccessColor,
+                    containerColor = Color.Transparent,
                     text = stringResource(Res.string.tasdiqlash),
                     onClick = onActionClick,
                     modifier = Modifier

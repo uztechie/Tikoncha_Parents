@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

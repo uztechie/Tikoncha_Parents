@@ -2,7 +2,7 @@ package uz.tikoncha_parent.presentation.tracking
 
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationItemDto
-import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.map.LatLng
 
 internal fun ChildrenLocationItemDto.toPerson(): Person? {
     val id = child_user_id ?: return null

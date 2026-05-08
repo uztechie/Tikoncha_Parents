@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import android.graphics.PointF
 import androidx.compose.runtime.Composable
@@ -23,7 +23,6 @@ import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition as YCameraPosition
 import com.yandex.mapkit.map.CircleMapObject
@@ -36,8 +35,6 @@ import com.yandex.mapkit.map.PolygonMapObject
 import com.yandex.mapkit.geometry.Circle as YCircle
 import com.yandex.mapkit.geometry.Polygon as YPolygon
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
-import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import kotlinx.coroutines.launch
 

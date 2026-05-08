@@ -3,7 +3,7 @@ package uz.tikoncha_parent.presentation.tracking
 import androidx.compose.runtime.Immutable
 import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
-import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.map.LatLng
 
 
 @Immutable

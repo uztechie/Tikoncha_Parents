@@ -13,7 +13,6 @@ import uz.tikoncha_parent.domain.model.in_app_update.UpdateStatus
 import uz.tikoncha_parent.domain.model.in_app_update.UpdateType
 import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
-import uz.tikoncha_parent.presentation.map.LocationViewModel
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
@@ -46,12 +45,6 @@ actual val targetModule = module {
         )
     }
 
-    single {
-        LocationViewModel(
-            tracker = get(),
-            childrenLocationUseCase = get()
-        )
-    }
 
     factory {
         TrackingScreenModel(

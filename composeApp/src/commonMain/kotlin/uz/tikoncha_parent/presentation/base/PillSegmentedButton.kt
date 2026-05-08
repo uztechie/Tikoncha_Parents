@@ -1,7 +1,11 @@
 package uz.tikoncha_parent.presentation.base
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,11 +36,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -50,24 +60,16 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 // Data
 // ═════════════════════════════════════════════════════════════
 
-/**
- * Segmented button ichidagi bitta item.
- * Icon ixtiyoriy — faqat text bo'lsa null qoldiring.
- */
 @Immutable
 data class PillSegmentedItem(
     val label: String,
     val icon: Painter? = null,
 )
 
-/**
- * Segmented button ranglari. Hamma token lar design system dan keladi,
- * dark/light mode avtomatik.
- */
 @Immutable
 data class PillSegmentedColors(
-    val trackColor: Color,         // tashqi fon (neutral)
-    val indicatorColor: Color,     // tanlangan item fon (oq)
+    val trackColor: Color,
+    val indicatorColor: Color,
     val selectedTextColor: Color,
     val unselectedTextColor: Color,
     val selectedIconColor: Color,
@@ -76,7 +78,6 @@ data class PillSegmentedColors(
 
 object PillSegmentedButtonDefaults {
 
-    /** Figma defaultlari: neutral track, oq indicator, primary text. */
     @Composable
     fun colors(
         trackColor: Color = AppColors.section.secondary,
@@ -99,6 +100,8 @@ object PillSegmentedButtonDefaults {
     val ItemGap: Dp = 4.dp
     val IconSize: Dp = 16.dp
     val IconTextGap: Dp = 6.dp
+    val BorderWidth: Dp = 1.dp
+    const val AnimationDurationMs: Int = 250
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -108,19 +111,17 @@ object PillSegmentedButtonDefaults {
 /**
  * Pill-shaped segmented button with animated indicator.
  *
- * Figma: Parent-design, node 40002545:17609 (Segmented control)
- * - Track: neutral pill shape
- * - Indicator: pill shape, animated left-right
- * - Text color constant; selection shown by indicator background only
+ * Indicator joylashuvi har bir item ning **actual measured** offset va
+ * width'idan olinadi (pikselda). Bu Dp arifmetikasi natijasidagi rounding
+ * drift'ni yo'q qiladi — indicator har doim aynan tanlangan item ustida turadi,
+ * chetlarda bo'sh joy qolmaydi.
  *
- * @param items tanlov variantlari (2 dan kam bo'lmasin)
- * @param selectedIndex tanlangan element indexi
- * @param onSelected tanlash eventi
- * @param modifier umumiy modifier
- * @param enabled hammasini yoqish/o'chirish
- * @param height component balandligi
- * @param textStyle text uslubi
- * @param colors ranglar
+ * Borderless yoki bordered:
+ *  - Borderless: `trackBorder = null`, `indicatorBorder = null`
+ *  - Bordered: BorderStroke uzating
+ *
+ * Item label uzun bo'lsa (kichik ekran yoki til o'zgargan holatda)
+ * avtomatik ravishda ellipsis (`…`) qo'yiladi.
  */
 @Composable
 fun PillSegmentedButton(
@@ -132,50 +133,85 @@ fun PillSegmentedButton(
     height: Dp = PillSegmentedButtonDefaults.Height,
     textStyle: TextStyle = AppTypography.bodyMdMedium,
     colors: PillSegmentedColors = PillSegmentedButtonDefaults.colors(),
+    trackBorder: BorderStroke? = null,
+    indicatorBorder: BorderStroke? = null,
+    animationDurationMs: Int = PillSegmentedButtonDefaults.AnimationDurationMs,
 ) {
     if (items.size < 2) return
 
-    val density = LocalDensity.current
+    val safeIndex = selectedIndex.coerceIn(0, items.lastIndex)
     val trackPadding = PillSegmentedButtonDefaults.TrackPadding
     val itemGap = PillSegmentedButtonDefaults.ItemGap
 
-    // Track widthni o'lchab itemWidth ni hisoblaymiz
-    var itemWidth by remember { mutableStateOf(0.dp) }
-
-    // Outer pill shape (Figma: rounded-100)
     val outerShape: Shape = RoundedCornerShape(percent = 50)
-    // Inner indicator shape (Figma: rounded-20)
     val indicatorShape: Shape = RoundedCornerShape(percent = 50)
+
+    // Har bir item o'z actual offset va width'ini (px da) xabar qiladi.
+    // Indicator shu qiymatlarni to'g'ridan-to'g'ri ishlatadi → no rounding drift.
+    var tabPositions by remember(items.size) {
+        mutableStateOf(List(items.size) { TabPx(0, 0) })
+    }
+    val current = tabPositions[safeIndex]
+
+    val indicatorOffsetAnim = remember { Animatable(0f) }
+    val indicatorWidthAnim = remember { Animatable(0f) }
+
+    LaunchedEffect(current) {
+        if (current.width == 0) return@LaunchedEffect
+        if (indicatorWidthAnim.value == 0f) {
+            // Birinchi o'lchov — animatsiyasiz
+            indicatorOffsetAnim.snapTo(current.offset.toFloat())
+            indicatorWidthAnim.snapTo(current.width.toFloat())
+        } else {
+            launch {
+                indicatorOffsetAnim.animateTo(
+                    current.offset.toFloat(),
+                    tween(animationDurationMs, easing = FastOutSlowInEasing),
+                )
+            }
+            launch {
+                indicatorWidthAnim.animateTo(
+                    current.width.toFloat(),
+                    tween(animationDurationMs, easing = FastOutSlowInEasing),
+                )
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .height(height)
             .clip(outerShape)
             .background(colors.trackColor)
-            .padding(trackPadding)
-            .onGloballyPositioned { coords ->
-                val totalPx = coords.size.width
-                val gapPx = with(density) { (itemGap * (items.size - 1)).toPx() }
-                val paddingPx = with(density) { (trackPadding * 2).toPx() }
-                val contentPx = totalPx - paddingPx
-                val perItemPx = (contentPx - gapPx) / items.size
-                itemWidth = with(density) { perItemPx.toDp() }
-            },
+            .then(
+                if (trackBorder != null) Modifier.border(trackBorder, outerShape)
+                else Modifier
+            )
+            .padding(trackPadding),
     ) {
-        // ── Sliding indicator ─────────────────
-        val indicatorOffset by animateDpAsState(
-            targetValue = (itemWidth + itemGap) * selectedIndex,
-            label = "PillSegmentedIndicatorOffset",
-        )
-
-        if (itemWidth > 0.dp) {
+        // ── Sliding indicator (pixel-precise) ─────────────────
+        if (current.width > 0) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(itemWidth)
-                    .offset(x = indicatorOffset)
+                    .offset {
+                        IntOffset(indicatorOffsetAnim.value.roundToInt(), 0)
+                    }
+                    .layout { measurable, constraints ->
+                        val w = indicatorWidthAnim.value.roundToInt().coerceAtLeast(0)
+                        val placeable = measurable.measure(
+                            constraints.copy(minWidth = w, maxWidth = w)
+                        )
+                        layout(placeable.width, placeable.height) {
+                            placeable.place(0, 0)
+                        }
+                    }
                     .clip(indicatorShape)
-                    .background(colors.indicatorColor),
+                    .background(colors.indicatorColor)
+                    .then(
+                        if (indicatorBorder != null) Modifier.border(indicatorBorder, indicatorShape)
+                        else Modifier
+                    ),
             )
         }
 
@@ -196,7 +232,18 @@ fun PillSegmentedButton(
                     onClick = { onSelected(index) },
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight(),
+                        .fillMaxHeight()
+                        .onGloballyPositioned { coords ->
+                            val newPos = TabPx(
+                                offset = coords.positionInParent().x.roundToInt(),
+                                width = coords.size.width,
+                            )
+                            if (tabPositions.getOrNull(index) != newPos) {
+                                tabPositions = tabPositions.toMutableList().also {
+                                    if (index < it.size) it[index] = newPos
+                                }
+                            }
+                        },
                 )
             }
         }
@@ -244,9 +291,13 @@ private fun PillSegmentedItemContent(
             color = textColor,
             style = textStyle,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
         )
     }
 }
+
+private data class TabPx(val offset: Int, val width: Int)
 
 // ═════════════════════════════════════════════════════════════
 // Preview
@@ -270,9 +321,13 @@ private fun PillSegmentedButtonPreviewDark() {
 
 @Composable
 private fun PillSegmentedButtonPreviewContent() {
-    var selectedText by remember { mutableStateOf(0) }
+    var selected2 by remember { mutableStateOf(0) }
+    var selected3 by remember { mutableStateOf(2) }   // oxirgi item — to'g'ri turishini tekshirish uchun
+    var selected4 by remember { mutableStateOf(3) }   // 4 ta item, oxirgi
+    var selectedLong by remember { mutableStateOf(1) }
     var selectedIcon by remember { mutableStateOf(1) }
-    var selectedThree by remember { mutableStateOf(0) }
+
+    val borderColor = AppColors.border.primary
 
     androidx.compose.foundation.layout.Column(
         modifier = Modifier
@@ -280,18 +335,59 @@ private fun PillSegmentedButtonPreviewContent() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // Text only — Kunlik / Soatlik
+        // 2 items (borderless)
         PillSegmentedButton(
             items = listOf(
                 PillSegmentedItem("Kunlik"),
                 PillSegmentedItem("Soatlik"),
             ),
-            selectedIndex = selectedText,
-            onSelected = { selectedText = it },
+            selectedIndex = selected2,
+            onSelected = { selected2 = it },
             modifier = Modifier.fillMaxWidth(),
         )
 
-        // With icons
+        // 3 items, oxirgisi tanlangan — pixel-precise tekshirish
+        PillSegmentedButton(
+            items = listOf(
+                PillSegmentedItem("Kun"),
+                PillSegmentedItem("Hafta"),
+                PillSegmentedItem("Oy"),
+            ),
+            selectedIndex = selected3,
+            onSelected = { selected3 = it },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        // 4 items, oxirgisi tanlangan
+        PillSegmentedButton(
+            items = listOf(
+                PillSegmentedItem("XS"),
+                PillSegmentedItem("S"),
+                PillSegmentedItem("M"),
+                PillSegmentedItem("L"),
+            ),
+            selectedIndex = selected4,
+            onSelected = { selected4 = it },
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        // Uzun matn — ellipsis tekshirish
+        PillSegmentedButton(
+            items = listOf(
+                PillSegmentedItem("Farzandingiz"),
+                PillSegmentedItem("Maktabingiz"),
+                PillSegmentedItem("Sozlamalaringiz"),
+            ),
+            selectedIndex = selectedLong,
+            onSelected = { selectedLong = it },
+            modifier = Modifier.fillMaxWidth(),
+            trackBorder = BorderStroke(
+                PillSegmentedButtonDefaults.BorderWidth,
+                borderColor,
+            ),
+        )
+
+        // Iconlar bilan
         PillSegmentedButton(
             items = listOf(
                 PillSegmentedItem("Otasi", painterResource(Res.drawable.father_icon)),
@@ -299,18 +395,6 @@ private fun PillSegmentedButtonPreviewContent() {
             ),
             selectedIndex = selectedIcon,
             onSelected = { selectedIcon = it },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        // 3 items
-        PillSegmentedButton(
-            items = listOf(
-                PillSegmentedItem("Kun"),
-                PillSegmentedItem("Hafta"),
-                PillSegmentedItem("Oy"),
-            ),
-            selectedIndex = selectedThree,
-            onSelected = { selectedThree = it },
             modifier = Modifier.fillMaxWidth(),
         )
 

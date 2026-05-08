@@ -30,6 +30,7 @@ data class PolicyDto(
     val packages: List<String>? = emptyList(),
     val sites: List<String>? = emptyList(),
     val categories: List<String>? = emptyList(),
+    val features: List<String>? = emptyList(),
     val time_rule: List<TimeRuleDto>? = emptyList(),
     val limit_rule: List<LimitRuleDto>? = emptyList(),
     val location_rule: LocationRuleDto? = null,

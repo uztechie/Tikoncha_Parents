@@ -123,6 +123,7 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi {
         isActive = true,
         packages = packages ?: emptyList(),
         categories = categories ?: emptyList(),
+        features = features?: emptyList(),
         action = PolicyAction.valueToPolicyAction(action),
         sites = sites ?: emptyList(),
         timeRule = time_rule?.toTimeRuleUiList() ?: emptyList(),     // ← o'zgardi

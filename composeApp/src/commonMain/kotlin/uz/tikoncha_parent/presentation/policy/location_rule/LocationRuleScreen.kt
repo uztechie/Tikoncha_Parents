@@ -3,7 +3,6 @@
 package uz.tikoncha_parent.presentation.policy.location_rule
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,12 +40,11 @@ import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomSwitch
-import uz.tikoncha_parent.presentation.map.OnScreenActive
-import uz.tikoncha_parent.presentation.map2.*
+import uz.tikoncha_parent.presentation.base.OnScreenActive
+import uz.tikoncha_parent.presentation.map.*
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.ui.theme.*
-import kotlin.collections.copy
 
 private val DEFAULT_CENTER = LatLng(40.7821, 72.3442)
 

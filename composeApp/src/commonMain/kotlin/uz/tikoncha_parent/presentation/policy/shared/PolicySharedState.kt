@@ -23,6 +23,7 @@ data class PolicySharedState(
     val selectedPkgs: Set<String> = emptySet(),
     val selectedCategories: Set<String> = emptySet(),
     val selectedSites: Set<String> = emptySet(),
+    val selectedFeatures: Set<String> = emptySet(),               // YANGI
 
     // ── Tab ──────────────────────────────────
     val appWebTabIndex: Int = 0,
@@ -38,6 +39,7 @@ data class PolicySharedState(
     val showAppLimitDialog: Boolean = false,
     val showSiteLimitDialog: Boolean = false,
     val showCategoryLimitDialog: Boolean = false,
+    val showFeatureLimitDialog: Boolean = false,                  // YANGI
 
     // ── Draft snapshot ───────────────────────
     val initialDraftSnapshot: PolicyDraftSnapshot? = null,
@@ -49,29 +51,30 @@ data class PolicySharedState(
     val isEditMode: Boolean
         get() = selectedPolicy != null
 
-    val selectedAppCount: Int get() = selectedPkgs.size
+    val selectedAppCount: Int
+        get() = selectedPkgs.size + selectedFeatures.size         // O'ZGARDI: feature ham app countga kiradi
     val selectedCategoryCount: Int get() = selectedCategories.size
     val selectedSiteCount: Int get() = selectedSites.size
+    val selectedFeatureCount: Int get() = selectedFeatures.size   // YANGI
 
-    val showAddRuleButton: Boolean get() = (limitList.isEmpty() || timeList.isEmpty() || locationRule == null) && canUpdate
-
+    val showAddRuleButton: Boolean
+        get() = (limitList.isEmpty() || timeList.isEmpty() || locationRule == null) && canUpdate
 
     val canSavePolicy: Boolean
         get() {
             val hasRule = timeList.isNotEmpty() || limitList.isNotEmpty() || locationRule != null
             val hasResource =
-                selectedPkgs.isNotEmpty() || selectedCategories.isNotEmpty() || selectedSites.isNotEmpty()
+                selectedPkgs.isNotEmpty() ||
+                        selectedCategories.isNotEmpty() ||
+                        selectedSites.isNotEmpty() ||
+                        selectedFeatures.isNotEmpty()
             return hasRule && hasResource && policyTitle.isNotBlank()
         }
 
-    /** App tanlangan — individual YOKI kategoriyasi tanlangan */
     fun isAppSelected(pkg: String, category: String?): Boolean {
         if (selectedPkgs.any { it.equals(pkg, ignoreCase = true) }) return true
         if (category != null && selectedCategories.any {
-                it.equals(
-                    category,
-                    ignoreCase = true
-                )
+                it.equals(category, ignoreCase = true)
             }) return true
         return false
     }
@@ -79,17 +82,25 @@ data class PolicySharedState(
     fun isSiteSelected(url: String): Boolean =
         selectedSites.any { it.equals(url, ignoreCase = true) }
 
-    /** Kategoriya checkbox holati */
-    fun categoryState(categoryName: String, appPackages: List<String>): CategorySelectionState {
-        // Faqat kategoriya to'g'ridan-to'g'ri tanlangan bo'lsa — ALL
+    fun isFeatureSelected(key: String): Boolean =                 // YANGI
+        selectedFeatures.any { it.equals(key, ignoreCase = true) }
+
+    /** Kategoriya checkbox holati — feature ham PARTIAL ga sabab bo'ladi */
+    fun categoryState(
+        categoryName: String,
+        appPackages: List<String>,
+        appFeatureKeys: List<String> = emptyList(),               // YANGI param
+    ): CategorySelectionState {
         if (selectedCategories.any { it.equals(categoryName, ignoreCase = true) }) {
             return CategorySelectionState.ALL
         }
-        // Individual applar tekshiruv — faqat NONE yoki PARTIAL
-        val selectedCount = appPackages.count { pkg ->
+        val hasSelectedApp = appPackages.any { pkg ->
             selectedPkgs.any { it.equals(pkg, ignoreCase = true) }
         }
-        return if (selectedCount == 0) CategorySelectionState.NONE
+        val hasSelectedFeature = appFeatureKeys.any { key ->
+            selectedFeatures.any { it.equals(key, ignoreCase = true) }
+        }
+        return if (!hasSelectedApp && !hasSelectedFeature) CategorySelectionState.NONE
         else CategorySelectionState.PARTIAL
     }
 
@@ -102,6 +113,7 @@ data class PolicySharedState(
         packages = selectedPkgs.toList(),
         categories = selectedCategories.toList(),
         sites = selectedSites.toList(),
+        features = selectedFeatures.toList(),                     // YANGI — PolicyDraftSnapshot ga ham qo'shing
     )
 
     val hasChanges: Boolean
@@ -109,7 +121,6 @@ data class PolicySharedState(
             val initial = initialDraftSnapshot ?: return false
             return initial != toSnapshot()
         }
-
 
     val canAddApp: Boolean
         get() = subscriptionLimitEntity?.appCount?.let { selectedAppCount < it } ?: true
@@ -120,8 +131,14 @@ data class PolicySharedState(
     val canSelectCategory: Boolean
         get() = subscriptionLimitEntity?.subscriptionType != SubscriptionType.FREE
 
-    val canSaveAppWebSelection: Boolean get() = selectedPkgs.isNotEmpty() || selectedSites.isNotEmpty() || selectedCategories.isNotEmpty()
-}
+    val canSelectFeature: Boolean                                 // YANGI
+        get() = subscriptionLimitEntity?.subscriptionType != SubscriptionType.FREE
 
+    val canSaveAppWebSelection: Boolean
+        get() = selectedPkgs.isNotEmpty() ||
+                selectedSites.isNotEmpty() ||
+                selectedCategories.isNotEmpty() ||
+                selectedFeatures.isNotEmpty()
+}
 
 enum class CategorySelectionState { NONE, PARTIAL, ALL }

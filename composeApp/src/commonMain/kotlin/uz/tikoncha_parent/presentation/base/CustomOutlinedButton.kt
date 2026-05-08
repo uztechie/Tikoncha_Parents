@@ -11,12 +11,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import uz.tikoncha_parent.ui.*
@@ -24,35 +27,38 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun CustomOutlinedButton(
     text: String,
-    fontSize: TextUnit = NormalTextSize,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.extendedColor.backgroundColor,
-    textColor: Color = MaterialTheme.extendedColor.primaryColor,
-    borderColor: Color = MaterialTheme.extendedColor.primaryColor,
+    style: TextStyle = AppTypography.titleSmMedium,
+    containerColor: Color = Color.Transparent,
+    contentColor: Color = AppColors.text.accentEmphasis,
+    borderColor: Color = AppColors.border.primary,
     enabled: Boolean = true,
     onClick: () -> Unit,
-    shape: Shape = RoundedCornerShape(TextFieldCornerRadius),
+    shape: Shape = RoundedCornerShape(16.dp),
     leadingIcon: (@Composable () -> Unit)? = null,
-    endingIcon: (@Composable () -> Unit)? = null
+    endingIcon: (@Composable () -> Unit)? = null,
+    disabledContainerColor: Color = AppColors.button.disabled,
+    disabledContentColor: Color = AppColors.text.disabledTertiary
 ) {
 
-    val borderColor = if (enabled) borderColor else MaterialTheme.extendedColor.disabledBgColor
-    val contentColor = if (enabled) textColor else MaterialTheme.extendedColor.disabledContentColor
 
     OutlinedButton(
         onClick = onClick,
         modifier = modifier
-            .height(ButtonHeight),
+            .height(48.dp),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = backgroundColor,
+            containerColor = containerColor,
             contentColor = contentColor,
-            disabledContainerColor = backgroundColor,
-            disabledContentColor = contentColor
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
         ),
         border = BorderStroke(1.dp, borderColor),
         shape = shape,
@@ -71,11 +77,10 @@ fun CustomOutlinedButton(
                 leadingIcon()
             }
 
-            CustomText(
+            Text(
                 text = text,
-                color = contentColor,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = fontSize
+                style = style,
+                textAlign = TextAlign.Center
             )
 
             if (endingIcon != null) {
@@ -88,16 +93,18 @@ fun CustomOutlinedButton(
 @Preview()
 @Composable
 private fun Pre() {
-    CustomOutlinedButton(
-        text = "smile",
-        onClick = {},
-        leadingIcon = {
-            Icon(
-                painter = painterResource(Res.drawable.lock),
-                contentDescription = "",
-                tint = PrimaryColor,
-            )
-        },
-        enabled = false
-    )
+    TikonchaParentTheme {
+        CustomOutlinedButton(
+            text = "smile",
+            onClick = {},
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(Res.drawable.lock),
+                    contentDescription = "",
+                    tint = PrimaryColor,
+                )
+            },
+            enabled = true
+        )
+    }
 }

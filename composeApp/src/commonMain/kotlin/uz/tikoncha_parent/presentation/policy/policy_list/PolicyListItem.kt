@@ -106,42 +106,7 @@ fun PolicyListItem(
         )
         Space(12.dp)
 
-        // ── Cheklovlar soni ──────────────────
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ContainerPadding),
-        ) {
-            Text(
-                text = stringResource(Res.string.cheklovlar),
-                style = AppTypography.bodySmMedium,
-                color = AppColors.text.secondary,
-                lineHeight = SmallTextSize,
-            )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (policy.appCount > 0) {
-                    Text(
-                        text = stringResource(Res.string.ta_ilovaga, policy.appCount),
-                        style = AppTypography.titleSmSemiBold,
-                        color = AppColors.text.primary,
-                    )
-                }
-                if (policy.webCount > 0) {
-                    Text(
-                        text = stringResource(Res.string.ta_vebsaytga, policy.webCount),
-                        style = AppTypography.titleSmSemiBold,
-                        color = AppColors.text.primary,
-                    )
-                }
-            }
-
-        }
 
     }
 }
@@ -185,6 +150,7 @@ private fun PolicyListItemPreview() {
                 isActive = false,
                 packages = emptyList(),
                 categories = emptyList(),
+                features = emptyList(),
                 action = PolicyAction.ALLOW,
                 sites = emptyList(),
                 locationRule = null

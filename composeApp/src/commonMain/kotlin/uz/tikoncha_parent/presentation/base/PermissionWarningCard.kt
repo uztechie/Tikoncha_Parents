@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalPlay
@@ -26,9 +27,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_right
+import tikoncha_parents.composeapp.generated.resources.play
+import tikoncha_parents.composeapp.generated.resources.qanday_faollashtiriladi
+import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.warning_1
+import tikoncha_parents.composeapp.generated.resources.warning_filled
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -44,15 +51,9 @@ fun PermissionWarningCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .simpleShadow(RoundedCornerShape(16.dp))
-            .background(AppColors.bg.surface)
-            .border(
-                width = 0.5.dp,
-                color = AppColors.border.secondary,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(14.dp)
+            .simpleShadow(RoundedCornerShape(20.dp))
+            .background(AppColors.bg.surface, RoundedCornerShape(20.dp))
+            .padding(12.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Top,
@@ -60,91 +61,53 @@ fun PermissionWarningCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(40.dp)
+                    .clip(CircleShape)
                     .background(AppColors.bg.accentWarningContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.warning_1),
+                    painter = painterResource(Res.drawable.warning_filled),
                     contentDescription = null,
-                    tint = AppColors.icon.accentPrimary,
-                    modifier = Modifier.size(18.dp)
+                    tint = AppColors.icon.accentWarning,
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = title,
-                    style = AppTypography.emphasizedMdMedium,
+                    style = AppTypography.titleSmSemiBold,
                     color = AppColors.text.primary
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = body,
-                    style = AppTypography.bodyMdRegular,
+                    style = AppTypography.emphasizedXsMedium,
                     color = AppColors.text.secondary
                 )
             }
         }
 
         if (!videoUrl.isNullOrBlank()) {
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider(
-                thickness = 0.5.dp,
-                color = AppColors.border.secondary
-            )
-            Spacer(Modifier.height(4.dp))
-
-            Row(
+            Spacer(Modifier.height(16.dp))
+            CustomButtonNew(
+                text = stringResource(Res.string.qanday_faollashtiriladi),
+                onClick = {
+                    onVideoClick(videoUrl)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { onVideoClick(videoUrl) }
-                    .padding(horizontal = 4.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Box(
+                    .height(36.dp),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.play),
+                        contentDescription = "play",
                         modifier = Modifier
-                            .size(28.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(AppColors.bg.accentDanger.copy(alpha = 0.12f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = AppColors.icon.accentDanger,
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "Video qoʻllanmani koʻrish",
-                            style = AppTypography.emphasizedSmMedium,
-                            color = AppColors.text.primary
-                        )
-                        Text(
-                            text = "YouTube'da ochiladi",
-                            style = AppTypography.bodyMdRegular,
-                            color = AppColors.text.tertiary
-                        )
-                    }
+                            .size(16.dp)
+                    )
                 }
-
-                Icon(
-                    painter = painterResource(Res.drawable.arrow_right),
-                    contentDescription = null,
-                    tint = AppColors.icon.accentPrimary,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
+            )
         }
     }
 }

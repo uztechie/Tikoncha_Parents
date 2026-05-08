@@ -624,7 +624,7 @@ fun PolicySetupUi(
                         modifier = Modifier.weight(1f),
                     )
                     Text(
-                        text = "${sharedState.selectedPkgs.size}",
+                        text = "${sharedState.selectedAppCount}",
                         style = AppTypography.titleSmMedium,
                         color = AppColors.text.primary,
                     )

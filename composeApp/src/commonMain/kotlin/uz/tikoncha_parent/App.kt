@@ -1,10 +1,7 @@
 package uz.tikoncha_parent
 
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
@@ -23,7 +20,7 @@ import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
-import uz.tikoncha_parent.presentation.map2.MapKitInitializer
+import uz.tikoncha_parent.presentation.map.MapKitInitializer
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
@@ -34,7 +31,6 @@ import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.presentation.push.navigateByDeepLink
 import uz.tikoncha_parent.presentation.task.TaskScreen
-import uz.tikoncha_parent.ui.theme.ThemeMode
 
 
 @Composable

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,16 +43,12 @@ import tikoncha_parents.composeapp.generated.resources.two_users
 import tikoncha_parents.composeapp.generated.resources.yosh
 import uz.tikoncha_parent.domain.model.GenderType
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
-import uz.tikoncha_parent.ui.DialogButtonHeight
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallButtonHeight
-import uz.tikoncha_parent.ui.SmallTextSize
-import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 
 @Composable
 fun PersonalInfoItem(
@@ -135,8 +130,7 @@ fun PersonalInfoItem(
 
         CustomOutlinedButton(
             text = stringResource(Res.string.tahrirlash),
-            backgroundColor = Color.Transparent,
-            fontSize = SmallTextSize,
+            containerColor = Color.Transparent,
             onClick = { onEdit() },
             leadingIcon = {
                 Image(

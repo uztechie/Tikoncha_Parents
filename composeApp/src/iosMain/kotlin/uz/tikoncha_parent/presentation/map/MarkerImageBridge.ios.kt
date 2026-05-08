@@ -1,6 +1,6 @@
 @file:OptIn(BetaInteropApi::class)
 
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap

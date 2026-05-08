@@ -25,7 +25,7 @@ import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
-import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.map.LatLng
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.cos

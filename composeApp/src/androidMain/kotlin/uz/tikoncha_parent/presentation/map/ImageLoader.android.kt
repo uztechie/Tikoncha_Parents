@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -7,9 +7,6 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.getDrawableResourceBytes
-import org.jetbrains.compose.resources.getSystemResourceEnvironment
 import uz.tikoncha_parent.AppHolder
 
 actual suspend fun loadImageBitmap(url: String): ImageBitmap? {

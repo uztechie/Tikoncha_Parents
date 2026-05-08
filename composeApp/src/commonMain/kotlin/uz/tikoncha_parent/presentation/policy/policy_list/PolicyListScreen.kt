@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.policy.policy_list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,14 +37,18 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.cheklovlar
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandingiz
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.jadval_limit_tugadi_plus
 import tikoncha_parents.composeapp.generated.resources.jadval_qoshish
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
-import tikoncha_parents.composeapp.generated.resources.sizning_cheklovlaringiz
+import tikoncha_parents.composeapp.generated.resources.maktab
+import tikoncha_parents.composeapp.generated.resources.siz
 import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
@@ -52,6 +58,10 @@ import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.NoInternetDialog
 import uz.tikoncha_parent.presentation.base.PermissionWarningCard
+import uz.tikoncha_parent.presentation.base.PillSegmentedButton
+import uz.tikoncha_parent.presentation.base.PillSegmentedButtonDefaults
+import uz.tikoncha_parent.presentation.base.PillSegmentedItem
+import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
@@ -196,7 +206,7 @@ fun PolicyListUi(
         ) {
 
             CustomHeader(
-                title = stringResource(Res.string.sizning_cheklovlaringiz),
+                title = stringResource(Res.string.cheklovlar),
                 showBackButton = true,
                 onBackClick = {
                     navigator?.pop()
@@ -204,23 +214,49 @@ fun PolicyListUi(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            ChildSelectionButton(
-                text = state.selectedChild?.name ?: "",
-                imageUrl = state.selectedChild?.avatarUrl ?: "",
-                label = stringResource(Res.string.farzand_qo_shish),
-                trailingIcon = state.childrenList.isNotEmpty(),
-                onClick = {
-                    if (state.childrenList.isEmpty()) {
-                        navigator?.push(AddChildScreen())
-                    } else {
-                        showDialog = true
-                    }
+            val siz = stringResource(Res.string.siz)
+            val farzandingiz = stringResource(Res.string.farzandingiz)
+            val maktab = stringResource(Res.string.maktab)
+            val options by remember {
+                mutableStateOf(
+                    listOf(
+                        PillSegmentedItem(
+                            label = siz
+                        ),
+                        PillSegmentedItem(
+                            label = farzandingiz
+                        ),
+                        PillSegmentedItem(
+                            label = maktab
+                        )
+
+                    )
+                )
+            }
+            PillSegmentedButton(
+                items = options,
+                selectedIndex = state.selectedTypeIndex,
+                onSelected = {
+                    event(PolicyEvent.OnTypeSelected(it))
                 },
+                height = 36.dp,
+                colors = PillSegmentedButtonDefaults.colors(
+                    trackColor = Color.Transparent,
+                ),
+                trackBorder = BorderStroke(
+                    1.dp,
+                    color = AppColors.border.secondarySubtle
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(42.dp)
-                    .padding(horizontal = 5.dp)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 10.dp
+                    )
             )
+
+
 
             LazyColumn(
                 modifier = Modifier
@@ -229,23 +265,43 @@ fun PolicyListUi(
                 contentPadding = PaddingValues(10.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
+
+                item {
+                    Space(16.dp)
+                    ChildSelectionButton(
+                        text = state.selectedChild?.name ?: "",
+                        imageUrl = state.selectedChild?.avatarUrl ?: "",
+                        label = stringResource(Res.string.farzand_qo_shish),
+                        trailingIcon = state.childrenList.isNotEmpty(),
+                        onClick = {
+                            if (state.childrenList.isEmpty()) {
+                                navigator?.push(AddChildScreen())
+                            } else {
+                                showDialog = true
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(42.dp)
+                    )
+                }
+
                 item {
 
                     if (state.permissionIssueList.isNotEmpty()) {
-                        state.permissionIssueList.forEach {
-                            PermissionWarningCard(
-                                title = it.title,
-                                body = it.body,
-                                videoUrl = it.video_url,
-                                onVideoClick = { url ->
-                                    openUrl(url)
-                                }
-                            )
-                            Space(12.dp)
-                        }
+                        val issue = state.permissionIssueList.first()
+                        PermissionWarningCard(
+                            title = issue.title,
+                            body = issue.body,
+                            videoUrl = issue.video_url,
+                            onVideoClick = { url ->
+                                openUrl(url)
+                            }
+                        )
+                        Space(15.dp)
                     }
 
-                    if (state.policies.isEmpty() && !loading) {
+                    if (state.filteredPolicies.isEmpty() && !loading && state.selectedTypeIndex == 0) {
                         CreatePolicyCard(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -269,7 +325,7 @@ fun PolicyListUi(
                 }
 
                 items(
-                    items = state.policies,
+                    items = state.filteredPolicies,
                     key = { it.ruleId }
                 ) {
                     PolicyListItem(
@@ -370,7 +426,17 @@ private fun Pre() {
     ) {
         PolicyListUi(
             navigator = null,
-            state = PolicyState(),
+            state = PolicyState(
+                permissionIssueList = listOf(
+                    PermissionStatusIssus(
+                        state = "",
+                        missing_permissions = emptyList(),
+                        title = "Issue",
+                        body = "Big issue",
+                        video_url = "sdsds"
+                    )
+                )
+            ),
             sharedState = PolicySharedState(),
             event = {},
         )

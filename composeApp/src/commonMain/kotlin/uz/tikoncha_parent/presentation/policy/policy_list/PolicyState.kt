@@ -16,9 +16,22 @@ data class PolicyState(
     val permissionIssueList: List<PermissionStatusIssus> = emptyList(),
     val childrenList: List<UserInfo> = emptyList(),
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
+
+    val selectedTypeIndex: Int = 0,
 ){
     val canCreatePolicy: Boolean
         get() = subscriptionLimit.policyCount.let {
             policies.count { it.policyType == PolicyType.PARENT_CHILD } < it
         } ?: true
+
+    val filteredPolicies: List<PolicyItemUi> get() =
+        policies.filter {
+            it.policyType == when(selectedTypeIndex){
+                0 ->  PolicyType.PARENT_CHILD
+                1 -> PolicyType.STUDENT
+                2 -> PolicyType.SCHOOL
+                else ->PolicyType.PARENT_CHILD
+
+            }
+        }
 }

@@ -53,7 +53,10 @@ class PolicySetupViewModel(
                     _effect.trySend(PolicySetupEffect.NoRuleSelectedToast)
                     return
                 }
-                if (s.selectedCategories.isEmpty() && s.selectedPkgs.isEmpty() && s.selectedSites.isEmpty()){
+                if (s.selectedCategories.isEmpty() &&
+                    s.selectedPkgs.isEmpty() &&
+                    s.selectedSites.isEmpty() &&
+                    s.selectedFeatures.isEmpty()) {                              // YANGI
                     _effect.trySend(PolicySetupEffect.NoAppWebSelectedToast)
                     return
                 }
@@ -86,6 +89,7 @@ class PolicySetupViewModel(
                 packages = shared.selectedPkgs.toList(),
                 categories = shared.selectedCategories.toList(),
                 sites = shared.selectedSites.toList(),
+                features = shared.selectedFeatures.toList(),
                 time_rule = shared.timeList.toTimeRuleDtoList(),
                 limit_rule = shared.limitList.toLimitRuleDtoList(),
                 location_rule = shared.locationRule?.toLocationRuleDto(),
@@ -112,6 +116,7 @@ class PolicySetupViewModel(
                 packages = shared.selectedPkgs.toList(),
                 categories = shared.selectedCategories.toList(),
                 sites = shared.selectedSites.toList(),
+                features = shared.selectedFeatures.toList(),
                 time_rule = shared.timeList.toTimeRuleDtoList(),
                 limit_rule = shared.limitList.toLimitRuleDtoList(),
                 location_rule = shared.locationRule?.toLocationRuleDto(),

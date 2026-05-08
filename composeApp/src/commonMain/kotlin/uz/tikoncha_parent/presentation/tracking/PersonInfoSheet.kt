@@ -3,12 +3,15 @@
 package uz.tikoncha_parent.presentation.tracking
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,13 +19,17 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -32,7 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -44,8 +53,13 @@ import tikoncha_parents.composeapp.generated.resources.tracking_checking_setting
 import tikoncha_parents.composeapp.generated.resources.tracking_last_update
 import tikoncha_parents.composeapp.generated.resources.tracking_location_unavailable
 import tikoncha_parents.composeapp.generated.resources.tracking_watch_video
+import tikoncha_parents.composeapp.generated.resources.ulashish
+import tikoncha_parents.composeapp.generated.resources.xaritadan_ochish
 import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
-import uz.tikoncha_parent.presentation.map2.LatLng
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.singleClick
+import uz.tikoncha_parent.presentation.map.LatLng
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -60,6 +74,8 @@ fun PersonInfoSheet(
     isCheckingStatus: Boolean = false,
     onDismiss: () -> Unit,
     onWatchVideo: (String) -> Unit = {},
+    onOpenInMaps: (Person) -> Unit = {},
+    onShare: (Person) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (!show) return
@@ -198,6 +214,36 @@ fun PersonInfoSheet(
                         }
                     }
 
+                    if (hasLocation) {
+                        Space(16.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Max),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+
+                            ActionButton(
+                                text = stringResource(Res.string.xaritadan_ochish),
+                                icon = Icons.Default.Map,
+                                onClick = {onOpenInMaps(person)},
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            )
+                            ActionButton(
+                                text = stringResource(Res.string.ulashish),
+                                icon = Icons.Default.Share,
+                                onClick = {onShare(person)},
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            )
+                        }
+                    }
+
+
+
                     Space(10.dp)
                 }
             }
@@ -260,7 +306,41 @@ private fun IssueWarningBlock(
                     )
                 }
             }
+
         }
+    }
+}
+
+@Composable
+private fun ActionButton(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+            .border(1.dp, AppColors.border.secondarySubtle, RoundedCornerShape(20.dp))
+            .singleClick{
+                onClick()
+            }
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Icon(
+            imageVector = icon,
+            contentDescription = "",
+            modifier = Modifier
+                .size(32.dp),
+            tint = AppColors.icon.accentPrimary
+        )
+        Text(
+            text = text,
+            style = AppTypography.titleSmMedium,
+            color = AppColors.text.primary,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

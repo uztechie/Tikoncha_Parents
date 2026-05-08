@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.map2
+package uz.tikoncha_parent.presentation.map
 
 import androidx.compose.ui.graphics.ImageBitmap
 import coil3.ImageLoader
@@ -7,9 +7,6 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.seiko.imageloader.asImageBitmap
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.getDrawableResourceBytes
-import org.jetbrains.compose.resources.getSystemResourceEnvironment
 
 actual suspend fun loadImageBitmap(url: String): ImageBitmap? {
     val ctx = PlatformContext.INSTANCE

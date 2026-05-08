@@ -44,17 +44,32 @@ fun AppCategoryHeaderItem(
     sharedState: PolicySharedState,
     expanded: Boolean,
     enabled: Boolean,
+    searchQuery: String = "",                                    // YANGI
     onToggleExpand: () -> Unit,
     onToggleCategory: () -> Unit,
     onToggleApp: (AppSelectionUi) -> Unit,
+    onToggleFeature: (AppFeatureUi) -> Unit = {},                // YANGI
 ) {
     val packageNames = remember(group.apps) { group.apps.map { it.packageName } }
-    val selectionState = sharedState.categoryState(group.id, packageNames)
+    val featureKeys = remember(group.apps) {                     // YANGI
+        group.apps.flatMap { app ->
+            AppFeatures.featuresFor(app.packageName).map { it.key }
+        }
+    }
+
+    val selectionState = sharedState.categoryState(group.id, packageNames, featureKeys)
+
     val selectedCount = when (selectionState) {
         CategorySelectionState.ALL -> group.apps.size
         CategorySelectionState.NONE -> 0
-        CategorySelectionState.PARTIAL -> packageNames.count { pkg ->
-            sharedState.selectedPkgs.any { it.equals(pkg, ignoreCase = true) }
+        CategorySelectionState.PARTIAL -> group.apps.count { app ->
+            val appSelected = sharedState.selectedPkgs.any {
+                it.equals(app.packageName, ignoreCase = true)
+            }
+            val anyFeatureSelected = AppFeatures.featuresFor(app.packageName).any { feat ->
+                sharedState.selectedFeatures.any { it.equals(feat.key, ignoreCase = true) }
+            }
+            appSelected || anyFeatureSelected
         }
     }
 
@@ -69,7 +84,7 @@ fun AppCategoryHeaderItem(
             .fillMaxWidth()
             .animateContentSize(),
     ) {
-        // ── Header row ───────────────────
+        // ── Header row (o'zgarmagan) ───────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,14 +113,13 @@ fun AppCategoryHeaderItem(
                     .size(32.dp)
                     .background(AppColors.bg.surface, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     text = group.emoji,
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
-                    lineHeight = 16.sp
+                    lineHeight = 16.sp,
                 )
             }
 
@@ -141,7 +155,7 @@ fun AppCategoryHeaderItem(
             )
         }
 
-        if (expanded){
+        if (expanded) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,17 +163,19 @@ fun AppCategoryHeaderItem(
                     .padding(start = 48.dp, end = 16.dp)
             ) {
                 group.apps.forEach { app ->
-                    AppRowItem(
+                    val visibleFeatures = AppFeatures.visibleFeaturesFor(app, searchQuery)
+                    AppRowWithFeatures(                          // YANGI: AppRowItem o'rniga
                         app = app,
-                        isSelected = sharedState.isAppSelected(app.packageName, app.category),
+                        features = visibleFeatures,
+                        isAppSelected = sharedState.isAppSelected(app.packageName, app.category),
+                        selectedFeatureKeys = sharedState.selectedFeatures,
                         enabled = enabled,
-                        onToggle = { onToggleApp(app) },
+                        onAppToggle = { onToggleApp(app) },
+                        onFeatureToggle = onToggleFeature,
                     )
                 }
             }
         }
-
-
     }
 }
 

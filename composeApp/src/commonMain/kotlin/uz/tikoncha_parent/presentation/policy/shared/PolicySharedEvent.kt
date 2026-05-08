@@ -46,6 +46,9 @@ sealed interface PolicySharedEvent {
     data class SetSelectedSites(val sites: Set<String>) :
         PolicySharedEvent
 
+    data class ToggleFeature(val key: String) : PolicySharedEvent
+    data class SetSelectedFeatures(val features: Set<String>) : PolicySharedEvent
+
     // ── Tab ──────────────────────────────────
     data class SetAppWebTabIndex(val index: Int) :
         PolicySharedEvent
@@ -82,6 +85,8 @@ sealed interface PolicySharedEvent {
     // ── Limit rule granular ──────────────────
     data class UpsertLimitRule(val rule: LimitRuleUi) : PolicySharedEvent
     data class RemoveLimitRule(val id: Int) : PolicySharedEvent
+
+    data object DismissFeatureLimitDialog : PolicySharedEvent
 
 
 }

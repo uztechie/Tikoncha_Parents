@@ -219,7 +219,6 @@ fun PromoCodeDialog(
 
                 SpaceMedium()
                 CustomOutlinedButton(
-                    fontSize = SmallTextSize,
                     enabled = !loading,
                     text = stringResource(Res.string.bekor_qilish),
                     onClick = {

@@ -15,4 +15,5 @@ data class PolicyDraftSnapshot(
     val packages: List<String>,
     val categories: List<String>,
     val sites: List<String>,
+    val features: List<String>,
 )
