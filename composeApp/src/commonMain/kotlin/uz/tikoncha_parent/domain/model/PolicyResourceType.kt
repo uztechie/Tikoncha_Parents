@@ -4,5 +4,6 @@ enum class PolicyResourceType {
     APP,
     WEBSITE,
     CATEGORY,
+    FEATURE,
     ALL
 }

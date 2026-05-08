@@ -578,4 +578,12 @@
     <string name="ko_rish">Просмотр</string>
     <string name="vazifa_ochirilsinmi">Удалить задачу?</string>
     <string name="vazifa_ochirish_tasdiq">Вы действительно хотите удалить эту задачу?</string>
+
+    <string name="radius">Радиус</string>
+    <string name="teskari_radius">Обратный радиус</string>
+    <string name="faol_vazifa_yo_q">Нет активных задач</string>
+    <string name="farzandingiz_uchun_vazifa_yo_q">У вашего ребёнка нет задач</string>
+    <string name="qanday_faollashtiriladi">Как активировать?</string>
+    <string name="xaritadan_ochish">Открыть на карте</string>
+    <string name="ulashish">Поделиться</string>
 </resources>
