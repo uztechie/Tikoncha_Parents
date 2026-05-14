@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.profile.subscription.payment
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
@@ -10,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import qrgenerator.qrkitpainter.phone
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tolov_amalga_oshmadi
 import uz.tikoncha_parent.data.local.AppSettings
@@ -50,10 +49,10 @@ class PaymentViewModel(
     fun onEvent(event: PaymentEvent){
         when(event){
             PaymentEvent.Pay -> {
-                if (AppSettings.selectedChild?.userId.isNullOrBlank()) {
+                if (AppSettings.selectedChild == null) {
                     _state.update {
                         it.copy(
-                            showChildSelectionDialog = true
+                            showSubscribeChildSheet = true
                         )
                     }
                     return
@@ -134,11 +133,27 @@ class PaymentViewModel(
                 }
             }
 
-            PaymentEvent.DismissChildSelectionDialog -> {
+            PaymentEvent.DismissChildSelectionSheet -> {
                 _state.update {
                     it.copy(
-                        showChildSelectionDialog = false
+                        showSubscribeChildSheet = false
                     )
+                }
+            }
+
+            is PaymentEvent.PayWithChildPhone -> {
+                when (state.value.selectedPaymentType) {
+                    PaymentType.Click -> {
+                        requestPayment(phone = "+998${event.phone}")
+                    }
+
+                    PaymentType.AppStore -> {
+                        requestApplyPay()
+                    }
+
+                    null -> {
+
+                    }
                 }
             }
         }
@@ -195,7 +210,7 @@ class PaymentViewModel(
             }
         }
     }
-    private fun requestPayment(){
+    private fun requestPayment(phone: String? = null){
         screenModelScope.launch {
             _state.update {
                 it.copy(
@@ -205,7 +220,8 @@ class PaymentViewModel(
             val request = SubscriptionPaymentRequest(
                 plan_id = _state.value.planId,
                 plan_duration = _state.value.subscriptionDuration.name,
-                child_user_id = AppSettings.selectedChild?.userId?:"",
+                child_user_id = AppSettings.selectedChild?.userId,
+                child_phone = phone,
                 promocode_code = _state.value.promoCode
             )
             val result = paymentUseCase.invoke(request)
@@ -227,7 +243,8 @@ class PaymentViewModel(
                             paymentResponseState = ResponseState.Success(),
                             merchantTransId = result.data.merchant_trans_id,
                             serviceId = result.data.service_id,
-                            amount = result.data.amount
+                            amount = result.data.amount,
+                            showSubscribeChildSheet = false
                         )
                     }
 

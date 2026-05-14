@@ -39,7 +39,8 @@ class PolicyViewModel(
     init {
         _state.update {
             it.copy(
-                selectedChild = AppSettings.selectedChild
+                selectedChild = AppSettings.selectedChild,
+                showPolicyTutorialCard = AppSettings.showPolicyTutorial
             )
         }
 

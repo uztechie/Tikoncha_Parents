@@ -77,20 +77,20 @@ fun LoginUi(
     val isKeyboardOpen = rememberIsKeyboardOpen()
 
     val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
+            .background(AppColors.bg.page)
             .imePadding()
-            .background(AppColors.bg.secondary)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .then(systemBars.modifier)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {

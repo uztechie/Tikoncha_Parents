@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +50,7 @@ import tikoncha_parents.composeapp.generated.resources.jadval_limit_tugadi_plus
 import tikoncha_parents.composeapp.generated.resources.jadval_qoshish
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
 import tikoncha_parents.composeapp.generated.resources.maktab
+import tikoncha_parents.composeapp.generated.resources.media_play
 import tikoncha_parents.composeapp.generated.resources.siz
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
@@ -73,7 +78,12 @@ import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
+import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -211,7 +221,30 @@ fun PolicyListUi(
                 onBackClick = {
                     navigator?.pop()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (!state.showPolicyTutorialCard){
+                        IconButton(
+                            onClick = {
+                                navigator?.push(VideoTutorialYoutubeScreen(TutorialType.POLICY))
+                            },
+                            modifier = Modifier
+                                .size(44.dp),
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = AppColors.bg.surfaceTertiary,
+                                contentColor = AppColors.icon.accentPrimary
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.media_play),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(NormalIconSize)
+                            )
+                        }
+                        SpaceUltraSmall()
+                    }
+                }
             )
 
             val siz = stringResource(Res.string.siz)
@@ -267,6 +300,14 @@ fun PolicyListUi(
             ) {
 
                 item {
+
+                    if (state.showPolicyTutorialCard){
+                        Space(16.dp)
+                        PolicyTutorialCard {
+                            navigator?.push(VideoTutorialYoutubeScreen(TutorialType.POLICY))
+                        }
+                    }
+
                     Space(16.dp)
                     ChildSelectionButton(
                         text = state.selectedChild?.name ?: "",

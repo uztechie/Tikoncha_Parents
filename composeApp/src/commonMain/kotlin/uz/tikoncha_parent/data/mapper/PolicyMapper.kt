@@ -115,8 +115,6 @@ fun PolicyDto.toPolicyListUi(): PolicyItemUi {
     return PolicyItemUi(
         ruleId = rule_id,
         policyName = rule_name ?: policy_name,
-        appCount = packages?.size ?: 0,
-        webCount = sites?.size ?: 0,
         hasTimeRule = !time_rule.isNullOrEmpty(),
         hasLimitRule = !limit_rule.isNullOrEmpty(),
         hasLocationRule = location_rule != null,

@@ -73,7 +73,13 @@ kotlin {
             implementation("com.google.android.play:app-update-ktx:2.1.0")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
+            //map
             implementation("com.yandex.android:maps.mobile:4.24.0-lite")
+
+            //player
+            implementation("androidx.media3:media3-exoplayer:1.10.0")
+            implementation("androidx.media3:media3-ui:1.10.0")
+            implementation("androidx.media3:media3-exoplayer-hls:1.10.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -177,12 +183,16 @@ android {
     namespace = "uz.tikoncha_parent"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "uz.tikoncha.parent"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 15
-        versionName = "1.1.5"
+        versionCode = 16
+        versionName = "1.1.6"
     }
     setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
 //    val props = Properties().apply {
@@ -217,6 +227,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
 }
 
 dependencies {

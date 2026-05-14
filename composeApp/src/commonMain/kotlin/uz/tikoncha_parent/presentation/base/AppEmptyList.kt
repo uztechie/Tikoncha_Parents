@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DialogButtonHeight
 import uz.tikoncha_parent.ui.LargeTextSize

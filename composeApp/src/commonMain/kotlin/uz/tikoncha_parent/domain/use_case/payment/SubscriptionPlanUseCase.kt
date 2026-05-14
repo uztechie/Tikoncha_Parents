@@ -8,7 +8,7 @@ import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toSubscriptionPlanUi
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.repository.PaymentRepository
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionUi
 
 class SubscriptionPlanUseCase(
     private val paymentRepository: PaymentRepository,

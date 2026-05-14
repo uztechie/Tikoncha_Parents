@@ -39,8 +39,6 @@ import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
-import uz.tikoncha_parent.presentation.profile.subscription.PlanUi
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.LargeTextSize

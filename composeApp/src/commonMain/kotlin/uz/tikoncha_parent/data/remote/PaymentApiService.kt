@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.data.remote
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
 import uz.tikoncha_parent.data.remote.model.PaymentStatusResponse
@@ -10,6 +11,7 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
+import uz.tikoncha_parent.data.remote.model.transaction.TransactionHistoryResponse
 import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
@@ -70,6 +72,20 @@ class PaymentApiService(private val client: HttpClient) {
             url = "/payments/create-intent",
             block = {
                 setBody(purchaseCoinRequest)
+            }
+        )
+
+
+    suspend fun paymentTransactions(
+        limit: Int,
+        offset: Int,
+    ): TransactionHistoryResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "/payments/transactions",
+            block = {
+                parameter("limit", limit)
+                parameter("offset", offset)
             }
         )
 

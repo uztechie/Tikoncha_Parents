@@ -45,10 +45,10 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.about_us.AboutUsScreen
-import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
+import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.task.TaskEvent
@@ -294,7 +294,7 @@ fun ProfileUi(
 
                 ProfileSectionItem(
                     title = stringResource(Res.string.farzandlaringiz),
-                    icon = painterResource(Res.drawable.person),
+                    icon = painterResource(Res.drawable.chat_group),
                     onItemClick = {
                         navigator?.push(ChildrenSelectScreen())
                     }
@@ -329,6 +329,13 @@ fun ProfileUi(
                     icon = painterResource(Res.drawable.coins_profile),
                     onItemClick = {
                         navigator?.push(CoinsScreen())
+                    }
+                )
+                ProfileSectionItem(
+                    title = stringResource(Res.string.tolovlar_tarixi),
+                    icon = painterResource(Res.drawable.money_light),
+                    onItemClick = {
+                        navigator?.push(PaymentHistoryScreen())
                     }
                 )
 

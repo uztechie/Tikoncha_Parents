@@ -103,7 +103,6 @@ fun CustomDialogTextField(
                     label = label,
                     readOnly = isReadOnly,
                     singleLine = isSingleLine,
-                    shadow = true,
                     hasBorder = false
                 )
 

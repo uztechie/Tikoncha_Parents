@@ -8,6 +8,8 @@ data class ChildState(
     val fullNumber: String = "",
     var accept: Boolean = false,
     var childJoined: Boolean = false,
+    var showConnectChildTutorialCard: Boolean = false,
+
 
 
     val responseState: ResponseState<Unit> = ResponseState.Idle

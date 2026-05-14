@@ -2,20 +2,13 @@ package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ConfirmationNumber
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,8 +39,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.PaymentStatus
@@ -62,16 +52,12 @@ import uz.tikoncha_parent.presentation.base.DashedDivider
 import uz.tikoncha_parent.presentation.base.LegalLinksRow
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.singleClick
-import uz.tikoncha_parent.presentation.base.tripleShadow
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
-import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class PaymentTypeScreen(
@@ -165,20 +151,17 @@ fun PaymentTypeScreenUi(
         }
     }
 
-    CustomDialog(
-        showCloseButton = true,
-        show = state.showChildSelectionDialog,
-        title = stringResource(Res.string.diqqat),
-        buttonText = stringResource(Res.string.farzand_qo_shish),
-        painter = painterResource(Res.drawable.dialog_info),
-        message = stringResource(Res.string.obuna_uchun_farzand_qoshilmagan),
-        onDismiss = {
-            event(PaymentEvent.DismissChildSelectionDialog)
+    SubscribeChildBottomSheet(
+        show = state.showSubscribeChildSheet,
+        onConfirm = { phoneNumber ->
+            event(PaymentEvent.PayWithChildPhone(phoneNumber))
         },
-        onButtonClick = {
-            event(PaymentEvent.DismissChildSelectionDialog)
-            navigator?.push(AddChildScreen())
-        }
+        onDismiss = {
+            event(PaymentEvent.DismissChildSelectionSheet)
+        },
+
+
+
     )
 
     PromoCodeDialog(
@@ -612,6 +595,7 @@ fun PaymentTypeScreenUi(
                     tint = AppColors.icon.secondary,
                 )
             }
+            Spacer(Modifier.height(16.dp))
         }
 
         Column(

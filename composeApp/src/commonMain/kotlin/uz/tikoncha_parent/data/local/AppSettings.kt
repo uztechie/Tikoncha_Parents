@@ -42,6 +42,9 @@ object AppSettings {
     private const val KEY_SELECT_SUBSCRIPTION_LIMIT = "selectSubscriptionLimit"
 
     private const val KEY_USER_SUBSCRIPTION_MAP = "userSubscriptionMap"
+    private const val KEY_TIKONCHA_TUTORIAL = "KEY_WHAT_IS_TIKONCHA"
+    private const val KEY_POLICY_TUTORIAL = "KEY_WHAT_IS_POLICY"
+    private const val KEY_BIND_CHILD_TUTORIAL = "KEY_BIND_CHILD"
 
     // ------------ primitives ------------
 
@@ -84,6 +87,18 @@ object AppSettings {
     var isFirstLaunch: Boolean
         get() = settings.get(KEY_IS_FIRST_LAUNCH) ?: true
         set(value) = settings.set(KEY_IS_FIRST_LAUNCH, value)
+
+    var showTikonchaTutorial: Boolean
+        get() = settings.get(KEY_TIKONCHA_TUTORIAL) ?: true
+        set(value) = settings.set(KEY_TIKONCHA_TUTORIAL, value)
+
+    var showPolicyTutorial: Boolean
+        get() = settings.get(KEY_POLICY_TUTORIAL) ?: true
+        set(value) = settings.set(KEY_POLICY_TUTORIAL, value)
+
+    var showBindChildTutorial: Boolean
+        get() = settings.get(KEY_BIND_CHILD_TUTORIAL) ?: true
+        set(value) = settings.set(KEY_BIND_CHILD_TUTORIAL, value)
 
 
     // ------------ JSON helpers ------------
@@ -196,6 +211,7 @@ object AppSettings {
         settings.remove(KEY_CHILDREN)
         settings.remove(KEY_SELECTED_CHILD)
         settings.remove(KEY_SELECTED_CHILD_ID)
+
 
         // optional
         settings.remove(KEY_SUBSCRIPTION_LIMIT_LIST)

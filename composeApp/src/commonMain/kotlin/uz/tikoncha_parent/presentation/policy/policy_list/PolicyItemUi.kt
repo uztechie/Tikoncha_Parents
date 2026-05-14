@@ -15,8 +15,6 @@ data class PolicyItemUi(
     val policyName: String,
     val action: PolicyAction,
     val isMine: Boolean,
-    val appCount: Int,
-    val webCount: Int,
     val hasTimeRule: Boolean,
     val hasLimitRule: Boolean,
     val hasLocationRule: Boolean,
@@ -31,4 +29,13 @@ data class PolicyItemUi(
     val locationRule: LocationRule?,
     val policyTemplate: PolicyTemplate? = null,
 
-    ):JavaSerializable
+    ):JavaSerializable{
+
+    val appCount: Int get() = packages.count() + features.count()
+    val webCount: Int get() = sites.count()
+
+    val categoryCount: Int get() = categories.count()
+
+    val featureCount: Int get() = features.count()
+
+}

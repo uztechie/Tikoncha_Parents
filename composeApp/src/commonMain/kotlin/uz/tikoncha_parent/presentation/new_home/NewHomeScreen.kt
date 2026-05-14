@@ -15,10 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -83,6 +87,9 @@ import uz.tikoncha_parent.presentation.statistic.StatisticState
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.tracking.TrackingScreen
+import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -173,7 +180,8 @@ fun NewHomeUi(
         event(HomeEvent.RefreshParentRequest)
     }
 
-    val count = state.parentRequestCount
+    val parentRequestCount = state.parentRequestCount
+    val showTikonchaTutorialCard = state.showTikonchaTutorialCard
     val taskCount = state.activeTaskCount
     val tableCount = state.parentPolicyCount
     val refreshScope = rememberCoroutineScope()
@@ -248,80 +256,78 @@ fun NewHomeUi(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                ChildSelectionButton(
-                    text = state.selectedChild?.name ?: "",
-                    imageUrl = state.selectedChild?.avatarUrl ?: "",
-                    label = stringResource(Res.string.farzand_qo_shish),
-                    trailingIcon = state.childrenList.isNotEmpty(),
+
+                ProfileCard(
                     modifier = Modifier
-                        .height(40.dp)
-                        .widthIn(120.dp, 160.dp),
+                        .widthIn(140.dp, 160.dp),
+                    name = state.userName,
+                    imageUrl = state.userImageUrl,
                     onClick = {
-                        if (state.childrenList.isEmpty()) {
-                            navigator?.push(AddChildScreen())
-                        } else {
-                            showDialog = true
-                        }
-                    },
+                        navigator?.push(ProfileScreen())
+                    }
                 )
+
                 Spacer(Modifier.weight(1f))
 
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(44.dp)
-                        .background(AppColors.bg.surfaceTertiary)
-                        .singleClick {
-                            openUrl("https://t.me/tikoncha_support")
+                if (!showTikonchaTutorialCard){
+                    IconButton(
+                        onClick = {
+                            navigator?.push(VideoTutorialYoutubeScreen(TutorialType.TIKONCHA))
                         },
-                    contentAlignment = Alignment.Center
+                        modifier = Modifier
+                            .size(44.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = AppColors.bg.surfaceTertiary,
+                            contentColor = AppColors.icon.accentPrimary
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.media_play),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(NormalIconSize)
+                        )
+                    }
+                    SpaceUltraSmall()
+                }
+                IconButton(
+                    onClick = {
+                        openUrl("https://t.me/tikoncha_support")
+                    },
+                    modifier = Modifier
+                        .size(44.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = AppColors.bg.surfaceTertiary,
+                        contentColor = AppColors.icon.accentPrimary
+                    )
                 ) {
-                    Image(
+                    Icon(
                         painter = painterResource(Res.drawable.support_icon),
                         contentDescription = "",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
                         modifier = Modifier
                             .size(NormalIconSize)
                     )
                 }
-                SpaceUltraSmall()
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(44.dp)
-                        .background(AppColors.bg.surfaceTertiary)
-                        .singleClick {
-                            navigator?.push(NotificationScreen())
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(Res.drawable.notification),
-                        contentDescription = "",
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
-                        modifier = Modifier
-                            .size(NormalIconSize)
-                    )
-                }
-                SpaceUltraSmall()
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(44.dp)
-                        .background(AppColors.bg.surfaceTertiary)
-                        .singleClick {
-                            navigator?.push(ProfileScreen())
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(Res.drawable.profile),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(NormalIconSize),
-                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor)
-                    )
-                }
+
+//                Box(
+//                    modifier = Modifier
+//                        .clip(CircleShape)
+//                        .size(44.dp)
+//                        .background(AppColors.bg.surfaceTertiary)
+//                        .singleClick {
+//                            navigator?.push(NotificationScreen())
+//                        },
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Image(
+//                        painter = painterResource(Res.drawable.notification),
+//                        contentDescription = "",
+//                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
+//                        modifier = Modifier
+//                            .size(NormalIconSize)
+//                    )
+//                }
+//                SpaceUltraSmall()
             }
 
 
@@ -332,8 +338,45 @@ fun NewHomeUi(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
 
+
                 item {
-                    if (count > 0) {
+                    ChildSelectionButton(
+                        text = state.selectedChild?.name ?: "",
+                        imageUrl = state.selectedChild?.avatarUrl ?: "",
+                        label = stringResource(Res.string.farzand_qo_shish),
+                        trailingIcon = state.childrenList.isNotEmpty(),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .fillMaxWidth(),
+                        onClick = {
+                            if (state.childrenList.isEmpty()) {
+                                navigator?.push(AddChildScreen())
+                            } else {
+                                showDialog = true
+                            }
+                        },
+                    )
+                    Space(16.dp)
+                }
+
+                item {
+
+                    if (showTikonchaTutorialCard){
+                        TikonchaTutorialCard(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onClick = {
+                                navigator?.push(VideoTutorialYoutubeScreen(TutorialType.TIKONCHA))
+                            }
+                        )
+                        Space(12.dp)
+                    }
+                }
+
+
+
+                item {
+                    if (parentRequestCount > 0) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -354,7 +397,7 @@ fun NewHomeUi(
                                 fontSize = LargeTextSize,
                                 modifier = Modifier.weight(1f)
                             )
-                            if (count > 0) {
+                            if (parentRequestCount > 0) {
                                 Box(
                                     modifier = Modifier
                                         .background(OtpErrorColor, CircleShape)
@@ -362,7 +405,7 @@ fun NewHomeUi(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     CustomText(
-                                        text = if (count > 99) "99" else count.toString(),
+                                        text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
                                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
                                         maxLines = 1,
                                         fontSize = SmallTextSize
@@ -645,7 +688,9 @@ private fun Pre() {
     ) {
         NewHomeUi(
             navigator = null,
-            state = HomeState(),
+            state = HomeState(
+                showTikonchaTutorialCard = true
+            ),
             event = {},
             statisticState = StatisticState(
                 todayUsage = HourMinute(1, 22)

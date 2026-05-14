@@ -3,18 +3,26 @@ package uz.tikoncha_parent.presentation.profile.children
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NoAccounts
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,14 +32,20 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.DashedBorderButton
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
@@ -79,23 +93,59 @@ fun ChildrenSelectUi(
             showBackButton = true,
             onBackClick = { navigator?.pop() }
         )
-        Space(32.dp)
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(state.children, key = { it.userId }) { child ->
-                ChildrenItem(
-                    name = child.name,
-                    gadget = child.phoneNumber,
-                    lastSeen = child.last_seen ?: "",
-                    imageUrl = child.avatarUrl ?: "",
-                    onClick = { navigator?.push(ChildDetailScreen(child)) },
-                    onMenuClick = { menuChild = child }
+        if (state.children.isEmpty()){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+
+                Icon(
+                    imageVector = Icons.Default.NoAccounts,
+                    contentDescription = "",
+                    tint = AppColors.icon.accentWarningContainer,
+                    modifier = Modifier
+                        .size(80.dp)
                 )
+                Space(40.dp)
+                val text = "${stringResource(Res.string.farzand_qoshilmagan)} \n ${stringResource(Res.string.farzand_malumotlari_keyin_korinadi)}"
+                Text(
+                    text = text,
+                    color = AppColors.text.secondary,
+                    style = AppTypography.titleMdMedium,
+                    textAlign = TextAlign.Center
+                )
+                Space(40.dp)
+                DashedBorderButton(
+                    text = stringResource(Res.string.farzand_qo_shish),
+                    onClick = {
+                        navigator?.push(AddChildScreen())
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        }
+        else{
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(state.children, key = { it.userId }) { child ->
+                    ChildrenItem(
+                        name = child.name,
+                        gadget = child.phoneNumber,
+                        lastSeen = child.last_seen ?: "",
+                        imageUrl = child.avatarUrl ?: "",
+                        onClick = { navigator?.push(ChildDetailScreen(child)) },
+                        onMenuClick = { menuChild = child }
+                    )
+                }
             }
         }
     }

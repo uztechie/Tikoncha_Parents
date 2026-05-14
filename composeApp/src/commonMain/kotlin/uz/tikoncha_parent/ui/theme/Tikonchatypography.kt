@@ -1,17 +1,27 @@
 package uz.tikoncha_parent.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.Font
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.fredoka_semibold
 
 /**
  * KMP uchun font — platformaga qarab expect/actual bilan berish mumkin.
  * Hozircha default [FontFamily.Default] ishlatiladi,
  * platformalarda GolosText ni actual qilib o'zgartiring.
  */
+
+
+val FredokaSemiBold: FontFamily
+    @Composable
+    get() = FontFamily(Font(Res.font.fredoka_semibold))
+
 expect val TikonchaFontFamily: FontFamily
 
 /* ---------------------------

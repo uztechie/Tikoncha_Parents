@@ -2,7 +2,6 @@ package uz.tikoncha_parent.presentation.profile.subscription.subscription_paymen
 
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class SubscriptionPaymentState(

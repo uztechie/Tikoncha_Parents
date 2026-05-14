@@ -6,7 +6,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class PaymentState(
     val amount: Int = 0,
-    val selectedPaymentType: PaymentType? = null,
+    val selectedPaymentType: PaymentType? = PaymentType.Click,
     val paymentResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val applePaymentResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val merchantTransId: String = "",
@@ -25,5 +25,5 @@ data class PaymentState(
     val discountSaving: Int = 0,
     val discountPercentage: Int = 0,
 
-    val showChildSelectionDialog: Boolean = false
+    val showSubscribeChildSheet: Boolean = false
 )

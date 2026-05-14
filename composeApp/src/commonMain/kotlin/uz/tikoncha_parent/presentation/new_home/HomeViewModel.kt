@@ -60,6 +60,14 @@ class HomeViewModel(
         if (!setOk) return
         sendDeviceInfo()
         getSubscriptionLimit()
+
+        _state.update {
+            it.copy(
+                showTikonchaTutorialCard = AppSettings.showTikonchaTutorial,
+                userName = AppSettings.userInfo?.name?:"",
+                userImageUrl = AppSettings.userInfo?.avatarUrl?: AppSettings.profileImageUrl
+            )
+        }
     }
 
     fun onEvent(event: HomeEvent) {

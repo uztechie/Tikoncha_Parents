@@ -11,6 +11,9 @@ data class HomeState(
     val parentRequestCount: Int = 0,
     val activeTaskCount: Int = 0,
     val parentPolicyCount: Int = 0,
+    val showTikonchaTutorialCard: Boolean = false,
+    val userName: String = "",
+    val userImageUrl: String = "",
 
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val appUsageResponseState: ResponseState<Nothing> = ResponseState.Idle,

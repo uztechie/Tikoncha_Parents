@@ -64,7 +64,7 @@ class ChatSocketService (
         isLenient = true
         encodeDefaults = true
     }
-    private val baseWs = "wss://api.tikoncha.uz/chat/ws"
+    private val baseWs = "wss://${TikonchaClient.BASE_URL}/chat/ws"
 
     fun connect(){
         if (reconnectJob?.isActive == true) return

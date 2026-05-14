@@ -12,7 +12,6 @@ import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 

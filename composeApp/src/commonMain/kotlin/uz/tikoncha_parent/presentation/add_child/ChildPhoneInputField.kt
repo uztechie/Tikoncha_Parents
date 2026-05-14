@@ -85,7 +85,6 @@ fun ChildPhoneInputField(
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
-                shadow = false,
                 value = phoneNumber,
                 onValueChange = { input ->
                     val digits = input.filter { it.isDigit() }

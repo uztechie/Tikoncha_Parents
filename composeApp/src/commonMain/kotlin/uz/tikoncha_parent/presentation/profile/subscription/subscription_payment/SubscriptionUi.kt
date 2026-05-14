@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.profile.subscription
+package uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 
 import uz.tikoncha_parent.domain.model.SubscriptionType
 

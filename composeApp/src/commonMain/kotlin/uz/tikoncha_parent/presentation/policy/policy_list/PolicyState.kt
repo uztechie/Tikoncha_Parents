@@ -18,6 +18,7 @@ data class PolicyState(
     val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
 
     val selectedTypeIndex: Int = 0,
+    val showPolicyTutorialCard: Boolean = false,
 ){
     val canCreatePolicy: Boolean
         get() = subscriptionLimit.policyCount.let {

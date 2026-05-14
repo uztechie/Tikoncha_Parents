@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.Util.normalizePhone
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.AddChildRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.AddChildUseCase
@@ -30,6 +31,14 @@ class ChildViewmodel(
 
     private val _state = MutableStateFlow(ChildState())
     val state = _state.asStateFlow()
+
+    init {
+        _state.update {
+            it.copy(
+                showConnectChildTutorialCard = AppSettings.showBindChildTutorial
+            )
+        }
+    }
 
     fun onEvent(event: ChildEvent) {
         when (event) {

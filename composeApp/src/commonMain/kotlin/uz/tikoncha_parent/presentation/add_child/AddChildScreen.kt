@@ -2,10 +2,12 @@
 
 package uz.tikoncha_parent.presentation.add_child
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,12 +18,16 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +38,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -61,12 +69,17 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.format6DigitCode
 import uz.tikoncha_parent.platform.copyPlainText
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.profile.children.ChildrenScreen
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
+import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -199,6 +212,29 @@ fun AddChildUi(
             showBackButton = true,
             onBackClick = {
                 navigator?.pop()
+            },
+            trailingIcon = {
+                if (!state.showConnectChildTutorialCard){
+                    IconButton(
+                        onClick = {
+                            navigator?.push(VideoTutorialYoutubeScreen(TutorialType.BIND_CHILD))
+                        },
+                        modifier = Modifier
+                            .size(44.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = AppColors.bg.surfaceTertiary,
+                            contentColor = AppColors.icon.accentPrimary
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.media_play),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(NormalIconSize)
+                        )
+                    }
+                    SpaceUltraSmall()
+                }
             }
         )
 
@@ -208,49 +244,38 @@ fun AddChildUi(
                 .padding(horizontal = ContainerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            SpaceLarge()
 
-            CustomText(
-                text = stringResource(Res.string.farzandlaringiz),
-                fontSize = 16.sp,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontWeight = FontWeight.W500
-            )
-            SpaceMedium()
 
-            Card(
+            if (state.showConnectChildTutorialCard){
+                Space(12.dp)
+                ConnectChildTutorialCard {
+                    navigator?.push(VideoTutorialYoutubeScreen(TutorialType.BIND_CHILD))
+                }
+            }
+            Space(16.dp)
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .border(
-                        width = 1.dp,
-                        color = if (state.accept) PrimaryColor else Color.Transparent,
-                        shape = RoundedCornerShape(TextFieldCornerRadius)
-                    ),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.extendedColor.cardColor)
+                    .background(AppColors.modal.primary, RoundedCornerShape(24.dp))
+                    .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(PaddingCornerRadius)
-                ) {
-                    CustomText(
-                        text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
-                        fontSize = SmallTextSize,
-                        fontWeight = FontWeight.W500
-                    )
-                    SpaceMedium()
+                Text(
+                    text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
+                    style = AppTypography.titleSmSemiBold,
+                    color = AppColors.text.primary
+                )
+                Space(16.dp)
 
-                    ChildPhoneInputField(
-                        isAccepted = state.accept,
-                        phoneNumber = state.number,
-                        onPhoneNumberChange = { newNumber ->
-                            if (canEditePhone) {
-                                event(ChildEvent.OnNumberInsert(newNumber))
-                            }
+                ChildPhoneInputField(
+                    isAccepted = state.accept,
+                    phoneNumber = state.number,
+                    onPhoneNumberChange = { newNumber ->
+                        if (canEditePhone) {
+                            event(ChildEvent.OnNumberInsert(newNumber))
                         }
-                    )
-                }
+                    }
+                )
             }
             SpaceLarge()
             SpaceLarge()
@@ -281,26 +306,25 @@ fun AddChildUi(
                     )
                     SpaceSmall()
 
-                    CustomText(
+                    Text(
                         text = formatted,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 22.sp
+                        color = AppColors.text.primary,
+                        style = AppTypography.headlineMdSemiBold
                     )
                 }
                 SpaceSmall()
 
-                CustomText(
+                Text(
                     text = stringResource(Res.string.confirm_code_instruction),
-                    fontSize = NormalTextSize,
-                    color = MaterialTheme.extendedColor.hintColor,
-                    fontWeight = FontWeight.W500,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = AppColors.text.secondary,
+                    style = AppTypography.bodyLgRegular
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
 
             if (canEditePhone) {
-                CustomButton(
+                CustomButtonNew(
                     onClick = {
                         event(ChildEvent.OnAddClicked)
                         keyboardController?.hide()
@@ -327,7 +351,9 @@ private fun Preview() {
     ) {
         AddChildUi(
             navigator = null,
-            state = ChildState(),
+            state = ChildState(
+                confirmCode = "123456"
+            ),
             event = {}
         )
     }

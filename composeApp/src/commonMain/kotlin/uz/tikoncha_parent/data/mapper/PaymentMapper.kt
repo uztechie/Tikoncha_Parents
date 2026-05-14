@@ -4,8 +4,8 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionLimitDto
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansData
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.SubscriptionType
-import uz.tikoncha_parent.presentation.profile.subscription.PlanUi
-import uz.tikoncha_parent.presentation.profile.subscription.SubscriptionUi
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.PlanUi
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionUi
 
 fun SubscriptionPlansData.toSubscriptionPlanUi(): SubscriptionUi {
     return SubscriptionUi(

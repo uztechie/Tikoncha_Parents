@@ -48,7 +48,7 @@ fun PhoneNumberInputField(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+                .background(AppColors.field.secondary, RoundedCornerShape(TextFieldCornerRadius))
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Icon(
@@ -59,12 +59,11 @@ fun PhoneNumberInputField(
             )
             Text(
                 text = "+998",
-                style = AppTypography.titleLgMedium,
+                style = AppTypography.titleSmMedium,
                 color = AppColors.text.tertiary,
             )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextField(
-                shadow = false,
                 value = phoneNumber,
                 onValueChange = { input ->
                     val digits = input.filter { it.isDigit() }

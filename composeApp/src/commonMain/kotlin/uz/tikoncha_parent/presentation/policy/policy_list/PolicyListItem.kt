@@ -18,12 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import qrgenerator.qrkitpainter.text
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.model.PolicyType
@@ -104,7 +106,54 @@ fun PolicyListItem(
             color = AppColors.border.secondarySubtle,
             thickness = 1.dp
         )
-        Space(12.dp)
+        if (policy.appCount > 0){
+            PolicyListRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                icon = painterResource(Res.drawable.apps_play),
+                title = stringResource(Res.string.ilovalar),
+                count = policy.appCount
+            )
+            if (policy.categoryCount > 0 || policy.webCount > 0){
+                HorizontalDivider(
+                    color = AppColors.border.secondarySubtle,
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
+        if (policy.webCount > 0){
+            PolicyListRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                icon = painterResource(Res.drawable.global),
+                title = stringResource(Res.string.vebsaytlar),
+                count = policy.webCount
+            )
+            if (policy.categoryCount > 0){
+                HorizontalDivider(
+                    color = AppColors.border.secondarySubtle,
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
+        if (policy.categoryCount > 0){
+            PolicyListRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                icon = painterResource(Res.drawable.category_point),
+                title = stringResource(Res.string.kategoriyalar),
+                count = policy.categoryCount
+            )
+        }
+
+
 
 
 
@@ -112,20 +161,40 @@ fun PolicyListItem(
 }
 
 @Composable
-private fun RuleIconCircle(iconRes: DrawableResource) {
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clip(CircleShape)
-            .background(AppColors.action.tertiary),
-        contentAlignment = Alignment.Center,
-    ) {
+private fun PolicyListRow(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    title: String,
+    count: Int
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
         Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            tint = AppColors.icon.accentPrimary,
-            modifier = Modifier.size(16.dp),
+            painter = icon,
+            contentDescription = "",
+            tint = AppColors.icon.secondary,
+            modifier = Modifier
+                .size(20.dp)
         )
+        Space(8.dp)
+        Text(
+            text = title,
+            modifier = Modifier
+                .weight(1f),
+            color = AppColors.text.primary,
+            style = AppTypography.titleSmMedium
+        )
+        Space(8.dp)
+        Text(
+            text = "$count ${stringResource(Res.string.ta)}",
+            modifier = Modifier,
+            color = AppColors.text.primary,
+            style = AppTypography.titleSmSemiBold
+        )
+
     }
 }
 
@@ -140,8 +209,6 @@ private fun PolicyListItemPreview() {
                 ruleId = "",
                 policyType = PolicyType.STUDENT,
                 isMine = true,
-                appCount = 1,
-                webCount = 3,
                 hasTimeRule = true,
                 hasLimitRule = true,
                 hasLocationRule = true,
