@@ -1,7 +1,9 @@
 package uz.tikoncha_parent.platform
 
 import platform.Foundation.NSURL
+import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
+import platform.UIKit.UIWindow
 
 private const val TG_BOT = "tikoncha_bot"
 actual fun openTelegram(phoneNumber: String): Boolean {
@@ -39,4 +41,20 @@ actual fun openUrl(url: String): Boolean {
     val nsUrl = NSURL.URLWithString(url) ?: return false
     UIApplication.sharedApplication.openURL(nsUrl, emptyMap<Any?, Any?>(), null)
     return true
+}
+
+actual fun shareText(text: String) {
+    val controller = UIActivityViewController(
+        activityItems = listOf(text),
+        applicationActivities = null
+    )
+
+    val rootVc = UIApplication.sharedApplication.connectedScenes
+        .filterIsInstance<platform.UIKit.UIWindowScene>()
+        .flatMap { it.windows as List<UIWindow> }
+        .firstOrNull { it.isKeyWindow() }
+        ?.rootViewController
+        ?: UIApplication.sharedApplication.keyWindow?.rootViewController
+
+    rootVc?.presentViewController(controller, animated = true, completion = null)
 }

@@ -1,13 +1,11 @@
 package uz.tikoncha_parent.presentation.policy.policy_list
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,14 +23,11 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.block_child_title_line1
 import tikoncha_parents.composeapp.generated.resources.block_child_title_line2
-import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
 import tikoncha_parents.composeapp.generated.resources.play
-import tikoncha_parents.composeapp.generated.resources.tikoncha_title_bottom
-import tikoncha_parents.composeapp.generated.resources.tikoncha_title_top
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.FredokaSemiBold
+import uz.tikoncha_parent.ui.theme.FredokaSemiBoldFontFamily
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
@@ -58,7 +53,7 @@ fun PolicyTutorialCard(
             Text(
                 text = stringResource(Res.string.block_child_title_line1),
                 color = AppColors.text.primary,
-                fontFamily = FredokaSemiBold,
+                fontFamily = FredokaSemiBoldFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal
             )
@@ -66,7 +61,7 @@ fun PolicyTutorialCard(
             Text(
                 text = stringResource(Res.string.block_child_title_line2),
                 color = AppColors.text.accentEmphasis,
-                fontFamily = FredokaSemiBold,
+                fontFamily = FredokaSemiBoldFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier

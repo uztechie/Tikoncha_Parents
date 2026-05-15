@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -124,7 +125,10 @@ fun LoginUi(
                 phoneNumber = state.number,
                 onPhoneNumberChange = {
                     event(LoginEvent.OnNumberInsert(it))
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AppColors.field.secondary, RoundedCornerShape(TextFieldCornerRadius))
             )
             Spacer(modifier = Modifier.weight(1f))
             CustomButton(
@@ -158,7 +162,7 @@ private fun rememberIsKeyboardOpen(): Boolean {
 @Composable
 @Preview
 private fun Preview() {
-    TikonchaParentTheme(ThemeMode.DARK) {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
         LoginUi(
             navigator = null,
             state = LoginState(),

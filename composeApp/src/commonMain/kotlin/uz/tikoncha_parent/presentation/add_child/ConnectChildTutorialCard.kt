@@ -27,7 +27,7 @@ import tikoncha_parents.composeapp.generated.resources.play
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.FredokaSemiBold
+import uz.tikoncha_parent.ui.theme.FredokaSemiBoldFontFamily
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
@@ -53,7 +53,7 @@ fun ConnectChildTutorialCard(
             Text(
                 text = stringResource(Res.string.connect_child_line1),
                 color = AppColors.text.primary,
-                fontFamily = FredokaSemiBold,
+                fontFamily = FredokaSemiBoldFontFamily,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal
             )
@@ -61,7 +61,7 @@ fun ConnectChildTutorialCard(
             Text(
                 text = stringResource(Res.string.connect_child_line2),
                 color = AppColors.text.accentEmphasis,
-                fontFamily = FredokaSemiBold,
+                fontFamily = FredokaSemiBoldFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier

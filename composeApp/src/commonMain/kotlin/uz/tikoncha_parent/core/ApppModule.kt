@@ -26,7 +26,6 @@ import uz.tikoncha_parent.domain.use_case.todo.TodoUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
 import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
-import uz.tikoncha_parent.presentation.add_child.ChildViewmodel
 import uz.tikoncha_parent.presentation.child_confirm_cod.ChildConfirmViewModel
 import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
@@ -117,6 +116,7 @@ import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
 import uz.tikoncha_parent.domain.use_case.tutorial.VideoTutorialUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
+import uz.tikoncha_parent.presentation.add_child.AddChildScreenModel
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomViewModel
@@ -269,7 +269,7 @@ val sharedModule = module {
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
     factory { ProfileViewModel(get(), get(), get(), get(), get()) }
-    factory { ChildViewmodel(get(), get()) }
+    factory { AddChildScreenModel(get()) }
     factory { ChildConfirmViewModel() }
     factory { TaskListViewModel(get(), get(), get(), get()) }
     factory { CreateTaskViewModel(get(), get(), get()) }

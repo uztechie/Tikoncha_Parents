@@ -133,7 +133,10 @@ fun SubscribeChildBottomSheet(
                 // Phone number input
                 PhoneNumberInputField(
                     phoneNumber = phoneNumber,
-                    onPhoneNumberChange = { phoneNumber = it }
+                    onPhoneNumberChange = { phoneNumber = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AppColors.field.page, RoundedCornerShape(TextFieldCornerRadius))
                 )
 
                 Space(20.dp)

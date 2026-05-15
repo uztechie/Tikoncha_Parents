@@ -43,12 +43,11 @@ fun PhoneNumberInputField(
     onPhoneNumberChange: (String) -> Unit
 ) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .background(AppColors.field.secondary, RoundedCornerShape(TextFieldCornerRadius))
                 .padding(horizontal = 20.dp, vertical = 0.dp)
         ) {
             Icon(

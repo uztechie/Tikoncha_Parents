@@ -18,7 +18,7 @@ import tikoncha_parents.composeapp.generated.resources.fredoka_semibold
  */
 
 
-val FredokaSemiBold: FontFamily
+val FredokaSemiBoldFontFamily: FontFamily
     @Composable
     get() = FontFamily(Font(Res.font.fredoka_semibold))
 

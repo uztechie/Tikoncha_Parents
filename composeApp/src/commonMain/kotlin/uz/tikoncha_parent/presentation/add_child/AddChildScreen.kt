@@ -1,10 +1,12 @@
-@file:Suppress("DEPRECATION")
-
 package uz.tikoncha_parent.presentation.add_child
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,210 +16,202 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.ui.PrimaryColor
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.common.Util.format6DigitCode
+import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi
+import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi_info
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_raqami
+import tikoncha_parents.composeapp.generated.resources.farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash
+import tikoncha_parents.composeapp.generated.resources.kod_nusxalandi
+import tikoncha_parents.composeapp.generated.resources.media_play
+import tikoncha_parents.composeapp.generated.resources.ochish
+import tikoncha_parents.composeapp.generated.resources.sorov_yuborish
+import tikoncha_parents.composeapp.generated.resources.tasdiqlash_kodi
+import tikoncha_parents.composeapp.generated.resources.ulashish
+import tikoncha_parents.composeapp.generated.resources.yuborilmoqda
 import uz.tikoncha_parent.platform.copyPlainText
+import uz.tikoncha_parent.platform.openUrl
+import uz.tikoncha_parent.platform.shareText
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.singleClick
-import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.LocalToastHost
+import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
+import uz.tikoncha_parent.presentation.base.ToastData
+import uz.tikoncha_parent.presentation.base.ToastProvider
+import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
-import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
+import uz.tikoncha_parent.ui.NormalIconSize
+import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class AddChildScreen : Screen {
 
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
 
-        val viewModel = koinScreenModel<ChildViewmodel>()
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
+        // DI: agar Koin ishlatsangiz -> koinScreenModel<AddChildScreenModel>()
+        val screenModel = koinScreenModel<AddChildScreenModel>()
 
-        val navigator = LocalNavigator.current
+        val state by screenModel.state.collectAsStateWithLifecycle()
+        val event = screenModel::onEvent
+        val clipboardManager = LocalClipboard.current
+        val coroutineScope = rememberCoroutineScope()
 
-        AddChildUi(
-            navigator = navigator,
-            state = state,
-            event = event
-        )
+        ToastProvider {
+
+            val toast = LocalToastHost.current
+
+
+            // --- Effects (bir martalik harakatlar)
+            LaunchedEffect(Unit) {
+                screenModel.effects.collect { effect ->
+                    when (effect) {
+                        is AddChildEffect.OpenUrl -> openUrl(effect.url)
+                        is AddChildEffect.ShareText -> {
+                            val text = "Tikoncha \n${effect.text}"
+                            shareText(text)
+                        }
+
+                        AddChildEffect.PlayTutorialVideo -> {
+
+                        }
+
+                        AddChildEffect.NavigateBack -> navigator.pop()
+                    }
+                }
+            }
+
+            // --- "Kod nusxalandi" snackbar
+            val copiedMsg = stringResource(Res.string.kod_nusxalandi)
+            LaunchedEffect(state.showCopiedSnackbar) {
+                if (state.showCopiedSnackbar) {
+                    toast.show(
+                        toast = ToastData(
+                            title =copiedMsg,
+                            type = ToastType.Info
+                        ),
+                        durationMs = 1500
+                    )
+                    screenModel.onEvent(AddChildEvent.DismissSnackbar)
+                }
+            }
+
+            // --- Error snackbar
+            val errorText = state.errorRes?.let { stringResource(it) } ?: state.errorMessage
+            LaunchedEffect(errorText) {
+                if (!errorText.isNullOrBlank()) {
+                    toast.show(
+                        toast = ToastData(
+                            title = errorText,
+                            type = ToastType.Error
+                        ),
+                        durationMs = 3000
+                    )
+                    screenModel.onEvent(AddChildEvent.DismissError)
+                }
+            }
+
+            AddChildContent(
+                state = state,
+                onIntent = { intent ->
+                    // Copy intent'da clipboard'ga yozamiz (KMP-friendly)
+                    if (intent is AddChildEvent.CodeCopied) {
+                        state.code?.let { code ->
+
+                            coroutineScope.launch {
+                                copyPlainText(clipboardManager, code)
+                            }
+                        }
+                    }
+                    screenModel.onEvent(intent)
+                },
+                onTutorial = {
+                    navigator.push(VideoTutorialYoutubeScreen(tutorialType = TutorialType.BIND_CHILD))
+                }
+            )
+        }
     }
 }
 
+/* ===================== UI ===================== */
 
 @Composable
-fun AddChildUi(
-    navigator: Navigator?,
-    state: ChildState,
-    event: (ChildEvent) -> Unit
+private fun AddChildContent(
+    state: AddChildState,
+    onIntent: (AddChildEvent) -> Unit,
+    onTutorial: () -> Unit = {}
 ) {
-    var showErrorDialog by remember { mutableStateOf(false) }
-
-    val isLoading = state.responseState is ResponseState.Loading
-    val errorText = state.responseState.errorText()
-    val isSuccess = state.responseState is ResponseState.Success
-
-    val scope = rememberCoroutineScope()
-    val clipboard = LocalClipboard.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val formatted = remember(state.confirmCode) { format6DigitCode(state.confirmCode) }
-    val canEditePhone by remember(state.confirmCode) { mutableStateOf(state.confirmCode.isEmpty()) }
-
-    LoadingDialog(isLoading)
-    LaunchedEffect(errorText) {
-        showErrorDialog = errorText.isNotEmpty()
-    }
-
-    CustomDialog(
-        painter = painterResource(Res.drawable.dialog_failed),
-        show = showErrorDialog,
-        title = stringResource(Res.string.xatolik),
-        message = state.responseState.errorText(),
-        buttonText = stringResource(Res.string.ok),
-        onDismiss = {
-            showErrorDialog = false
-        },
-        onButtonClick = {
-            showErrorDialog = false
-        }
-    )
-
-    CustomDialog(
-        show = state.childJoined,
-        buttonText = stringResource(Res.string.ok),
-        title = stringResource(Res.string.muvaffaqiyatli),
-        message = stringResource(Res.string.farzand_ulan_di),
-        painter = painterResource(Res.drawable.dialog_success),
-        onDismiss = {
-            event(ChildEvent.OnSuccessDismissed)
-        },
-        onButtonClick = {
-//            val addedPhone = state.fullNumber
-            event(ChildEvent.OnSuccessDismissed)
-            navigator?.replace(ChildrenSelectScreen())
-//            navigator?.replace(ChildrenScreen(highlightPhone = addedPhone))
-        }
-    )
-
-    LaunchedEffect(isSuccess) {
-        if (isSuccess) {
-            event(ChildEvent.Reset)
-//            navigator?.push(ChildConfirmCodeScreen(confirmCode = state.confirmCode))
-        }
-    }
-
-    LifecycleEventEffect(Lifecycle.Event.ON_START) {
-        if (state.confirmCode.isNotEmpty() && !state.childJoined) {
-            event(ChildEvent.StartWatching)
-        }
-    }
-
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-        event(ChildEvent.StopWatching)
-    }
-
-    LaunchedEffect(state.confirmCode) {
-        if (state.confirmCode.isNotEmpty() && !state.childJoined) {
-            event(ChildEvent.StartWatching)
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            event(ChildEvent.StopWatching)
-        }
-    }
-
-    var enableButton by remember { mutableStateOf(false) }
-    LaunchedEffect(state.number) {
-        enableButton = state.number.length >= 9
-    }
 
     val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.surface
     )
 
-    Column(
+    Column (
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
-            .imePadding()
-            .background(AppColors.bg.secondary)
+            .background(AppColors.bg.page)
     ) {
+
+
         CustomHeader(
-            title = stringResource(Res.string.farzand_qoshish),
+            title = stringResource(Res.string.farzand_qo_shish),
+            onBackClick = {},
             showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            },
             trailingIcon = {
-                if (!state.showConnectChildTutorialCard){
+                if (!state.showBindChildTutorial){
                     IconButton(
                         onClick = {
-                            navigator?.push(VideoTutorialYoutubeScreen(TutorialType.BIND_CHILD))
+                            onTutorial()
                         },
                         modifier = Modifier
                             .size(44.dp),
@@ -238,123 +232,417 @@ fun AddChildUi(
             }
         )
 
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
-
-            if (state.showConnectChildTutorialCard){
+            AnimatedVisibility(
+                visible = state.showBindChildTutorial,
+                enter = fadeIn() + expandVertically(),
+                exit  = fadeOut() + shrinkVertically()
+            ) {
                 Space(12.dp)
-                ConnectChildTutorialCard {
-                    navigator?.push(VideoTutorialYoutubeScreen(TutorialType.BIND_CHILD))
+                ConnectChildTutorialCard(
+                    onClick = onTutorial
+                )
+            }
+
+            Space(12.dp)
+
+            // 2) Telefon raqami
+            PhoneInputCard(
+                phone = state.phoneNumber,
+                onPhoneChange = { onIntent(AddChildEvent.PhoneChanged(it)) },
+                enabled = !state.isLoading
+            )
+
+            // 3) Tugma <-> Kod card (telefon raqam ostida)
+            AnimatedContent(
+                targetState = state.showCodeCard,
+                label = "request_or_code"
+            ) { showCode ->
+                if (showCode && state.code != null) {
+                    CodeCard(
+                        code = state.code,
+                        isRefreshing = state.isLoading,
+                        onRefresh = { onIntent(AddChildEvent.RefreshCode) },
+                        onCopy = { onIntent(AddChildEvent.CodeCopied) }
+                    )
+                } else {
+                    CustomButtonNew(
+                        text = if (state.isLoading) stringResource(Res.string.yuborilmoqda) else stringResource(Res.string.sorov_yuborish),
+                        enabled = state.canRequestCode,
+                        onClick = { onIntent(AddChildEvent.RequestCode) },
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = if (state.isLoading) {
+                            {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = AppColors.text.inverse,
+                                    strokeWidth = 2.dp
+                                )
+                            }
+                        } else null
+                    )
                 }
             }
-            Space(16.dp)
 
-            Column(
+            Spacer(Modifier.weight(1f))
+
+            // 4) Share card — pastda
+            ShareCard(
+                onOpen = { onIntent(AddChildEvent.OpenAppLink) },
+                onShare = { onIntent(AddChildEvent.ShareLink) }
+            )
+
+            Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+
+
+
+@Composable
+private fun PhoneInputCard(
+    phone: String,
+    onPhoneChange: (String) -> Unit,
+    enabled: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(AppColors.bg.surface)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(Res.string.farzandingiz_raqami),
+            style = AppTypography.titleSmSemiBold,
+            color = AppColors.text.primary
+        )
+        Spacer(Modifier.height(10.dp))
+
+        PhoneNumberInputField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AppColors.field.page, RoundedCornerShape(TextFieldCornerRadius)),
+            phoneNumber = phone,
+            onPhoneNumberChange = {
+                onPhoneChange(it)
+            }
+        )
+    }
+}
+
+@Composable
+private fun CodeCard(
+    code: String,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    onCopy: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(AppColors.bg.surface)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+    ) {
+        // Sarlavha qatori — label + refresh tugmasi
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(Res.string.tasdiqlash_kodi),
+                style = AppTypography.titleSmSemiBold,
+                color = AppColors.text.primary
+            )
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AppColors.modal.primary, RoundedCornerShape(24.dp))
-                    .padding(16.dp)
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(AppColors.bg.primaryContainer)
+                    .clickable(enabled = !isRefreshing, onClick = onRefresh),
+                contentAlignment = Alignment.Center
             ) {
+                if (isRefreshing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(14.dp),
+                        color = AppColors.icon.accentPrimary,
+                        strokeWidth = 1.5.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Yangi kod olish",
+                        tint = AppColors.icon.accentPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        // Kod + copy
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(14.dp))
+                .background(AppColors.bg.page)
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = formatCode(code),
+                style = TextStyle(
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                    letterSpacing = 2.sp
+                ),
+                color = AppColors.text.primary
+            )
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(AppColors.bg.tertiary)
+                    .clickable(onClick = onCopy),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ContentCopy,
+                    contentDescription = "Nusxa olish",
+                    tint = AppColors.icon.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            text = stringResource(Res.string.farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash),
+            style = AppTypography.bodyLgRegular,
+            color = AppColors.text.secondary
+        )
+    }
+}
+
+@Composable
+private fun ShareCard(
+    onOpen: () -> Unit,
+    onShare: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(AppColors.bg.surface)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AppColors.bg.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Download,
+                    contentDescription = null,
+                    tint = AppColors.icon.accentPrimary,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+            Column {
                 Text(
-                    text = stringResource(Res.string.farzandingiz_telefon_raqamini_kiriting),
+                    text = stringResource(Res.string.farzand_ilovasi),
                     style = AppTypography.titleSmSemiBold,
                     color = AppColors.text.primary
                 )
-                Space(16.dp)
-
-                ChildPhoneInputField(
-                    isAccepted = state.accept,
-                    phoneNumber = state.number,
-                    onPhoneNumberChange = { newNumber ->
-                        if (canEditePhone) {
-                            event(ChildEvent.OnNumberInsert(newNumber))
-                        }
-                    }
-                )
-            }
-            SpaceLarge()
-            SpaceLarge()
-
-            if (state.confirmCode.isNotEmpty()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            MaterialTheme.extendedColor.cardColor,
-                            RoundedCornerShape(TextFieldCornerRadius)
-                        )
-                        .height(TextFieldHeight),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.password_check),
-                        contentDescription = null,
-                        tint = MaterialTheme.extendedColor.hintColor,
-                        modifier = Modifier
-                            .size(22.dp)
-                            .clickable {
-                                scope.launch {
-                                    copyPlainText(clipboard, formatted)
-                                }
-                            }
-                    )
-                    SpaceSmall()
-
-                    Text(
-                        text = formatted,
-                        color = AppColors.text.primary,
-                        style = AppTypography.headlineMdSemiBold
-                    )
-                }
-                SpaceSmall()
-
+                Space(4.dp)
                 Text(
-                    text = stringResource(Res.string.confirm_code_instruction),
-                    textAlign = TextAlign.Center,
-                    color = AppColors.text.secondary,
-                    style = AppTypography.bodyLgRegular
+                    text = stringResource(Res.string.farzand_ilovasi_info),
+                    style = AppTypography.bodyMdRegular,
+                    color = AppColors.text.tertiary
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
+        }
 
-            if (canEditePhone) {
-                CustomButtonNew(
-                    onClick = {
-                        event(ChildEvent.OnAddClicked)
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    },
-                    modifier = Modifier
-                        .padding(top = 5.dp)
-                        .fillMaxWidth()
-                        .height(ButtonHeight),
-                    enabled = enableButton,
-                    text = stringResource(Res.string.qoshish)
-                )
-                SpaceLarge()
-            }
+        Spacer(Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ShareActionButton(
+                text = stringResource(Res.string.ochish),
+                icon = Icons.AutoMirrored.Filled.OpenInNew,
+                primary = false,
+                onClick = onOpen,
+                modifier = Modifier.weight(1f)
+            )
+            ShareActionButton(
+                text = stringResource(Res.string.ulashish),
+                icon = Icons.Filled.Share,
+                primary = true,
+                onClick = onShare,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
 
 @Composable
-@Preview
-private fun Preview() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
+private fun ShareActionButton(
+    text: String,
+    icon: ImageVector,
+    primary: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val bg = if (primary) AppColors.button.primary else AppColors.button.secondary
+    val fg = if (primary) AppColors.text.onPrimary else AppColors.text.primary
+
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(bg)
+            .clickable(onClick = onClick)
+            .padding(vertical = 11.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        AddChildUi(
-            navigator = null,
-            state = ChildState(
-                confirmCode = "123456"
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = fg,
+            modifier = Modifier.size(14.dp)
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = text,
+            style = AppTypography.bodyLgSemiBold,
+            color = fg
+        )
+    }
+}
+
+private fun formatCode(code: String): String =
+    if (code.length == 6 && code.all { it.isDigit() })
+        "${code.substring(0, 3)}-${code.substring(3)}"
+    else code
+
+
+@Preview(name = "1. Boshlang'ich · Dark")
+@Composable
+private fun AddChildPreview_Initial() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "2. Telefon kiritilgan · Dark")
+@Composable
+private fun AddChildPreview_PhoneTyped() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(phoneNumber = "119952666"),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "3. Yuklanmoqda · Dark")
+@Composable
+private fun AddChildPreview_Loading() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(
+                phoneNumber = "119952666",
+                isLoading = true
             ),
-            event = {}
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "4. Kod tayyor · Dark")
+@Composable
+private fun AddChildPreview_CodeReady() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(
+                phoneNumber = "119952666",
+                requestedPhone = "119952666",
+                code = "796961",
+                showBindChildTutorial = true
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "5. Kod yangilanmoqda · Dark")
+@Composable
+private fun AddChildPreview_Refreshing() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(
+                phoneNumber = "119952666",
+                requestedPhone = "119952666",
+                code = "796961",
+                showBindChildTutorial = true,
+                isLoading = true     // ↻ icon spinner ko'rsatadi
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "6. Telefon o'zgartirildi (kod gone) · Dark")
+@Composable
+private fun AddChildPreview_PhoneChangedAfterCode() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        AddChildContent(
+            state = AddChildState(
+                phoneNumber = "119952600",        // o'zgartirilgan
+                requestedPhone = "119952666",     // asl request
+                code = "796961",                   // state'da bor lekin showCodeCard=false
+                showBindChildTutorial = true           // tutorial header'da qoladi
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(name = "7. Kod tayyor · Light")
+@Composable
+private fun AddChildPreview_CodeReady_Light() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        AddChildContent(
+            state = AddChildState(
+                phoneNumber = "119952666",
+                requestedPhone = "119952666",
+                code = "796961",
+                showBindChildTutorial = true
+            ),
+            onIntent = {}
         )
     }
 }
