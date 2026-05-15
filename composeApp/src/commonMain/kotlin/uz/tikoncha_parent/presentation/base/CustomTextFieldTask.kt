@@ -68,11 +68,11 @@ fun CustomTextFieldTask(
     }
 
     val backgroundColor = if (enabled)  containerColor else DisableButtonColor
-    val borderColor  = if (enabled) PrimaryColor else DisableButtonContentColor
+    val borderColor  = if (enabled) AppColors.border.secondarySubtle else AppColors.border.secondarySubtle
 
     val newModifier = if (hasBorder){
         modifier
-            .border(1.dp, borderColor, RoundedCornerShape(TextFieldCornerRadius))
+            .border(1.dp, borderColor, shape)
     }else{
         modifier
     }
@@ -81,7 +81,7 @@ fun CustomTextFieldTask(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.extendedColor.cardColor, RoundedCornerShape(TextFieldCornerRadius))
+            .background(AppColors.field.page, shape)
     ) {
         BasicTextField(
             cursorBrush = Brush.sweepGradient(listOf(contentColor, contentColor)),

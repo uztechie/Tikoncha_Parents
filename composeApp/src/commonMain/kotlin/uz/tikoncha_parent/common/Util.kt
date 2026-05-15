@@ -13,6 +13,8 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import uz.tikoncha_parent.domain.model.todo.TaskFilterChip
+import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -214,6 +216,41 @@ object Util {
             digits.startsWith("998") -> "+$digits"
             digits.length == 9 -> "+998$digits"
             else -> "+$digits"
+        }
+    }
+
+    fun buildTodoFilter(
+        chip: TaskFilterChip?,
+        forHistory: Boolean
+    ): TodoFilter {
+        if (forHistory) {
+            return TodoFilter(
+                isCompleted = true,
+                isChildDone = null,
+                isExpired = null
+            )
+        }
+        return when (chip) {
+            TaskFilterChip.IN_PROGRESS -> TodoFilter(
+                isCompleted = false,
+                isChildDone = false,
+                isExpired = false
+            )
+            TaskFilterChip.DONE_BY_CHILD -> TodoFilter(
+                isCompleted = false,
+                isChildDone = true,
+                isExpired = null
+            )
+            TaskFilterChip.OVERDUE -> TodoFilter(
+                isCompleted = false,
+                isChildDone = false,
+                isExpired = true
+            )
+            null -> TodoFilter(
+                isCompleted = false,
+                isChildDone = null,
+                isExpired = null
+            )
         }
     }
 }

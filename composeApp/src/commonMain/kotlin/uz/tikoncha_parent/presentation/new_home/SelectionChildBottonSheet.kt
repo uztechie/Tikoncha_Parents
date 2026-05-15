@@ -48,10 +48,7 @@ import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomRadio
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.DividerHorizontal
-import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SuccessColor
-import uz.tikoncha_parent.ui.TextFieldIconSize
-import uz.tikoncha_parent.ui.TextFieldInnerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -59,7 +56,7 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 
 @Composable
-fun SelectionChildBottonSheet(
+fun SelectionChildBottomSheet(
     navigator: Navigator?,
     modifier: Modifier = Modifier,
     title: String,
@@ -254,7 +251,7 @@ private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.LIGHT
     ) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = null,
             title = "Farzandlaringiz",
             items = listOf(),

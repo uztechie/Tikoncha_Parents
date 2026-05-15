@@ -14,26 +14,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.flow.distinctUntilChanged
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.completedTask.CompletedTaskScreen
+import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -43,10 +48,13 @@ import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.base.singleClick
-import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
-import uz.tikoncha_parent.presentation.task.add_task.AddNewTaskScreen
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
+import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
+import uz.tikoncha_parent.presentation.task.model.Task
+import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -57,10 +65,36 @@ import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 class TaskScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = koinScreenModel<TaskViewModel>()
+
+        val viewModel = rememberSharedScreenModel<TaskListViewModel>()
         val state by viewModel.state.collectAsState()
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current ?: return
+
+        LifecycleStartEffect(Unit) {
+            event(TaskListEvent.LoadTasks)
+            onStopOrDispose {}
+        }
+
+        var errorMessage by remember { mutableStateOf<String?>(null) }
+//        CollectEffects(viewModel.effect) { effect ->
+//            when (effect) {
+//                is TaskListEffect.ShowError -> {
+//                    errorMessage = effect.message
+//                }
+//                TaskListEffect.TaskMarkedAsCompleted -> {}
+//                TaskListEffect.TaskDeleted -> {}
+//            }
+//        }
+
+        CustomDialog(
+            painter = painterResource(Res.drawable.dialog_failed),
+            show = errorMessage != null,
+            title = stringResource(Res.string.xatolik),
+            message = errorMessage.orEmpty(),
+            onDismiss = { errorMessage = null },
+            onButtonClick = { errorMessage = null }
+        )
 
         TaskUi(
             navigator = navigator,
@@ -73,27 +107,23 @@ class TaskScreen : Screen {
 @Composable
 fun TaskUi(
     navigator: Navigator?,
-    state: TaskState,
-    event: (TaskEvent) -> Unit
+    state: TaskListState,
+    event: (TaskListEvent) -> Unit
 ) {
+    val isParentTab = state.taskIndex == 0
     var showChildSelector by remember { mutableStateOf(false) }
     var taskToDelete by remember { mutableStateOf<Task?>(null) }
-    val displayedList = if (state.taskIndex == 0) {
-        state.parentTaskList
-    } else {
-        state.childrenTaskList
-    }
-    val isParentTab = state.taskIndex == 0
+    val displayedList = state.taskList
 
     if (showChildSelector) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             selectedItem = state.selectedChild,
             onDismiss = { showChildSelector = false },
             title = stringResource(Res.string.farzandlaringiz),
             onItemSelected = {
-                event(TaskEvent.OnChildSelected(it))
+                event(TaskListEvent.OnChildSelected(it))
                 showChildSelector = false
             }
         )
@@ -107,14 +137,28 @@ fun TaskUi(
             cancelText = stringResource(Res.string.bekor_qilish),
             onDismiss = { taskToDelete = null },
             onConfirm = {
+                event(TaskListEvent.OnDeleteTask(task))
                 taskToDelete = null
             }
         )
     }
+
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.secondary
     )
+
+    val listState = rememberLazyListState()
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val total = layoutInfo.totalItemsCount
+            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            total > 0 && lastVisible >= total - 3
+        }
+            .distinctUntilChanged()
+            .collect { shouldLoad -> if (shouldLoad) event(TaskListEvent.OnLoadMore) }
+    }
 
     Box(
         modifier = Modifier
@@ -157,7 +201,7 @@ fun TaskUi(
                         stringResource(Res.string.ozim) to null,
                         stringResource(Res.string.farzandim) to null
                     ),
-                    onOptionSelected = { event(TaskEvent.OnTaskSelected(it)) }
+                    onOptionSelected = { event(TaskListEvent.OnTaskSelected(it)) }
                 )
                 Spacer(Modifier.height(12.dp))
 
@@ -172,6 +216,18 @@ fun TaskUi(
                         if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
                         else showChildSelector = true
                     }
+                )
+                Spacer(Modifier.height(16.dp))
+
+                StatusChips(
+                    items = listOf(
+                        TaskFilterChip.IN_PROGRESS to stringResource(Res.string.jarayonda),
+                        TaskFilterChip.DONE_BY_CHILD to stringResource(Res.string.bajarilgan),
+                        TaskFilterChip.OVERDUE to stringResource(Res.string.muddati_otgan)
+                    ),
+                    selected = state.activeChip,
+                    onChipClick = { chip -> event(TaskListEvent.OnFilterChipToggled(chip)) },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(12.dp))
             }
@@ -191,33 +247,33 @@ fun TaskUi(
                         .padding(bottom = ButtonHeight + ContainerPadding * 2)
                 )
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(
-                        start = ContainerPadding,
-                        end = ContainerPadding,
-                        bottom = ButtonHeight + ContainerPadding * 2
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(if (isParentTab) 10.dp else 12.dp)
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { event(TaskListEvent.OnRefresh) }
                 ) {
-                    items(items = displayedList, key = { it.id }) { task ->
-                        TaskCardItem(
-                            task = task,
-                            onDetailsIconClick = {
-
-                            },
-                            onDoneButtonClick = {
-                                if (isParentTab) event(TaskEvent.OnCompletedTask(task))
-                            },
-                            onEditIconClick = {
-                                if (isParentTab) navigator?.push(AddNewTaskScreen(task))
-                            },
-                            onDeleteClick = {
-                                taskToDelete = it
-                            }
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = listState,
+                        contentPadding = PaddingValues(
+                            start = ContainerPadding,
+                            end = ContainerPadding,
+                            bottom = ButtonHeight + ContainerPadding * 2
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(if (isParentTab) 10.dp else 12.dp)
+                    ) {
+                        items(items = displayedList, key = { it.id }) { task ->
+                            TaskCardItem(
+                                task = task,
+                                onDetailsIconClick = { },
+                                onDeleteClick = { taskToDelete = it },
+                                onDoneButtonClick = {
+                                    event(TaskListEvent.OnCompletedTask(task))
+                                },
+                                onEditIconClick = {
+                                    navigator?.push(CreateTaskScreen(task))
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -245,7 +301,7 @@ fun TaskUi(
             CustomButton(
                 enabled = state.selectedChild != null,
                 text = stringResource(Res.string.vazifa_qo_shish),
-                onClick = { navigator?.push(AddNewTaskScreen()) },
+                onClick = { navigator?.push(CreateTaskScreen()) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -294,7 +350,7 @@ private fun Preview() {
         ThemeMode.LIGHT
     ) {
         TaskUi(
-            state = TaskState(),
+            state = TaskListState(),
             event = {},
             navigator = LocalNavigator.current
         )

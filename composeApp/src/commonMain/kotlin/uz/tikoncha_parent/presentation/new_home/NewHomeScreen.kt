@@ -198,7 +198,7 @@ fun NewHomeUi(
     NoInternetDialog(internetCheck)
 
     if (showDialog) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             selectedItem = state.selectedChild,

@@ -70,7 +70,7 @@ import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
-import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
@@ -158,7 +158,7 @@ fun PolicyListUi(
     LaunchedEffect(errorText) { showErrorText = errorText.isNotEmpty() }
 
     if (showDialog) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             onDismiss = { showDialog = false },

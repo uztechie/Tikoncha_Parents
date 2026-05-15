@@ -1,4 +1,4 @@
-package uz.saidburxon.newedu.presentation.feature.assignment
+package uz.tikoncha_parent.presentation.base
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,22 +13,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import kotlinx.datetime.*
 import kotlinx.datetime.LocalDate
 import uz.tikoncha_parent.common.Util
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.platform.formatMonthYear
 import uz.tikoncha_parent.platform.getWeekDays
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.coverShadow
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.ui.theme.ThemeMode

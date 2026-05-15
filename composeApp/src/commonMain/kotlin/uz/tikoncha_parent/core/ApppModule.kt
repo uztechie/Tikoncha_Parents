@@ -21,8 +21,8 @@ import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterUseCase
 import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
-import uz.tikoncha_parent.domain.use_case.TodoListUseCase
-import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
+import uz.tikoncha_parent.domain.use_case.todo.TodoUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
 import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
@@ -33,7 +33,6 @@ import uz.tikoncha_parent.presentation.profile.ProfileViewModel
 import uz.tikoncha_parent.presentation.login.LoginViewModel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
-import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.dsl.module
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
@@ -112,6 +111,10 @@ import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseC
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
+import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
 import uz.tikoncha_parent.domain.use_case.tutorial.VideoTutorialUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
@@ -136,6 +139,8 @@ import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScr
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
+import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
+import uz.tikoncha_parent.presentation.task.TaskListViewModel
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreenModel
 
 val sharedModule = module {
@@ -249,6 +254,12 @@ val sharedModule = module {
     single { VideoTutorialUseCase(get()) }
     factory { GetPaymentTransactionsUseCase(get()) }
 
+    single { GetTodosUseCase(get()) }
+    single { GetTodoByIdUseCase(get()) }
+    single { uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase(get()) }
+    single { uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase(get()) }
+    single { DeleteTodoUseCase(get()) }
+    single { CompleteTodoUseCase(get()) }
 
 
 
@@ -260,7 +271,8 @@ val sharedModule = module {
     factory { ProfileViewModel(get(), get(), get(), get(), get()) }
     factory { ChildViewmodel(get(), get()) }
     factory { ChildConfirmViewModel() }
-    factory { TaskViewModel(get (), get(), get(), get(), get()) }
+    factory { TaskListViewModel(get(), get(), get(), get()) }
+    factory { CreateTaskViewModel(get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
 

@@ -51,9 +51,10 @@ import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
-import uz.tikoncha_parent.presentation.task.TaskEvent
+import uz.tikoncha_parent.presentation.task.TaskListEvent
+import uz.tikoncha_parent.presentation.task.TaskListViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen
-import uz.tikoncha_parent.presentation.task.TaskViewModel
+import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -93,11 +94,11 @@ class ProfileScreen : Screen {
         val ui by coinsViewModel.state.collectAsStateWithLifecycle()
         val aiTokens = ui.myCoins
 
-        val taskViewModel = koinScreenModel<TaskViewModel>()
+        val taskViewModel = rememberSharedScreenModel<TaskListViewModel>()
         val taskState by taskViewModel.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
-            taskViewModel.onEvent(TaskEvent.LoadAllChildrenActiveTasks)
+            taskViewModel.onEvent(TaskListEvent.LoadAllChildrenActiveTasks)
         }
         val activeTasksCount = taskState.allChildrenActiveTaskCount
 

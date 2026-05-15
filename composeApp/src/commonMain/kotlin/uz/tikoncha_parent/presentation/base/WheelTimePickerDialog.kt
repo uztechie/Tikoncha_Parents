@@ -117,7 +117,7 @@ fun WheelTimePickerDialog(
                             visibleItemCount = 3,
                             selectedTextStyle = AppTypography.displayMdSemiBold,
                             unselectedTextStyle = AppTypography.headlineSmMedium,
-                            showLabels = false
+                            showLabels = true
                         )
 
 

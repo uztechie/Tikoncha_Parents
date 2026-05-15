@@ -51,6 +51,9 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
+import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthWithWeekday
+import uz.tikoncha_parent.presentation.task.model.ImportanceType
+import uz.tikoncha_parent.presentation.task.model.Task
 
 @Composable
 fun TaskCardItem(
@@ -61,6 +64,7 @@ fun TaskCardItem(
     onDetailsIconClick: (task: Task) -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+
     val importance = when (task.importance) {
         ImportanceType.NONE -> ""
         ImportanceType.IMPORTANT -> stringResource(Res.string.muhim)
@@ -310,7 +314,7 @@ fun TaskCardItem(
                         onClick = {
                             onDoneButtonClick(task)
                         },
-                        enabled = true,
+                        enabled = task.isChildDone,
                         text = stringResource(Res.string.tekshirildi)
                     )
                 }
