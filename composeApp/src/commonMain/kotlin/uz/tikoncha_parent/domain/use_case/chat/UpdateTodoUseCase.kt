@@ -1,41 +1,31 @@
 package uz.tikoncha_parent.domain.use_case.chat
 
-import okio.IOException
+import kotlinx.io.IOException
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
-import uz.tikoncha_parent.data.remote.model.TodoDto
-import uz.tikoncha_parent.data.remote.model.TodoRequest
+import uz.tikoncha_parent.data.mapper.todo.toDto
+import uz.tikoncha_parent.data.mapper.todo.toUpdateParams
+import uz.tikoncha_parent.data.remote.model.todo.TodoDto
+import uz.tikoncha_parent.data.remote.model.todo.TodoRequest
 import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.repository.TodoRepository
+import uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase as TodoUpdateUseCase
 
 class UpdateTodoUseCase(
-    private val repository: TodoRepository,
+    private val todoUpdateUseCase: TodoUpdateUseCase     // ✅ alias bilan
 ) {
-    suspend operator fun invoke(request: TodoRequest): Resource<TodoDto> {
-        return try {
-            val response = repository.updateTodo(request)
-
-            if (response.success && response.data != null) {
-                Resource.Success(response.data)
-            } else {
-                Resource.Error(
-                    message = response.error,
-                    resId = Res.string.server_connection_error
-                )
+    suspend operator fun invoke(request: TodoRequest): Resource<TodoDto> = try {
+        todoUpdateUseCase(request.toUpdateParams()).fold(
+            onSuccess = { todo -> Resource.Success(todo.toDto()) },
+            onFailure = { e ->
+                Resource.Error(message = e.message, resId = Res.string.server_connection_error)
             }
-        } catch (e: IOException) {
-            Resource.Error(
-                resId = Res.string.iltimos_internetga_ulang,
-                cause = e
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Resource.Error(
-                resId = Res.string.kutilmagan_xatolik_qayta_urining,
-                cause = e
-            )
-        }
+        )
+    } catch (e: IOException) {
+        Resource.Error(resId = Res.string.iltimos_internetga_ulang, cause = e)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Resource.Error(resId = Res.string.kutilmagan_xatolik_qayta_urining, cause = e)
     }
 }

@@ -578,4 +578,15 @@
     <string name="ko_rish">Просмотр</string>
     <string name="vazifa_ochirilsinmi">Удалить задачу?</string>
     <string name="vazifa_ochirish_tasdiq">Вы действительно хотите удалить эту задачу?</string>
+    <string name="izoh_ixtiyoriy">Комментарий (необязательно)</string>
+    <string name="vazifa_tangalari">Монеты, выдаваемые за выполнение задания</string>
+    <string name="vazifani_tekshirish">Проверка задания</string>
+    <string name="izoh">Комментарий</string>
+    <string name="muhimlilik_darajasi">Уровень важности</string>
+    <string name="ragbatlantirish_tangachalari">Поощрительные монеты</string>
+    <string name="tugatish_vaqti">Время завершения</string>
+    <string name="vazifani_saqlash">Сохранить задание</string>
+    <string name="vazifa_yuborildi">Задание отправлено</string>
+    <string name="vazifani_tahrirlash">Редактировать задание</string>
+    <string name="muddati_otgan">Просрочено</string>
 </resources>

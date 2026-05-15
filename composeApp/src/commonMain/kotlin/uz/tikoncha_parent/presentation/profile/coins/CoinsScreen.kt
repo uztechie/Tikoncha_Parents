@@ -40,13 +40,8 @@ import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.simpleShadow
-import uz.tikoncha_parent.presentation.common.CustomListDialog
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
-import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
-import uz.tikoncha_parent.presentation.profile.ProfileEvent
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseScreen
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
-import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -91,7 +86,7 @@ fun CoinsUi(
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             selectedItem = state.selectedChild,

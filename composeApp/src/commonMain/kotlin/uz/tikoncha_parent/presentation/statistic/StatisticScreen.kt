@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -41,7 +40,6 @@ import kotlinx.datetime.number
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.SegmentedToggle
-import uz.tikoncha_parent.presentation.common.CustomListDialog
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -53,9 +51,7 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.PermissionWarningCard
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
-import uz.tikoncha_parent.presentation.new_home.SelectionChildBottonSheet
-import uz.tikoncha_parent.ui.theme.extendedColor
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -123,7 +119,7 @@ fun StatisticUi(
     }
 
     if (showDialog) {
-        SelectionChildBottonSheet(
+        SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             selectedItem = state.selectedChild,

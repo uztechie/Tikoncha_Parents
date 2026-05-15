@@ -26,8 +26,8 @@ import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.RefreshRulesUseCase
 import uz.tikoncha_parent.domain.use_case.RegisterUseCase
 import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
-import uz.tikoncha_parent.domain.use_case.TodoListUseCase
-import uz.tikoncha_parent.domain.use_case.TodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
+import uz.tikoncha_parent.domain.use_case.todo.TodoUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UpsertRuleUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
@@ -39,7 +39,6 @@ import uz.tikoncha_parent.presentation.profile.ProfileViewModel
 import uz.tikoncha_parent.presentation.login.LoginViewModel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
-import uz.tikoncha_parent.presentation.task.TaskViewModel
 import org.koin.dsl.module
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
@@ -112,6 +111,10 @@ import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseC
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
+import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
@@ -124,7 +127,6 @@ import uz.tikoncha_parent.presentation.policy.policy_list.PolicyViewModel
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebViewModel
 import uz.tikoncha_parent.presentation.policy.limit_rule.setup.LimitRuleSetupViewModel
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
-import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
 import uz.tikoncha_parent.presentation.policy.policy_setup.PolicySetupViewModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.template.sleep.SleepTemplateSetupViewModel
@@ -134,6 +136,8 @@ import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewMod
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
+import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
+import uz.tikoncha_parent.presentation.task.TaskListViewModel
 
 val sharedModule = module {
     single {
@@ -246,6 +250,12 @@ val sharedModule = module {
     single { LogoutUseCase(get()) }
     single { PermissionStatusUseCase(get()) }
 
+    single { GetTodosUseCase(get()) }
+    single { GetTodoByIdUseCase(get()) }
+    single { uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase(get()) }
+    single { uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase(get()) }
+    single { DeleteTodoUseCase(get()) }
+    single { CompleteTodoUseCase(get()) }
 
 
 
@@ -257,7 +267,8 @@ val sharedModule = module {
     factory { ProfileViewModel(get(), get(), get(), get(), get()) }
     factory { ChildViewmodel(get(), get()) }
     factory { ChildConfirmViewModel() }
-    factory { TaskViewModel(get (), get(), get(), get(), get()) }
+    factory { TaskListViewModel(get(), get(), get(), get()) }
+    factory { CreateTaskViewModel(get(), get(), get()) }
     factory { StatisticViewModel(get(), get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
 

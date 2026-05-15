@@ -591,4 +591,15 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="ko_rish">Ko'rish</string>
     <string name="vazifa_ochirilsinmi">Vazifa o‘chirilsinmi?</string>
     <string name="vazifa_ochirish_tasdiq">Siz rostdan ham ushbu vazifani o‘chirmoqchimisiz?</string>
+    <string name="izoh_ixtiyoriy">Izoh (ixtiyoriy)</string>
+    <string name="vazifa_tangalari">Vazifani bajarganda beriladigan tangalar</string>
+    <string name="vazifani_tekshirish">Vazifani tekshirish</string>
+    <string name="izoh">Izoh</string>
+    <string name="muhimlilik_darajasi">Muhimlilik darajasi</string>
+    <string name="ragbatlantirish_tangachalari">Rag‘batlantirish tangachalari</string>
+    <string name="tugatish_vaqti">Tugatish vaqti</string>
+    <string name="vazifani_saqlash">Vazifani saqlash</string>
+    <string name="vazifa_yuborildi">Vazifa yuborildi</string>
+    <string name="vazifani_tahrirlash">Vazifani tahrirlash</string>
+    <string name="muddati_otgan">Muddati o‘tgan</string>
 </resources>
