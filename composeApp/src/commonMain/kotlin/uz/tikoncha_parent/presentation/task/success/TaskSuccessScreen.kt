@@ -36,6 +36,7 @@ import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class TaskSuccessScreen : Screen {
     @Composable
@@ -70,10 +71,14 @@ fun TaskSuccessUI(
 ) {
     val successText = if (isEditing) stringResource(Res.string.vazifa_tahrirlandi)
     else stringResource(Res.string.vazifa_yuborildi)
-
+    val systemBars = rememberScreenSystemBars(
+        statusBarColor = AppColors.bg.secondary,
+        navigationBarColor = AppColors.bg.secondary
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
             .padding(horizontal = 20.dp)
     ) {

@@ -32,6 +32,7 @@ data class TaskListState(
     val isInitialLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isPaginating: Boolean = false,
+    val isRefiltering: Boolean = false,
 
     // ✅ Per-item optimistic UI
     val completingIds: Set<String> = emptySet(),

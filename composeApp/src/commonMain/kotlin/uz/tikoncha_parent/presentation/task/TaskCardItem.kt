@@ -1,8 +1,10 @@
 package uz.tikoncha_parent.presentation.task
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,7 +53,7 @@ import uz.tikoncha_parent.ui.theme.extendedColor
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
-import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthWithWeekday
+import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
 import uz.tikoncha_parent.presentation.task.model.ImportanceType
 import uz.tikoncha_parent.presentation.task.model.Task
 
@@ -80,7 +82,7 @@ fun TaskCardItem(
         ImportanceType.NONE -> Color.Transparent
     }
 
-    val shownDate = formatDayMonthWithWeekday(task.dateTime)
+    val shownDate = formatDayMonthYearWithWeekday(task.dateTime)
     val shownTime = remember(task.id, task.dateTime) {
         formatTimeHHmm(task.dateTime)
     }
@@ -238,9 +240,11 @@ fun TaskCardItem(
             }
             Space(8.dp)
 
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
 
                 Row(
