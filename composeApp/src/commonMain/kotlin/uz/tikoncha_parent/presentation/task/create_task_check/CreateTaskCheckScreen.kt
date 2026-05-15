@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -137,7 +136,7 @@ fun CreateTaskCheckUI(
     }
 
     // Muhimlik darajasiga qarab rang
-    val importanceColor = when (state.importance) {
+    val importanceTextColor = when (state.importance) {
         ImportanceType.MOST_IMPORTANT -> AppColors.text.accentDanger
         ImportanceType.IMPORTANT -> AppColors.text.accentWarning
         ImportanceType.MEDIUM -> AppColors.text.accentSuccess
@@ -284,13 +283,13 @@ fun CreateTaskCheckUI(
                             modifier = Modifier
                                 .size(6.dp)
                                 .clip(CircleShape)
-                                .background(importanceColor)
+                                .background(importanceTextColor)
                         )
 
                         Text(
                             text = importanceText,
                             style = AppTypography.titleMdMedium,
-                            color = AppColors.text.primary
+                            color = importanceTextColor
                         )
                     }
 

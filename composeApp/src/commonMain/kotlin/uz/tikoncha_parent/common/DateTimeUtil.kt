@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.common
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -58,19 +59,19 @@ object DateTimeUtil {
 
         val m = re.find(input) ?: return 0L
 
-        val year   = m.groupValues[1].toInt()
-        val month  = m.groupValues[2].toInt()
-        val day    = m.groupValues[3].toInt()
-        val hour   = m.groupValues[4].toInt()
+        val year = m.groupValues[1].toInt()
+        val month = m.groupValues[2].toInt()
+        val day = m.groupValues[3].toInt()
+        val hour = m.groupValues[4].toInt()
         val minute = m.groupValues[5].toInt()
         val second = m.groupValues[6].toInt()
 
         val frac = m.groupValues.getOrNull(7).orEmpty()
         // milliseconds = first 3 digits (truncate) or pad with zeros if shorter
         val ms = when {
-            frac.isEmpty()      -> 0
-            frac.length >= 3    -> frac.substring(0, 3).toInt()
-            else                -> (frac + "000").substring(0, 3).toInt()
+            frac.isEmpty() -> 0
+            frac.length >= 3 -> frac.substring(0, 3).toInt()
+            else -> (frac + "000").substring(0, 3).toInt()
         }
 
         val ldt = LocalDateTime(
@@ -82,6 +83,7 @@ object DateTimeUtil {
         // Interpret the naive timestamp as UTC (no offset in the string)
         return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
+
     fun toMillisUtc(s: String?): Long {
         if (s.isNullOrBlank()) return 0L
         val input = s.trim()
@@ -94,19 +96,19 @@ object DateTimeUtil {
 
         val m = re.find(input) ?: return 0L
 
-        val year   = m.groupValues[1].toInt()
-        val month  = m.groupValues[2].toInt()
-        val day    = m.groupValues[3].toInt()
-        val hour   = m.groupValues[4].toInt()
+        val year = m.groupValues[1].toInt()
+        val month = m.groupValues[2].toInt()
+        val day = m.groupValues[3].toInt()
+        val hour = m.groupValues[4].toInt()
         val minute = m.groupValues[5].toInt()
         val second = m.groupValues[6].toInt()
 
         val frac = m.groupValues.getOrNull(7).orEmpty()
         // milliseconds = first 3 digits (truncate) or pad with zeros if shorter
         val ms = when {
-            frac.isEmpty()      -> 0
-            frac.length >= 3    -> frac.substring(0, 3).toInt()
-            else                -> (frac + "000").substring(0, 3).toInt()
+            frac.isEmpty() -> 0
+            frac.length >= 3 -> frac.substring(0, 3).toInt()
+            else -> (frac + "000").substring(0, 3).toInt()
         }
 
         val ldt = LocalDateTime(
@@ -125,7 +127,8 @@ object DateTimeUtil {
 
         // 1) ISO: 2025-12-19T15:54:05(.123)
         run {
-            val iso = Regex("""^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,}))?""")
+            val iso =
+                Regex("""^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,}))?""")
             val m = iso.find(input)
             if (m != null) {
                 val year = m.groupValues[1].toInt()
@@ -174,20 +177,21 @@ object DateTimeUtil {
     }
 
 
-
     private fun formatTimeHHmm(t: LocalTime): String {
         val h = t.hour
         val m = t.minute
-        return "${h.two()}${":"}${m.two()   }"
+        return "${h.two()}${":"}${m.two()}"
     }
 
     fun formatTime(millis: Long): String {
-        val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
+        val t = Instant.fromEpochMilliseconds(millis)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).time
         return "${t.hour.two()}:${t.minute.two()}"
     }
 
     fun formatLocalTime(millis: Long): LocalTime {
-        val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
+        val t = Instant.fromEpochMilliseconds(millis)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).time
         return LocalTime(hour = t.hour, minute = t.minute)
     }
 
@@ -264,8 +268,6 @@ object DateTimeUtil {
     }
 
 
-
-
     fun formatDateTimeMonthlyForMap(
         longDate: Long,
         lang: LanguageType,
@@ -279,17 +281,21 @@ object DateTimeUtil {
         val today = Clock.System.now().toLocalDateTime(zone).date
         val time = formatTime(millis = longDate)
 
-        val todayString = when(lang) {
-            LanguageType.UZ -> {"Bugun"}
-            LanguageType.RU -> {"Сегодня"}
+        val todayString = when (lang) {
+            LanguageType.UZ -> {
+                "Bugun"
+            }
+
+            LanguageType.RU -> {
+                "Сегодня"
+            }
         }
 
 
 
-        return if (date == today){
+        return if (date == today) {
             "$todayString $time"
-        }
-        else{
+        } else {
             val formattedDate = formatDayMonth(longDate, lang, zone)
             "$formattedDate $time"
         }
@@ -404,13 +410,13 @@ object DateTimeUtil {
         )
 
         val weekdays = mapOf(
-            DayOfWeek.MONDAY    to Res.string.weekday_monday,
-            DayOfWeek.TUESDAY   to Res.string.weekday_tuesday,
+            DayOfWeek.MONDAY to Res.string.weekday_monday,
+            DayOfWeek.TUESDAY to Res.string.weekday_tuesday,
             DayOfWeek.WEDNESDAY to Res.string.weekday_wednesday,
-            DayOfWeek.THURSDAY  to Res.string.weekday_thursday,
-            DayOfWeek.FRIDAY    to Res.string.weekday_friday,
-            DayOfWeek.SATURDAY  to Res.string.weekday_saturday,
-            DayOfWeek.SUNDAY    to Res.string.weekday_sunday
+            DayOfWeek.THURSDAY to Res.string.weekday_thursday,
+            DayOfWeek.FRIDAY to Res.string.weekday_friday,
+            DayOfWeek.SATURDAY to Res.string.weekday_saturday,
+            DayOfWeek.SUNDAY to Res.string.weekday_sunday
         )
 
         val day = date.day.toString().padStart(2, '0')
@@ -463,7 +469,7 @@ object DateTimeUtil {
         localTime: LocalTime?,
         timeZone: TimeZone = TimeZone.currentSystemDefault()
     ): String {
-        if (localTime == null || localDate == null){
+        if (localTime == null || localDate == null) {
             return ""
         }
         // Combine LocalDate + LocalTime into LocalDateTime
@@ -473,7 +479,7 @@ object DateTimeUtil {
 
 
         val year = utcLdt.year.toString().padStart(4, '0')
-        val month = (utcLdt.month.ordinal+1).toString().padStart(2, '0')
+        val month = (utcLdt.month.ordinal + 1).toString().padStart(2, '0')
         val day = utcLdt.day.toString().padStart(2, '0')
         val hour = utcLdt.hour.toString().padStart(2, '0')
         val minute = utcLdt.minute.toString().padStart(2, '0')
@@ -493,7 +499,7 @@ object DateTimeUtil {
 
 
         val year = localDateTime.year.toString().padStart(4, '0')
-        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
+        val month = (localDateTime.month.ordinal + 1).toString().padStart(2, '0')
         val day = localDateTime.day.toString().padStart(2, '0')
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')
@@ -504,13 +510,12 @@ object DateTimeUtil {
     }
 
 
-
     fun getCurrentIsoDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
         val nowInstant = Clock.System.now()
         val localDateTime = nowInstant.toLocalDateTime(timeZone)
 
         val year = localDateTime.year.toString().padStart(4, '0')
-        val month = (localDateTime.month.ordinal+1).toString().padStart(2, '0')
+        val month = (localDateTime.month.ordinal + 1).toString().padStart(2, '0')
         val day = localDateTime.day.toString().padStart(2, '0')
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')
@@ -525,9 +530,8 @@ object DateTimeUtil {
             .getOrElse { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
 
 
-
     fun String?.serverDateTimeToMillis(defaultTimeZone: TimeZone = TimeZone.currentSystemDefault()): Long {
-        if (this == null){
+        if (this == null) {
             return 0
         }
         val raw = this.trim()
@@ -560,13 +564,13 @@ object DateTimeUtil {
                 )
                 val m = re.matchEntire(normalized) ?: return 0L
 
-                val year   = m.groupValues[1].toInt()
-                val month  = m.groupValues[2].toInt()
-                val day    = m.groupValues[3].toInt()
-                val hour   = m.groupValues[4].toInt()
+                val year = m.groupValues[1].toInt()
+                val month = m.groupValues[2].toInt()
+                val day = m.groupValues[3].toInt()
+                val hour = m.groupValues[4].toInt()
                 val minute = m.groupValues[5].toInt()
                 val second = m.groupValues.getOrNull(6)?.takeIf { it.isNotEmpty() }?.toInt() ?: 0
-                val nano   = m.groupValues.getOrNull(7)?.takeIf { it.isNotEmpty() }?.let {
+                val nano = m.groupValues.getOrNull(7)?.takeIf { it.isNotEmpty() }?.let {
                     (it + "000000000").take(9).toInt()
                 } ?: 0
 
@@ -591,13 +595,13 @@ object DateTimeUtil {
 
     fun LocalDateTime.toUIData(): String {
         val d = date
-        return "${d.day.toString().padStart(2,'0')}." +
-                "${d.month.number.toString().padStart(2,'0')}." +
-                d.year.toString().padStart(4,'0')
+        return "${d.day.toString().padStart(2, '0')}." +
+                "${d.month.number.toString().padStart(2, '0')}." +
+                d.year.toString().padStart(4, '0')
     }
 
     fun LocalDateTime.toUiTime(): String =
-        "${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}"
+        "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 
 
     fun nowMillis(): Long {
@@ -605,7 +609,7 @@ object DateTimeUtil {
     }
 
 
-
+    // 5-apel, Chorshanba Formati uchun
     @Composable
     fun formatDayMonthWithWeekday(epochMs: Long?): String {
         if (epochMs == null || epochMs <= 0L) return ""
@@ -622,6 +626,7 @@ object DateTimeUtil {
 
         return "$day-$monthName, $weekdayName"
     }
+
     private fun monthStringRes(monthNumber: Int): StringResource? = when (monthNumber) {
         1 -> Res.string.month_january
         2 -> Res.string.month_february
@@ -637,14 +642,58 @@ object DateTimeUtil {
         12 -> Res.string.month_december
         else -> null
     }
+
     private fun weekdayStringRes(dayOfWeek: DayOfWeek): StringResource? = when (dayOfWeek) {
-        DayOfWeek.MONDAY    -> Res.string.weekday_monday
-        DayOfWeek.TUESDAY   -> Res.string.weekday_tuesday
+        DayOfWeek.MONDAY -> Res.string.weekday_monday
+        DayOfWeek.TUESDAY -> Res.string.weekday_tuesday
         DayOfWeek.WEDNESDAY -> Res.string.weekday_wednesday
-        DayOfWeek.THURSDAY  -> Res.string.weekday_thursday
-        DayOfWeek.FRIDAY    -> Res.string.weekday_friday
-        DayOfWeek.SATURDAY  -> Res.string.weekday_saturday
-        DayOfWeek.SUNDAY    -> Res.string.weekday_sunday
-        else                -> null
+        DayOfWeek.THURSDAY -> Res.string.weekday_thursday
+        DayOfWeek.FRIDAY -> Res.string.weekday_friday
+        DayOfWeek.SATURDAY -> Res.string.weekday_saturday
+        DayOfWeek.SUNDAY -> Res.string.weekday_sunday
+        else -> null
+    }
+
+    // 5-apel 2025, Chorshanba Formati uchun
+    @Composable
+    fun formatDayMonthYearWithWeekday(millis: Long): String {
+        val ldt = remember(millis) {
+            Instant.fromEpochMilliseconds(millis)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+        }
+
+        val day = ldt.day.toString().padStart(2, '0')
+
+        // ✅ Month enum'ni ishlatamiz — exhaustive, `else` kerak emas
+        val month = stringResource(
+            when (ldt.month) {
+                Month.JANUARY   -> Res.string.month_january
+                Month.FEBRUARY  -> Res.string.month_february
+                Month.MARCH     -> Res.string.month_march
+                Month.APRIL     -> Res.string.month_april
+                Month.MAY       -> Res.string.month_may
+                Month.JUNE      -> Res.string.month_june
+                Month.JULY      -> Res.string.month_july
+                Month.AUGUST    -> Res.string.month_august
+                Month.SEPTEMBER -> Res.string.month_september
+                Month.OCTOBER   -> Res.string.month_october
+                Month.NOVEMBER  -> Res.string.month_november
+                Month.DECEMBER  -> Res.string.month_december
+            }
+        )
+
+        val weekday = stringResource(
+            when (ldt.dayOfWeek) {
+                DayOfWeek.MONDAY    -> Res.string.weekday_monday
+                DayOfWeek.TUESDAY   -> Res.string.weekday_tuesday
+                DayOfWeek.WEDNESDAY -> Res.string.weekday_wednesday
+                DayOfWeek.THURSDAY  -> Res.string.weekday_thursday
+                DayOfWeek.FRIDAY    -> Res.string.weekday_friday
+                DayOfWeek.SATURDAY  -> Res.string.weekday_saturday
+                DayOfWeek.SUNDAY    -> Res.string.weekday_sunday
+            }
+        )
+
+        return "$day $month ${ldt.year}, $weekday"
     }
 }

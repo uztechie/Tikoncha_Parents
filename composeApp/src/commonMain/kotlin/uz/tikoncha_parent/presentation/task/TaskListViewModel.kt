@@ -121,16 +121,19 @@ class TaskListViewModel(
 
     private fun changeTab(index: Int) {
         if (index == state.value.taskIndex) return
+        val willFetch = index == 0 || state.value.selectedChild != null
         _state.update {
             it.copy(
                 taskIndex = index,
                 taskList = emptyList(),
                 offset = 0,
                 hasMore = true,
-                errorMessage = null
+                errorMessage = null,
+                isInitialLoading = willFetch,
+                listResponseState = if (willFetch) ResponseState.Loading else ResponseState.Idle
             )
         }
-        if (state.value.canFetch) firstPage()
+        if (willFetch) firstPage()
     }
 
     private fun selectChild(child: uz.tikoncha_parent.domain.model.UserInfo) {
@@ -142,21 +145,26 @@ class TaskListViewModel(
                 taskList = emptyList(),
                 offset = 0,
                 hasMore = true,
-                errorMessage = null
+                errorMessage = null,
+                isInitialLoading = true,
+                listResponseState = ResponseState.Loading
             )
         }
-        if (state.value.canFetch) firstPage()
+        if (state.value.canFetch) firstPage() else _state.update { it.copy(isInitialLoading = false) }
     }
 
     private fun toggleChip(chip: TaskFilterChip) {
+        val hasExistingData = state.value.taskList.isNotEmpty()
         _state.update {
             val new = if (it.activeChip == chip) null else chip
             it.copy(
                 activeChip = new,
-                taskList = emptyList(),
                 offset = 0,
                 hasMore = true,
-                errorMessage = null
+                errorMessage = null,
+                isInitialLoading = !hasExistingData,
+                isRefiltering = hasExistingData,
+                listResponseState = ResponseState.Loading
             )
         }
         firstPage()

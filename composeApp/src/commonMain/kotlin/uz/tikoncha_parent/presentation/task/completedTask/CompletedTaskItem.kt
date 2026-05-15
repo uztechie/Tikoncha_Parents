@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,6 +38,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthWithWeekday
+import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -61,7 +63,7 @@ fun CompletedTaskItem(
         ImportanceType.NONE -> Color.Transparent
     }
 
-    val shownDate = formatDayMonthWithWeekday(task.dateTime)
+    val shownDate = formatDayMonthYearWithWeekday(task.dateTime)
     val shownTime = remember(task.id, task.dateTime) { formatTimeHHmm(task.dateTime) }
 
     Box(
@@ -102,7 +104,8 @@ fun CompletedTaskItem(
                 .padding(20.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
             ) {
                 Column(
                     modifier = Modifier.weight(1f)
@@ -120,13 +123,37 @@ fun CompletedTaskItem(
                         color = AppColors.text.primary
                     )
                 }
+
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(AppColors.bg.accentWarningContainer)
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.checked),
+                        contentDescription = null,
+                        tint = AppColors.text.accentSuccess,
+                        modifier = Modifier.size(10.dp)
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = stringResource(Res.string.bajarilgan),
+                        style = AppTypography.bodySmSemiBold,
+                        color = AppColors.text.accentSuccess,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
             Space(8.dp)
 
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -165,7 +192,7 @@ fun CompletedTaskItem(
                 }
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
                         modifier = Modifier
@@ -184,33 +211,6 @@ fun CompletedTaskItem(
                     )
                 }
             }
-//            Space(8.dp)
-
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Icon(
-//                    painter = painterResource(Res.drawable.time_square),
-//                    tint = AppColors.icon.secondary,
-//                    contentDescription = "",
-//                    modifier = Modifier.size(20.dp)
-//                )
-//
-//                Text(
-//                    modifier = Modifier.padding(start = 3.dp),
-//                    text = shownTime,
-//                    color = AppColors.text.primary,
-//                    style = AppTypography.bodyMdMedium
-//                )
-//            }
-            Space(16.dp)
-
-            CustomText(
-                text = stringResource(Res.string.bajarilgan),
-                color = PrimaryColor,
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.SemiBold
-            )
         }
     }
 }
