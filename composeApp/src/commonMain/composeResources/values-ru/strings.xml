@@ -631,4 +631,5 @@
     <string name="vazifa_yuborildi">Задание отправлено</string>
     <string name="vazifani_tahrirlash">Редактировать задание</string>
     <string name="muddati_otgan">Просрочено</string>
+    <string name="bola_hali_bajardim_bosmagan">Ребёнок ещё не нажал кнопку «Я выполнил»</string>
 </resources>

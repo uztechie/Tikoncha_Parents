@@ -16,19 +16,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,9 +49,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.flow.distinctUntilChanged
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -49,12 +58,15 @@ import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
+import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
 import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -77,15 +89,6 @@ class TaskScreen : Screen {
         }
 
         var errorMessage by remember { mutableStateOf<String?>(null) }
-//        CollectEffects(viewModel.effect) { effect ->
-//            when (effect) {
-//                is TaskListEffect.ShowError -> {
-//                    errorMessage = effect.message
-//                }
-//                TaskListEffect.TaskMarkedAsCompleted -> {}
-//                TaskListEffect.TaskDeleted -> {}
-//            }
-//        }
 
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
@@ -115,6 +118,7 @@ fun TaskUi(
     var taskToDelete by remember { mutableStateOf<Task?>(null) }
     val displayedList = state.taskList
 
+    // ── Bottom sheetlar ─────────────────────────────────────
     if (showChildSelector) {
         SelectionChildBottomSheet(
             navigator = navigator,
@@ -143,11 +147,13 @@ fun TaskUi(
         )
     }
 
+    // ── System bars ─────────────────────────────────────────
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.secondary
     )
 
+    // ── List state + pagination ─────────────────────────────
     val listState = rememberLazyListState()
     LaunchedEffect(listState) {
         snapshotFlow {
@@ -160,34 +166,72 @@ fun TaskUi(
             .collect { shouldLoad -> if (shouldLoad) event(TaskListEvent.OnLoadMore) }
     }
 
+    // ── Collapsing header setup ─────────────────────────────
+    val density = LocalDensity.current
+    val headerHeight = 56.dp
+    val headerHeightPx = with(density) { headerHeight.toPx() }
+    val headerOffsetPx = remember { mutableFloatStateOf(0f) }
+
+    val collapseConnection = remember(headerHeightPx) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val old = headerOffsetPx.floatValue
+                val new = (old + available.y).coerceIn(-headerHeightPx, 0f)
+                headerOffsetPx.floatValue = new
+                return Offset(0f, new - old)
+            }
+        }
+    }
+
+    val headerCurrentHeight = with(density) {
+        (headerHeightPx + headerOffsetPx.floatValue).toDp()
+    }
+    val headerAlpha by remember {
+        derivedStateOf {
+            ((headerHeightPx + headerOffsetPx.floatValue) / headerHeightPx).coerceIn(0f, 1f)
+        }
+    }
+
+    // ── UI ──────────────────────────────────────────────────
     Box(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
             .background(AppColors.bg.secondary)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(collapseConnection)
+        ) {
+            // ── Collapsing Header ──
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(headerCurrentHeight)
+                    .graphicsLayer { alpha = headerAlpha }
+                    .clipToBounds()
+            ) {
+                CustomHeader(
+                    showBackButton = true,
+                    onBackClick = { navigator?.pop() },
+                    title = stringResource(Res.string.vazifalar),
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.circle_clock),
+                            contentDescription = null,
+                            tint = AppColors.icon.accentPrimary,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .singleClick {
+                                    navigator?.push(CompletedTaskScreen())
+                                }
+                        )
+                    }
+                )
+            }
 
-            // ── Header ────────────────────────────────────
-            CustomHeader(
-                showBackButton = true,
-                onBackClick = { navigator?.pop() },
-                title = stringResource(Res.string.vazifalar),
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.circle_clock),
-                        contentDescription = null,
-                        tint = AppColors.icon.accentPrimary,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .singleClick {
-                                navigator?.push(CompletedTaskScreen())
-                            }
-                    )
-                }
-            )
-
-            // ── Toggle + Child selector ───────────────────
+            // ── Sticky Toggle ──
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,93 +247,125 @@ fun TaskUi(
                     ),
                     onOptionSelected = { event(TaskListEvent.OnTaskSelected(it)) }
                 )
-                Spacer(Modifier.height(12.dp))
-
-                ChildSelectionButton(
-                    text = state.selectedChild?.name.orEmpty(),
-                    imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
-                    label = stringResource(Res.string.farzandlaringiz),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(TextFieldHeight),
-                    onClick = {
-                        if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
-                        else showChildSelector = true
-                    }
-                )
-                Spacer(Modifier.height(16.dp))
-
-                StatusChips(
-                    items = listOf(
-                        TaskFilterChip.IN_PROGRESS to stringResource(Res.string.jarayonda),
-                        TaskFilterChip.DONE_BY_CHILD to stringResource(Res.string.bajarilgan),
-                        TaskFilterChip.OVERDUE to stringResource(Res.string.muddati_otgan)
-                    ),
-                    selected = state.activeChip,
-                    onChipClick = { chip -> event(TaskListEvent.OnFilterChipToggled(chip)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(12.dp))
             }
 
-            // ── Empty state YOKI LazyColumn ───────────────
-            if (displayedList.isEmpty()) {
-                EmptyTaskState(
-                    title = if (isParentTab) stringResource(Res.string.hali_vazifa_yoq) else stringResource(
-                        Res.string.hozir_vazifalar_yo_q
-                    ),
-                    subtitle = if (isParentTab) stringResource(Res.string.ota_ona_vazifalari_desc) else stringResource(
-                        Res.string.farzand_vazifalari_desc
-                    ),
+            // ── Refilter loading indicator (chip/tab almashtirilganda) ──
+            if (state.isRefiltering) {
+                LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                        .padding(bottom = ButtonHeight + ContainerPadding * 2)
+                        .height(2.dp),
+                    color = AppColors.icon.accentPrimary,
+                    trackColor = Color.Transparent,
                 )
             } else {
-                PullToRefreshBox(
-                    isRefreshing = state.isRefreshing,
-                    onRefresh = { event(TaskListEvent.OnRefresh) }
+                Spacer(Modifier.height(2.dp))
+            }
+
+            // ── Scrollable: ChildSelector + StatusChips + List ──
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { event(TaskListEvent.OnRefresh) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        start = ContainerPadding,
+                        end = ContainerPadding,
+                        top = 12.dp,
+                        bottom = ButtonHeight + ContainerPadding * 2,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = listState,
-                        contentPadding = PaddingValues(
-                            start = ContainerPadding,
-                            end = ContainerPadding,
-                            bottom = ButtonHeight + ContainerPadding * 2
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(if (isParentTab) 10.dp else 12.dp)
-                    ) {
-                        items(items = displayedList, key = { it.id }) { task ->
-                            TaskCardItem(
-                                task = task,
-                                onDetailsIconClick = { },
-                                onDeleteClick = { taskToDelete = it },
-                                onDoneButtonClick = {
-                                    event(TaskListEvent.OnCompletedTask(task))
-                                },
-                                onEditIconClick = {
-                                    navigator?.push(CreateTaskScreen(task))
+                    item(key = "child-selector") {
+                        ChildSelectionButton(
+                            text = state.selectedChild?.name.orEmpty(),
+                            imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
+                            label = stringResource(Res.string.farzandlaringiz),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(TextFieldHeight),
+                            onClick = {
+                                if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
+                                else showChildSelector = true
+                            }
+                        )
+                    }
+
+                    item(key = "status-chips") {
+                        StatusChips(
+                            items = listOf(
+                                TaskFilterChip.IN_PROGRESS to "Jarayonda",
+                                TaskFilterChip.DONE_BY_CHILD to "Bajarilgan",
+                                TaskFilterChip.OVERDUE to "Tugallanmagan",
+                            ),
+                            selected = state.activeChip,
+                            onChipClick = { chip -> event(TaskListEvent.OnFilterChipToggled(chip)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    when {
+                        state.isInitialLoading -> {
+                            item(key = "loading") {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillParentMaxHeight(0.5f),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = AppColors.icon.accentPrimary,
+                                        strokeWidth = 3.dp,
+                                    )
                                 }
-                            )
+                            }
+                        }
+                        displayedList.isEmpty() -> {
+                            item(key = "empty") {
+                                EmptyTaskState(
+                                    title = if (isParentTab)
+                                        stringResource(Res.string.hali_vazifa_yoq)
+                                    else
+                                        stringResource(Res.string.hozir_vazifalar_yo_q),
+                                    subtitle = if (isParentTab)
+                                        stringResource(Res.string.ota_ona_vazifalari_desc)
+                                    else
+                                        stringResource(Res.string.farzand_vazifalari_desc),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillParentMaxHeight(0.7f),
+                                )
+                            }
+                        }
+                        else -> {
+                            items(items = displayedList, key = { it.id }) { task ->
+                                TaskCardItem(
+                                    task = task,
+                                    onDetailsIconClick = { /* TODO */ },
+                                    onDoneButtonClick = {
+                                        event(TaskListEvent.OnCompletedTask(task))
+                                    },
+                                    onEditIconClick = {
+                                        navigator?.push(CreateTaskScreen(task))
+                                    },
+                                    onDeleteClick = { taskToDelete = it }
+                                )
+                            }
                         }
                     }
                 }
             }
         }
 
-        // ── Pastki tugma ──────────────────────────────────
+        // ── Pastki tugma (fixed) ────────────────────────────
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .bottomShadow(
-                    shape = RoundedCornerShape(
-                        topStart = ButtonCornerRadius,
-                        topEnd = ButtonCornerRadius
-                    ),
-                    color = AppColors.bg.secondary
-                )
                 .background(
                     AppColors.bg.elevated,
                     RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
@@ -320,14 +396,14 @@ private fun EmptyTaskState(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(Res.drawable.home_task), // ⚠ resource qo'shish kerak
+            painter = painterResource(Res.drawable.home_task),
             contentDescription = null,
             modifier = Modifier.size(90.dp)
         )
         Spacer(Modifier.height(26.dp))
 
         Text(
-            text = title, // ⚠ string qo'shish kerak
+            text = title,
             style = AppTypography.titleSmSemiBold,
             color = AppColors.text.primary,
             textAlign = TextAlign.Center
@@ -335,7 +411,7 @@ private fun EmptyTaskState(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = subtitle, // ⚠ string qo'shish kerak
+            text = subtitle,
             style = AppTypography.emphasizedMdMedium,
             color = AppColors.text.secondary,
             textAlign = TextAlign.Center

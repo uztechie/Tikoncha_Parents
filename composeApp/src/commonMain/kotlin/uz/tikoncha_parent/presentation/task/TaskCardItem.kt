@@ -51,6 +51,7 @@ import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
@@ -307,31 +308,39 @@ fun TaskCardItem(
             }
 
             if (!task.isCompleted) {
-
                 SpaceMedium()
-
                 if (task.isMine) {
                     CustomButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(DialogButtonHeight),
+                        enabled = task.isChildDone,
+                        text = stringResource(Res.string.tekshirildi),
                         onClick = {
                             onDoneButtonClick(task)
                         },
-                        enabled = task.isChildDone,
-                        text = stringResource(Res.string.tekshirildi)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(DialogButtonHeight),
+                        leadingIcon = {
+                            if (!task.isChildDone) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.lock),
+                                    contentDescription = null,
+                                    tint = AppColors.icon.secondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
                     )
                 }
+            }
+            Space(8.dp)
 
-            } else {
-
-                SpaceLarge()
-
-                CustomText(
-                    text = stringResource(Res.string.bajarilgan),
-                    color = PrimaryColor,
-                    fontSize = NormalTextSize,
-                    fontWeight = FontWeight.SemiBold
+            if (!task.isChildDone) {
+                Text(
+                    text = stringResource(Res.string.bola_hali_bajardim_bosmagan),
+                    style = AppTypography.emphasizedXsMedium,
+                    color = AppColors.text.secondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

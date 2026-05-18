@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toTask
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import uz.tikoncha_parent.domain.model.todo.TodosQuery
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
@@ -47,7 +48,7 @@ class TaskListViewModel(
 
     fun onEvent(event: TaskListEvent) {
         when (event) {
-            TaskListEvent.LoadTasks -> firstPage()
+            TaskListEvent.LoadTasks -> initialLoad()
             TaskListEvent.OnRefresh -> refresh()
             TaskListEvent.OnLoadMore -> loadMore()
             TaskListEvent.OnRetry -> firstPage()
@@ -79,6 +80,16 @@ class TaskListViewModel(
         }
     }
 
+    private fun initialLoad() {
+        val hasData = state.value.taskList.isNotEmpty()
+        _state.update {
+            it.copy(
+                isInitialLoading = !hasData,                            // ✅ faqat data yo'q bo'lsa
+                isRefiltering = hasData,                                // ✅ aks holda ingichka indikator
+            )
+        }
+        firstPage()
+    }
     private fun loadCompletedTasks(reset: Boolean) {
         val s = state.value
         if (s.isCompletedLoading) return
@@ -122,49 +133,48 @@ class TaskListViewModel(
     private fun changeTab(index: Int) {
         if (index == state.value.taskIndex) return
         val willFetch = index == 0 || state.value.selectedChild != null
+        val hasData = state.value.taskList.isNotEmpty()
+
         _state.update {
             it.copy(
                 taskIndex = index,
-                taskList = emptyList(),
-                offset = 0,
-                hasMore = true,
                 errorMessage = null,
-                isInitialLoading = willFetch,
-                listResponseState = if (willFetch) ResponseState.Loading else ResponseState.Idle
+                isInitialLoading = willFetch && !hasData,
+                isRefiltering = willFetch && hasData,
             )
         }
         if (willFetch) firstPage()
+        else _state.update { it.copy(taskList = emptyList(), totalCount = 0) }
     }
 
-    private fun selectChild(child: uz.tikoncha_parent.domain.model.UserInfo) {
+    private fun selectChild(child: UserInfo) {
         if (child.userId == state.value.selectedChild?.userId) return
         AppSettings.selectedChild = child
+        val hasData = state.value.taskList.isNotEmpty()
+
         _state.update {
             it.copy(
                 selectedChild = child,
-                taskList = emptyList(),
-                offset = 0,
-                hasMore = true,
                 errorMessage = null,
-                isInitialLoading = true,
-                listResponseState = ResponseState.Loading
+                isInitialLoading = !hasData,
+                isRefiltering = hasData,
             )
         }
-        if (state.value.canFetch) firstPage() else _state.update { it.copy(isInitialLoading = false) }
+        if (state.value.canFetch) firstPage()
+        else _state.update {
+            it.copy(taskList = emptyList(), totalCount = 0, isInitialLoading = false, isRefiltering = false)
+        }
     }
 
     private fun toggleChip(chip: TaskFilterChip) {
-        val hasExistingData = state.value.taskList.isNotEmpty()
+        val hasData = state.value.taskList.isNotEmpty()
         _state.update {
             val new = if (it.activeChip == chip) null else chip
             it.copy(
                 activeChip = new,
-                offset = 0,
-                hasMore = true,
                 errorMessage = null,
-                isInitialLoading = !hasExistingData,
-                isRefiltering = hasExistingData,
-                listResponseState = ResponseState.Loading
+                isInitialLoading = !hasData,
+                isRefiltering = hasData,
             )
         }
         firstPage()
@@ -174,18 +184,23 @@ class TaskListViewModel(
 
     private fun firstPage() {
         if (!state.value.canFetch) {
-            _state.update { it.copy(taskList = emptyList(), totalCount = 0) }
+            _state.update {
+                it.copy(
+                    taskList = emptyList(),
+                    totalCount = 0,
+                    isInitialLoading = false,
+                    isRefiltering = false,
+                )
+            }
             return
         }
         loadJob?.cancel()
         _state.update {
             it.copy(
-                isInitialLoading = true,
                 listResponseState = ResponseState.Loading,
                 errorMessage = null,
-                taskList = emptyList(),
                 offset = 0,
-                hasMore = true
+                hasMore = true,
             )
         }
         loadJob = screenModelScope.launch { fetchPage(reset = true) }
@@ -221,21 +236,18 @@ class TaskListViewModel(
                 _state.update { current ->
                     val newList = if (reset) mapped else current.taskList + mapped
                     current.copy(
-                        taskList = newList,
+                        taskList = newList,                              // ✅ eski o'rniga yangi data
                         totalCount = page.total,
                         offset = newList.size,
                         hasMore = page.hasMore,
                         isInitialLoading = false,
+                        isRefiltering = false,                           // ✅ tugagach o'chiramiz
                         isRefreshing = false,
                         isPaginating = false,
                         listResponseState = ResponseState.Idle,
                         errorMessage = null,
-                        // ✅ activeTaskCount faqat filter yo'q va "O'zim" tabida yangilanadi
-                        activeTaskCount = if (current.activeChip == null && current.taskIndex == 0) {
-                            page.total
-                        } else {
-                            current.activeTaskCount
-                        }
+                        activeTaskCount = if (current.activeChip == null && current.taskIndex == 0)
+                            page.total else current.activeTaskCount
                     )
                 }
             },
@@ -243,6 +255,7 @@ class TaskListViewModel(
                 _state.update { current ->
                     current.copy(
                         isInitialLoading = false,
+                        isRefiltering = false,                           // ✅ xatolikda ham o'chiriladi
                         isRefreshing = false,
                         isPaginating = false,
                         listResponseState = ResponseState.Idle,

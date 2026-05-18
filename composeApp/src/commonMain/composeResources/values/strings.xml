@@ -661,5 +661,5 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzand_ilovasi_info">Ushbu Tikoncha ilovasini farzandingiz telefoniga o'rnating.</string>
     <string name="kod_nusxalandi">Kod nusxalandi</string>
     <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Farzandingiz Tikoncha ilovasidan kirib tasdiqlash kodini kiritishi kerak.</string>
-
+    <string name="bola_hali_bajardim_bosmagan">Bola hali “Bajardim” tugmasini bosmagan</string>
 </resources>
