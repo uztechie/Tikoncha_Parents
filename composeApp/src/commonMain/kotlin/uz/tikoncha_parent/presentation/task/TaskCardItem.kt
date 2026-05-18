@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -33,34 +34,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.common.Util.currentMillis
-import uz.tikoncha_parent.common.Util.formatTimeHHmm
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
+import uz.tikoncha_parent.common.Util.currentMillis
+import uz.tikoncha_parent.common.Util.formatTimeHHmm
 import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.task.model.ImportanceType
+import uz.tikoncha_parent.presentation.task.model.Task
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpOffset
-import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
-import uz.tikoncha_parent.presentation.task.model.ImportanceType
-import uz.tikoncha_parent.presentation.task.model.Task
 
 @Composable
 fun TaskCardItem(
     task: Task,
+    isCompleting: Boolean = false,
+    isDeleting: Boolean = false,
     onDeleteClick: (task: Task) -> Unit,
     onEditIconClick: (task: Task) -> Unit,
     onDoneButtonClick: (task: Task) -> Unit,
@@ -88,6 +89,8 @@ fun TaskCardItem(
         formatTimeHHmm(task.dateTime)
     }
 
+    // Card ustida biror background action ketayotgan bo'lsa
+    val isBusy = isCompleting || isDeleting
 
     Box(
         modifier = Modifier
@@ -148,17 +151,26 @@ fun TaskCardItem(
                     )
                 }
 
-                if (task.isMine) {
+                if (task.canUpdate) {
                     Box {
                         IconButton(
                             onClick = { menuExpanded = true },
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
+                            enabled = !isBusy        // ✅ delete/complete ketayotgan bo'lsa menu yopiq
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "",
-                                tint = MaterialTheme.extendedColor.hintColor
-                            )
+                            if (isDeleting) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = AppColors.text.accentDanger
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "",
+                                    tint = MaterialTheme.extendedColor.hintColor
+                                )
+                            }
                         }
 
                         DropdownMenu(
@@ -182,7 +194,7 @@ fun TaskCardItem(
                                 text = {
                                     Text(
                                         text = stringResource(Res.string.ko_rish),
-                                        style = AppTypography.bodySmMedium,
+                                        style = AppTypography.titleSmMedium,
                                         color = AppColors.text.primary
                                     )
                                 },
@@ -204,7 +216,7 @@ fun TaskCardItem(
                                 text = {
                                     Text(
                                         text = stringResource(Res.string.tahrirlash),
-                                        style = AppTypography.bodySmMedium,
+                                        style = AppTypography.titleSmMedium,
                                         color = AppColors.text.primary
                                     )
                                 },
@@ -226,7 +238,7 @@ fun TaskCardItem(
                                 text = {
                                     Text(
                                         text = stringResource(Res.string.ochirish),
-                                        style = AppTypography.bodySmMedium,
+                                        style = AppTypography.titleSmMedium,
                                         color = AppColors.text.accentDanger
                                     )
                                 },
@@ -309,9 +321,10 @@ fun TaskCardItem(
 
             if (!task.isCompleted) {
                 SpaceMedium()
-                if (task.isMine) {
+                if (task.canUpdate) {
                     CustomButton(
-                        enabled = task.isChildDone,
+                        // ✅ Loading paytida ham, child bosmagan paytda ham disable
+                        enabled = task.isChildDone && !isBusy,
                         text = stringResource(Res.string.tekshirildi),
                         onClick = {
                             onDoneButtonClick(task)
@@ -320,13 +333,22 @@ fun TaskCardItem(
                             .fillMaxWidth()
                             .height(DialogButtonHeight),
                         leadingIcon = {
-                            if (!task.isChildDone) {
-                                Icon(
-                                    painter = painterResource(Res.drawable.lock),
-                                    contentDescription = null,
-                                    tint = AppColors.icon.secondary,
-                                    modifier = Modifier.size(14.dp)
-                                )
+                            when {
+                                isCompleting -> {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(14.dp),
+                                        strokeWidth = 2.dp,
+                                        color = AppColors.icon.secondary
+                                    )
+                                }
+                                !task.isChildDone -> {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.lock),
+                                        contentDescription = null,
+                                        tint = AppColors.icon.secondary,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
                             }
                         }
                     )
@@ -356,7 +378,7 @@ private fun Pre() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-        ) {  }
+        ) { }
         TaskCardItem(
             task = Task(
                 title = "Matimatika uy vazifasini bajarish",
@@ -370,8 +392,10 @@ private fun Pre() {
                 createdAt = currentMillis,
                 targetUserId = "",
                 authorId = "",
-                isMine = true
+                canUpdate = true
             ),
+            isCompleting = false,
+            isDeleting = false,
             onEditIconClick = {},
             onDoneButtonClick = {},
             onDetailsIconClick = {},

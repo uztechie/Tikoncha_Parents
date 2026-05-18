@@ -49,6 +49,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -59,7 +60,6 @@ import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
@@ -83,20 +83,40 @@ class TaskScreen : Screen {
         val event = viewModel::onEvent
         val navigator = LocalNavigator.current ?: return
 
+        // ✅ Effect'larni collect qilish — error/success uchun
+        var localError by remember { mutableStateOf<String?>(null) }
+
+        LaunchedEffect(Unit) {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is TaskListEffect.ShowError -> localError = effect.message
+                    is TaskListEffect.ShowMessage -> localError = effect.message
+                    TaskListEffect.TaskDeleted -> { /* snackbar bo'lsa shu yerda */ }
+                    TaskListEffect.TaskMarkedAsCompleted -> { /* snackbar bo'lsa shu yerda */ }
+                }
+            }
+        }
+
         LifecycleStartEffect(Unit) {
             event(TaskListEvent.LoadTasks)
             onStopOrDispose {}
         }
 
-        var errorMessage by remember { mutableStateOf<String?>(null) }
+        val shownError = localError ?: state.errorMessage
 
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
-            show = errorMessage != null,
+            show = shownError != null,
             title = stringResource(Res.string.xatolik),
-            message = errorMessage.orEmpty(),
-            onDismiss = { errorMessage = null },
-            onButtonClick = { errorMessage = null }
+            message = shownError.orEmpty(),
+            onDismiss = {
+                localError = null
+                event(TaskListEvent.ClearError)
+            },
+            onButtonClick = {
+                localError = null
+                event(TaskListEvent.ClearError)
+            }
         )
 
         TaskUi(
@@ -116,7 +136,6 @@ fun TaskUi(
     val isParentTab = state.taskIndex == 0
     var showChildSelector by remember { mutableStateOf(false) }
     var taskToDelete by remember { mutableStateOf<Task?>(null) }
-    val displayedList = state.taskList
 
     // ── Bottom sheetlar ─────────────────────────────────────
     if (showChildSelector) {
@@ -150,20 +169,24 @@ fun TaskUi(
     // ── System bars ─────────────────────────────────────────
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.elevated
     )
 
     // ── List state + pagination ─────────────────────────────
     val listState = rememberLazyListState()
-    LaunchedEffect(listState) {
+
+    LaunchedEffect(listState, state.taskList.size, state.hasMore, state.isPaginating) {
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
             val total = layoutInfo.totalItemsCount
-            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            total > 0 && lastVisible >= total - 3
+            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val taskItemsExist = state.taskList.isNotEmpty()
+            val nearEnd = total > 2 && lastVisible >= total - 3
+            taskItemsExist && nearEnd && state.hasMore && !state.isPaginating
         }
             .distinctUntilChanged()
-            .collect { shouldLoad -> if (shouldLoad) event(TaskListEvent.OnLoadMore) }
+            .filter { it }
+            .collect { event(TaskListEvent.OnLoadMore) }
     }
 
     // ── Collapsing header setup ─────────────────────────────
@@ -172,13 +195,25 @@ fun TaskUi(
     val headerHeightPx = with(density) { headerHeight.toPx() }
     val headerOffsetPx = remember { mutableFloatStateOf(0f) }
 
-    val collapseConnection = remember(headerHeightPx) {
+    val collapseConnection = remember(headerHeightPx, listState) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
                 val old = headerOffsetPx.floatValue
-                val new = (old + available.y).coerceIn(-headerHeightPx, 0f)
-                headerOffsetPx.floatValue = new
-                return Offset(0f, new - old)
+
+                return when {
+                    delta < 0 && old > -headerHeightPx -> {
+                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+                        headerOffsetPx.floatValue = new
+                        Offset(0f, new - old)
+                    }
+                    delta > 0 && old < 0f && !listState.canScrollBackward -> {
+                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+                        headerOffsetPx.floatValue = new
+                        Offset(0f, new - old)
+                    }
+                    else -> Offset.Zero
+                }
             }
         }
     }
@@ -249,7 +284,7 @@ fun TaskUi(
                 )
             }
 
-            // ── Refilter loading indicator (chip/tab almashtirilganda) ──
+            // ── Refilter loading indicator ──
             if (state.isRefiltering) {
                 LinearProgressIndicator(
                     modifier = Modifier
@@ -311,21 +346,22 @@ fun TaskUi(
 
                     when {
                         state.isInitialLoading -> {
-                            item(key = "loading") {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillParentMaxHeight(0.5f),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    CircularProgressIndicator(
-                                        color = AppColors.icon.accentPrimary,
-                                        strokeWidth = 3.dp,
-                                    )
-                                }
+                            items(count = 5, key = { "shimmer-$it" }) {
+                                TaskCardItemShimmer()
                             }
                         }
-                        displayedList.isEmpty() -> {
+                        state.selectedChild == null -> {
+                            item(key = "no-child") {
+                                EmptyTaskState(
+                                    title = stringResource(Res.string.farzandlaringiz),
+                                    subtitle = stringResource(Res.string.farzand_vazifalari_desc),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillParentMaxHeight(0.7f),
+                                )
+                            }
+                        }
+                        state.taskList.isEmpty() -> {
                             item(key = "empty") {
                                 EmptyTaskState(
                                     title = if (isParentTab)
@@ -343,10 +379,12 @@ fun TaskUi(
                             }
                         }
                         else -> {
-                            items(items = displayedList, key = { it.id }) { task ->
+                            items(items = state.taskList, key = { it.id }) { task ->
                                 TaskCardItem(
                                     task = task,
-                                    onDetailsIconClick = { /* TODO */ },
+                                    isCompleting = task.id in state.completingIds,
+                                    isDeleting = task.id in state.deletingIds,
+                                    onDetailsIconClick = { },
                                     onDoneButtonClick = {
                                         event(TaskListEvent.OnCompletedTask(task))
                                     },
@@ -355,6 +393,23 @@ fun TaskUi(
                                     },
                                     onDeleteClick = { taskToDelete = it }
                                 )
+                            }
+
+                            if (state.isPaginating) {
+                                item(key = "pagination-loader") {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(
+                                            color = AppColors.icon.accentPrimary,
+                                            strokeWidth = 2.dp,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

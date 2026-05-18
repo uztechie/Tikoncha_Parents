@@ -10,6 +10,7 @@ sealed interface TaskListEvent {
     data object OnLoadMore : TaskListEvent
     data object OnRetry : TaskListEvent
     data object LoadAllChildrenActiveTasks : TaskListEvent
+    data object ClearError : TaskListEvent
 
     // ✅ Filter
     data class OnFilterChipToggled(val chip: TaskFilterChip) : TaskListEvent
@@ -19,12 +20,8 @@ sealed interface TaskListEvent {
     data object ShowChildrenAll : TaskListEvent
     data class OnChildSelected(val child: UserInfo) : TaskListEvent
     data class OnTaskSelected(val taskIndex: Int) : TaskListEvent
-    data class OnGenderSelected(val genderIndex: Int) : TaskListEvent
 
     // Actions
-    data class OnCompletedTask(val task: Task) : TaskListEvent       // "Tekshirildi"
+    data class OnCompletedTask(val task: Task) : TaskListEvent
     data class OnDeleteTask(val task: Task) : TaskListEvent
-
-    data object LoadCompletedTasks : TaskListEvent
-    data object LoadMoreCompleted : TaskListEvent
 }

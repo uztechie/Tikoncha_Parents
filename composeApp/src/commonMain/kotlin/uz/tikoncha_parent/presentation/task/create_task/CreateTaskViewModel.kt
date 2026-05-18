@@ -79,8 +79,14 @@ class CreateTaskViewModel(
             }
             CreateTaskEvent.OnReset -> resetForm()
 
-            is CreateTaskEvent.OnEditTask -> _state.update {
-                it.copy(
+            is CreateTaskEvent.OnEditTask -> _state.update { current ->
+                // ✅ Edit qilinayotgan vazifa boshqa farzandga tegishli bo'lishi mumkin —
+                // shu farzandni childrenList'dan topib qo'yamiz.
+                val matchedChild = current.childrenList
+                    .firstOrNull { it.userId == event.task.targetUserId }
+                    ?: current.selectedChild
+
+                current.copy(
                     title = event.task.title,
                     desc = event.task.description,
                     date = millisToLocalDate(event.task.dateTime),
@@ -89,7 +95,8 @@ class CreateTaskViewModel(
                     completed = event.task.isCompleted,
                     isEditing = true,
                     editingTaskId = event.task.id,
-                    editingTaskCreatedAt = event.task.createdAt
+                    editingTaskCreatedAt = event.task.createdAt,
+                    selectedChild = matchedChild
                 )
             }
         }
@@ -170,7 +177,6 @@ class CreateTaskViewModel(
                 createTodoUseCase(params).fold(
                     onSuccess = {
                         _state.update { it.copy(taskResponseState = ResponseState.Idle) }
-                        // Server tasdiqlagandan keyin balansni rasmiy qayta yuklash
                         loadParentCoins()
                         sendEffect(CreateTaskEffect.NavigateToSuccess)
                     },

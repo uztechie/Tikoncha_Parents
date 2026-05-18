@@ -177,6 +177,7 @@ fun NewHomeUi(
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
+        event(HomeEvent.ReloadUserInfo)
         event(HomeEvent.RefreshParentRequest)
     }
 
@@ -236,6 +237,7 @@ fun NewHomeUi(
             internetCheck.check {
                 isRefreshing = true
                 event(HomeEvent.GetChildren)
+                event(HomeEvent.ReloadUserInfo)
                 statisticEvent(StatisticEvent.RefreshChild)
                 statisticEvent(StatisticEvent.GetAppUsage)
                 delay(500)

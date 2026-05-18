@@ -114,6 +114,7 @@ class CreateTaskCheckScreen : Screen {
         )
     }
 }
+
 @Composable
 fun CreateTaskCheckUI(
     state: CreateTaskState,
@@ -122,7 +123,7 @@ fun CreateTaskCheckUI(
 ) {
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.elevated
     )
     var showChildSelector by remember { mutableStateOf(false) }
     val dateText = state.date?.let { reformattedDayMonthWithWeekdayForTask(it) } ?: "—"
@@ -135,13 +136,20 @@ fun CreateTaskCheckUI(
         ImportanceType.NONE -> "—"
     }
 
-    // Muhimlik darajasiga qarab rang
     val importanceTextColor = when (state.importance) {
         ImportanceType.MOST_IMPORTANT -> AppColors.text.accentDanger
         ImportanceType.IMPORTANT -> AppColors.text.accentWarning
         ImportanceType.MEDIUM -> AppColors.text.accentSuccess
         ImportanceType.NONE -> Color.Transparent
     }
+
+    // ✅ Saqlash tugmasi shartlari
+    val canSave = state.title.isNotBlank() &&
+            state.date != null &&
+            state.time != null &&
+            state.importance != ImportanceType.NONE &&
+            state.selectedChild != null &&
+            state.taskResponseState !is ResponseState.Loading
 
     if (showChildSelector) {
         SelectionChildBottomSheet(
@@ -292,8 +300,6 @@ fun CreateTaskCheckUI(
                             color = importanceTextColor
                         )
                     }
-
-
                 }
                 Space(8.dp)
 
@@ -338,7 +344,7 @@ fun CreateTaskCheckUI(
                 .align(Alignment.BottomCenter)
         ) {
             CustomButtonNew(
-                enabled = true,
+                enabled = canSave,    // ✅ form valid + child + loading emas
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.vazifani_saqlash),
                 shape = RoundedCornerShape(24.dp),

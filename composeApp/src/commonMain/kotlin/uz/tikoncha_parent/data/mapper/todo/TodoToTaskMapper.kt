@@ -27,6 +27,7 @@ fun TodoDto.toDomain(): Todo = Todo(
     isExpired = is_expired,
     createdAt = created_at,
     modifiedAt = modified_at,
+    canUpdate = can_update?:false,
     coin = coin
 )
 
@@ -71,6 +72,7 @@ fun Todo.toDto(): TodoDto = TodoDto(
     is_expired = isExpired,
     created_at = createdAt,
     modified_at = modifiedAt,
+    can_update = null,
     coin = coin
 )
 
@@ -104,6 +106,6 @@ fun Todo.toTask(): Task = Task(
     createdAt = createdAt ?: 0L,
     targetUserId = targetUserId.orEmpty(),
     authorId = authorId.orEmpty(),
-    isMine = authorId == AppSettings.userId,
+    canUpdate = canUpdate,
     coin = coin
 )

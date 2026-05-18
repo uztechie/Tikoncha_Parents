@@ -4,10 +4,8 @@ from pathlib import Path
 BASE = "./composeApp/src/commonMain/composeResources"
 DEFAULT = f"{BASE}/values/strings.xml"
 
-# en fayl hozir yo'q — script baribir nima qo'shish kerakligini ko'rsatadi
 TARGETS = {
     "ru": f"{BASE}/values-ru/strings.xml",
-    "en": f"{BASE}/values-en/strings.xml",
 }
 
 def load_strings(path):

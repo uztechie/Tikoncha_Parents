@@ -11,6 +11,7 @@ data class Todo(
     val isChildDone: Boolean,     // farzand bajargan
     val isCompleted: Boolean,     // ota-ona tasdiqlagan (verified)
     val isExpired: Boolean,       // server-side
+    val canUpdate: Boolean,
     val createdAt: Long?,
     val modifiedAt: Long?,
     val coin: Int

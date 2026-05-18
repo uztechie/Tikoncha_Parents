@@ -57,6 +57,7 @@ import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.create_task_check.CreateTaskCheckScreen
 import uz.tikoncha_parent.presentation.task.model.ImportanceType
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
+import uz.tikoncha_parent.presentation.task.success.TaskSuccessScreen
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -78,8 +79,16 @@ class CreateTaskScreen(
         var successDialogMessage by remember { mutableStateOf<String?>(null) }
         var errorMessage by remember { mutableStateOf<String?>(null) }
 
+        // ✅ Edit yoki yangi vazifa — har holatda form holatini to'g'ri o'rnatish.
+        // taskToEdit = null bo'lsa, eski edit holatini reset qilamiz.
         LaunchedEffect(taskToEdit?.id) {
-            if (taskToEdit != null) event(CreateTaskEvent.OnEditTask(taskToEdit))
+            if (taskToEdit != null) {
+                event(CreateTaskEvent.OnEditTask(taskToEdit))
+            } else {
+                event(CreateTaskEvent.OnReset)
+            }
+            // Coin balansini har safar yangilash
+            event(CreateTaskEvent.LoadParentCoins)
         }
 
         CollectEffects(viewModel.effect) { effect ->
@@ -89,9 +98,11 @@ class CreateTaskScreen(
                     navigator?.pop()
                     event(CreateTaskEvent.OnReset)
                 }
-
                 is CreateTaskEffect.ShowError -> errorMessage = effect.message
-                CreateTaskEffect.NavigateToSuccess -> { /* CheckScreen'da kelishi kerak */
+                // ✅ Agar user CheckScreen'dan back qaytsa, lekin request muvaffaqiyatli bo'lsa,
+                // bu yerda success ekraniga o'tkazamiz
+                CreateTaskEffect.NavigateToSuccess -> {
+                    navigator?.push(TaskSuccessScreen())
                 }
             }
         }
@@ -140,15 +151,15 @@ fun CreateTaskUI(
     var showDialogData by remember { mutableStateOf(false) }
     var showDialogTime by remember { mutableStateOf(false) }
 
+    // ✅ description ixtiyoriy — formdan olib tashladik
     val isFormValid = state.title.isNotBlank() &&
-            state.desc.isNotBlank() &&
             state.date != null &&
             state.time != null &&
             state.importance != ImportanceType.NONE
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.elevated
     )
 
     val headerText = if (state.isEditing) stringResource(Res.string.vazifani_tahrirlash)
@@ -167,7 +178,6 @@ fun CreateTaskUI(
             showDialogData = false
             focusManager.clearFocus()
             hidKeyboard()
-
         }
     )
 

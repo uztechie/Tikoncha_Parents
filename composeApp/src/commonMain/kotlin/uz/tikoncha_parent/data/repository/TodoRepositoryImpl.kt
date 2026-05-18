@@ -21,6 +21,7 @@ class TodoRepositoryImpl(
             isChildDone = query.filter.isChildDone,
             isExpired = query.filter.isExpired,
             importance = query.filter.importance?.apiValue,
+            createdByRole = query.filter.createdByRole.apiValue,
             limit = query.limit,
             offset = query.offset
         )

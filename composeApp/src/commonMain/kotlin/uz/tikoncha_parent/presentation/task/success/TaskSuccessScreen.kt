@@ -11,6 +11,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,9 +47,13 @@ class TaskSuccessScreen : Screen {
         val state by createVm.state.collectAsStateWithLifecycle()
         val event = createVm::onEvent
 
+        // ✅ `isEditing` ni screen ochilgan paytda capture qilamiz —
+        // reset bo'lganda ham xabar o'zgarmasin.
+        val wasEditing = remember { state.isEditing }
 
         TaskSuccessUI(
             navigator = navigator,
+            isEditing = wasEditing,
             onClick = {
                 event(CreateTaskEvent.OnReset)
                 navigator.popUntil { it is TaskScreen }

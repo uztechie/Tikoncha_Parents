@@ -4,6 +4,7 @@ data class TodoFilter(
     val isCompleted: Boolean? = null,
     val isChildDone: Boolean? = null,
     val isExpired: Boolean? = null,
+    val createdByRole: CreatedByRole = CreatedByRole.PARENT,
     val importance: Importance? = null
 )
 
@@ -14,6 +15,15 @@ data class TodosQuery(
     val offset: Int
 )
 
-enum class TaskOwnerTab { MINE, CHILDREN }
+enum class CreatedByRole(val apiValue: String) {
+    PARENT("PARENT"),
+    CHILD("CHILD");
+
+    companion object {
+        fun fromApi(value: String?): CreatedByRole? =
+            entries.firstOrNull { it.apiValue.equals(value, ignoreCase = true) }
+    }
+}
+
 
 enum class TaskFilterChip { IN_PROGRESS, DONE_BY_CHILD, OVERDUE }

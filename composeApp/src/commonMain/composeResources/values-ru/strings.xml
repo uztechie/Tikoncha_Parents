@@ -632,4 +632,14 @@
     <string name="vazifani_tahrirlash">Редактировать задание</string>
     <string name="muddati_otgan">Просрочено</string>
     <string name="bola_hali_bajardim_bosmagan">Ребёнок ещё не нажал кнопку «Я выполнил»</string>
+
+    <string name="farzandingiz_raqami">Номер вашего ребёнка</string>
+    <string name="yuborilmoqda">Отправка...</string>
+    <string name="sorov_yuborish">Отправить запрос</string>
+    <string name="tasdiqlash_kodi">Код подтверждения</string>
+    <string name="ochish">Открыть</string>
+    <string name="farzand_ilovasi">Приложение для ребёнка</string>
+    <string name="farzand_ilovasi_info">Установите это приложение Tikoncha на телефон вашего ребёнка.</string>
+    <string name="kod_nusxalandi">Код скопирован</string>
+    <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Ваш ребёнок должен войти в приложение Tikoncha и ввести код подтверждения.</string>
 </resources>

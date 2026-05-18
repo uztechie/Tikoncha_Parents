@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +35,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthWithWeekday
 import uz.tikoncha_parent.common.DateTimeUtil.formatDayMonthYearWithWeekday
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -231,7 +228,7 @@ private fun Pre() {
                 dateTime = 123123123123,
                 importance = ImportanceType.IMPORTANT,
                 isCompleted = true,
-                isMine = true,
+                canUpdate = true,
                 authorId = "1",
                 targetUserId = "1",
                 createdAt = 123123123123,

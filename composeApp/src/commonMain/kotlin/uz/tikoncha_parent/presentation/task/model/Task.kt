@@ -14,7 +14,7 @@ data class Task(
     val isCompleted: Boolean,
     val isChildDone: Boolean = false,
     val isExpired: Boolean = false,
-    val isMine: Boolean,
+    val canUpdate: Boolean,
     val authorId: String,
     val targetUserId: String,
     val progress: Int = 0,

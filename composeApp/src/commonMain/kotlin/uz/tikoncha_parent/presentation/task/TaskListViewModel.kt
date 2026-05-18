@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toTask
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.todo.CreatedByRole
 import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import uz.tikoncha_parent.domain.model.todo.TodosQuery
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
@@ -53,131 +54,113 @@ class TaskListViewModel(
             TaskListEvent.OnLoadMore -> loadMore()
             TaskListEvent.OnRetry -> firstPage()
             TaskListEvent.LoadAllChildrenActiveTasks -> loadAllChildrenActiveTasks()
+            TaskListEvent.ClearError -> _state.update { it.copy(errorMessage = null) }
 
             is TaskListEvent.OnFilterChipToggled -> toggleChip(event.chip)
 
             is TaskListEvent.OnTaskSelected -> changeTab(event.taskIndex)
             is TaskListEvent.OnChildSelected -> selectChild(event.child)
-            is TaskListEvent.OnGenderSelected -> {
-                _state.update {
-                    it.copy(
-                        genderIndex = event.genderIndex,
-                        completedTaskList = emptyList(),
-                        completedOffset = 0,
-                        completedHasMore = true
-                    )
-                }
-                loadCompletedTasks(reset = true)
-            }
+
 
             is TaskListEvent.OnCompletedTask -> completeTask(event.task)
             is TaskListEvent.OnDeleteTask -> deleteTask(event.task)
 
             TaskListEvent.ShowMineAll -> _state.update { it.copy(showMineAll = !it.showMineAll) }
             TaskListEvent.ShowChildrenAll -> _state.update { it.copy(showChildrenAll = !it.showChildrenAll) }
-            TaskListEvent.LoadCompletedTasks -> loadCompletedTasks(reset = true)
-            TaskListEvent.LoadMoreCompleted -> loadCompletedTasks(reset = false)
         }
     }
 
     private fun initialLoad() {
-        val hasData = state.value.taskList.isNotEmpty()
+        val s = state.value
+        if (!s.canFetch) {
+            // Child tanlanmagan — yuklamaymiz
+            _state.update {
+                it.copy(
+                    taskList = emptyList(),
+                    totalCount = 0,
+                    offset = 0,
+                    hasMore = true,
+                    isRefreshing = false,
+                    isInitialLoading = false,
+                    isRefiltering = false,
+                    isPaginating = false,
+                )
+            }
+            return
+        }
+        val hasData = s.taskList.isNotEmpty()
         _state.update {
             it.copy(
-                isInitialLoading = !hasData,                            // ✅ faqat data yo'q bo'lsa
-                isRefiltering = hasData,                                // ✅ aks holda ingichka indikator
+                isInitialLoading = !hasData,
+                isRefiltering = hasData,
             )
         }
         firstPage()
     }
-    private fun loadCompletedTasks(reset: Boolean) {
-        val s = state.value
-        if (s.isCompletedLoading) return
-        if (!reset && !s.completedHasMore) return
 
-        screenModelScope.launch {
-            _state.update { it.copy(isCompletedLoading = true) }
-
-            val targetId = if (s.genderIndex == 0) s.selectedChild?.userId else null
-
-            val query = TodosQuery(
-                targetUserId = targetId,
-                filter = buildFilter(null, forHistory = true),  // isCompleted=true
-                limit = s.pageSize,
-                offset = if (reset) 0 else s.completedOffset
-            )
-
-            getTodosUseCase(query).fold(
-                onSuccess = { page ->
-                    val mapped = page.items.map { it.toTask() }
-                    _state.update { current ->
-                        val newList = if (reset) mapped else current.completedTaskList + mapped
-                        current.copy(
-                            completedTaskList = newList,
-                            completedOffset = newList.size,
-                            completedHasMore = page.hasMore,
-                            isCompletedLoading = false
-                        )
-                    }
-                },
-                onFailure = { e ->
-                    _state.update { it.copy(isCompletedLoading = false) }
-                    sendEffect(TaskListEffect.ShowError(e.message ?: "Yuklanmadi"))
-                }
-            )
-        }
-    }
 
     // ---------------- tab / child / chip ----------------
 
     private fun changeTab(index: Int) {
         if (index == state.value.taskIndex) return
-        val willFetch = index == 0 || state.value.selectedChild != null
-        val hasData = state.value.taskList.isNotEmpty()
+
+        loadJob?.cancel()
+        val willFetch = state.value.selectedChild != null
 
         _state.update {
             it.copy(
                 taskIndex = index,
                 errorMessage = null,
-                isInitialLoading = willFetch && !hasData,
-                isRefiltering = willFetch && hasData,
+                taskList = emptyList(),
+                totalCount = 0,
+                offset = 0,
+                hasMore = true,
+                isInitialLoading = willFetch,
+                isRefiltering = false,
+                isPaginating = false,
             )
         }
         if (willFetch) firstPage()
-        else _state.update { it.copy(taskList = emptyList(), totalCount = 0) }
     }
 
     private fun selectChild(child: UserInfo) {
         if (child.userId == state.value.selectedChild?.userId) return
         AppSettings.selectedChild = child
-        val hasData = state.value.taskList.isNotEmpty()
 
+        loadJob?.cancel()
         _state.update {
             it.copy(
                 selectedChild = child,
                 errorMessage = null,
-                isInitialLoading = !hasData,
-                isRefiltering = hasData,
+                taskList = emptyList(),
+                totalCount = 0,
+                offset = 0,
+                hasMore = true,
+                isInitialLoading = true,
+                isRefiltering = false,
+                isPaginating = false,
             )
         }
-        if (state.value.canFetch) firstPage()
-        else _state.update {
-            it.copy(taskList = emptyList(), totalCount = 0, isInitialLoading = false, isRefiltering = false)
-        }
+        firstPage()
     }
 
     private fun toggleChip(chip: TaskFilterChip) {
-        val hasData = state.value.taskList.isNotEmpty()
+        loadJob?.cancel()
         _state.update {
             val new = if (it.activeChip == chip) null else chip
             it.copy(
                 activeChip = new,
                 errorMessage = null,
-                isInitialLoading = !hasData,
-                isRefiltering = hasData,
+                taskList = emptyList(),
+                totalCount = 0,
+                offset = 0,
+                hasMore = true,
+                isInitialLoading = it.canFetch,
+                isRefiltering = false,
+                isPaginating = false,
             )
         }
-        firstPage()
+        if (state.value.canFetch) firstPage()
     }
 
     // ---------------- fetch ----------------
@@ -188,8 +171,11 @@ class TaskListViewModel(
                 it.copy(
                     taskList = emptyList(),
                     totalCount = 0,
+                    offset = 0,
+                    hasMore = true,
                     isInitialLoading = false,
                     isRefiltering = false,
+                    isPaginating = false,
                 )
             }
             return
@@ -201,6 +187,7 @@ class TaskListViewModel(
                 errorMessage = null,
                 offset = 0,
                 hasMore = true,
+                isPaginating = false,
             )
         }
         loadJob = screenModelScope.launch { fetchPage(reset = true) }
@@ -209,23 +196,36 @@ class TaskListViewModel(
     private fun refresh() {
         if (!state.value.canFetch) return
         loadJob?.cancel()
-        _state.update { it.copy(isRefreshing = true, errorMessage = null) }
+        _state.update {
+            it.copy(
+                isRefreshing = true,
+                errorMessage = null,
+                offset = 0,
+                hasMore = true,
+                isPaginating = false,
+            )
+        }
         loadJob = screenModelScope.launch { fetchPage(reset = true) }
     }
 
     private fun loadMore() {
         val s = state.value
-        if (s.isPaginating || s.isInitialLoading || s.isRefreshing) return
+        if (s.isPaginating || s.isInitialLoading || s.isRefreshing || s.isRefiltering) return
         if (!s.hasMore || !s.canFetch) return
+
         _state.update { it.copy(isPaginating = true) }
-        screenModelScope.launch { fetchPage(reset = false) }
+        loadJob = screenModelScope.launch { fetchPage(reset = false) }
     }
 
     private suspend fun fetchPage(reset: Boolean) {
         val s = state.value
         val query = TodosQuery(
-            targetUserId = s.currentTargetUserId,
-            filter = buildFilter(s.activeChip, forHistory = false),
+            targetUserId = s.currentTargetUserId,   // doimiy child
+            filter = buildFilter(
+                chip = s.activeChip,
+                taskIndex = s.taskIndex,
+                forHistory = false
+            ),
             limit = s.pageSize,
             offset = if (reset) 0 else s.offset
         )
@@ -236,12 +236,12 @@ class TaskListViewModel(
                 _state.update { current ->
                     val newList = if (reset) mapped else current.taskList + mapped
                     current.copy(
-                        taskList = newList,                              // ✅ eski o'rniga yangi data
+                        taskList = newList,
                         totalCount = page.total,
                         offset = newList.size,
                         hasMore = page.hasMore,
                         isInitialLoading = false,
-                        isRefiltering = false,                           // ✅ tugagach o'chiramiz
+                        isRefiltering = false,
                         isRefreshing = false,
                         isPaginating = false,
                         listResponseState = ResponseState.Idle,
@@ -255,7 +255,7 @@ class TaskListViewModel(
                 _state.update { current ->
                     current.copy(
                         isInitialLoading = false,
-                        isRefiltering = false,                           // ✅ xatolikda ham o'chiriladi
+                        isRefiltering = false,
                         isRefreshing = false,
                         isPaginating = false,
                         listResponseState = ResponseState.Idle,
@@ -270,8 +270,6 @@ class TaskListViewModel(
     // ---------------- complete (Tekshirildi) ----------------
 
     private fun completeTask(task: Task) {
-        // Server invariantiga: faqat is_child_done=true bo'lganda chaqirish mumkin.
-        // UI tugmasi disable bo'lishi kerak, ammo himoya sifatida ham tekshiramiz.
         if (!task.isChildDone || task.isCompleted) return
         if (task.id in state.value.completingIds) return
 
@@ -280,10 +278,11 @@ class TaskListViewModel(
         screenModelScope.launch {
             completeTodoUseCase(task.id).fold(
                 onSuccess = {
-                    // Verified bo'ldi → asosiy listdan olib tashlaymiz (tarixga ketdi)
                     _state.update {
+                        val newList = it.taskList.filterNot { t -> t.id == task.id }
                         it.copy(
-                            taskList = it.taskList.filterNot { t -> t.id == task.id },
+                            taskList = newList,
+                            offset = newList.size,
                             totalCount = (it.totalCount - 1).coerceAtLeast(0),
                             completingIds = it.completingIds - task.id
                         )
@@ -308,8 +307,10 @@ class TaskListViewModel(
             deleteTodoUseCase(task.id).fold(
                 onSuccess = {
                     _state.update {
+                        val newList = it.taskList.filterNot { t -> t.id == task.id }
                         it.copy(
-                            taskList = it.taskList.filterNot { t -> t.id == task.id },
+                            taskList = newList,
+                            offset = newList.size,
                             totalCount = (it.totalCount - 1).coerceAtLeast(0),
                             deletingIds = it.deletingIds - task.id
                         )
@@ -337,7 +338,7 @@ class TaskListViewModel(
             for (child in children) {
                 val q = TodosQuery(
                     targetUserId = child.userId,
-                    filter = TodoFilter(isCompleted = false),
+                    filter = TodoFilter(isCompleted = false, createdByRole = CreatedByRole.PARENT),
                     limit = 1,
                     offset = 0
                 )
@@ -349,19 +350,40 @@ class TaskListViewModel(
 
     // ---------------- helpers ----------------
 
-    private fun buildFilter(chip: TaskFilterChip?, forHistory: Boolean): TodoFilter {
-        if (forHistory) return TodoFilter(isCompleted = true)
+    private fun buildFilter(
+        chip: TaskFilterChip?,
+        taskIndex: Int,
+        forHistory: Boolean
+    ): TodoFilter {
+        // tab 0 = Mendan = PARENT, tab 1 = Farzandim = CHILD
+        val role = if (taskIndex == 0) CreatedByRole.PARENT else CreatedByRole.CHILD
+
+        if (forHistory) return TodoFilter(
+            isCompleted = true,
+            createdByRole = role
+        )
         return when (chip) {
             TaskFilterChip.IN_PROGRESS -> TodoFilter(
-                isCompleted = false, isChildDone = false, isExpired = false
+                isCompleted = false,
+                isChildDone = false,
+                isExpired = false,
+                createdByRole = role
             )
             TaskFilterChip.DONE_BY_CHILD -> TodoFilter(
-                isCompleted = false, isChildDone = true, isExpired = null
+                isCompleted = false,
+                isChildDone = true,
+                isExpired = null,
+                createdByRole = role
             )
             TaskFilterChip.OVERDUE -> TodoFilter(
-                isCompleted = false, isChildDone = false, isExpired = true
+                isCompleted = false,
+                isExpired = true,
+                createdByRole = role
             )
-            null -> TodoFilter(isCompleted = false)
+            null -> TodoFilter(
+                isCompleted = false,
+                createdByRole = role
+            )
         }
     }
 

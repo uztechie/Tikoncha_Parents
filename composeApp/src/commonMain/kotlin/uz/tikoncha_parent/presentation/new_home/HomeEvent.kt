@@ -6,6 +6,7 @@ import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestEvent
 
 sealed interface HomeEvent {
     data class OnChildSelected(val child: UserInfo): HomeEvent
+    data object ReloadUserInfo: HomeEvent
     data object GetChildren: HomeEvent
     data object RefreshParentRequest: HomeEvent
     data object SyncSelectedChildFromSettings : HomeEvent

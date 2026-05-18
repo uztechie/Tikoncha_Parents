@@ -14,6 +14,7 @@ data class TodoDto(
     val is_child_done: Boolean,
     val is_completed: Boolean,
     val is_expired: Boolean,
+    val can_update: Boolean?,
     val created_at: Long?,
     val modified_at: Long?,
     val coin: Int = 0

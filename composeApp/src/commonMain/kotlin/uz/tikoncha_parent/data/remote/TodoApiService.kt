@@ -18,6 +18,7 @@ class TodoApiService(private val client: HttpClient) {
         isCompleted: Boolean?,
         isChildDone: Boolean?,
         isExpired: Boolean?,
+        createdByRole: String?,
         importance: String?,
         orderBy: String = "created_at",
         order: String = "desc",
@@ -32,6 +33,7 @@ class TodoApiService(private val client: HttpClient) {
             isChildDone?.let { parameter("is_child_done", it) }
             isExpired?.let { parameter("is_expired", it) }
             importance?.let { parameter("importance", it) }
+            createdByRole?.let { parameter("created_by_role", it) }
             parameter("order_by", orderBy)
             parameter("order", order)
             parameter("limit", limit)

@@ -13,35 +13,30 @@ data class TaskListState(
     val childrenList: List<UserInfo> = emptyList(),
 
     // Tabs
-    val taskIndex: Int = 0,        // 0 = O'zim, 1 = Farzandim
-    val genderIndex: Int = 0,      // tarix ekrani uchun
+    val taskIndex: Int = 0,        // 0 = Mendan (PARENT), 1 = Farzandim (CHILD)
 
-    // ✅ Filter chip (single-select)
+    // Filter chip (single-select)
     val activeChip: TaskFilterChip? = null,
 
-    // ✅ Bir nechta list o'rniga aktiv ro'yxat
+    // Aktiv ro'yxat
     val taskList: List<Task> = emptyList(),
     val totalCount: Int = 0,
 
-    // ✅ Pagination
+    // Pagination
     val hasMore: Boolean = true,
     val offset: Int = 0,
     val pageSize: Int = 20,
 
-    // ✅ Loading holatlari
+    // Loading
     val isInitialLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isPaginating: Boolean = false,
     val isRefiltering: Boolean = false,
 
-    // ✅ Per-item optimistic UI
+    // Per-item optimistic UI
     val completingIds: Set<String> = emptySet(),
     val deletingIds: Set<String> = emptySet(),
 
-    // Tarix ekrani uchun (CompletedTaskScreen)
-    val parentCompletedTaskList: List<Task> = emptyList(),
-    val childrenCompletedTaskList: List<Task> = emptyList(),
-    val selectedCompletedTaskList: List<Task> = emptyList(),
 
     // Counters
     val activeTaskCount: Int = 0,
@@ -51,19 +46,14 @@ data class TaskListState(
     val listResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val errorMessage: String? = null,
 
-    // Toggles (boshqa ekranlar uchun)
+    // Toggles
     val showMineAll: Boolean = false,
     val showChildrenAll: Boolean = false,
-
-    // CompletedTaskScreen uchun
-    val completedTaskList: List<Task> = emptyList(),
-    val isCompletedLoading: Boolean = false,
-    val completedHasMore: Boolean = true,
-    val completedOffset: Int = 0,
 ) {
+    /** Ikkala tabda ham selectedChild kerak — target = farzand. */
     val canFetch: Boolean
-        get() = taskIndex == 0 || (taskIndex == 1 && selectedChild != null)
+        get() = selectedChild != null
 
     val currentTargetUserId: String?
-        get() = if (taskIndex == 0) userId else selectedChild?.userId
+        get() = selectedChild?.userId
 }

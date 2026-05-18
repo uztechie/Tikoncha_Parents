@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,6 +63,7 @@ import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi_info
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzandingiz_raqami
 import tikoncha_parents.composeapp.generated.resources.farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash
+import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
 import tikoncha_parents.composeapp.generated.resources.kod_nusxalandi
 import tikoncha_parents.composeapp.generated.resources.media_play
 import tikoncha_parents.composeapp.generated.resources.ochish
@@ -175,6 +177,9 @@ class AddChildScreen : Screen {
                 },
                 onTutorial = {
                     navigator.push(VideoTutorialYoutubeScreen(tutorialType = TutorialType.BIND_CHILD))
+                },
+                onBack = {
+                    navigator.pop()
                 }
             )
         }
@@ -187,7 +192,8 @@ class AddChildScreen : Screen {
 private fun AddChildContent(
     state: AddChildState,
     onIntent: (AddChildEvent) -> Unit,
-    onTutorial: () -> Unit = {}
+    onTutorial: () -> Unit = {},
+    onBack: () -> Unit = {},
 ) {
 
     val systemBars = rememberScreenSystemBars(
@@ -205,7 +211,7 @@ private fun AddChildContent(
 
         CustomHeader(
             title = stringResource(Res.string.farzand_qo_shish),
-            onBackClick = {},
+            onBackClick = onBack,
             showBackButton = true,
             trailingIcon = {
                 if (!state.showBindChildTutorial){
@@ -453,16 +459,15 @@ private fun ShareCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(AppColors.bg.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Download,
+                Image(
+                    painter = painterResource(Res.drawable.hedgehog_heart),
                     contentDescription = null,
-                    tint = AppColors.icon.accentPrimary,
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.fillMaxSize(0.8f)
                 )
             }
             Spacer(Modifier.width(10.dp))
