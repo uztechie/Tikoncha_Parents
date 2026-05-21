@@ -147,7 +147,7 @@ class AddChildScreen : Screen {
             }
 
             // --- Error snackbar
-            val errorText = state.errorRes?.let { stringResource(it) } ?: state.errorMessage
+            val errorText = state.errorMessage?:state.errorRes?.let { stringResource(it) }
             LaunchedEffect(errorText) {
                 if (!errorText.isNullOrBlank()) {
                     toast.show(

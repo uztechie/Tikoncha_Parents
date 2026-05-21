@@ -33,7 +33,7 @@ fun CustomLoadingButton(
     textColor: Color = AppColors.text.inverse,
     enabled:Boolean = true,
     onClick:()->Unit,
-    shape: Shape = RoundedCornerShape(ButtonCornerRadius),
+    shape: Shape = RoundedCornerShape(16.dp),
     loading:Boolean = false
 ) {
 

@@ -5,7 +5,6 @@ import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class PaymentState(
-    val amount: Int = 0,
     val selectedPaymentType: PaymentType? = PaymentType.Click,
     val paymentResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val applePaymentResponseState: ResponseState<Nothing> = ResponseState.Idle,
@@ -20,6 +19,8 @@ data class PaymentState(
 
     val promoCodeResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val promoActivated: Boolean = false,
+    val originalAmount: Int = 0,
+    val finalAmount: Int = 0,
     val promoCode: String = "",
     val discountAmount: Int = 0,
     val discountSaving: Int = 0,

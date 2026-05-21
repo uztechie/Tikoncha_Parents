@@ -1,20 +1,21 @@
 package uz.tikoncha_parent.presentation.statistic
 
 import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
-import uz.tikoncha_parent.presentation.profile.coins.CoinsEvent
 
 sealed interface StatisticEvent {
-    data class GetUsageList(val usagePeriod: UsagePeriod, val dateSelectionType: DateSelectionType): StatisticEvent
-    data object GetAppUsage: StatisticEvent
-    data object RefreshChild: StatisticEvent
+    data object Init : StatisticEvent
+    data object GetChildren : StatisticEvent
+    data object RefreshChild : StatisticEvent
+    data object GetAppUsage : StatisticEvent
+    data object RefreshSubscriptionLimit : StatisticEvent
 
-    data object RefreshSubscriptionLimit: StatisticEvent
+    data class OnChildSelected(val child: UserInfo) : StatisticEvent
 
+    data class ChangeMode(val mode: DateSelectionType) : StatisticEvent
+    data class PageChanged(val index: Int) : StatisticEvent
 
-    data class OnChildSelected(val child: UserInfo): StatisticEvent
+    data class BarClicked(val bar: ChartBarUi) : StatisticEvent
+    data object DismissUsageDetailsDialog : StatisticEvent
 
-    data object GetChildren: StatisticEvent
-    data object ClearAll: StatisticEvent
+    data object ClearAll : StatisticEvent
 }

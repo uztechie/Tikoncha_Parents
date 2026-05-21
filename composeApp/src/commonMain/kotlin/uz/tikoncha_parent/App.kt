@@ -6,6 +6,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
+import cafe.adriel.voyager.transitions.SlideTransition
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import uz.tikoncha_parent.platform.AppEnvironment
 import uz.tikoncha_parent.presentation.splash.SplashScreen
 
@@ -16,10 +19,22 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
 import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_warning
+import tikoncha_parents.composeapp.generated.resources.login_qilish
+import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.token_eskirgan
+import tikoncha_parents.composeapp.generated.resources.tokenni_yangilash_uchun
+import uz.tikoncha_parent.data.remote.AuthEvent
+import uz.tikoncha_parent.data.remote.AuthEventBus
 import uz.tikoncha_parent.domain.model.DeepLink
 import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
+import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.map.MapKitInitializer
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
@@ -107,9 +122,9 @@ fun App() {
                             val first = initialStack.first()
                             val rest  = initialStack.drop(1)
                             Navigator(first, disposeBehavior) { nav ->
-                                CurrentScreen()
+                                SwipeBackContent(nav)
                                 DeepLinkEffect(nav)
-
+                                AuthEventListener(nav)
                                 // Stack’ni to‘liq tiklash
                                 LaunchedEffect(rest) {
                                     rest.forEach { screen -> nav.push(screen) }
@@ -124,6 +139,7 @@ fun App() {
                             Navigator(SplashScreen(), disposeBehavior) { nav ->
                                 SwipeBackContent(navigator = nav)
                                 DeepLinkEffect(nav)
+                                AuthEventListener(nav)
                             }
                         }
                     }
@@ -163,4 +179,39 @@ fun initMapKit() {
 
 }
 
+
+@Composable
+private fun AuthEventListener(navigator: Navigator) {
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    CustomDialog(
+        title = stringResource(Res.string.token_eskirgan),
+        message = stringResource(Res.string.tokenni_yangilash_uchun),
+        painter = painterResource(Res.drawable.dialog_failed),
+        buttonText = stringResource(Res.string.login_qilish),
+        buttonText2 = stringResource(Res.string.bekor_qilish),
+        showCloseButton = false,
+        show = showDialog,
+        onButtonClick = {
+            showDialog = false
+            if (navigator.lastItem !is LoginScreen) {
+                navigator.replaceAll(LoginScreen())
+            }
+        },
+        onDismiss = {
+            showDialog = false
+        }
+    )
+
+    LaunchedEffect(navigator) {
+        AuthEventBus.events.collect { event ->
+            when (event) {
+                AuthEvent.SessionExpired -> {
+                    showDialog = true
+                }
+            }
+        }
+    }
+}
 

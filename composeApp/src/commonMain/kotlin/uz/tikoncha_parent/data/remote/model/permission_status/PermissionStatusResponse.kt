@@ -26,6 +26,6 @@ data class PermissionStatusIssus(
     val missing_permissions: List<String>,
     val title: String,
     val body: String,
-    val video_url: String,
+    val video_url: String?,
 
 )

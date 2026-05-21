@@ -1,23 +1,27 @@
 package uz.tikoncha_parent.presentation.navigation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
@@ -28,6 +32,8 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.stack.StackEvent
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -35,10 +41,15 @@ import kotlin.math.roundToInt
 
 expect val isSwipeBackEnabled: Boolean
 
+private const val PUSH_DURATION = 320
+private const val POP_DURATION = 280
+private const val REPLACE_DURATION = 220
+
 @Composable
 fun SwipeBackContent(navigator: Navigator) {
+    // Swipe ishlamasa ham push/pop animatsiya bo'lishi kerak
     if (!isSwipeBackEnabled || !navigator.canPop) {
-        navigator.lastItem.Content()
+        AnimatedScreenContent(navigator, skipAnimation = false)
         return
     }
 
@@ -60,7 +71,7 @@ fun SwipeBackContent(navigator: Navigator) {
             .fillMaxSize()
             .onSizeChanged { screenWidth = it.width.toFloat() }
     ) {
-        // ── Oldingi screen (parallax) ──
+        // ── Oldingi screen (parallax) — faqat swipe paytida ──
         if (isSwiping && previousScreen != null) {
             val prevOffset = (-screenWidth * 0.3f * (1f - progress)).roundToInt()
 
@@ -83,7 +94,7 @@ fun SwipeBackContent(navigator: Navigator) {
             )
         }
 
-        // ── Hozirgi screen ──
+        // ── Hozirgi screen (push/pop animatsiyasi bilan) ──
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,7 +112,6 @@ fun SwipeBackContent(navigator: Navigator) {
                         val down = awaitFirstDown(pass = PointerEventPass.Initial)
                         val startX = down.position.x
 
-                        // ── Edge zone: ekranning chap 15% qismi (kamida 50dp) ──
                         val edgeZone = maxOf(screenWidth * 0.15f, 50.dp.toPx())
                         if (startX > edgeZone) return@awaitEachGesture
 
@@ -116,7 +126,6 @@ fun SwipeBackContent(navigator: Navigator) {
                                 val change = event.changes.firstOrNull() ?: break
 
                                 if (!change.pressed) {
-                                    // Barmoq ko'tarildi
                                     if (isSwiping) {
                                         val threshold = screenWidth * 0.3f
                                         scope.launch {
@@ -144,11 +153,9 @@ fun SwipeBackContent(navigator: Navigator) {
                                 totalDragX += delta.x
                                 totalDragY += delta.y
 
-                                // Yo'nalishni aniqlash — 10px dan keyin
                                 if (!directionDecided && (abs(totalDragX) > 10f || abs(totalDragY) > 10f)) {
                                     directionDecided = true
                                     if (abs(totalDragX) < abs(totalDragY) || totalDragX < 0) {
-                                        // Vertikal yoki chapga — swipe emas
                                         gestureStarted = false
                                         break
                                     }
@@ -175,7 +182,55 @@ fun SwipeBackContent(navigator: Navigator) {
                     }
                 }
         ) {
-            navigator.lastItem.Content()
+            // ★ MUHIM: swipe paytida AnimatedContent animatsiya qilmasligi kerak
+            // (chunki swipe o'zi qo'lda render qilyapti)
+            AnimatedScreenContent(
+                navigator = navigator,
+                skipAnimation = isSwiping
+            )
         }
+    }
+}
+
+/**
+ * Push/Pop/Replace uchun iOS uslubidagi animatsiyalar.
+ * skipAnimation=true bo'lganda hech qanday animatsiya bo'lmaydi (swipe paytida).
+ */
+@Composable
+private fun AnimatedScreenContent(
+    navigator: Navigator,
+    skipAnimation: Boolean,
+) {
+    AnimatedContent(
+        targetState = navigator.lastItem,
+        contentKey = { it.key },
+        transitionSpec = {
+            if (skipAnimation) {
+                EnterTransition.None togetherWith ExitTransition.None
+            } else {
+                when (navigator.lastEvent) {
+                    StackEvent.Pop -> {
+                        // Pop: yangi (avvalgi) ekran chapdan 1/3 dan keladi, eski to'liq o'ngga
+                        slideInHorizontally(tween(POP_DURATION)) { -it / 3 } +
+                                fadeIn(tween(POP_DURATION)) togetherWith
+                                slideOutHorizontally(tween(POP_DURATION)) { it }
+                    }
+                    StackEvent.Replace -> {
+                        // replaceAll (LoginScreen ga o'tish): fade
+                        fadeIn(tween(REPLACE_DURATION)) togetherWith
+                                fadeOut(tween(REPLACE_DURATION))
+                    }
+                    else -> {
+                        // Push: yangi ekran o'ngdan keladi, eski chapga 1/3 siljiydi
+                        slideInHorizontally(tween(PUSH_DURATION)) { it } togetherWith
+                                slideOutHorizontally(tween(PUSH_DURATION)) { -it / 3 } +
+                                fadeOut(tween(PUSH_DURATION))
+                    }
+                }
+            }
+        },
+        label = "ScreenTransition"
+    ) { screen: Screen ->
+        screen.Content()
     }
 }

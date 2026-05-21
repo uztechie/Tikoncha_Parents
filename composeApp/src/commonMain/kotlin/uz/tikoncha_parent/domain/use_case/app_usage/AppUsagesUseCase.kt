@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.domain.use_case
+package uz.tikoncha_parent.domain.use_case.app_usage
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -13,21 +13,19 @@ import tikoncha_parents.composeapp.generated.resources.iltimos_internetga_ulang
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import tikoncha_parents.composeapp.generated.resources.server_connection_error
 import uz.tikoncha_parent.data.mapper.toAppUsageList
-import uz.tikoncha_parent.domain.model.AppUsage
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_usage.AppUsage
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.platform.Logger
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-
 
 class AppUsagesUseCase(
     private val repository: ChildRepository
 ) {
     @OptIn(ExperimentalTime::class)
-    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-    val tenDaysBefore = today.minus(10, DateTimeUnit.DAY)
-    val formatter = LocalDate.Format {
+    val today = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault()).date
+    val tenDaysBefore = today.minus(15, DateTimeUnit.Companion.DAY)
+    val formatter = LocalDate.Companion.Format {
         year()      // YYYY
         char('-')
         monthNumber() // MM

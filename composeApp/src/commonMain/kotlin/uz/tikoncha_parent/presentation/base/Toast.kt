@@ -120,7 +120,7 @@ private fun ToastView(data: ToastData, onDismiss: () -> Unit) {
     when (data.type) {
         ToastType.Success -> {
             icon = Icons.Default.Check
-            bg = AppColors.bg.primary
+            bg = AppColors.text.accentSuccess
         }
         ToastType.Error -> {
             icon = Icons.Default.ErrorOutline

@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import qrgenerator.qrkitpainter.phone
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tolov_amalga_oshmadi
 import uz.tikoncha_parent.data.local.AppSettings
@@ -84,7 +83,8 @@ class PaymentViewModel(
             is PaymentEvent.SetAmount -> {
                 _state.update {
                     it.copy(
-                        amount = event.amount
+                        originalAmount = event.amount,
+                        finalAmount = event.amount
                     )
                 }
 
@@ -243,7 +243,7 @@ class PaymentViewModel(
                             paymentResponseState = ResponseState.Success(),
                             merchantTransId = result.data.merchant_trans_id,
                             serviceId = result.data.service_id,
-                            amount = result.data.amount,
+                            finalAmount = result.data.amount,
                             showSubscribeChildSheet = false
                         )
                     }
@@ -251,7 +251,7 @@ class PaymentViewModel(
                     openClickPayment(
                         serviceId = _state.value.serviceId.toString(),
                         merchantId = _state.value.merchantId.toString(),
-                        amount = _state.value.amount.toString(),
+                        amount = _state.value.finalAmount.toString(),
                         transactionId = _state.value.merchantTransId
                     )
                     requestPaymentStatus()
@@ -345,7 +345,7 @@ class PaymentViewModel(
             }
             val request = PromoCodeValidationRequest(
                 code = _state.value.promoCode,
-                amount = _state.value.amount
+                amount = _state.value.originalAmount
             )
             val result = promoCodeValidationUseCase.invoke(request)
             when(result){
@@ -365,10 +365,11 @@ class PaymentViewModel(
                         it.copy(
                             promoActivated = true,
                             promoCodeResponseState = ResponseState.Success(),
-                            amount = result.data.discounted_amount,
+                            originalAmount = result.data.original_amount,
                             discountAmount = result.data.discounted_amount,
                             discountPercentage = result.data.discount_percentage,
-                            discountSaving = result.data.savings
+                            discountSaving = result.data.savings,
+                            finalAmount = result.data.discounted_amount
                         )
                     }
                 }

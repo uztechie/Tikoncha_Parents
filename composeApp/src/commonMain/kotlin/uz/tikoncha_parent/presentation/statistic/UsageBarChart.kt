@@ -1,340 +1,177 @@
+@file:Suppress("unused")
+
 package uz.tikoncha_parent.presentation.statistic
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import uz.tikoncha_parent.ui.PrimaryColor
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.chor
-import tikoncha_parents.composeapp.generated.resources.dush
-import tikoncha_parents.composeapp.generated.resources.jum
-import tikoncha_parents.composeapp.generated.resources.pay
-import tikoncha_parents.composeapp.generated.resources.sesh
-import tikoncha_parents.composeapp.generated.resources.shan
-import tikoncha_parents.composeapp.generated.resources.yak
-import uz.tikoncha_parent.presentation.base.CustomText
+import tikoncha_parents.composeapp.generated.resources.d
+import tikoncha_parents.composeapp.generated.resources.s
+import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import kotlin.math.ceil
+import kotlin.math.max
+
+private val AXIS_WIDTH       = 24.dp
+private val GAP_AFTER_AXIS   = 4.dp
+private val CHART_HEIGHT     = 150.dp
+private val X_LABELS_HEIGHT  = 20.dp
+
 @Composable
 fun UsageBarChart(
-    data: Map<Int, Double>,
+    bars: List<ChartBarUi>,
+    mode: DateSelectionType,
+    chartSubtitle: ChartSubtitle?,
+    onBarClick: (ChartBarUi) -> Unit,
     modifier: Modifier = Modifier,
-    barColor: Color = PrimaryColor,
-    state: StatisticState = StatisticState(),
-    overlayPainter: Painter? = null,
-    isWeekly: Boolean,
-    onSubscriptionClick: () -> Unit = {},
-    onHourlyBinClick: (startHour: Int, endHour: Int) -> Unit = { _, _ -> },
-    onWeeklyDayClick: (dayIndex: Int) -> Unit = {},
+    barColor: Color = AppColors.bg.primary,
 ) {
-    val isEmpty = remember(data) { data.isEmpty() || data.values.all { it <= 0.0 } }
-    val blur by animateDpAsState(if (state.showBlur) 10.dp else 0.dp, label = "blur")
-    val overlayInteraction = remember { MutableInteractionSource() }
+    val maxMinutes = remember(bars) {
+        bars.maxOfOrNull { it.valueMinutes }?.coerceAtLeast(0.0) ?: 0.0
+    }
+    val axis = rememberAxisModel(maxMinutes)
 
-    Box(modifier) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(blur)
-        ) {
-            if (isWeekly) {
-                WeeklyChart(
-                    data = data,
-                    barColor = barColor,
-                    isEmpty = isEmpty,
-                    onDayClick = onWeeklyDayClick
-                )
-            } else {
-                HourlyChart(
-                    data = data,
-                    barColor = barColor,
-                    isEmpty = isEmpty,
-                    onBinClick = onHourlyBinClick
+    Column(modifier = modifier) {
+        when (mode) {
+            DateSelectionType.WEEK -> WeeklyChartContent(bars, axis, barColor, onBarClick)
+            DateSelectionType.DAY  -> DailyChartContent(bars, axis, barColor, onBarClick)
+        }
+
+        if (chartSubtitle != null) {
+            Spacer(Modifier.height(8.dp))
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = chartSubtitleString(chartSubtitle),
+                    style = AppTypography.titleSmMedium,
+                    color = AppColors.text.secondary,
+                    textAlign = TextAlign.Center
                 )
             }
         }
+    }
+}
 
-        if (state.showBlur && overlayPainter != null) {
-            androidx.compose.foundation.Image(
-                painter = overlayPainter,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .aspectRatio(2f)
-                    .align(Alignment.Center)
-                    .clickable(indication = null, interactionSource = overlayInteraction) {
-                        onSubscriptionClick()
+/* ============ WEEKLY ============ */
+
+@Composable
+private fun WeeklyChartContent(
+    bars: List<ChartBarUi>,
+    axis: AxisModel,
+    barColor: Color,
+    onBarClick: (ChartBarUi) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth().height(CHART_HEIGHT)) {
+            AxisLeft(axis = axis, modifier = Modifier.width(AXIS_WIDTH).fillMaxHeight())
+            Spacer(Modifier.width(GAP_AFTER_AXIS))
+            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                BarsCanvas(
+                    bars = bars,
+                    maxMinutes = axis.maxMinutes,
+                    slotWidthOverride = null,
+                    barColor = barColor,
+                )
+                Row(Modifier.fillMaxSize()) {
+                    bars.forEach { bar ->
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .clickable(enabled = bar.totalMillis > 0L) { onBarClick(bar) }
+                        )
                     }
-            )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(X_LABELS_HEIGHT)
+                .padding(start = AXIS_WIDTH + GAP_AFTER_AXIS, top = 2.dp)
+        ) {
+            bars.forEach { bar ->
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = barLabel(bar, DateSelectionType.WEEK),
+                        style = AppTypography.bodySmRegular,
+                        color = AppColors.text.secondary
+                    )
+                }
+            }
         }
     }
 }
 
+/* ============ DAILY (scrollable) ============ */
+
 @Composable
-private fun WeeklyChart(
-    data: Map<Int, Double>,
+private fun DailyChartContent(
+    bars: List<ChartBarUi>,
+    axis: AxisModel,
     barColor: Color,
-    isEmpty: Boolean,
-    onDayClick: (Int) -> Unit,
+    onBarClick: (ChartBarUi) -> Unit,
 ) {
-    val days = remember {
-        listOf(
-            Res.string.dush, Res.string.sesh, Res.string.chor, Res.string.pay,
-            Res.string.jum, Res.string.shan, Res.string.yak
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp)
-            .padding(vertical = 10.dp)
-    ) {
-        AnimatedUsageBarChartCanvas(
-            data = data,
-            isWeekly = true,
-            barColor = barColor,
-            showEmpty = isEmpty
-        )
-        WeeklyClickLayer(onDayClick)
-    }
-
-    Row(Modifier.fillMaxWidth()) {
-        repeat(7) { i ->
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                CustomText(
-                    text = stringResource(days[i]),
-                    fontSize = 10.sp,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.extendedColor.hintColor
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AnimatedUsageBarChartCanvas(
-    data: Map<Int, Double>,
-    modifier: Modifier = Modifier,
-    barColor: Color = MaterialTheme.extendedColor.primaryColor,
-    cornerRadius: Dp = 10.dp,
-    showEmpty: Boolean = false,
-    hourBinSize: Int = 2,
-    isWeekly: Boolean,
-) {
-    val isEmpty = showEmpty || data.isEmpty() || data.values.all { it <= 0.0 }
-
-    val binned = remember(data, hourBinSize, isWeekly) {
-        if (isWeekly) emptyMap()
-        else buildMap {
-            data.forEach { (hour, minutes) ->
-                val binStart = (hour / hourBinSize) * hourBinSize
-                put(binStart, (get(binStart) ?: 0.0) + minutes)
-            }
-        }
-    }
-
-    val maxMinutes = remember(data, binned, isWeekly) {
-        val m = (if (isWeekly) data.values.maxOrNull() else binned.values.maxOrNull()) ?: 0.0
-        if (m > 0) m else 1.0
-    }
-
-    val topHour = remember(maxMinutes, isWeekly) {
-        val raw = ceil(maxMinutes / 60.0).toInt().coerceAtLeast(1)
-        if (isWeekly) weeklyTopHourCapped(raw) else raw
-    }
-    val maxAdjusted = remember(topHour) { topHour * 60.0 }
-
-    val anim = remember { Animatable(0f) }
-
-    val animKey = remember(isWeekly, data, binned) {
-        val src = if (isWeekly) data else binned
-        src.entries.sortedBy { it.key }.map { it.key to it.value }
-    }
-
-    LaunchedEffect(animKey, isEmpty) {
-        if (isEmpty) anim.snapTo(1f)
-        else {
-            anim.snapTo(0f)
-            anim.animateTo(1f, tween(900, easing = FastOutSlowInEasing))
-        }
-    }
-
-    val hint = MaterialTheme.extendedColor.hintColor.copy(alpha = 0.3f)
-    val dash = remember { PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f) }
-
-    Canvas(modifier.fillMaxSize()) {
-        val w = size.width
-        val h = size.height
-
-        // grid
-        val stroke = 1.dp.toPx()
-        listOf(0f, h / 3f, 2f * h / 3f, h).forEach { y ->
-            val yy = if (y == h) h - 0.5f else y
-            drawLine(
-                color = hint,
-                start = Offset(0f, yy),
-                end = Offset(w, yy),
-                strokeWidth = stroke,
-                pathEffect = dash
-            )
-        }
-
-        val gap = 2.dp.toPx()
-        val tickH = 3.dp.toPx()
-        val tickY = h - tickH - gap
-        val tickCorner = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-        val barCorner = CornerRadius(cornerRadius.toPx(), cornerRadius.toPx())
-        val minBarH = 4.dp.toPx()
-
-        fun drawBar(index: Int, count: Int, value: Double) {
-            val slotW = w / count
-            val barW = (slotW * 0.60f).coerceAtLeast(6.dp.toPx())
-            val cx = (index + 0.5f) * slotW
-            val left = (cx - barW / 2f).coerceIn(0f, w - barW)
-
-            if (value <= 0.0) {
-                drawRoundRect(hint, Offset(left, tickY), Size(barW, tickH), tickCorner)
-                return
-            }
-
-            val p = (value / maxAdjusted).toFloat().coerceIn(0f, 1f)
-            val rawH = (h * p * anim.value) - gap
-            val barH = rawH.coerceAtLeast(minBarH)
-            val top = h - barH - gap
-
-            drawRoundRect(barColor, Offset(left, top), Size(barW, barH), barCorner)
-        }
-
-        if (isWeekly) {
-            repeat(7) { i -> drawBar(i, 7, data[i] ?: 0.0) }
-        } else {
-            val bins = (0..22 step hourBinSize).toList()
-            bins.forEachIndexed { idx, binStart -> drawBar(idx, bins.size, binned[binStart] ?: 0.0) }
-        }
-    }
-}
-
-fun normalizeWeeklyKeys(raw: Map<Int, Double>): Map<Int, Double> {
-    if (raw.isEmpty()) return emptyMap()
-
-    val keys = raw.keys
-    return when {
-
-        keys.minOrNull() == 1 && keys.maxOrNull() == 7 ->
-            raw.mapKeys { (k, _) -> k - 1 }
-
-        keys.minOrNull() == 0 && keys.maxOrNull() == 6 ->
-            raw else -> raw
-    }
-}
-
-@Composable
-private fun HourlyChart(
-    data: Map<Int, Double>,
-    barColor: Color,
-    isEmpty: Boolean,
-    onBinClick: (startHour: Int, endHour: Int) -> Unit,
-) {
-    val binStep = 2
-    val bins = remember { (0..22 step binStep).toList() }
     val scroll = rememberScrollState()
 
-    var viewportPx by remember { mutableIntStateOf(0) }
-    var contentPx by remember { mutableIntStateOf(0) }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val barArea = (maxWidth - AXIS_WIDTH - GAP_AFTER_AXIS).coerceAtLeast(1.dp)
+        val binWidth = (barArea / 8).coerceIn(40.dp, 64.dp)
+        val contentWidth = binWidth * bars.size.coerceAtLeast(1)
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .onSizeChanged { viewportPx = it.width }
-    ) {
-        val binWidth = (maxWidth / 8).coerceIn(40.dp, 64.dp)
-        val contentWidth = binWidth * bins.size
-
-        Column(Modifier.fillMaxWidth()) {
-            Column(Modifier.fillMaxWidth().horizontalScroll(scroll)) {
-                Column(
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.fillMaxWidth().height(CHART_HEIGHT)) {
+                AxisLeft(axis = axis, modifier = Modifier.width(AXIS_WIDTH).fillMaxHeight())
+                Spacer(Modifier.width(GAP_AFTER_AXIS))
+                Box(
                     modifier = Modifier
-                        .width(contentWidth)
-                        .onSizeChanged { contentPx = it.width }
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .horizontalScroll(scroll)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .height(160.dp)
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                    ) {
-                        AnimatedUsageBarChartCanvas(
-                            data = data,
-                            isWeekly = false,
+                    Box(modifier = Modifier.width(contentWidth).fillMaxHeight()) {
+                        BarsCanvas(
+                            bars = bars,
+                            maxMinutes = axis.maxMinutes,
+                            slotWidthOverride = binWidth,
                             barColor = barColor,
-                            showEmpty = isEmpty,
-                            hourBinSize = binStep
                         )
-
-                        HourlyClickLayer(
-                            bins = bins,
-                            binWidth = binWidth,
-                            onBinClick = { start ->
-                                val end = (start + binStep - 1).coerceAtMost(23)
-                                onBinClick(start, end)
-                            }
-                        )
-                    }
-
-                    Row(Modifier.fillMaxWidth()) {
-                        bins.forEach { startHour ->
-                            Box(Modifier.width(binWidth), contentAlignment = Alignment.Center) {
-                                CustomText(
-                                    text = startHour.toString().padStart(2, '0'),
-                                    fontSize = 10.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.extendedColor.hintColor
+                        Row(Modifier.fillMaxSize()) {
+                            bars.forEach { bar ->
+                                Box(
+                                    modifier = Modifier
+                                        .width(binWidth)
+                                        .fillMaxHeight()
+                                        .clickable(enabled = bar.totalMillis > 0L) { onBarClick(bar) }
                                 )
                             }
                         }
@@ -342,103 +179,288 @@ private fun HourlyChart(
                 }
             }
 
+            // X labels — chart bilan birgalikda scroll
+            Row(modifier = Modifier.fillMaxWidth().height(X_LABELS_HEIGHT).padding(top = 2.dp)) {
+                Spacer(Modifier.width(AXIS_WIDTH + GAP_AFTER_AXIS))
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .horizontalScroll(scroll)
+                ) {
+                    Row(modifier = Modifier.width(contentWidth).fillMaxHeight()) {
+                        bars.forEach { bar ->
+                            Box(Modifier.width(binWidth).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = barLabel(bar, DateSelectionType.DAY),
+                                    style = AppTypography.bodySmRegular,
+                                    color = AppColors.text.secondary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Scroll indicator
             HorizontalScrollIndicator(
                 scrollState = scroll,
-                viewportPx = viewportPx,
-                contentPx = contentPx,
-                modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, start = AXIS_WIDTH + GAP_AFTER_AXIS)
             )
         }
     }
 }
+
+/* ============ AXIS ============ */
+
+private data class AxisModel(
+    val maxMinutes: Double,
+    val midLabel: String,
+    val topLabel: String,
+)
+
+@Composable
+private fun rememberAxisModel(maxMinutes: Double): AxisModel {
+    val s = stringResource(Res.string.s)
+    val d = stringResource(Res.string.d)
+    return remember(maxMinutes, s, d) { buildAxisModel(maxMinutes, s, d) }
+}
+
+private fun buildAxisModel(maxMinutesRaw: Double, s: String, d: String): AxisModel {
+    val maxHours = max(0.0, maxMinutesRaw / 60.0)
+    val topHours = when {
+        maxHours <= 1.0 -> 1
+        maxHours <= 2.0 -> 2
+        else            -> (ceil(maxHours / 2.0) * 2.0).toInt()
+    }.coerceAtMost(24)
+
+    val midLabel = if (topHours == 1) "30$d" else "${topHours / 2}$s"
+    val topLabel = "${topHours}$s"
+
+    return AxisModel(maxMinutes = topHours * 60.0, midLabel = midLabel, topLabel = topLabel)
+}
+
+@Composable
+private fun AxisLeft(axis: AxisModel, modifier: Modifier = Modifier) {
+    val color = AppColors.text.tertiary
+    val style = AppTypography.bodySmRegular.copy(color = color)
+    val measurer = rememberTextMeasurer()
+
+    Canvas(modifier = modifier) {
+        val topLayout = measurer.measure(axis.topLabel, style)
+        val midLayout = measurer.measure(axis.midLabel, style)
+        val h = size.height
+        drawText(topLayout, topLeft = Offset(0f, 0f))
+        drawText(midLayout, topLeft = Offset(0f, h / 2f - midLayout.size.height / 2f))
+    }
+}
+
+/* ============ BARS + GRID ============ */
+
+@Composable
+private fun BarsCanvas(
+    bars: List<ChartBarUi>,
+    maxMinutes: Double,
+    slotWidthOverride: Dp?,
+    barColor: Color,
+    cornerRadius: Dp = 10.dp,
+) {
+    val targets = remember(bars, maxMinutes) {
+        val safeMax = maxMinutes.coerceAtLeast(1.0)
+        bars.map { bar ->
+            if (bar.totalMillis <= 0L) 0f
+            else (bar.valueMinutes / safeMax).toFloat().coerceIn(0f, 1f)
+        }
+    }
+
+    val animatables = remember { mutableStateListOf<Animatable<Float, *>>() }
+
+    LaunchedEffect(targets) {
+        while (animatables.size < targets.size) animatables.add(Animatable(0f))
+        while (animatables.size > targets.size) animatables.removeAt(animatables.lastIndex)
+
+        targets.forEachIndexed { i, target ->
+            launch {
+                animatables[i].animateTo(
+                    targetValue = target,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        delayMillis = i * 40,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+        }
+    }
+
+    val gridColor = AppColors.border.secondary
+    val tickColor = AppColors.button.disabled
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val w = size.width
+        val h = size.height
+
+        val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+
+        val topY = 10.dp.toPx()    // label uchun joy
+        val botY = h
+        val midY = (topY + botY) / 2f
+
+        listOf(topY, midY, botY).forEach { y ->
+            val yy = if (y == h) h - 0.5f else y
+            drawLine(
+                color = gridColor,
+                start = Offset(0f, yy),
+                end = Offset(w, yy),
+                strokeWidth = 1.dp.toPx(),
+                pathEffect = dash
+            )
+        }
+
+        val barBottomGap = 2.dp.toPx()
+        val tickH        = 3.dp.toPx()
+        val tickY        = h - tickH - barBottomGap
+        val tickCorner   = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+        val minBarH      = 4.dp.toPx()
+
+        val count = bars.size.coerceAtLeast(1)
+        val slotW = slotWidthOverride?.toPx() ?: (w / count)
+        val barW  = (slotW * 0.60f).coerceAtLeast(6.dp.toPx())
+        val corner = CornerRadius(cornerRadius.toPx(), cornerRadius.toPx())
+
+        bars.forEachIndexed { index, _ ->
+            val centerX = (index + 0.5f) * slotW
+            val left = centerX - barW / 2f
+            val fr = animatables.getOrNull(index)?.value ?: 0f
+
+            if (fr <= 0.001f) {
+                drawRoundRect(
+                    color = tickColor,
+                    topLeft = Offset(left, tickY),
+                    size = Size(barW, tickH),
+                    cornerRadius = tickCorner
+                )
+            } else {
+                val area = botY - topY
+                val rawH = area * fr
+                val barH = rawH.coerceAtLeast(minBarH)
+                val top = botY - barH - barBottomGap
+
+                drawRoundRect(
+                    color = barColor,
+                    topLeft = Offset(left, top),
+                    size = Size(barW, barH),
+                    cornerRadius = corner
+                )
+            }
+        }
+    }
+}
+
+/* ============ SCROLL INDICATOR ============ */
 
 @Composable
 private fun HorizontalScrollIndicator(
     scrollState: ScrollState,
-    viewportPx: Int,
-    contentPx: Int,
     modifier: Modifier = Modifier,
     height: Dp = 3.dp,
     minThumb: Dp = 28.dp,
-    trackColor: Color = PrimaryColor.copy(alpha = 0.2f),
-    thumbColor: Color = PrimaryColor,
 ) {
     val maxScroll = scrollState.maxValue
-    if (viewportPx <= 0 || contentPx <= 0 || maxScroll <= 0) return
+    if (maxScroll <= 0) return
 
-    Canvas(modifier.height(height)) {
+    val trackColor = AppColors.bg.tertiary
+    val thumbColor = AppColors.bg.primary.copy(alpha = 0.4f)
+
+    Canvas(modifier = modifier.height(height)) {
         val w = size.width
         val h = size.height
 
-        drawRoundRect(trackColor, Offset.Zero, Size(w, h), CornerRadius(h, h))
+        drawRoundRect(
+            color = trackColor,
+            topLeft = Offset.Zero,
+            size = Size(w, h),
+            cornerRadius = CornerRadius(h, h)
+        )
 
-        val thumbW = ((viewportPx.toFloat() / contentPx.toFloat()) * w)
-            .coerceAtLeast(minThumb.toPx())
-            .coerceAtMost(w)
+        // Thumb width ≈ proportional, lekin minThumb dan kichik bo'lmasin
+        val ratio = 0.4f
+        val thumbW = (w * ratio).coerceAtLeast(minThumb.toPx()).coerceAtMost(w)
 
-        val p = (scrollState.value.toFloat() / maxScroll.toFloat()).coerceIn(0f, 1f)
-        val x = (w - thumbW) * p
+        val progress = (scrollState.value.toFloat() / maxScroll.toFloat()).coerceIn(0f, 1f)
+        val x = (w - thumbW) * progress
 
-        drawRoundRect(thumbColor, Offset(x, 0f), Size(thumbW, h), CornerRadius(h, h))
+        drawRoundRect(
+            color = thumbColor,
+            topLeft = Offset(x, 0f),
+            size = Size(thumbW, h),
+            cornerRadius = CornerRadius(h, h)
+        )
     }
-}
-
-@Composable
-private fun HourlyClickLayer(
-    bins: List<Int>,
-    binWidth: Dp,
-    onBinClick: (startHour: Int) -> Unit
-) {
-    val interaction = remember { MutableInteractionSource() }
-    Row(Modifier.fillMaxSize()) {
-        repeat(bins.size) { i ->
-            Box(
-                Modifier
-                    .width(binWidth)
-                    .fillMaxHeight()
-                    .clickable(indication = null, interactionSource = interaction) { onBinClick(bins[i]) }
-            )
-        }
-    }
-}
-
-@Composable
-private fun WeeklyClickLayer(onDayClick: (Int) -> Unit) {
-    val interaction = remember { MutableInteractionSource() }
-    Row(Modifier.fillMaxSize()) {
-        repeat(7) { i ->
-            Box(
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable(indication = null, interactionSource = interaction) { onDayClick(i) }
-            )
-        }
-    }
-}
-private const val WEEKLY_MAX_HOUR = 300
-private val weeklySteps = listOf(
-    1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24,
-    30, 36, 48, 60, 72, 96, 120, 144, 168, 240, 300
-)
-private fun weeklyTopHourCapped(maxHour: Int): Int {
-    val capped = maxHour.coerceAtMost(WEEKLY_MAX_HOUR)
-    return weeklySteps.firstOrNull { it >= capped } ?: WEEKLY_MAX_HOUR
 }
 
 @Preview
 @Composable
-private fun Pre() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
-        UsageBarChart(
-            data = mapOf(
-                0 to 12.0,
-                1 to 34.0,
-                2 to 5.5
-            ),
-            isWeekly = true
-        )
+private fun UsageBarChartPreview_Daily() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        Box(Modifier.background(AppColors.bg.surface).padding(16.dp)) {
+            UsageBarChart(
+                bars = previewDailyBars(),
+                mode = DateSelectionType.DAY,
+                chartSubtitle = null,
+                onBarClick = {},
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UsageBarChartPreview_Weekly() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        Box(Modifier.background(AppColors.bg.surface).padding(16.dp)) {
+            UsageBarChart(
+                bars = previewWeeklyBars(),
+                mode = DateSelectionType.WEEK,
+                chartSubtitle = ChartSubtitle.WeeklyAverage(HourMinute(2, 14)),
+                onBarClick = {},
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UsageBarChartPreview_Empty() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        Box(Modifier.background(AppColors.bg.surface).padding(16.dp)) {
+            UsageBarChart(
+                bars = emptyBars(DateSelectionType.WEEK),
+                mode = DateSelectionType.WEEK,
+                chartSubtitle = null,
+                onBarClick = {},
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UsageBarChartPreview_Dark() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        Box(Modifier.background(AppColors.bg.surface).padding(16.dp)) {
+            UsageBarChart(
+                bars = previewDailyBars(),
+                mode = DateSelectionType.DAY,
+                chartSubtitle = null,
+                onBarClick = {},
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }

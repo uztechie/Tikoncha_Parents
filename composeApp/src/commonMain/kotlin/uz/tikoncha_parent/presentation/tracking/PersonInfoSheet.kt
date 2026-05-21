@@ -208,7 +208,7 @@ fun PersonInfoSheet(
                         issues.forEach { issue ->
                             IssueWarningBlock(
                                 issue = issue,
-                                onWatchVideo = { onWatchVideo(issue.video_url) }
+                                onWatchVideo = { onWatchVideo(issue.video_url?:"") }
                             )
                             Space(12.dp)
                         }
@@ -289,7 +289,7 @@ private fun IssueWarningBlock(
             )
 
             // Video tugma (URL bo'lsa)
-            if (issue.video_url.isNotBlank()) {
+            if (!issue.video_url.isNullOrBlank()) {
                 Space(4.dp)
                 Box(
                     modifier = Modifier

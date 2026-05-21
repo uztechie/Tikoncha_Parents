@@ -1,146 +1,119 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package uz.tikoncha_parent.presentation.statistic
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.number
-import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.SegmentedToggle
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.App
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
-import uz.tikoncha_parent.presentation.base.CustomText
-import uz.tikoncha_parent.presentation.base.ChildSelectionButton
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.PermissionWarningCard
+import uz.tikoncha_parent.presentation.base.*
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
+import uz.tikoncha_parent.presentation.policy.common.SegmentedTabBar
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
-
 class StatisticScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
-
         val viewModel = navigator.koinNavigatorScreenModel<StatisticViewModel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
-
-        StatisticUi(
-            navigator = navigator,
-            state = state.value,
-            event = event
-        )
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        StatisticUi(navigator, state, viewModel::onEvent)
     }
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, InternalVoyagerApi::class)
 @Composable
 fun StatisticUi(
     navigator: Navigator?,
     state: StatisticState,
-    event: (StatisticEvent) -> Unit
+    event: (StatisticEvent) -> Unit,
 ) {
-
     val refreshScope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
+    var showChildSheet by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+
     val appUsageErrorText = state.appUsageResponseState.errorText()
-    var selectionTypeIndex by remember { mutableIntStateOf(0) }
-    var showAppUsageErrorDialog by remember { mutableStateOf(false) }
     val appUsageLoading = state.appUsageResponseState is ResponseState.Loading
-    var selectionType by remember { mutableStateOf(DateSelectionType.WEEK) }
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        navigationBarColor = AppColors.bg.secondary,
     )
 
     LoadingDialog(appUsageLoading && !isRefreshing)
 
-
-    LaunchedEffect(Unit) {
-        event(StatisticEvent.GetChildren)
-//        event(StatisticEvent.RefreshChild)
-//        event(StatisticEvent.GetAppUsage)
-    }
-
+    LaunchedEffect(Unit) { event(StatisticEvent.GetChildren) }
 
     LaunchedEffect(appUsageErrorText) {
-        if (appUsageErrorText.isNotEmpty()) {
-            showAppUsageErrorDialog = true
-        }
+        if (appUsageErrorText.isNotEmpty()) showErrorDialog = true
     }
 
-    if (showDialog) {
+    // Child selection sheet
+    if (showChildSheet) {
         SelectionChildBottomSheet(
             navigator = navigator,
             items = state.childrenList,
             selectedItem = state.selectedChild,
-            onDismiss = { showDialog = false },
+            onDismiss = { showChildSheet = false },
             title = stringResource(Res.string.farzandlaringiz),
             onItemSelected = {
                 event(StatisticEvent.OnChildSelected(it))
-                showDialog = false
+                showChildSheet = false
             }
         )
     }
 
+    // Error dialog
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
-        onDismiss = { showAppUsageErrorDialog = false },
-        show = showAppUsageErrorDialog,
+        onDismiss = { showErrorDialog = false },
+        show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = appUsageErrorText,
-        onButtonClick = {
-            showAppUsageErrorDialog = false
-        }
+        onButtonClick = { showErrorDialog = false }
+    )
+
+    // Bar click dialog
+    UsageDetailsDialog(
+        details = state.usageDetails,
+        show = state.showUsageDetailsDialog,
+        onDismiss = { event(StatisticEvent.DismissUsageDetailsDialog) }
     )
 
     PullToRefreshBox(
@@ -164,218 +137,251 @@ fun StatisticUi(
             CustomHeader(
                 title = stringResource(Res.string.statistika),
                 showBackButton = true,
-                onBackClick = {
-                    navigator?.pop()
-                },
+                onBackClick = { navigator?.pop() },
                 trailingIcon = {
                     ChildSelectionButton(
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .widthIn(120.dp, 160.dp),
+                        modifier = Modifier.widthIn(120.dp, 160.dp),
                         text = state.selectedChild?.name ?: "",
                         imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzandingizni_tanlang),
                         onClick = {
-                            if (state.childrenList.isEmpty()) {
-                                navigator?.push(AddChildScreen())
-                            } else {
-                                showDialog = true
-                            }
-                        },
+                            if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
+                            else showChildSheet = true
+                        }
                     )
                 }
             )
 
+            // showBlur bo'lsa pastki blokga blur qo'llanadi
+            val contentModifier = if (state.showBlur) Modifier.blur(10.dp) else Modifier
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        horizontal = ContainerPadding,
-                    )
+                    .padding(horizontal = 12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-
+                // Permission warnings
                 if (state.permissionIssueList.isNotEmpty()) {
                     Space(12.dp)
-                    state.permissionIssueList.forEach {
+                    state.permissionIssueList.forEach { issue ->
                         PermissionWarningCard(
-                            title = it.title,
-                            body = it.body,
-                            videoUrl = it.video_url,
-                            onVideoClick = {
-                                openUrl(it)
-                            }
+                            title = issue.title,
+                            body = issue.body,
+                            videoUrl = issue.video_url,
+                            onVideoClick = { openUrl(it) }
                         )
                         Space(12.dp)
                     }
-                }
-                else{
+                } else {
                     Space(12.dp)
                 }
 
+                /* ============ Chart card ============ */
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(AppColors.bg.surface, RoundedCornerShape(TextFieldCornerRadius))
                         .padding(ContainerPadding)
+                        .then(contentModifier)
                 ) {
-                    SegmentedToggle(
-                        containerColor = AppColors.bg.secondarySurface,
-                        options = listOf(
-                            stringResource(Res.string.haftalik) to null,
-                            stringResource(Res.string.kunlik) to null
+                    // Toggle DAILY / WEEKLY
+                    val selectedIdx = if (state.dateSelectionType == DateSelectionType.DAY) 0 else 1
+                    PillSegmentedButton(
+                        items = listOf(
+                            PillSegmentedItem(
+                                label = stringResource(Res.string.kunlik)
+                            ),
+                            PillSegmentedItem(
+                                label = stringResource(Res.string.haftalik)
+                            )
                         ),
-                        selectedIndex = selectionTypeIndex,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        onOptionSelected = {
-                            selectionTypeIndex = it
-                            selectionType =
-                                if (it == 0) DateSelectionType.WEEK else DateSelectionType.DAY
+                        selectedIndex = selectedIdx,
+                        modifier = Modifier.fillMaxWidth(),
+                        onSelected = { idx ->
+                            val mode =
+                                if (idx == 0) DateSelectionType.DAY else DateSelectionType.WEEK
+                            event(StatisticEvent.ChangeMode(mode))
                         }
                     )
+
                     SpaceMedium()
 
-//                    val averageTime = if (selectionType == DateSelectionType.DAY) {
-//                        val formatTime = state.averageUsageTime
-//                        buildList {
-//
-//                            if (state.isTodaySelected) {
-//                                add(stringResource(Res.string.bugun))
-//                            }
-//                            if (formatTime.hour > 0) {
-//                                add("${formatTime.hour} ${stringResource(Res.string.soat)}")
-//                            }
-//                            if (formatTime.minute > 0) {
-//                                add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
-//                            }
-//                        }.joinToString(" ")
-//                    } else {
-//
-//                        val formatTime = state.averageUsageTime
-//                        val usageTime = buildList {
-//                            if (formatTime.hour > 0) {
-//                                add("${formatTime.hour} ${stringResource(Res.string.soat)}")
-//                            }
-//                            if (formatTime.minute > 0) {
-//                                add("${formatTime.minute} ${stringResource(Res.string.daqiqa)}")
-//                            }
-//                        }.joinToString(" ")
-//
-//                        "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
-//                    }
-                    val sliderTimeText = if (selectionType == DateSelectionType.DAY) {
-                        val f = state.averageUsageTime
-                        buildList {
-                            if (state.isTodaySelected) add(stringResource(Res.string.bugun))
-                            if (f.hour > 0) add("${f.hour} ${stringResource(Res.string.soat)}")
-                            if (f.minute > 0) add("${f.minute} ${stringResource(Res.string.daqiqa)}")
-                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
-                            .joinToString(" ")
-                    } else {
-                        val totalMinutes = state.weeklyChartData.values.sum().toInt()
-                        val hours = totalMinutes / 60
-                        val minutes = totalMinutes % 60
-
-                        buildList {
-                            if (hours > 0) add("$hours ${stringResource(Res.string.soat)}")
-                            if (minutes > 0) add("$minutes ${stringResource(Res.string.daqiqa)}")
-                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
-                            .joinToString(" ")
-                    }
-
-                    DateSelectorSlider(
-                        type = selectionType,
-                        averageTimeText = sliderTimeText,
-                        periodsDate = if (selectionType == DateSelectionType.WEEK) state.weeklyPeriods else state.dailyPeriods,
-                        onDateSelected = {
-                            event(StatisticEvent.GetUsageList(it, selectionType))
-                        }
+                    // Pager
+                    PagerBlock(
+                        state = state,
+                        onPageChange = { event(StatisticEvent.PageChanged(it)) }
                     )
 
                     SpaceLarge()
 
-                    val data = if (selectionType == DateSelectionType.WEEK) normalizeWeeklyKeys(state.weeklyChartData) else state.dailyChartData
+                    // Chart
                     UsageBarChart(
-                        data = data,
-                        isWeekly = selectionType == DateSelectionType.WEEK,
-                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                        bars = state.bars,
+                        mode = state.dateSelectionType,
+                        chartSubtitle = state.selectedPage?.chartSubtitle,
+                        onBarClick = { event(StatisticEvent.BarClicked(it)) },
+                        modifier = Modifier.fillMaxWidth(),
                     )
+                }
 
-                    if (selectionType == DateSelectionType.WEEK && state.selectedPeriod != null) {
-                        val dailyMinutes = state.weeklyChartData.values
-                        val totalMinutes = dailyMinutes.sum().toInt()
-                        val activeDays = dailyMinutes.count { it > 0.0 }
+                SpaceMedium()
 
-                        val avgPerDay = if (activeDays > 0) totalMinutes / activeDays else 0
-                        val hours = avgPerDay / 60
-                        val minutes = avgPerDay % 60
+                /* ============ Top apps ============ */
+                if (state.topApps.isNotEmpty()) {
+                    Text(
+                        text = stringResource(Res.string.eng_kop_foydalanilgan),
+                        color = AppColors.text.primary,
+                        style = AppTypography.titleMdSemiBold
+                    )
+                    SpaceSmall()
 
-                        val usageTime = buildList {
-                            if (hours > 0) add("$hours ${stringResource(Res.string.soat)}")
-                            if (minutes > 0) add("$minutes ${stringResource(Res.string.daqiqa)}")
-                        }.ifEmpty { listOf("0 ${stringResource(Res.string.daqiqa)}") }
-                            .joinToString(" ")
-
-                        val weeklyAvgText = "${stringResource(Res.string.bir_kunda_o_rtacha)} $usageTime"
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 6.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = weeklyAvgText,
-                                style = AppTypography.titleMdMedium,
-                                color = AppColors.text.secondary,
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                AppColors.bg.surface,
+                                RoundedCornerShape(TextFieldCornerRadius)
                             )
+                            .padding(horizontal = ContainerPadding)
+                            .then(contentModifier)
+                    ) {
+                        state.topApps.forEachIndexed { i, app ->
+                            TopAppItem(app = app)
+                            if (i < state.topApps.lastIndex)
+                                HorizontalDivider(
+                                    thickness = 1.dp,
+                                    color = AppColors.border.secondary
+                                )
                         }
                     }
                 }
-                SpaceMedium()
 
-                CustomText(
-                    text = stringResource(Res.string.eng_kop_foydalanilgan),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = NormalLargeTextSize
-                )
-                SpaceSmall()
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(AppColors.bg.surface, RoundedCornerShape(TextFieldCornerRadius))
-                        .padding(ContainerPadding)
-                ) {
-                    state.appUsageUiList.forEach { item ->
-                        AppUsageItem(appUsageUi = item)
-                        SpaceUltraSmall()
-                        DividerHorizontal()
-                    }
-                }
+                SpaceLarge()
             }
         }
     }
 }
 
-private fun formatDate(date: LocalDate): String {
-    val d = date.day.toString().padStart(2, '0')
-    val m = date.month.number.toString().padStart(2, '0')
-    return "$d.$m.${date.year}"
+@Composable
+private fun PagerBlock(
+    state: StatisticState,
+    onPageChange: (Int) -> Unit,
+) {
+    if (state.pages.isEmpty()) {
+        Spacer(Modifier.height(64.dp))
+        return
+    }
+
+    val pagerState = rememberPagerState(
+        initialPage = state.selectedPageIndex.coerceIn(0, state.pages.lastIndex),
+        pageCount = { state.pages.size }
+    )
+
+    // state → pager
+    LaunchedEffect(state.selectedPageIndex, state.pages.size) {
+        val target = state.selectedPageIndex.coerceIn(0, state.pages.lastIndex)
+        if (pagerState.currentPage != target) pagerState.scrollToPage(target)
+    }
+
+    // pager → state
+    LaunchedEffect(pagerState.settledPage) {
+        if (pagerState.settledPage != state.selectedPageIndex) onPageChange(pagerState.settledPage)
+    }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PagerDots(
+            total = state.pages.size,
+            current = pagerState.currentPage,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
+        )
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+            beyondViewportPageCount = 1,
+        ) { idx ->
+            val page = state.pages[idx]
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = pageTitleString(page.title),
+                    style = AppTypography.titleMdMedium,
+                    color = AppColors.text.secondary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = durationString(page.subtitle),
+                    style = AppTypography.headlineMdSemiBold,
+                    color = AppColors.text.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
 }
+
 
 @Preview
 @Composable
-private fun Pre() {
-    TikonchaParentTheme(
-        ThemeMode.LIGHT
-    ) {
+private fun StatisticScreenPreview_Daily_WithData() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
         StatisticUi(
             navigator = null,
-            state = StatisticState(),
-            event = {}
+            state = previewStateDaily(),
+            event = {},
         )
     }
 }
 
+@Preview
+@Composable
+private fun StatisticScreenPreview_Weekly_WithData() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        StatisticUi(
+            navigator = null,
+            state = previewStateWeekly(),
+            event = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun StatisticScreenPreview_Empty() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        StatisticUi(
+            navigator = null,
+            state = previewStateEmpty(),
+            event = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun StatisticScreenPreview_Dark() {
+    TikonchaParentTheme(ThemeMode.DARK) {
+        StatisticUi(
+            navigator = null,
+            state = previewStateDaily(),
+            event = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun StatisticScreenPreview_Blurred() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        StatisticUi(
+            navigator = null,
+            state = previewStateDaily().copy(showBlur = true),
+            event = {},
+        )
+    }
+}

@@ -44,7 +44,6 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.platform.isIos
-import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomPaymentDialog
@@ -309,7 +308,7 @@ fun PaymentTypeScreenUi(
                         color = AppColors.text.inverse,
                     )
                 ) {
-                    append(state.amount.toCurrency())
+                    append(state.originalAmount.toCurrency())
                 }
                 append(" ")
                 withStyle(
@@ -461,7 +460,7 @@ fun PaymentTypeScreenUi(
                                 color = AppColors.text.primary,
                             )
                         ) {
-                            append(state.amount.toCurrency())
+                            append(state.originalAmount.toCurrency())
                         }
                         append(" ")
                         withStyle(
@@ -491,13 +490,13 @@ fun PaymentTypeScreenUi(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val priceText2 = buildAnnotatedString {
+                    val priceDiscount = buildAnnotatedString {
                         withStyle(
                             SpanStyle(
                                 color = AppColors.text.accentEmphasis,
                             )
                         ) {
-                            append(state.discountAmount.toCurrency())
+                            append(state.discountSaving.toCurrency())
                         }
                         append(" ")
                         withStyle(
@@ -516,7 +515,7 @@ fun PaymentTypeScreenUi(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = priceText2,
+                        text = "- ${priceDiscount}",
                         style = AppTypography.titleSmMedium,
                         color = AppColors.text.accentEmphasis
                     )
@@ -530,8 +529,8 @@ fun PaymentTypeScreenUi(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val amount = (state.amount - state.discountAmount).toCurrency()
-                    val priceText3 = buildAnnotatedString {
+                    val amount = (state.finalAmount).toCurrency()
+                    val priceFinal = buildAnnotatedString {
                         withStyle(
                             SpanStyle(
                                 color = AppColors.text.accentEmphasis,
@@ -556,7 +555,7 @@ fun PaymentTypeScreenUi(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = priceText3,
+                        text = priceFinal,
                         style = AppTypography.titleLgSemiBold,
                         color = AppColors.text.accentEmphasis
                     )
@@ -627,7 +626,7 @@ private fun Preview() {
         PaymentTypeScreenUi(
             navigator = null,
             state = PaymentState(
-                amount = 199000,
+                originalAmount = 199000,
                 subscriptionDuration = SubscriptionDuration.ANNUAL,
                 isTestAccount = true,
                 selectedPaymentType = PaymentType.AppStore

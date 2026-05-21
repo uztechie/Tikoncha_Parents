@@ -23,6 +23,7 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.tikoncha_logo
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 
@@ -58,7 +59,7 @@ class SplashScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.extendedColor.backgroundColor),
+                .background(AppColors.bg.page),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

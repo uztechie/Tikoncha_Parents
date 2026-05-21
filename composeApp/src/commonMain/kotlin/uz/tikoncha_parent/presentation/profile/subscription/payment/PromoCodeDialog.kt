@@ -4,11 +4,13 @@ import PromoCodeInput
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,12 +26,15 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.promokod
 import tikoncha_parents.composeapp.generated.resources.promokod_tasdiqlandi
 import tikoncha_parents.composeapp.generated.resources.promokodni_kiriting
 import tikoncha_parents.composeapp.generated.resources.qo_llash
 import tikoncha_parents.composeapp.generated.resources.tekshirilmoqda
 import tikoncha_parents.composeapp.generated.resources.yopish
+import uz.tikoncha_parent.App
 import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomLoadingButton
 import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
 import uz.tikoncha_parent.presentation.base.CustomText
@@ -42,12 +47,15 @@ import uz.tikoncha_parent.ui.NormalTextSize
 import uz.tikoncha_parent.ui.OtpErrorColor
 import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceLarge
 import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
 import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -90,7 +98,6 @@ fun PromoCodeDialog(
     Dialog(
         onDismissRequest = onDismiss
     ) {
-
         Column(
             modifier = Modifier
                 .coverShadow(
@@ -98,20 +105,20 @@ fun PromoCodeDialog(
                 )
                 .fillMaxWidth()
                 .background(
-                    MaterialTheme.extendedColor.backgroundColor, RoundedCornerShape(
+                    AppColors.bg.surface, RoundedCornerShape(
                         CardCornerRadius
                     )
                 )
                 .padding(25.dp)
         ) {
 
-            CustomText(
+            Text(
                 text = stringResource(Res.string.promokodni_kiriting),
-                fontSize = NormalTextSize,
-                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = AppTypography.titleMdSemiBold,
+                color = AppColors.text.primary
             )
 
             SpaceLarge()
@@ -123,12 +130,11 @@ fun PromoCodeDialog(
                 isError = errorMessage.isNotEmpty(),
                 errorMessage = errorMessage,
                 focusRequester = focusRequester,
-
-                containerColor = MaterialTheme.extendedColor.cardColor,
-                textColor = MaterialTheme.extendedColor.textColor,
-                cursorColor = MaterialTheme.extendedColor.textColor,
-                errorContainerColor = OtpErrorColor.copy(alpha = 0.15f),
-                errorTextColor = OtpErrorColor,
+                containerColor = AppColors.field.page,
+                textColor = AppColors.text.primary,
+                cursorColor = AppColors.text.primary,
+                errorContainerColor = AppColors.bg.accentDanger.copy(0.5f),
+                errorTextColor = AppColors.text.accentDanger,
 
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,29 +150,27 @@ fun PromoCodeDialog(
             )
             {
                 if (errorMessage.isNotEmpty()) {
-                    CustomText(
+                    Text(
                         modifier = Modifier
                             .fillMaxWidth(),
                         text = errorMessage,
-                        color = OtpErrorColor,
-                        style = MaterialTheme.typography.labelSmall,
+                        color = AppColors.text.accentDanger,
+                        style = AppTypography.titleSmMedium,
                         textAlign = TextAlign.End,
-                        fontSize = UltraSmallTextSize
                     )
                 }
                 else if (success) {
-                    CustomText(
+                    Text(
                         modifier = Modifier
                             .fillMaxWidth(),
                         text = stringResource(Res.string.promokod_tasdiqlandi),
-                        color = PrimaryColor,
-                        style = MaterialTheme.typography.labelSmall,
+                        color = AppColors.text.accentSuccess,
+                        style = AppTypography.titleSmMedium,
                         textAlign = TextAlign.End,
-                        fontSize = UltraSmallTextSize
                     )
                 }
                 else{
-                    CustomText(
+                    Text(
                         modifier = Modifier
                             .fillMaxWidth(),
                         text = "",
@@ -195,7 +199,7 @@ fun PromoCodeDialog(
 
 
             if (success) {
-                CustomButton(
+                CustomButtonNew(
                     text = stringResource(Res.string.yopish),
                     onClick = {
                         onDismiss()
@@ -205,6 +209,22 @@ fun PromoCodeDialog(
                         .height(DialogButtonHeight)
                 )
             } else {
+
+
+
+                CustomButtonNew(
+                    enabled = !loading,
+                    text = stringResource(Res.string.bekor_qilish),
+                    onClick = {
+                        onDismiss()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(DialogButtonHeight),
+                    containerColor = AppColors.section.secondary,
+                    contentColor = AppColors.text.primary
+                )
+                Space(10.dp)
                 CustomLoadingButton(
                     loading = loading,
                     enabled = !loading && state.promoCode.isNotEmpty(),
@@ -216,23 +236,14 @@ fun PromoCodeDialog(
                         .fillMaxWidth()
                         .height(DialogButtonHeight)
                 )
-
-                SpaceMedium()
-                CustomOutlinedButton(
-                    enabled = !loading,
-                    text = stringResource(Res.string.bekor_qilish),
-                    onClick = {
-                        onDismiss()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(DialogButtonHeight)
-                )
             }
 
 
         }
+
     }
+
+
 
 }
 
@@ -240,15 +251,22 @@ fun PromoCodeDialog(
 @Composable
 private fun Pre() {
     TikonchaParentTheme(mode = ThemeMode.LIGHT){
-        PromoCodeDialog(
-            show =  true,
-            state = PaymentState(
-                promoCode = "fd",
-                promoCodeResponseState = ResponseState.Success()
-            ),
-            event = {},
-            onDismiss = {}
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppColors.bg.page)
+        ){
+            PromoCodeDialog(
+                show =  true,
+                state = PaymentState(
+                    promoCode = "",
+                    promoCodeResponseState = ResponseState.Idle
+                ),
+                event = {},
+                onDismiss = {}
+            )
+        }
+
     }
 
 }

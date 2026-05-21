@@ -64,7 +64,7 @@ class CoinPurchaseViewModel (
         promoCodeJob = screenModelScope.launch {
             _state.update {
                 it.copy(
-                    promoCodeLoading = true
+                    promoCodeLoading = true,
                 )
             }
             val request = PromoCodeValidationRequest(
@@ -76,7 +76,7 @@ class CoinPurchaseViewModel (
                     _state.update {
                         it.copy(
                             promoCodeLoading = false,
-                            promoActivated = false
+                            promoActivated = false,
                         )
                     }
                     _effect.tryEmit(CoinPurchaseEffect.ShowPromoCodeErrorToast(result.message ?: "Server connection error"))
@@ -87,7 +87,7 @@ class CoinPurchaseViewModel (
                         it.copy(
                             promoActivated = true,
                             promoCodeLoading = false,
-                            promoCodeDiscountPrice = discountedPromoCodePrice
+                            promoCodeDiscountPrice = discountedPromoCodePrice,
                         )
                     }
                     _effect.tryEmit(CoinPurchaseEffect.ShowPromoCodeSuccessToast)

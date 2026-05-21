@@ -47,6 +47,7 @@ suspend inline fun <reified T> HttpClient.safeRequest(
 
             return retryResponse.body()
         } else {
+            handleSessionExpired()
             throw Exception("Session expired, please login again.")
         }
     }
@@ -78,6 +79,7 @@ suspend inline fun <reified T> HttpClient.safeUploadMultipart(
             )
             return retryResponse.body()
         } else {
+            handleSessionExpired()
             throw Exception("Session expired. Please log in again.")
         }
     }
@@ -103,4 +105,9 @@ suspend fun refreshAccessToken(client: HttpClient): Boolean {
         e.printStackTrace()
         false
     }
+}
+
+fun handleSessionExpired() {
+    AppSettings.clearSession()
+    AuthEventBus.emit(AuthEvent.SessionExpired)
 }

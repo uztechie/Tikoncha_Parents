@@ -662,4 +662,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="kod_nusxalandi">Kod nusxalandi</string>
     <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Farzandingiz Tikoncha ilovasidan kirib tasdiqlash kodini kiritishi kerak.</string>
     <string name="bola_hali_bajardim_bosmagan">Bola hali “Bajardim” tugmasini bosmagan</string>
+    <string name="foydalanilmagan">Foydalanilmagan</string>
+    <string name="token_eskirgan">Token eskirgan</string>
+    <string name="tokenni_yangilash_uchun">Tokenni yangilash qayta login qilish kerak.</string>
+    <string name="login_qilish">Login qilish</string>
 </resources>

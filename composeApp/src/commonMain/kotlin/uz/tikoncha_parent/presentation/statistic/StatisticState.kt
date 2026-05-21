@@ -1,44 +1,42 @@
 package uz.tikoncha_parent.presentation.statistic
 
-import kotlinx.datetime.LocalTime
-import uz.tikoncha_parent.data.remote.model.GetRuleItem
+import kotlinx.datetime.LocalDate
 import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
-import uz.tikoncha_parent.domain.model.AppUsage
-import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
+import uz.tikoncha_parent.domain.model.app_usage.AppUsage
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class StatisticState(
-    val rulesAppList: List<GetRuleItem> = emptyList(),
-    val appUsageUiList: List<AppUsageUi> = emptyList(),
-    val dailyPeriods: List<UsagePeriod> = emptyList(),
-    val appUsageList: List<AppUsage> = emptyList(),
-    val weeklyPeriods: List<UsagePeriod> = emptyList(),
-
-    val todayUsage: HourMinute = HourMinute(0,0),
-
-
-
-    val selectedChild: UserInfo? = null,
-
+    /* ----- Async holatlar ----- */
+    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
     val appUsageResponseState: ResponseState<Nothing> = ResponseState.Idle,
 
-    val isTodaySelected: Boolean = false,
-    val averageUsageTime: HourMinute = HourMinute(),
-
-    val dailyChartData: Map<Int, Double> = emptyMap(),
-    val weeklyChartData: Map<Int, Double> = emptyMap(),
-    val dateSelectionType: DateSelectionType = DateSelectionType.WEEK,
-
-    val selectedApp: AppUsageUi? = null,
-    val subscriptionLimit: SubscriptionLimit? = null,
-
+    /* ----- Child ----- */
     val childrenList: List<UserInfo> = emptyList(),
-    val childrenResponseState: ResponseState<Nothing> = ResponseState.Idle,
+    val selectedChild: UserInfo? = null,
 
-    val showBlur: Boolean = false,
-    val selectedPeriod: UsagePeriod? = null,
+    /* ----- Permission / Subscription ----- */
     val permissionIssueList: List<PermissionStatusIssus> = emptyList(),
-)
+    val subscriptionLimit: SubscriptionLimit? = null,
+    val showBlur: Boolean = false,
+
+    /* ----- Raw data ----- */
+    val appUsageList: List<AppUsage> = emptyList(),
+    val today: LocalDate? = null,
+
+    /* ----- Tab / Pager ----- */
+    val dateSelectionType: DateSelectionType = DateSelectionType.DAY,   // default DAILY
+    val pages: List<PagePeriod> = emptyList(),
+    val selectedPageIndex: Int = 0,
+
+    /* ----- Tanlangan page uchun derived ----- */
+    val bars: List<ChartBarUi> = emptyList(),
+    val topApps: List<TopAppUi> = emptyList(),
+
+    /* ----- Bar click dialog ----- */
+    val usageDetails: UsageDetailsUi? = null,
+    val showUsageDetailsDialog: Boolean = false,
+) {
+    val selectedPage: PagePeriod? get() = pages.getOrNull(selectedPageIndex)
+}

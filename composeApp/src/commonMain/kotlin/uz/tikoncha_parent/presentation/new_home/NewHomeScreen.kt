@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -37,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,15 +49,7 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.*
-import tikoncha_parents.composeapp.generated.resources.instagram_icon
-import tikoncha_parents.composeapp.generated.resources.linkedin_icon
-import tikoncha_parents.composeapp.generated.resources.notification
-import tikoncha_parents.composeapp.generated.resources.profile
-import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
-import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
@@ -67,6 +57,7 @@ import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.base.NoInternetDialog
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
@@ -78,17 +69,13 @@ import uz.tikoncha_parent.presentation.in_app_update.UpdateEvent
 import uz.tikoncha_parent.presentation.in_app_update.UpdateUiState
 import uz.tikoncha_parent.presentation.in_app_update.UpdateViewModel
 import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
-import uz.tikoncha_parent.presentation.notification.NotificationScreen
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
-import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
-import uz.tikoncha_parent.presentation.statistic.StatisticState
-import uz.tikoncha_parent.presentation.statistic.StatisticViewModel
+import uz.tikoncha_parent.presentation.statistic.durationStringWithZero
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.tracking.TrackingScreen
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
-import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.CardCornerPadding
 import uz.tikoncha_parent.ui.CardCornerRadius
@@ -118,14 +105,9 @@ class NewHomeScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
 
-
         val viewModel = navigator.koinNavigatorScreenModel<HomeViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
-
-        val statisticViewModel = navigator.koinNavigatorScreenModel<StatisticViewModel>()
-        val statisticState = statisticViewModel.state.collectAsStateWithLifecycle()
-        val statisticEvent = statisticViewModel::onEvent
 
         val updateViewModel = koinViewModel<UpdateViewModel>()
         val updateState by updateViewModel.state.collectAsStateWithLifecycle()
@@ -137,20 +119,7 @@ class NewHomeScreen : Screen {
             updateEvent(UpdateEvent.ScreenStarted)
         }
 
-
-
-
         HandleUpdateEffect(updateViewModel)
-
-        LaunchedEffect(state.value.selectedChild) {
-            Logger.d(
-                "HomeViewModel", "homeScreen " +
-                        "selectedChild=${state.value.selectedChild}"
-            )
-            state.value.selectedChild?.let { child ->
-                statisticEvent(StatisticEvent.OnChildSelected(child))
-            }
-        }
 
         Logger.d("NewHomeScreen", "Content")
 
@@ -158,8 +127,6 @@ class NewHomeScreen : Screen {
             navigator = navigator,
             state = state.value,
             event = event,
-            statisticState = statisticState.value,
-            statisticEvent = statisticEvent,
             appUpdateState = updateState,
             appUpdateEvent = updateEvent
         )
@@ -171,8 +138,6 @@ fun NewHomeUi(
     navigator: Navigator?,
     state: HomeState,
     event: (HomeEvent) -> Unit,
-    statisticState: StatisticState,
-    statisticEvent: (StatisticEvent) -> Unit = {},
     appUpdateState: UpdateUiState = UpdateUiState(),
     appUpdateEvent: (UpdateEvent) -> Unit = {},
 ) {
@@ -238,8 +203,6 @@ fun NewHomeUi(
                 isRefreshing = true
                 event(HomeEvent.GetChildren)
                 event(HomeEvent.ReloadUserInfo)
-                statisticEvent(StatisticEvent.RefreshChild)
-                statisticEvent(StatisticEvent.GetAppUsage)
                 delay(500)
                 isRefreshing = false
             }
@@ -258,12 +221,10 @@ fun NewHomeUi(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-
                 ProfileCard(
-                    modifier = Modifier
-                        .widthIn(140.dp, 160.dp),
+                    modifier = Modifier.widthIn(140.dp, 160.dp),
                     name = state.userName,
-                    imageUrl = state.userImageUrl,
+                    imageUrl = state.userImageUrl?:"",
                     onClick = {
                         navigator?.push(ProfileScreen())
                     }
@@ -271,13 +232,12 @@ fun NewHomeUi(
 
                 Spacer(Modifier.weight(1f))
 
-                if (!showTikonchaTutorialCard){
+                if (!showTikonchaTutorialCard) {
                     IconButton(
                         onClick = {
                             navigator?.push(VideoTutorialYoutubeScreen(TutorialType.TIKONCHA))
                         },
-                        modifier = Modifier
-                            .size(44.dp),
+                        modifier = Modifier.size(44.dp),
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = AppColors.bg.surfaceTertiary,
                             contentColor = AppColors.icon.accentPrimary
@@ -286,8 +246,7 @@ fun NewHomeUi(
                         Icon(
                             painter = painterResource(Res.drawable.media_play),
                             contentDescription = "",
-                            modifier = Modifier
-                                .size(NormalIconSize)
+                            modifier = Modifier.size(NormalIconSize)
                         )
                     }
                     SpaceUltraSmall()
@@ -296,8 +255,7 @@ fun NewHomeUi(
                     onClick = {
                         openUrl("https://t.me/tikoncha_support")
                     },
-                    modifier = Modifier
-                        .size(44.dp),
+                    modifier = Modifier.size(44.dp),
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = AppColors.bg.surfaceTertiary,
                         contentColor = AppColors.icon.accentPrimary
@@ -306,40 +264,16 @@ fun NewHomeUi(
                     Icon(
                         painter = painterResource(Res.drawable.support_icon),
                         contentDescription = "",
-                        modifier = Modifier
-                            .size(NormalIconSize)
+                        modifier = Modifier.size(NormalIconSize)
                     )
                 }
-
-//                Box(
-//                    modifier = Modifier
-//                        .clip(CircleShape)
-//                        .size(44.dp)
-//                        .background(AppColors.bg.surfaceTertiary)
-//                        .singleClick {
-//                            navigator?.push(NotificationScreen())
-//                        },
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Image(
-//                        painter = painterResource(Res.drawable.notification),
-//                        contentDescription = "",
-//                        colorFilter = ColorFilter.tint(MaterialTheme.extendedColor.primaryAlphaColor),
-//                        modifier = Modifier
-//                            .size(NormalIconSize)
-//                    )
-//                }
-//                SpaceUltraSmall()
             }
-
-
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-
 
                 item {
                     ChildSelectionButton(
@@ -362,11 +296,9 @@ fun NewHomeUi(
                 }
 
                 item {
-
-                    if (showTikonchaTutorialCard){
+                    if (showTikonchaTutorialCard) {
                         TikonchaTutorialCard(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 navigator?.push(VideoTutorialYoutubeScreen(TutorialType.TIKONCHA))
                             }
@@ -374,8 +306,6 @@ fun NewHomeUi(
                         Space(12.dp)
                     }
                 }
-
-
 
                 item {
                     if (parentRequestCount > 0) {
@@ -399,20 +329,18 @@ fun NewHomeUi(
                                 fontSize = LargeTextSize,
                                 modifier = Modifier.weight(1f)
                             )
-                            if (parentRequestCount > 0) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(OtpErrorColor, CircleShape)
-                                        .size(24.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CustomText(
-                                        text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
-                                        maxLines = 1,
-                                        fontSize = SmallTextSize
-                                    )
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .background(OtpErrorColor, CircleShape)
+                                    .size(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CustomText(
+                                    text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
+                                    maxLines = 1,
+                                    fontSize = SmallTextSize
+                                )
                             }
                         }
                         Space(12.dp)
@@ -421,13 +349,13 @@ fun NewHomeUi(
 
                 item {
                     InAppUpdateCard(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.padding(bottom = 16.dp),
                         state = appUpdateState,
                         event = appUpdateEvent
                     )
                 }
 
+                /* ============ STATISTIKA card ============ */
                 item {
                     Row(
                         modifier = Modifier
@@ -440,9 +368,7 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    internetCheck.check {
-                                        showChildDialog = true
-                                    }
+                                    internetCheck.check { showChildDialog = true }
                                 } else {
                                     navigator?.push(StatisticScreen())
                                 }
@@ -450,48 +376,9 @@ fun NewHomeUi(
                             .padding(CardCornerPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
-
-                            val statUsageTime = buildString {
-                                append(
-                                    when {
-                                        statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute == 0 -> {
-                                            "0 ${stringResource(Res.string.daq)}"
-                                        }
-
-                                        statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute == 0 -> {
-                                            "${statisticState.todayUsage.hour} ${stringResource(Res.string.soat)}"
-                                        }
-
-                                        statisticState.todayUsage.hour > 0 && statisticState.todayUsage.minute > 0 -> {
-                                            "${statisticState.todayUsage.hour} ${stringResource(Res.string.s)}" +
-                                                    ", ${statisticState.todayUsage.minute} ${
-                                                        stringResource(
-                                                            Res.string.d
-                                                        )
-                                                    }"
-                                        }
-
-                                        statisticState.todayUsage.hour == 0 && statisticState.todayUsage.minute > 0 -> {
-                                            "${statisticState.todayUsage.minute} ${
-                                                stringResource(
-                                                    Res.string.daq
-                                                )
-                                            }"
-                                        }
-
-                                        else -> {
-                                            "0 ${stringResource(Res.string.daq)}"
-                                        }
-                                    }
-                                )
-                            }
-
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = statUsageTime,
+                                text = durationStringWithZero(state.todayUsage),
                                 color = AppColors.text.primary,
                                 style = AppTypography.displaySmRegular
                             )
@@ -521,8 +408,7 @@ fun NewHomeUi(
                                 Image(
                                     painter = painterResource(Res.drawable.linkedin_icon),
                                     contentDescription = "",
-                                    modifier = Modifier
-                                        .size(SmallIconSize),
+                                    modifier = Modifier.size(SmallIconSize),
                                     alignment = Alignment.BottomCenter,
                                 )
                             }
@@ -539,8 +425,7 @@ fun NewHomeUi(
                                 Image(
                                     painter = painterResource(Res.drawable.whatsapp_icon),
                                     contentDescription = "",
-                                    modifier = Modifier
-                                        .size(SmallIconSize),
+                                    modifier = Modifier.size(SmallIconSize),
                                     alignment = Alignment.BottomCenter,
                                 )
                             }
@@ -557,8 +442,7 @@ fun NewHomeUi(
                                 Image(
                                     painter = painterResource(Res.drawable.instagram_icon),
                                     contentDescription = "",
-                                    modifier = Modifier
-                                        .size(SmallIconSize),
+                                    modifier = Modifier.size(SmallIconSize),
                                     alignment = Alignment.BottomCenter,
                                 )
                             }
@@ -567,6 +451,7 @@ fun NewHomeUi(
                     Space(12.dp)
                 }
 
+                /* ============ CHEKLOVLAR card ============ */
                 item {
                     Row(
                         modifier = Modifier
@@ -579,9 +464,7 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    internetCheck.check {
-                                        showChildDialog = true
-                                    }
+                                    internetCheck.check { showChildDialog = true }
                                 } else {
                                     navigator?.push(PolicyListScreen())
                                 }
@@ -589,10 +472,7 @@ fun NewHomeUi(
                             .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(Res.string.cheklovlar),
                                 color = AppColors.text.primary,
@@ -618,18 +498,14 @@ fun NewHomeUi(
                     NewHomeItem(
                         onSettingSelected = { selectionItem ->
                             when (selectionItem) {
-                                HomeSelectionItem.XARITA -> {
-                                    navigator?.push(TrackingScreen())
-                                }
-
-                                HomeSelectionItem.SIHBAT -> {
-                                    navigator?.push(ChatScreen())
-                                }
+                                HomeSelectionItem.XARITA -> navigator?.push(TrackingScreen())
+                                HomeSelectionItem.SIHBAT -> navigator?.push(ChatScreen())
                             }
                         }
                     )
                 }
 
+                /* ============ TOPSHIRIQLAR card ============ */
                 item {
                     Row(
                         modifier = Modifier
@@ -642,21 +518,15 @@ fun NewHomeUi(
                             )
                             .singleClick {
                                 if (state.childrenList.isEmpty()) {
-                                    internetCheck.check {
-                                        showChildDialog = true
-                                    }
+                                    internetCheck.check { showChildDialog = true }
                                 } else {
                                     navigator?.push(TaskScreen())
                                 }
-
                             }
                             .padding(horizontal = CardCornerPadding, vertical = ContainerPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(Res.string.topshiriqlar),
                                 color = AppColors.text.primary,
@@ -685,18 +555,14 @@ fun NewHomeUi(
 @Preview
 @Composable
 private fun Pre() {
-    TikonchaParentTheme(
-        ThemeMode.LIGHT
-    ) {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
         NewHomeUi(
             navigator = null,
             state = HomeState(
-                showTikonchaTutorialCard = true
+                showTikonchaTutorialCard = true,
+                todayUsage = HourMinute(1, 22),
             ),
             event = {},
-            statisticState = StatisticState(
-                todayUsage = HourMinute(1, 22)
-            )
         )
     }
 }

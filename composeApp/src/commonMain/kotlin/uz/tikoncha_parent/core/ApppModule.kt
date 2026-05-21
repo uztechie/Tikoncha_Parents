@@ -15,7 +15,7 @@ import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.repository.LoginRepository
 import uz.tikoncha_parent.domain.repository.TodoRepository
 import uz.tikoncha_parent.domain.use_case.AddChildUseCase
-import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
+import uz.tikoncha_parent.domain.use_case.app_usage.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
@@ -76,6 +76,7 @@ import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
+import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.UpdateParentRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoEditUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
@@ -261,6 +262,7 @@ val sharedModule = module {
     single { uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase(get()) }
     single { DeleteTodoUseCase(get()) }
     single { CompleteTodoUseCase(get()) }
+    single { TodayUsageUseCase(get()) }
 
 
 
@@ -276,7 +278,7 @@ val sharedModule = module {
     factory { CreateTaskViewModel(get(), get(), get()) }
     factory { CompletedTaskViewModel(get()) }
     factory { StatisticViewModel(get(), get(), get(), get()) }
-    factory { HomeViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     factory {
         ChatViewModel(

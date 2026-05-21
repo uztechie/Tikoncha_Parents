@@ -25,6 +25,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.theme.AppTypography
 import kotlin.math.max
 
 /**
@@ -148,7 +149,7 @@ fun PromoCodeInput(
     focusRequester: FocusRequester = remember { FocusRequester() },
 
     // Text & keyboard
-    textStyle: TextStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+    textStyle: TextStyle = AppTypography.titleLgMedium.copy(textAlign = TextAlign.Center),
     keyboardOptions: KeyboardOptions = KeyboardOptions(
         capitalization = KeyboardCapitalization.Characters
     ),

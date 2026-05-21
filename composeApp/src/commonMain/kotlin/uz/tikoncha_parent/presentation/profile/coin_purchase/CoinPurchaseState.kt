@@ -20,7 +20,7 @@ data class CoinPurchaseState(
     val discountAmount: Int = 0,
     val discountSaving: Int = 0,
     val discountPercentage: Int = 0,
-    val promoCodeLoading: Boolean = false
+    val promoCodeLoading: Boolean = false,
 ){
     val finalPrice: Int
         get() = totalPrice - promoCodeDiscountPrice - discountPrice

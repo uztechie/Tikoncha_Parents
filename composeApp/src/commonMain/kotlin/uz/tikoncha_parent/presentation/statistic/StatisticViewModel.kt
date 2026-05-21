@@ -2,316 +2,295 @@
 
 package uz.tikoncha_parent.presentation.statistic
 
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.mapToDailyUsagePeriods
-import uz.tikoncha_parent.data.mapper.mapToWeeklyUsagePeriods
-import uz.tikoncha_parent.data.mapper.toDailyAverage
-import uz.tikoncha_parent.data.mapper.toDailyUsageMinutesForChart
-import uz.tikoncha_parent.data.mapper.toTodayAverage
-import uz.tikoncha_parent.data.mapper.toUsageUi
 import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.data.mapper.toWeeklyAverage
-import uz.tikoncha_parent.data.mapper.toWeeklyUsageMinutesForChart
 import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
-import uz.tikoncha_parent.domain.use_case.AppUsagesUseCase
+import uz.tikoncha_parent.domain.use_case.app_usage.AppUsagesUseCase
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
-import uz.tikoncha_parent.presentation.profile.coins.CoinsEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-
 
 class StatisticViewModel(
     private val appUsagesUseCase: AppUsagesUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
     private val childrenUseCase: ChildrenUseCase,
-    private val permissionStatusUseCase: PermissionStatusUseCase
-) : ScreenModel
-{
+    private val permissionStatusUseCase: PermissionStatusUseCase,
+) : ScreenModel {
 
     private val TAG = "StatisticViewModel"
 
     private val _state = MutableStateFlow(StatisticState())
     val state = _state.asStateFlow()
 
-    private val _usagePeriod = MutableStateFlow<UsagePeriod?>(null)
-
-
     private var childrenJob: Job? = null
     private var appUsageJob: Job? = null
-    private var computeAllJob: Job? = null
+    private var permissionJob: Job? = null
+    private var recomputeJob: Job? = null
 
     init {
         Logger.d(TAG, "INIT")
+        val today = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+        _state.update { it.copy(today = today) }
     }
-
-
-
 
     fun onEvent(event: StatisticEvent) {
         when (event) {
-
-            is StatisticEvent.OnChildSelected -> {
-
-                Logger.d(TAG, "Statistics-OnChildSelected AppSettings.selectedChild=${AppSettings.selectedChild}")
-                Logger.d(TAG, "Statistics-OnChildSelected event.child=${event.child}")
-
-                _state.update {
-                    it.copy(selectedChild = event.child)
-                }
-                AppSettings.selectedChildId = event.child.userId
-                AppSettings.selectedChild = event.child
-                loadAppUsages()
-                loadPermissionStatus()
-
-                Logger.d(TAG, "Statistics-OnChildSelected after AppSettings.selectedChild=${AppSettings.selectedChild}")
-                Logger.d(TAG, "Statistics-OnChildSelected after event.child=${event.child}")
-            }
-
-            is StatisticEvent.GetUsageList -> {
-                _usagePeriod.value = event.usagePeriod
-                val isToday = event.dateSelectionType == DateSelectionType.DAY &&
-                        event.usagePeriod.startDate.isToday()
-                _state.update {
-                    it.copy(
-                        dateSelectionType = event.dateSelectionType,
-                        selectedPeriod = event.usagePeriod,
-                        isTodaySelected = isToday
-                    )
-                }
-                recomputeAll()
-            }
-
-            StatisticEvent.GetAppUsage -> {
-                loadAppUsages()
-            }
-
-
-
-            StatisticEvent.RefreshSubscriptionLimit -> {
-                getSubscriptionLimit()
-            }
+            StatisticEvent.Init                          -> { /* Screen LaunchedEffect dan kirsa */ loadChildren() }
+            StatisticEvent.GetChildren                   -> loadChildren()
+            StatisticEvent.GetAppUsage                   -> loadAppUsages()
+            StatisticEvent.RefreshSubscriptionLimit      -> refreshSubscriptionLimit()
 
             StatisticEvent.RefreshChild -> {
-                _state.update { innerState->
-                    val limit = AppSettings.subscriptionLimitList.find { it.childId == AppSettings.selectedChild?.userId }?: SubscriptionLimit()
-                    innerState.copy(
+                val limit = AppSettings.subscriptionLimitList
+                    .find { it.childId == AppSettings.selectedChild?.userId }
+                    ?: SubscriptionLimit()
+                _state.update {
+                    it.copy(
                         selectedChild = AppSettings.selectedChild,
-                        subscriptionLimit = limit
+                        subscriptionLimit = limit,
+                        showBlur = shouldShowBlur(limit)
                     )
                 }
             }
 
-            StatisticEvent.GetChildren -> {
-                loadChildren()
-            }
+            is StatisticEvent.OnChildSelected            -> selectChild(event.child)
+            is StatisticEvent.ChangeMode                 -> changeMode(event.mode)
+            is StatisticEvent.PageChanged                -> selectPage(event.index)
+            is StatisticEvent.BarClicked                 -> handleBarClick(event.bar)
+
+            StatisticEvent.DismissUsageDetailsDialog ->
+                _state.update { it.copy(showUsageDetailsDialog = false) }
 
             StatisticEvent.ClearAll -> {
-
+                _state.update { StatisticState(today = it.today) }
             }
         }
     }
 
-
-    private fun LocalDate.isToday(): Boolean {
-        val today = Clock.System.now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-        return this == today
-    }
-
-    private fun getSubscriptionLimit(){
-        screenModelScope.launch {
-            subscriptionLimitUseCase.invoke()
-        }
-    }
-
-
-    private fun loadAppUsages() {
-        val childId = state.value.selectedChild?.userId
-        if (childId.isNullOrEmpty()) {
-            return
-        }
-        appUsageJob?.cancel()
-        appUsageJob = screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    appUsageResponseState = ResponseState.Loading,
-                )
-            }
-
-
-            val response = appUsagesUseCase.invoke(state.value.selectedChild?.userId ?: "")
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    println("loadAppUsages ERROR: msg=${response.message}")
-                    _state.update {
-                        it.copy(
-                            appUsageResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    val usageList = response.data
-                    Logger.d("TAG", "week=${usageList.mapToWeeklyUsagePeriods()}")
-                    _state.update {
-                        it.copy(
-                            appUsageResponseState = ResponseState.Success(),
-                            appUsageList = usageList,
-                            dailyPeriods = usageList.mapToDailyUsagePeriods(),
-                            weeklyPeriods = usageList.mapToWeeklyUsagePeriods(),
-                            todayUsage = usageList.toTodayAverage()
-
-                            )
-                    }
-                    recomputeAll()
-                }
-            }
-        }
-    }
-
-
-
-
-    private fun recomputeAll(){
-        val period = _usagePeriod.value ?: return
-        computeAllJob?.cancel()
-        computeAllJob = screenModelScope.launch(Dispatchers.IO) {
-            val s = state.value
-            val usageList = s.appUsageList
-            val dateType = s.dateSelectionType
-
-            val uiList = usageList.toUsageUi(
-                startDate = period.startDate,
-                endDate = period.endDate
-            )
-
-            val weeklyChartData = usageList.toWeeklyUsageMinutesForChart(period.startDate)
-            val dailyChartData = usageList.toDailyUsageMinutesForChart(period.startDate)
-            val weeklyAverage = usageList.toWeeklyAverage(period.startDate)
-            val dailyAverage = usageList.toDailyAverage(period.startDate)
-
-            val (chartData, avg) = if (dateType == DateSelectionType.WEEK) {
-                weeklyChartData to weeklyAverage
-            } else {
-                dailyChartData to dailyAverage
-            }
-
-            println("AVERAGE week=$weeklyAverage  day=$dailyAverage  avg=$avg")
-
-
-            _state.update {
-                it.copy(
-                    appUsageUiList = uiList,
-                    dailyChartData = chartData,
-                    weeklyChartData = weeklyChartData,
-                    averageUsageTime = avg
-                )
-            }
-
-        }
-    }
+    /* ---------------- CHILDREN ---------------- */
 
     private fun loadChildren() {
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    childrenResponseState = ResponseState.Loading
-                )
-            }
+            _state.update { it.copy(childrenResponseState = ResponseState.Loading) }
 
-            val response = childrenUseCase.invoke()
-            when (response) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
+            when (val response = childrenUseCase.invoke()) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(
+                        res = response.resId, message = response.message
+                    ))
                 }
-
                 is Resource.Success -> {
+                    val list = response.data.map { dto -> dto.toUserInfo() }
                     _state.update {
                         it.copy(
                             childrenResponseState = ResponseState.Success(),
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() },
+                            childrenList = list,
                             selectedChild = AppSettings.selectedChild
                         )
                     }
                     if (AppSettings.selectedChild == null) {
-                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
+                        AppSettings.selectedChild = list.firstOrNull()
                         _state.update { it.copy(selectedChild = AppSettings.selectedChild) }
                     }
                     loadAppUsages()
                     loadPermissionStatus()
-
-//                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
-//                    if (AppSettings.selectedChild == null){
-//                        AppSettings.selectedChild = AppSettings.children.firstOrNull()
-//                    }
                 }
             }
         }
     }
 
+    private fun selectChild(child: uz.tikoncha_parent.domain.model.UserInfo) {
+        Logger.d(TAG, "OnChildSelected childId=${child.userId}")
+        if (child.userId == _state.value.selectedChild?.userId) return
+
+        AppSettings.selectedChildId = child.userId
+        AppSettings.selectedChild = child
+
+        val limit = AppSettings.subscriptionLimitList
+            .find { it.childId == child.userId } ?: SubscriptionLimit()
+
+        _state.update {
+            it.copy(
+                selectedChild = child,
+                subscriptionLimit = limit,
+                showBlur = shouldShowBlur(limit),
+                // tozalash — yangi child boshqa data'ga ega
+                appUsageList = emptyList(),
+                pages = emptyList(),
+                bars = emptyBars(it.dateSelectionType),
+                topApps = emptyList()
+            )
+        }
+        loadAppUsages()
+        loadPermissionStatus()
+    }
+
+    /* ---------------- APP USAGE ---------------- */
+
+    private fun loadAppUsages() {
+        val childId = state.value.selectedChild?.userId
+        if (childId.isNullOrEmpty()) return
+
+        appUsageJob?.cancel()
+        appUsageJob = screenModelScope.launch {
+            _state.update { it.copy(appUsageResponseState = ResponseState.Loading) }
+
+            when (val response = appUsagesUseCase.invoke(childId)) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update {
+                    it.copy(appUsageResponseState = ResponseState.Error(
+                        res = response.resId, message = response.message
+                    ))
+                }
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            appUsageResponseState = ResponseState.Success(),
+                            appUsageList = response.data
+                        )
+                    }
+                    rebuildPagesForCurrentMode()
+                }
+            }
+        }
+    }
+
+    /* ---------------- PERMISSION ---------------- */
+
     private fun loadPermissionStatus() {
-        screenModelScope.launch {
+        val childId = _state.value.selectedChild?.userId ?: return
+        permissionJob?.cancel()
+        permissionJob = screenModelScope.launch {
             val res = permissionStatusUseCase.invoke(
                 PermissionStatusRequest(
-                    userId = _state.value.selectedChild?.userId?:"",
+                    userId = childId,
                     state = PermissionStatusType.STATISTICS.name
                 )
             )
             when (res) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            permissionIssueList = res.data.issues
-                        )
-                    }
+                is Resource.Success -> _state.update {
+                    it.copy(permissionIssueList = res.data.issues)
                 }
-                is Resource.Error -> {
-                    // Xato — issue ko'rsatmaymiz, loading'ni yopamiz
-                    _state.update {
-                        it.copy(
-                            permissionIssueList = emptyList()
-                        )
-                    }
+                is Resource.Error   -> _state.update {
+                    it.copy(permissionIssueList = emptyList())
                 }
                 else -> Unit
             }
         }
+    }
+
+    /* ---------------- SUBSCRIPTION ---------------- */
+
+    private fun refreshSubscriptionLimit() {
+        screenModelScope.launch {
+            subscriptionLimitUseCase.invoke()
+            // useCase AppSettings.subscriptionLimitList ni yangilaydi (ehtimol).
+            // Shundan keyin tanlangan child'ga mos limitni state ga ko'chirib qo'yamiz:
+            val limit = AppSettings.subscriptionLimitList
+                .find { it.childId == _state.value.selectedChild?.userId }
+                ?: SubscriptionLimit()
+            _state.update {
+                it.copy(
+                    subscriptionLimit = limit,
+                    showBlur = shouldShowBlur(limit)
+                )
+            }
+        }
+    }
+
+    /**
+     * SubscriptionLimit modelingizdagi maydonlarga qarab moslang.
+     * Masalan: `limit.exceeded`, `limit.remaining <= 0`, va h.k.
+     */
+    private fun shouldShowBlur(limit: SubscriptionLimit?): Boolean {
+        if (limit == null) return false
+        // TODO: SubscriptionLimit ichida qaysi maydon "exceeded" ni bildirsa, shu yerga yozing
+        // return limit.isExceeded
+        return false
+    }
+
+    /* ---------------- MODE / PAGE ---------------- */
+
+    private fun changeMode(newMode: DateSelectionType) {
+        if (newMode == _state.value.dateSelectionType) return
+        _state.update { it.copy(dateSelectionType = newMode) }
+        rebuildPagesForCurrentMode()
+    }
+
+    private fun selectPage(index: Int) {
+        val s = _state.value
+        if (index !in s.pages.indices || index == s.selectedPageIndex) return
+        _state.update { it.copy(selectedPageIndex = index) }
+        recomputeBarsAndTopApps()
+    }
+
+    private fun rebuildPagesForCurrentMode() {
+        val s = _state.value
+        val today = s.today ?: return
+        val pages = when (s.dateSelectionType) {
+            DateSelectionType.WEEK -> buildWeeklyPages(s.appUsageList, today)
+            DateSelectionType.DAY  -> buildDailyPages(s.appUsageList, today)
+        }
+        _state.update {
+            it.copy(
+                pages = pages,
+                selectedPageIndex = pages.lastIndex.coerceAtLeast(0)
+            )
+        }
+        recomputeBarsAndTopApps()
+    }
+
+    private fun recomputeBarsAndTopApps() {
+        val s = _state.value
+        val page = s.selectedPage
+        if (page == null) {
+            _state.update { it.copy(bars = emptyBars(s.dateSelectionType), topApps = emptyList()) }
+            return
+        }
+
+        recomputeJob?.cancel()
+        recomputeJob = screenModelScope.launch(Dispatchers.Default) {
+            val bars = when (s.dateSelectionType) {
+                DateSelectionType.WEEK -> buildWeeklyBars(s.appUsageList, page)
+                DateSelectionType.DAY  -> buildDailyBars(s.appUsageList, page)
+            }
+            val tops = buildTopApps(s.appUsageList, page)
+            _state.update { it.copy(bars = bars, topApps = tops) }
+        }
+    }
+
+    /* ---------------- BAR CLICK ---------------- */
+
+    private fun handleBarClick(bar: ChartBarUi) {
+        if (bar.totalMillis <= 0L) return
+        if (_state.value.showBlur) return        // blur ostida click ishlamaydi
+
+        val s = _state.value
+        val page = s.selectedPage ?: return
+        val details = when (s.dateSelectionType) {
+            DateSelectionType.WEEK -> buildWeeklyBarDetails(s.appUsageList, page, bar)
+            DateSelectionType.DAY  -> buildDailyBarDetails(s.appUsageList, page, bar)
+        }
+        _state.update { it.copy(usageDetails = details, showUsageDetailsDialog = true) }
     }
 }
