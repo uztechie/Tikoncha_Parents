@@ -11,4 +11,7 @@ sealed interface ProfileEvent {
     data object Refresh : ProfileEvent
     data object RequestLogout : ProfileEvent
     data object Clear : ProfileEvent
+
+    data object RequestDeleteAvatar : ProfileEvent
+    data object ClearDeleteAvatarState : ProfileEvent
 }

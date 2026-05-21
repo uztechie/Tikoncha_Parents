@@ -9,6 +9,7 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
+import uz.tikoncha_parent.data.remote.model.SubscriptionStatusResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
 import uz.tikoncha_parent.data.remote.model.transaction.TransactionHistoryResponse
@@ -89,5 +90,12 @@ class PaymentApiService(private val client: HttpClient) {
             }
         )
 
-
+    suspend fun getSubscriptionStatus(userId: String? = null): SubscriptionStatusResponse =
+        client.safeRequest(
+            method = HttpMethod.Get,
+            url = "/subscriptions/status",
+            block = {
+                userId?.let { parameter("user_id", it) }
+            }
+        )
 }

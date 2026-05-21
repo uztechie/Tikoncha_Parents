@@ -15,5 +15,6 @@ data class ProfileState(
     val relativity: String = "",
     val passportNumber: String = "",
     val userInfo: UserInfo? = null,
-    val children: List<UserInfo> = emptyList()
+    val children: List<UserInfo> = emptyList(),
+    val deleteAvatarState: ResponseState<Unit> = ResponseState.Idle
 )

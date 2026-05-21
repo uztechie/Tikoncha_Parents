@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +36,6 @@ import uz.tikoncha_parent.presentation.common.*
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
 import uz.tikoncha_parent.domain.model.SubscriptionType
@@ -53,7 +53,10 @@ import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
-class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
+class SubscriptionPaymentScreen(
+    val selectedChild: UserInfo? = null,
+    val isInfoMode: Boolean = false
+) : Screen {
     @Composable
     override fun Content() {
 
@@ -62,8 +65,8 @@ class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        LaunchedEffect(selectedChild){
-            if (selectedChild != null){
+        LaunchedEffect(selectedChild) {
+            if (selectedChild != null) {
                 Logger.d("SubscriptionPaymentScreen", "selectedChild=$selectedChild")
                 event(SubscriptionPaymentEvent.SetSelectedChild(selectedChild))
             }
@@ -72,7 +75,8 @@ class SubscriptionPaymentScreen(val selectedChild: UserInfo? = null) : Screen {
         SubscriptionPaymentUi(
             navigator = navigator,
             state = state,
-            event = event
+            event = event,
+            isInfoMode = isInfoMode
         )
     }
 }
@@ -82,7 +86,7 @@ fun SubscriptionPaymentUi(
     navigator: Navigator?,
     state: SubscriptionPaymentState = SubscriptionPaymentState(),
     event: (SubscriptionPaymentEvent) -> Unit,
-
+    isInfoMode: Boolean = false
 ) {
     val planLoading = state.subscriptionPlanState is ResponseState.Loading
     val planErrorText = state.subscriptionPlanState.errorText()
@@ -208,47 +212,50 @@ fun SubscriptionPaymentUi(
                 }
                 Space(12.dp)
 
-                Text(
-                    text = stringResource(Res.string.farzand_nazorat_tavsifi),
-                    fontSize = 14.sp,
-                    color = AppColors.text.inverse.copy(alpha = 0.9f),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 20.sp,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
+                if (!isInfoMode) {
+                    Text(
+                        text = stringResource(Res.string.farzand_nazorat_tavsifi),
+                        fontSize = 14.sp,
+                        color = AppColors.text.inverse.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+                }
             }
             Space(27.dp)
 
             // ── Pricing cards ──────────────────────────────
-            if (subscription != null) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    SubscriptionPlanCard(
-                        title = stringResource(Res.string.yillik),
-                        pricePerMonth = subscription.annual.price / 12,
-                        totalPrice = subscription.annual.price,
-                        badgeText = stringResource(Res.string.eng_foydali_tanlov),
-                        isSelected = selectedPlan == 0,
-                        onClick = { selectedPlan = 0 }
-                    )
+            if (!isInfoMode) {
+                if (subscription != null) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        SubscriptionPlanCard(
+                            title = stringResource(Res.string.yillik),
+                            pricePerMonth = subscription.annual.price / 12,
+                            totalPrice = subscription.annual.price,
+                            badgeText = stringResource(Res.string.eng_foydali_tanlov),
+                            isSelected = selectedPlan == 0,
+                            onClick = { selectedPlan = 0 }
+                        )
 
-                    SubscriptionPlanCard(
-                        title = stringResource(Res.string.oylik),
-                        pricePerMonth = subscription.monthly.price,
-                        totalPrice = null,
-                        badgeText = null,
-                        isSelected = selectedPlan == 1,
-                        onClick = { selectedPlan = 1 }
-                    )
+                        SubscriptionPlanCard(
+                            title = stringResource(Res.string.oylik),
+                            pricePerMonth = subscription.monthly.price,
+                            totalPrice = null,
+                            badgeText = null,
+                            isSelected = selectedPlan == 1,
+                            onClick = { selectedPlan = 1 }
+                        )
+                    }
                 }
+                Space(16.dp)
             }
-            Space(16.dp)
 
             // ── Feature list ───────────────────────────────
             if (subscription != null) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -289,61 +296,63 @@ fun SubscriptionPaymentUi(
                 }
             }
             Space(24.dp)
-            Space(130.dp)
+            if (!isInfoMode) Space(130.dp)
         }
 
         // ── Bottom button ──────────────────────────────────
-        val bottomGradient = Brush.verticalGradient(
-            colors = listOf(
-                Color.Transparent,
-                Color(0xFF141A15).copy(alpha = 0.3f),
-                Color(0xFF141A15).copy(alpha = 0.7f),
-                Color(0xFF141A15).copy(alpha = 0.95f),
-                Color(0xFF141A15),
+        if (!isInfoMode) {
+            val bottomGradient = Brush.verticalGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color(0xFF141A15).copy(alpha = 0.3f),
+                    Color(0xFF141A15).copy(alpha = 0.7f),
+                    Color(0xFF141A15).copy(alpha = 0.95f),
+                    Color(0xFF141A15),
+                )
             )
-        )
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(bottomGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 18.dp)
-                .padding(top = 13.dp, bottom = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomButton(
-                enabled = !hasSubscription && subscription != null,
-                text = if (hasSubscription) stringResource(Res.string.obuna_faollashtirilgan)
-                else stringResource(Res.string.obuna_bolish),
-                onClick = {
-                    subscription?.let { sub ->
-                        val plan = if (selectedPlan == 0) sub.annual else sub.monthly
-                        val duration = if (selectedPlan == 0)
-                            SubscriptionDuration.ANNUAL
-                        else
-                            SubscriptionDuration.MONTHLY
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(bottomGradient)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(horizontal = 18.dp)
+                    .padding(top = 13.dp, bottom = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CustomButton(
+                    enabled = !hasSubscription && subscription != null,
+                    text = if (hasSubscription) stringResource(Res.string.obuna_faollashtirilgan)
+                    else stringResource(Res.string.obuna_bolish),
+                    onClick = {
+                        subscription?.let { sub ->
+                            val plan = if (selectedPlan == 0) sub.annual else sub.monthly
+                            val duration = if (selectedPlan == 0)
+                                SubscriptionDuration.ANNUAL
+                            else
+                                SubscriptionDuration.MONTHLY
 
-                        navigator?.push(
-                            PaymentTypeScreen(
-                                amount = plan.price,
-                                subDuration = duration,
-                                planId = sub.planId
+                            navigator?.push(
+                                PaymentTypeScreen(
+                                    amount = plan.price,
+                                    subDuration = duration,
+                                    planId = sub.planId
+                                )
                             )
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Space(12.dp)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Space(12.dp)
 
-            Text(
-                text = stringResource(Res.string.istalgan_vaqtda_bekor),
-                style = AppTypography.bodyMdMedium,
-                color = AppColors.text.inverse,
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = stringResource(Res.string.istalgan_vaqtda_bekor),
+                    style = AppTypography.bodyMdMedium,
+                    color = AppColors.text.inverse,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -353,7 +362,7 @@ fun SubscriptionPaymentUi(
 fun PreviewSubscriptionScreen() {
     TikonchaParentTheme(
         ThemeMode.LIGHT,
-    ){
+    ) {
         SubscriptionPaymentUi(
             navigator = null,
             state = SubscriptionPaymentState(),

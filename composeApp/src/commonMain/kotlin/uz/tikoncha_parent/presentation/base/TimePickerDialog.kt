@@ -281,16 +281,16 @@ fun TimeColumn(
 //
 //    LaunchedEffect(listState) {
 //        snapshotFlow {
-//            val info = listState.layoutInfo
-//            val centerY = info.viewportStartOffset + info.viewportSize.height / 2
+//            val subscription_info = listState.layoutInfo
+//            val centerY = subscription_info.viewportStartOffset + subscription_info.viewportSize.height / 2
 //            // Markaz CHIZIG'INI ichiga olgan itemni aniq topamiz:
-//            info.visibleItemsInfo.firstOrNull { item ->
+//            subscription_info.visibleItemsInfo.firstOrNull { item ->
 //                val mid = item.offset + item.size / 2
 //                // item markazga eng yaqin va markaz chizig'i itemning vertikal chegaralari ichida
 //                centerY in item.offset..(item.offset + item.size)
 //            }?.index
 //            // Agar yuqoridagi topilmasa (masalan, layout o'zgarishi), "eng yaqin"iga qaytamiz:
-//                ?: info.visibleItemsInfo.minByOrNull { item ->
+//                ?: subscription_info.visibleItemsInfo.minByOrNull { item ->
 //                    kotlin.math.abs((item.offset + item.size / 2) - centerY)
 //                }?.index
 //        }

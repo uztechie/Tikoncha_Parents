@@ -30,4 +30,11 @@ class AvatarApiService(private val client: HttpClient) {
             url = "users/avatar/",
             block = {}
         )
+
+    suspend fun deleteAvatar(): AvatarResponse =
+        client.safeRequest(
+            method = HttpMethod.Delete,
+            url = "users/avatar/",
+            block = {}
+        )
 }

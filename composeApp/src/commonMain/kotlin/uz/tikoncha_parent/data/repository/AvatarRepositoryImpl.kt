@@ -10,4 +10,5 @@ class AvatarRepositoryImpl(
 ): AvatarRepository {
     override suspend fun uploadAvatar(part: UploadPart): AvatarResponse = api.uploadAvatar(part)
     override suspend fun getAvatarFromServer(): AvatarResponse = api.loadAvatar()
+    override suspend fun deleteAvatar(): AvatarResponse = api.deleteAvatar()
 }

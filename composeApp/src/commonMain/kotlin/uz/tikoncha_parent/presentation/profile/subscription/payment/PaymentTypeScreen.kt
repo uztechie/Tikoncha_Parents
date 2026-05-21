@@ -223,7 +223,7 @@ fun PaymentTypeScreenUi(
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
-        navigationBarColor = AppColors.bg.page
+        navigationBarColor = AppColors.bg.elevated
     )
 
     val bgGradient = Brush.verticalGradient(
@@ -402,8 +402,8 @@ fun PaymentTypeScreenUi(
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(SmallIconSize),
-                                color = PrimaryColor,
-                                trackColor = PrimaryColor.copy(alpha = 0.3f),
+                                color = AppColors.text.inverse,
+                                trackColor = AppColors.text.inverse.copy(alpha = 0.3f),
                             )
                             SpaceUltraSmall()
                         }
@@ -473,7 +473,7 @@ fun PaymentTypeScreenUi(
                         }
                     }
                     Text(
-                        text = stringResource(Res.string.narx),
+                        text = "${ stringResource(Res.string.narx) }:",
                         style = AppTypography.titleSmMedium,
                         color = AppColors.text.secondary,
                         modifier = Modifier.weight(1f)

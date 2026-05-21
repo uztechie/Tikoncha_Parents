@@ -12,6 +12,7 @@ import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResp
 import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
+import uz.tikoncha_parent.domain.model.subscription.SubscriptionStatus
 import uz.tikoncha_parent.domain.model.transaction.TransactionPage
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 
@@ -62,4 +63,14 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
     }
 
 
+    override suspend fun getSubscriptionStatus(userId: String?): SubscriptionStatus {
+        val response = api.getSubscriptionStatus(userId)
+        if (!response.success || response.data == null) {
+            throw IllegalStateException(
+                response.error
+                    ?: "Failed to load subscription status (code=${response.code ?: "unknown"})"
+            )
+        }
+        return response.data.toDomain()
+    }
 }

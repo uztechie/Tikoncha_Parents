@@ -81,7 +81,7 @@ class PolicySharedModel(
             PolicySharedEvent.DismissCategoryLimitDialog ->
                 _state.update { it.copy(showCategoryLimitDialog = false) }
 
-            // ── Policy info ──────────────────
+            // ── Policy subscription_info ──────────────────
             is PolicySharedEvent.SetPolicy -> {
                 val policy = event.policyItemUi
                 _state.update {

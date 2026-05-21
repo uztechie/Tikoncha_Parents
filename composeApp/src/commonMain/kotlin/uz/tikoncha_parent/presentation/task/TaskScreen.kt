@@ -64,6 +64,7 @@ import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
+import uz.tikoncha_parent.presentation.task.detail.TaskDetailScreen
 import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.ui.*
@@ -276,11 +277,11 @@ fun TaskUi(
                 TaskSegmentedToggle(
                     selectedIndex = state.taskIndex,
                     modifier = Modifier.fillMaxWidth(),
+                    onOptionSelected = { event(TaskListEvent.OnTaskSelected(it)) },
                     options = listOf(
                         stringResource(Res.string.ozim) to null,
                         stringResource(Res.string.farzandim) to null
-                    ),
-                    onOptionSelected = { event(TaskListEvent.OnTaskSelected(it)) }
+                    )
                 )
             }
 
@@ -319,8 +320,8 @@ fun TaskUi(
                     item(key = "child-selector") {
                         ChildSelectionButton(
                             text = state.selectedChild?.name.orEmpty(),
-                            imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
                             label = stringResource(Res.string.farzandlaringiz),
+                            imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(TextFieldHeight),
@@ -334,9 +335,9 @@ fun TaskUi(
                     item(key = "status-chips") {
                         StatusChips(
                             items = listOf(
-                                TaskFilterChip.IN_PROGRESS to "Jarayonda",
-                                TaskFilterChip.DONE_BY_CHILD to "Bajarilgan",
-                                TaskFilterChip.OVERDUE to "Tugallanmagan",
+                                TaskFilterChip.IN_PROGRESS to stringResource(Res.string.jarayonda),
+                                TaskFilterChip.DONE_BY_CHILD to stringResource(Res.string.bajarilgan),
+                                TaskFilterChip.OVERDUE to stringResource(Res.string.muddati_otgan),
                             ),
                             selected = state.activeChip,
                             onChipClick = { chip -> event(TaskListEvent.OnFilterChipToggled(chip)) },
@@ -382,16 +383,18 @@ fun TaskUi(
                             items(items = state.taskList, key = { it.id }) { task ->
                                 TaskCardItem(
                                     task = task,
-                                    isCompleting = task.id in state.completingIds,
+                                    onDeleteClick = { taskToDelete = it },
                                     isDeleting = task.id in state.deletingIds,
-                                    onDetailsIconClick = { },
+                                    isCompleting = task.id in state.completingIds,
+                                    onDetailsIconClick = {
+                                        navigator?.push(TaskDetailScreen(task))
+                                    },
                                     onDoneButtonClick = {
                                         event(TaskListEvent.OnCompletedTask(task))
                                     },
                                     onEditIconClick = {
                                         navigator?.push(CreateTaskScreen(task))
-                                    },
-                                    onDeleteClick = { taskToDelete = it }
+                                    }
                                 )
                             }
 
@@ -404,9 +407,9 @@ fun TaskUi(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         CircularProgressIndicator(
-                                            color = AppColors.icon.accentPrimary,
                                             strokeWidth = 2.dp,
-                                            modifier = Modifier.size(24.dp)
+                                            modifier = Modifier.size(24.dp),
+                                            color = AppColors.icon.accentPrimary
                                         )
                                     }
                                 }

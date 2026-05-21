@@ -31,7 +31,7 @@ data class ChatRoomState(
 
     val error: String? = null,
 
-    // header info (sizda bor)
+    // header subscription_info (sizda bor)
     val chatMembersCount: Int = 0,
     val isUserOnline: Boolean = false,
     val lastTimeOnline: ChatDateLabel = ChatDateLabel.Unknown,

@@ -391,8 +391,8 @@
     <string name="qollash">Применить</string>
     <string name="promokod">Промокод:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Вы успешно купили монеты.</string>
-    <string name="narx">Цена:</string>
-    <string name="jami">Всего:</string>
+    <string name="narx">Цена</string>
+    <string name="jami">Всего</string>
     <string name="bekor_qilindi">Отменено!</string>
     <string name="sorov_holati">Cтатус запроса</string>
     <string name="qanday_qilib_ishlatish">Как пользоваться</string>
@@ -642,4 +642,19 @@
     <string name="farzand_ilovasi_info">Установите это приложение Tikoncha на телефон вашего ребёнка.</string>
     <string name="kod_nusxalandi">Код скопирован</string>
     <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Ваш ребёнок должен войти в приложение Tikoncha и ввести код подтверждения.</string>
+    <string name="profil_rasmi">Фото профиля</string>
+    <string name="rasmni_ozgartirish">Изменить фото</string>
+    <string name="rasmni_ochirish">Удалить фото</string>
+    <string name="profil_rasmi_olib_tashlanadi">Фото профиля будет удалено. Это действие нельзя отменить.</string>
+    <string name="keyingi_tolov">Следующий платёж</string>
+    <string name="obuna_turi">Тип подписки:</string>
+    <string name="obuna_boshlangan_sana">Дата начала подписки:</string>
+    <string name="tugash_sanasi">Дата окончания подписки:</string>
+    <string name="qolgan_kunlar">Осталось дней:</string>
+    <string name="kun">день</string>
+    <string name="tugagan">Завершено</string>
+    <string name="farzandingiz_sorovlari">Запросы вашего ребёнка</string>
+    <string name="farzand_ilovadan_chiqish_sorovi">Ваш ребёнок «%1$s» запрашивает разрешение на выход из приложения</string>
+    <string name="farzand_ilovani_ochirish_sorovi">Ваш ребёнок «%1$s» запрашивает разрешение на удаление приложения</string>
+    <string name="farzandlarim">Мои дети</string>
 </resources>

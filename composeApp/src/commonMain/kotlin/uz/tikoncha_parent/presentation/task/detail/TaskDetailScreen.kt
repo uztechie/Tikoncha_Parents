@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task.create_task_check
+package uz.tikoncha_parent.presentation.task.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,38 +34,45 @@ import cafe.adriel.voyager.navigator.Navigator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.izoh
 import tikoncha_parents.composeapp.generated.resources.juda_muhim
+import tikoncha_parents.composeapp.generated.resources.message_delete
+import tikoncha_parents.composeapp.generated.resources.message_edit
 import tikoncha_parents.composeapp.generated.resources.muhim
 import tikoncha_parents.composeapp.generated.resources.muhimlilik_darajasi
 import tikoncha_parents.composeapp.generated.resources.o_rtacha
+import tikoncha_parents.composeapp.generated.resources.ochirish
 import tikoncha_parents.composeapp.generated.resources.ragbatlantirish_tangachalari
 import tikoncha_parents.composeapp.generated.resources.ta
+import tikoncha_parents.composeapp.generated.resources.tahrirlash
 import tikoncha_parents.composeapp.generated.resources.tugatish_sanasi
 import tikoncha_parents.composeapp.generated.resources.tugatish_vaqti
 import tikoncha_parents.composeapp.generated.resources.vazifa_nomi
-import tikoncha_parents.composeapp.generated.resources.vazifani_saqlash
+import tikoncha_parents.composeapp.generated.resources.vazifa_ochirilsinmi
+import tikoncha_parents.composeapp.generated.resources.vazifa_ochirish_tasdiq
 import tikoncha_parents.composeapp.generated.resources.vazifani_tekshirish
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.common.DateTimeUtil.formatTime
 import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
+import uz.tikoncha_parent.common.Util.millisToLocalDate
+import uz.tikoncha_parent.common.Util.millisToLocalTime
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
-import uz.tikoncha_parent.presentation.base.CustomButtonNew
+import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.bottomShadow
-import uz.tikoncha_parent.presentation.task.model.CollectEffects
-import uz.tikoncha_parent.presentation.task.create_task.CreateTaskEffect
-import uz.tikoncha_parent.presentation.task.create_task.CreateTaskEvent
-import uz.tikoncha_parent.presentation.task.create_task.CreateTaskState
-import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
+import uz.tikoncha_parent.presentation.task.TaskListEffect
+import uz.tikoncha_parent.presentation.task.TaskListEvent
+import uz.tikoncha_parent.presentation.task.TaskListViewModel
+import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
 import uz.tikoncha_parent.presentation.task.model.ImportanceType
+import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
-import uz.tikoncha_parent.presentation.task.success.TaskSuccessScreen
-import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.Space
@@ -74,25 +83,36 @@ import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
-class CreateTaskCheckScreen : Screen {
+class TaskDetailScreen(
+    private val task: Task
+): Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val viewModel = rememberSharedScreenModel<CreateTaskViewModel>()
-        val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
+        val listViewModel = rememberSharedScreenModel<TaskListViewModel>()
+        val listState by listViewModel.state.collectAsStateWithLifecycle()
+        val listEvent = listViewModel::onEvent
 
+        val currentTask = remember(listState.taskList, task.id) {
+            listState.taskList.firstOrNull { it.id == task.id } ?: task
+        }
+        val taskChild = remember(listState.childrenList, currentTask.targetUserId) {
+            listState.childrenList.firstOrNull { it.userId == currentTask.targetUserId }
+        }
+
+        var taskToDelete by remember { mutableStateOf<Task?>(null) }
         var errorMessage by remember { mutableStateOf<String?>(null) }
+        val isDeleting = currentTask.id in listState.deletingIds
+        LoadingDialog(isDeleting)
 
-        val taskLoading = state.taskResponseState is ResponseState.Loading
-        LoadingDialog(taskLoading)
-
-        CollectEffects(viewModel.effect) { effect ->
-            when (effect) {
-                CreateTaskEffect.NavigateToSuccess -> navigator?.push(TaskSuccessScreen())
-                is CreateTaskEffect.ShowError -> errorMessage = effect.message
-                CreateTaskEffect.NavigateBack -> navigator?.pop()
-                is CreateTaskEffect.ShowSuccessDialog -> { /* bu yerga kelmaydi */ }
+        // O'chirish muvaffaqiyatli bo'lsa — orqaga qaytamiz
+        LaunchedEffect(Unit) {
+            listViewModel.effect.collect { effect ->
+                when (effect) {
+                    TaskListEffect.TaskDeleted -> navigator?.pop()
+                    is TaskListEffect.ShowError -> errorMessage = effect.message
+                    else -> Unit
+                }
             }
         }
 
@@ -105,48 +125,65 @@ class CreateTaskCheckScreen : Screen {
             onButtonClick = { errorMessage = null }
         )
 
-        CreateTaskCheckUI(
+        taskToDelete?.let { t ->
+            ConfirmationBottomSheet(
+                title = stringResource(Res.string.vazifa_ochirilsinmi),
+                subtitle = stringResource(Res.string.vazifa_ochirish_tasdiq),
+                confirmText = stringResource(Res.string.ochirish),
+                cancelText = stringResource(Res.string.bekor_qilish),
+                onDismiss = { taskToDelete = null },
+                onConfirm = {
+                    listEvent(TaskListEvent.OnDeleteTask(t))
+                    taskToDelete = null
+                }
+            )
+        }
+
+        TaskDetailUI(
             navigator = navigator,
-            state = state,
-            event = event
+            task = currentTask,
+            childName = taskChild?.name.orEmpty(),
+            childAvatarUrl = taskChild?.avatarUrl.orEmpty(),
+            onEditClick = {
+                navigator?.push(CreateTaskScreen(currentTask))
+            },
+            onDeleteClick = { taskToDelete = currentTask }
         )
     }
 }
 
 @Composable
-fun CreateTaskCheckUI(
-    state: CreateTaskState,
-    event: (CreateTaskEvent) -> Unit,
-    navigator: Navigator? = null
+fun TaskDetailUI(
+    task: Task,
+    childName: String,
+    childAvatarUrl: String,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    navigator: Navigator? = null,
 ) {
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.elevated
     )
-    val dateText = state.date?.let { reformattedDayMonthWithWeekdayForTask(it) } ?: "—"
-    val timeText = state.time?.let { formatTime(it) } ?: "—"
+    val date = remember(task.dateTime) { millisToLocalDate(task.dateTime) }
+    val time = remember(task.dateTime) { millisToLocalTime(task.dateTime) }
 
-    val importanceText = when (state.importance) {
+    val dateText = reformattedDayMonthWithWeekdayForTask(date) ?: "—"
+    val timeText = formatTime(time) ?: "—"
+
+    val importanceText = when (task.importance) {
         ImportanceType.MOST_IMPORTANT -> stringResource(Res.string.juda_muhim)
-        ImportanceType.IMPORTANT -> stringResource(Res.string.muhim)
-        ImportanceType.MEDIUM -> stringResource(Res.string.o_rtacha)
-        ImportanceType.NONE -> "—"
+        ImportanceType.IMPORTANT      -> stringResource(Res.string.muhim)
+        ImportanceType.MEDIUM         -> stringResource(Res.string.o_rtacha)
+        ImportanceType.NONE           -> "—"
     }
 
-    val importanceTextColor = when (state.importance) {
+    val importanceColor = when (task.importance) {
         ImportanceType.MOST_IMPORTANT -> AppColors.text.accentDanger
-        ImportanceType.IMPORTANT -> AppColors.text.accentWarning
-        ImportanceType.MEDIUM -> AppColors.text.accentSuccess
-        ImportanceType.NONE -> Color.Transparent
+        ImportanceType.IMPORTANT      -> AppColors.text.accentWarning
+        ImportanceType.MEDIUM         -> AppColors.text.accentSuccess
+        ImportanceType.NONE           -> Color.Transparent
     }
-
-    // ✅ Saqlash tugmasi shartlari
-    val canSave = state.title.isNotBlank() &&
-            state.date != null &&
-            state.time != null &&
-            state.importance != ImportanceType.NONE &&
-            state.selectedChild != null &&
-            state.taskResponseState !is ResponseState.Loading
 
     Box(
         modifier = Modifier
@@ -162,6 +199,7 @@ fun CreateTaskCheckUI(
                 showBackButton = true,
                 onBackClick = { navigator?.pop() }
             )
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -170,8 +208,8 @@ fun CreateTaskCheckUI(
                 ChildSelectionButton(
                     onClick = {},
                     trailingIcon = false,
-                    text = state.selectedChild?.name.orEmpty(),
-                    imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
+                    text = childName,
+                    imageUrl = childAvatarUrl,
                     label = stringResource(Res.string.farzandlaringiz),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -193,7 +231,7 @@ fun CreateTaskCheckUI(
                     Space(8.dp)
 
                     Text(
-                        text = state.title,
+                        text = task.title,
                         style = AppTypography.titleMdMedium,
                         color = AppColors.text.primary
                     )
@@ -210,7 +248,7 @@ fun CreateTaskCheckUI(
                     Space(8.dp)
 
                     Text(
-                        text = state.desc,
+                        text = task.description.ifBlank { "—" },
                         style = AppTypography.titleMdMedium,
                         color = AppColors.text.primary
                     )
@@ -272,20 +310,20 @@ fun CreateTaskCheckUI(
                             modifier = Modifier
                                 .size(6.dp)
                                 .clip(CircleShape)
-                                .background(importanceTextColor)
+                                .background(importanceColor)
                         )
                         Space(4.dp)
 
                         Text(
                             text = importanceText,
                             style = AppTypography.titleMdMedium,
-                            color = importanceTextColor
+                            color = importanceColor
                         )
                     }
                 }
                 Space(8.dp)
 
-                if(state.totalCoin != 0){
+                if(task.coin != 0) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -300,7 +338,7 @@ fun CreateTaskCheckUI(
                         Space(8.dp)
 
                         Text(
-                            text = "${state.totalCoin} ${stringResource(Res.string.ta)}",
+                            text = "${task.coin} ${stringResource(Res.string.ta)}",
                             style = AppTypography.titleMdMedium,
                             color = AppColors.text.primary
                         )
@@ -327,28 +365,68 @@ fun CreateTaskCheckUI(
                 .height(ButtonHeight)
                 .align(Alignment.BottomCenter)
         ) {
-            CustomButtonNew(
-                enabled = canSave,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.vazifani_saqlash),
-                shape = RoundedCornerShape(24.dp),
-                onClick = {
-                    event(CreateTaskEvent.OnConfirmClicked)
-                }
-            )
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                CustomButton(
+                    color = AppColors.section.secondary,
+                    textColor = AppColors.text.primary,
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(Res.string.tahrirlash),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = onEditClick,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.message_edit),
+                            contentDescription = null,
+                            tint = AppColors.icon.secondary
+                        )
+                    }
+                )
+                CustomButton(
+                    color = AppColors.text.accentDanger,
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(Res.string.ochirish),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = onDeleteClick,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.message_delete),
+                            contentDescription = null,
+                            tint = AppColors.icon.inverse
+                        )
+                    }
+                )
+            }
         }
     }
 }
 
 @Preview
 @Composable
-private fun Preview() {
+fun TaskDetailPreview() {
     TikonchaParentTheme(
-        ThemeMode.LIGHT
+        ThemeMode.DARK
     ) {
-        CreateTaskCheckUI(
-            state = CreateTaskState(),
-            event = {}
+        TaskDetailUI(
+            task = Task(
+                title = "Test",
+                description = "Test",
+                dateTime = 56516516,
+                importance = ImportanceType.MOST_IMPORTANT,
+                isCompleted = false,
+                canUpdate = false,
+                authorId = "",
+                targetUserId = "",
+                createdAt = 56516516,
+                coin = 100
+            ),
+            childName = "Farrux",
+            childAvatarUrl = "",
+            onEditClick = {},
+            onDeleteClick = {}
         )
     }
 }

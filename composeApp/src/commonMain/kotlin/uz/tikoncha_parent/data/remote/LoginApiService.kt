@@ -44,7 +44,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun registerUser(request: RegisterUserRequest): RegisterUserResponse =
         client.safeRequest(
             method = HttpMethod.Post,
-            url = "users/parent-info",
+            url = "users/parent-subscription_info",
             block = {
                 setBody(request)
             }
@@ -53,7 +53,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun userInfoEdit(request: RegisterUserRequest): RegisterUserResponse =
         client.safeRequest(
             method = HttpMethod.Put,
-            url = "users/parent-info",
+            url = "users/parent-subscription_info",
             block = {
                 setBody(request)
             }
@@ -71,7 +71,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun userInfo(): UserInfoResponse =
         client.safeRequest(
             method = HttpMethod.Get,
-            url = "users/parent-info",
+            url = "users/parent-subscription_info",
             block = {
                 parameter("user_id", AppSettings.userId)
             }
@@ -81,7 +81,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse =
         client.safeRequest(
             method = HttpMethod.Patch,
-            url = "/users/student-info",
+            url = "/users/student-subscription_info",
             block = {
                 setBody(body)
             }

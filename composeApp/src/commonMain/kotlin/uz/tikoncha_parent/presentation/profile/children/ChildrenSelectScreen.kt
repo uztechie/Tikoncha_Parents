@@ -30,14 +30,18 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.add
 import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
+import tikoncha_parents.composeapp.generated.resources.farzandlarim
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.DashedBorderButton
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
@@ -89,7 +93,7 @@ fun ChildrenSelectUi(
             .background(AppColors.bg.secondary)
     ) {
         CustomHeader(
-            title = stringResource(Res.string.farzandlaringiz),
+            title = stringResource(Res.string.farzandlarim),
             showBackButton = true,
             onBackClick = { navigator?.pop() }
         )
@@ -144,6 +148,23 @@ fun ChildrenSelectUi(
                         imageUrl = child.avatarUrl ?: "",
                         onClick = { navigator?.push(ChildDetailScreen(child)) },
                         onMenuClick = { menuChild = child }
+                    )
+                }
+
+                item {
+                    Space(16.dp)
+                    CustomButtonDash(
+                        text = stringResource(Res.string.farzand_qo_shish),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { navigator?.push(AddChildScreen()) },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.add),
+                                contentDescription = "",
+                                tint = AppColors.icon.accentPrimary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     )
                 }
             }
