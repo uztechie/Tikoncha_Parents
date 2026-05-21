@@ -324,23 +324,26 @@ fun NewHomeUi(
                                 .padding(horizontal = CardCornerPadding, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            CustomText(
-                                text = stringResource(Res.string.sorovlar),
-                                fontSize = LargeTextSize,
+                            Text(
+                                text = stringResource(Res.string.farzandingiz_sorovlari),
+                                style = AppTypography.titleSmMedium,
+                                color = AppColors.text.primary,
                                 modifier = Modifier.weight(1f)
                             )
-                            Box(
-                                modifier = Modifier
-                                    .background(OtpErrorColor, CircleShape)
-                                    .size(24.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CustomText(
-                                    text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.W600),
-                                    maxLines = 1,
-                                    fontSize = SmallTextSize
-                                )
+                            if (parentRequestCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(AppColors.bg.accentWarning, CircleShape)
+                                        .size(24.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
+                                        style = AppTypography.titleSmMedium,
+                                        color = AppColors.text.inverse,
+                                        maxLines = 1,
+                                    )
+                                }
                             }
                         }
                         Space(12.dp)
