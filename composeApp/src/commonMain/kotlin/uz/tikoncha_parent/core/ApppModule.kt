@@ -71,6 +71,7 @@ import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
+import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
@@ -100,6 +101,7 @@ import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetPaymentTransactionsUseCase
+import uz.tikoncha_parent.domain.use_case.payment.GetSubscriptionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
@@ -136,6 +138,7 @@ import uz.tikoncha_parent.presentation.policy.time_rule.setup.TimeRuleSetupViewM
 import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditViewModel
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewModel
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreenModel
+import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
@@ -261,7 +264,8 @@ val sharedModule = module {
     single { uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase(get()) }
     single { DeleteTodoUseCase(get()) }
     single { CompleteTodoUseCase(get()) }
-
+    factory { DeleteAvatarFromServerUseCase(get()) }
+    factory { GetSubscriptionStatusUseCase(get()) }
 
 
 
@@ -269,7 +273,7 @@ val sharedModule = module {
     factory { LoginViewModel() }
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
-    factory { ProfileViewModel(get(), get(), get(), get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
     factory { AddChildScreenModel(get()) }
     factory { ChildConfirmViewModel() }
     factory { TaskListViewModel(get(), get(), get(), get()) }
@@ -330,5 +334,6 @@ val sharedModule = module {
     factory { PlayerScreenModel(get(), get()) }
     factory { VideoTutorialScreenModel(get()) }
     factory { PaymentHistoryScreenModel(get()) }
+    factory { SubscriptionViewModel(get()) }
 
 }

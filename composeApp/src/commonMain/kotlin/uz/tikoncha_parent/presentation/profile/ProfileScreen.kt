@@ -50,6 +50,7 @@ import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
+import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionScreen
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.task.TaskListEvent
 import uz.tikoncha_parent.presentation.task.TaskListViewModel
@@ -128,6 +129,10 @@ fun ProfileUi(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showLogoutErrorDialog by remember { mutableStateOf(false) }
 
+    var showFullscreenAvatar by remember { mutableStateOf(false) }
+    var showDeleteAvatarDialog by remember { mutableStateOf(false) }
+    var showDeleteAvatarErrorDialog by remember { mutableStateOf(false) }
+
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val launchPicker = rememberImagePicker { picked ->
         val bitmap = decodeImageBitmapOrNull(picked.bytes)
@@ -140,19 +145,51 @@ fun ProfileUi(
     val logoutError = state.logoutState.errorText()
     val logoutSuccess = state.logoutState is ResponseState.Success
 
-    LaunchedEffect(logoutError){
-        if (logoutError.isNotEmpty()){
+    val deleteAvatarLoading = state.deleteAvatarState is ResponseState.Loading
+    val deleteAvatarError = state.deleteAvatarState.errorText()
+    val deleteAvatarSuccess = state.deleteAvatarState is ResponseState.Success
+    val hasAvatar = (state.profileImageUrl?.isNotEmpty() == true) || state.localAvatar != null
+
+    LaunchedEffect(logoutError) {
+        if (logoutError.isNotEmpty()) {
             showLogoutErrorDialog = true
         }
     }
 
-    LaunchedEffect(logoutSuccess){
-        if (logoutSuccess){
+    LaunchedEffect(logoutSuccess) {
+        if (logoutSuccess) {
             navigator?.replaceAll(LoginScreen())
         }
     }
 
-    LoadingDialog(logoutLoading)
+    LaunchedEffect(deleteAvatarSuccess) {
+        if (deleteAvatarSuccess) {
+            showDeleteAvatarDialog = false
+            event(ProfileEvent.ClearDeleteAvatarState)
+        }
+    }
+
+    LaunchedEffect(deleteAvatarError) {
+        if (deleteAvatarError.isNotEmpty()) showDeleteAvatarErrorDialog = true
+    }
+
+    LoadingDialog(logoutLoading || deleteAvatarLoading)
+
+    CustomDialog(
+        show = showDeleteAvatarErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = deleteAvatarError,
+        buttonText = stringResource(Res.string.ok),
+        painter = painterResource(Res.drawable.dialog_failed),
+        onDismiss = {
+            event(ProfileEvent.ClearDeleteAvatarState)
+            showDeleteAvatarErrorDialog = false
+        },
+        onButtonClick = {
+            event(ProfileEvent.ClearDeleteAvatarState)
+            showDeleteAvatarErrorDialog = false
+        }
+    )
 
     CustomDialog(
         show = showLogoutErrorDialog,
@@ -193,7 +230,22 @@ fun ProfileUi(
             showLogoutDialog = true
             event(ProfileEvent.RequestLogout)
         },
-        onDismiss = {showLogoutDialog = false}
+        onDismiss = { showLogoutDialog = false }
+    )
+
+    CustomBottomDialog(
+        showCancelButton = true,
+        show = showDeleteAvatarDialog,
+        title = stringResource(Res.string.rasmni_ochirish),
+        message = stringResource(Res.string.profil_rasmi_olib_tashlanadi),
+        confirmButtonText = stringResource(Res.string.ochirish),
+        dismissButtonText = stringResource(Res.string.bekor_qilish),
+        confirmButtonColor = AppColors.button.accentDanger,
+        onConfirm = {
+            showDeleteAvatarDialog = true
+            event(ProfileEvent.RequestDeleteAvatar)
+        },
+        onDismiss = { showDeleteAvatarDialog = false }
     )
 
     val systemBars = rememberScreenSystemBars(
@@ -201,188 +253,209 @@ fun ProfileUi(
         navigationBarColor = AppColors.bg.page
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.page)
-    ) {
-        CustomHeader(
-            showBackButton = true,
-            title = stringResource(Res.string.profil),
-            onBackClick = {
-                navigator?.pop()
-            }
-        )
-
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = ContainerPadding)
-                .verticalScroll(rememberScrollState())
+                .then(systemBars.modifier)
+                .background(AppColors.bg.page)
         ) {
-            Spacer(Modifier.height(16.dp))
-
-            ProfileHeader(
-                state = state,
-                firstName = state.userInfo?.name ?: "",
-                lastName = state.userInfo?.lastName ?: "",
-                fathersName = state.userInfo?.patronymic ?: "",
-                onSelectImageButtonClick = {
-                    launchPicker()
+            CustomHeader(
+                showBackButton = true,
+                title = stringResource(Res.string.profil),
+                onBackClick = {
+                    navigator?.pop()
                 }
             )
-            Spacer(Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                UserStatsItem(
-                    icon = painterResource(Res.drawable.coin_3d),
-                    title = stringResource(Res.string.tangachalaringiz),
-                    value = "$aiTokens ${stringResource(Res.string.ta)}",
-                    modifier = Modifier
-                        .height(ProfileStatsContainerHeight)
-                        .weight(1f),
-                    onClick = {
-                        navigator?.push(CoinsScreen())
-                    }
-                )
-                Spacer(Modifier.width(12.dp))
-
-                UserStatsItem(
-                    icon = painterResource(Res.drawable.file_3d),
-                    title = stringResource(Res.string.faol_vazifalar),
-                    value = "$activeTasksCount ${stringResource(Res.string.ta)}",
-                    modifier = Modifier
-                        .height(ProfileStatsContainerHeight)
-                        .weight(1f),
-                    onClick = {
-                        navigator?.push(TaskScreen())
-                    }
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-
-            CustomButtonDash(
-                text = stringResource(Res.string.farzand_qo_shish),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { navigator?.push(AddChildScreen()) },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.add),
-                        contentDescription = "",
-                        tint = AppColors.icon.accentPrimary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            )
-            Spacer(Modifier.height(12.dp))
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AppColors.bg.surface, RoundedCornerShape(24.dp))
-                    .padding(horizontal = 8.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = ContainerPadding)
+                    .verticalScroll(rememberScrollState())
             ) {
-                ProfileSectionItem(
-                    title = stringResource(Res.string.shaxsiy_malumotlar),
-                    icon = painterResource(Res.drawable.person),
-                    onItemClick = {
-                        navigator?.push(PersonalInformationScreen())
-                    }
-                )
+                Spacer(Modifier.height(16.dp))
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.farzandlaringiz),
-                    icon = painterResource(Res.drawable.chat_group),
-                    onItemClick = {
-                        navigator?.push(ChildrenSelectScreen())
+                ProfileHeader(
+                    state = state,
+                    firstName = state.userInfo?.name ?: "",
+                    lastName = state.userInfo?.lastName ?: "",
+                    fathersName = state.userInfo?.patronymic ?: "",
+                    onSelectImageButtonClick = { launchPicker() },
+                    onAvatarClick = {
+                        if (state.profileImageUrl.isNotEmpty()) {
+                            showFullscreenAvatar = true
+                        }
                     }
                 )
+                Spacer(Modifier.height(16.dp))
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.sozlamalar),
-                    icon = painterResource(Res.drawable.settings),
-                    onItemClick = {
-                        navigator?.push(SettingsScreen())
-                    }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    UserStatsItem(
+                        icon = painterResource(Res.drawable.coin_3d),
+                        title = stringResource(Res.string.tangachalaringiz),
+                        value = "$aiTokens ${stringResource(Res.string.ta)}",
+                        modifier = Modifier
+                            .height(ProfileStatsContainerHeight)
+                            .weight(1f),
+                        onClick = {
+                            navigator?.push(CoinsScreen())
+                        }
+                    )
+                    Spacer(Modifier.width(12.dp))
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.til),
-                    icon = painterResource(Res.drawable.global),
-                    onItemClick = {
-                        navigator?.push(LanguageScreen())
-                    }
-                )
+                    UserStatsItem(
+                        icon = painterResource(Res.drawable.file_3d),
+                        title = stringResource(Res.string.faol_vazifalar),
+                        value = "$activeTasksCount ${stringResource(Res.string.ta)}",
+                        modifier = Modifier
+                            .height(ProfileStatsContainerHeight)
+                            .weight(1f),
+                        onClick = {
+                            navigator?.push(TaskScreen())
+                        }
+                    )
+                }
+                Spacer(Modifier.height(12.dp))
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.obuna),
-                    icon = painterResource(Res.drawable.telegrams_star),
-                    onItemClick = {
-                        navigator?.push(SubscriptionPaymentScreen())
+                CustomButtonDash(
+                    text = stringResource(Res.string.farzand_qo_shish),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navigator?.push(AddChildScreen()) },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.add),
+                            contentDescription = "",
+                            tint = AppColors.icon.accentPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 )
+                Spacer(Modifier.height(12.dp))
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.tangachalar),
-                    icon = painterResource(Res.drawable.coins_profile),
-                    onItemClick = {
-                        navigator?.push(CoinsScreen())
-                    }
-                )
-                ProfileSectionItem(
-                    title = stringResource(Res.string.tolovlar_tarixi),
-                    icon = painterResource(Res.drawable.money_light),
-                    onItemClick = {
-                        navigator?.push(PaymentHistoryScreen())
-                    }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AppColors.bg.surface, RoundedCornerShape(24.dp))
+                        .padding(horizontal = 8.dp)
+                ) {
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.shaxsiy_malumotlar),
+                        icon = painterResource(Res.drawable.person),
+                        onItemClick = {
+                            navigator?.push(PersonalInformationScreen())
+                        }
+                    )
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.biz_haqimizda),
-                    icon = painterResource(Res.drawable.info_profile_us),
-                    onItemClick = {
-                        navigator?.push(AboutUsScreen())
-                    }
-                )
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.farzandlarim),
+                        icon = painterResource(Res.drawable.chat_group),
+                        onItemClick = {
+                            navigator?.push(ChildrenSelectScreen())
+                        }
+                    )
 
-                ProfileSectionItem(
-                    title = stringResource(Res.string.biz_bilan_aloqa),
-                    icon = painterResource(Res.drawable.support_icon),
-                    onItemClick = {
-                        openUrl("https://t.me/tikoncha_support")
-                    }
-                )
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.sozlamalar),
+                        icon = painterResource(Res.drawable.settings),
+                        onItemClick = {
+                            navigator?.push(SettingsScreen())
+                        }
+                    )
 
-                ProfileSectionItem(
-                    divider = false,
-                    title = stringResource(Res.string.chiqish),
-                    icon = painterResource(Res.drawable.logout),
-                    iconColor = AppColors.icon.accentDanger,
-                    textColor = AppColors.text.accentDanger,
-                    onItemClick = {
-                        showLogoutDialog = true
-                    }
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.til),
+                        icon = painterResource(Res.drawable.global),
+                        onItemClick = {
+                            navigator?.push(LanguageScreen())
+                        }
+                    )
+
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.obuna),
+                        icon = painterResource(Res.drawable.telegrams_star),
+                        onItemClick = {
+                            navigator?.push(SubscriptionScreen())
+//                            navigator?.push(SubscriptionPaymentScreen())
+                        }
+                    )
+
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.tangachalar),
+                        icon = painterResource(Res.drawable.coins_profile),
+                        onItemClick = {
+                            navigator?.push(CoinsScreen())
+                        }
+                    )
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.tolovlar_tarixi),
+                        icon = painterResource(Res.drawable.money_light),
+                        onItemClick = {
+                            navigator?.push(PaymentHistoryScreen())
+                        }
+                    )
+
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.biz_haqimizda),
+                        icon = painterResource(Res.drawable.info_profile_us),
+                        onItemClick = {
+                            navigator?.push(AboutUsScreen())
+                        }
+                    )
+
+                    ProfileSectionItem(
+                        title = stringResource(Res.string.biz_bilan_aloqa),
+                        icon = painterResource(Res.drawable.support_icon),
+                        onItemClick = {
+                            openUrl("https://t.me/tikoncha_support")
+                        }
+                    )
+
+                    ProfileSectionItem(
+                        divider = false,
+                        title = stringResource(Res.string.chiqish),
+                        icon = painterResource(Res.drawable.logout),
+                        iconColor = AppColors.icon.accentDanger,
+                        textColor = AppColors.text.accentDanger,
+                        onItemClick = {
+                            showLogoutDialog = true
+                        }
+                    )
+                }
+
+                SpaceMedium()
+                val appVersion = if (LocalInspectionMode.current) {
+                    "1.0.0"
+                } else {
+                    getAppVersion()
+                }
+                Text(
+                    text = "${stringResource(Res.string.versiya)}: $appVersion",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.extendedColor.textColor,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
+                SpaceMedium()
             }
-
-            SpaceMedium()
-            val appVersion = if (LocalInspectionMode.current) {
-                "1.0.0"
-            } else {
-                getAppVersion()
-            }
-            Text(
-                text = "${stringResource(Res.string.versiya)}: $appVersion",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.extendedColor.textColor,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            SpaceMedium()
         }
+
+        FullscreenAvatarViewer(
+            show = showFullscreenAvatar,
+            imageUrL = state.profileImageUrl,
+            userName = "${state.userInfo?.name ?: ""} ${state.userInfo?.lastName ?: ""}".trim(),
+            hasAvatar = hasAvatar,
+            onDismiss = { showFullscreenAvatar = false },
+            onChangeClick = {
+                showFullscreenAvatar = false
+                launchPicker()
+            },
+            onDeleteClick = {
+                showDeleteAvatarDialog = true
+            }
+        )
     }
 }
 

@@ -12,6 +12,7 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.UploadPart
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
@@ -25,10 +26,12 @@ class ProfileViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
+    private val deleteAvatarFromServerUseCase: DeleteAvatarFromServerUseCase
 ): ScreenModel {
     var userInfoJob: Job? = null
     var childrenJob: Job? = null
     var avatarJob: Job? = null
+    var deleteAvatarJob: Job? = null
 
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
@@ -86,10 +89,56 @@ class ProfileViewModel(
                     )
                 }
             }
+
+            ProfileEvent.ClearDeleteAvatarState -> {
+                _state.update {
+                    it.copy(
+                        deleteAvatarState = ResponseState.Idle
+                    )
+                }
+            }
+            ProfileEvent.RequestDeleteAvatar -> {
+                deleteAvatar()
+            }
         }
     }
 
 
+    private fun deleteAvatar(){
+        deleteAvatarJob?.cancel()
+        _state.update {
+            it.copy(
+                deleteAvatarState = ResponseState.Loading
+            )
+        }
+
+        deleteAvatarJob = screenModelScope.launch {
+            val result = deleteAvatarFromServerUseCase()
+            when(result){
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            deleteAvatarState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId
+                            )
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    AppSettings.profileImageUrl = ""
+                    _state.update {
+                        it.copy(
+                            profileImageUrl = "",
+                            localAvatar = null,
+                            deleteAvatarState = ResponseState.Success()
+                        )
+                    }
+                }
+            }
+        }
+    }
     private fun uploadAvatar(part: UploadPart){
         avatarJob?.cancel()
 

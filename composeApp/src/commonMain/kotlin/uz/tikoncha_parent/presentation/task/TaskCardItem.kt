@@ -352,18 +352,18 @@ fun TaskCardItem(
                             }
                         }
                     )
-                }
-            }
-            Space(8.dp)
+                    Space(8.dp)
 
-            if (!task.isChildDone) {
-                Text(
-                    text = stringResource(Res.string.bola_hali_bajardim_bosmagan),
-                    style = AppTypography.emphasizedXsMedium,
-                    color = AppColors.text.secondary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    if (!task.isChildDone) {
+                        Text(
+                            text = stringResource(Res.string.bola_hali_bajardim_bosmagan),
+                            style = AppTypography.emphasizedXsMedium,
+                            color = AppColors.text.secondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
             }
         }
     }

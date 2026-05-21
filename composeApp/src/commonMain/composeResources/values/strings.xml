@@ -443,8 +443,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="qollash">Qo‘llash</string>
     <string name="promokod">Promokod:</string>
     <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">Siz tangachalarni muvaqqiyatli sotib oldingiz.</string>
-    <string name="narx">Narx:</string>
-    <string name="jami">Jami:</string>
+    <string name="narx">Narx</string>
+    <string name="jami">Jami</string>
     <string name="bekor_qilindi">Bekor qilindi!</string>
     <string name="sorov_holati">So‘rov holati</string>
     <string name="qanday_qilib_ishlatish">Qanday qilib ishlatish</string>
@@ -662,4 +662,19 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="kod_nusxalandi">Kod nusxalandi</string>
     <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Farzandingiz Tikoncha ilovasidan kirib tasdiqlash kodini kiritishi kerak.</string>
     <string name="bola_hali_bajardim_bosmagan">Bola hali “Bajardim” tugmasini bosmagan</string>
+    <string name="profil_rasmi">Profil rasmi</string>
+    <string name="rasmni_ozgartirish">Rasmni o‘zgartirish</string>
+    <string name="rasmni_ochirish">Rasmni o‘chirish</string>
+    <string name="profil_rasmi_olib_tashlanadi">Profil rasmingiz olib tashlanadi. Bu amalni qaytarib bo‘lmaydi.</string>
+    <string name="keyingi_tolov">Keyingi to‘lov</string>
+    <string name="obuna_turi">Obuna turi:</string>
+    <string name="obuna_boshlangan_sana">Obuna boshlangan sana:</string>
+    <string name="tugash_sanasi">Obuna tugash sanasi:</string>
+    <string name="qolgan_kunlar">Qolgan kunlar:</string>
+    <string name="kun">kun</string>
+    <string name="tugagan">Tugagan</string>
+    <string name="farzandingiz_sorovlari">Farzandingiz so‘rovlari</string>
+    <string name="farzand_ilovadan_chiqish_sorovi">Farzandingiz “%1$s” ilovadan chiqish uchun sizdan ruxsat so‘ramoqda</string>
+    <string name="farzand_ilovani_ochirish_sorovi">Farzandingiz “%1$s” ilovani o‘chirish uchun sizdan ruxsat so‘ramoqda</string>
+    <string name="farzandlarim">Farzandlarim</string>
 </resources>

@@ -22,17 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilindi
 import tikoncha_parents.composeapp.generated.resources.chegirma
@@ -101,8 +100,6 @@ class CoinPurchaseScreen(
                 effect = viewModel.effect
             )
         }
-
-
     }
 }
 @Composable
@@ -456,14 +453,16 @@ private fun Pre() {
     TikonchaParentTheme (
         ThemeMode.LIGHT
     ) {
-        CoinPurchaseUi(
-            navigator = null,
-            state = CoinPurchaseState(
-                promoCodeDiscountPrice = 2000,
-                discountPrice = 20000
-            ),
-            event = {},
-            effect = MutableSharedFlow()
-        )
+        ToastProvider {
+            CoinPurchaseUi(
+                navigator = null,
+                state = CoinPurchaseState(
+                    promoCodeDiscountPrice = 2000,
+                    discountPrice = 20000
+                ),
+                event = {},
+                effect = MutableSharedFlow()
+            )
+        }
     }
 }

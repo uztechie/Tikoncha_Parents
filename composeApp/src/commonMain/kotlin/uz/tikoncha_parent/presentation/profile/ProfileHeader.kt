@@ -19,14 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import uz.tikoncha_parent.ui.ProfileImageSize
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.camera
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.AppColors
@@ -40,6 +41,7 @@ fun ProfileHeader(
     firstName: String,
     fathersName: String,
     state: ProfileState,
+    onAvatarClick: () -> Unit = {},
     onSelectImageButtonClick: () -> Unit
 ) {
 
@@ -49,8 +51,7 @@ fun ProfileHeader(
     ) {
 
         Box(
-            modifier = Modifier
-                .size(ProfileImageSize),
+            modifier = Modifier.size(ProfileImageSize),
             contentAlignment = Alignment.BottomEnd
         ) {
             Box(
@@ -58,6 +59,7 @@ fun ProfileHeader(
                     .fillMaxSize()
                     .clip(RoundedCornerShape(50))
                     .border(width = 2.dp, color = AppColors.border.tertiary, shape = CircleShape)
+                    .singleClick { onAvatarClick() }
             ) {
                 AsyncImage(
                     modifier = Modifier
@@ -117,7 +119,8 @@ private fun Pre() {
             firstName = "Husniddin",
             fathersName = "Nazirjon o'g'li",
             onSelectImageButtonClick = {},
-            state = ProfileState()
+            state = ProfileState(),
+            onAvatarClick = {}
         )
     }
 }
