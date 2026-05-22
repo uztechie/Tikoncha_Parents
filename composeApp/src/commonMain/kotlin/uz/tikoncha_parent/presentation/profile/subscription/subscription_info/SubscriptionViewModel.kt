@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.subscription.PlanType
 import uz.tikoncha_parent.domain.use_case.payment.GetSubscriptionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
@@ -32,15 +33,23 @@ class SubscriptionViewModel(
     val effect: Flow<SubscriptionEffect> = _effect.receiveAsFlow()
 
     init {
+        _state.update {
+            it.copy(
+                selectedChildId = AppSettings.selectedChild?.userId
+            )
+        }
         onEvent(SubscriptionEvent.Load)
     }
 
     fun onEvent(event: SubscriptionEvent) {
         when (event) {
-            SubscriptionEvent.Load,
-
-            SubscriptionEvent.Retry -> {
-                loadStatus()
+            SubscriptionEvent.Load ->{
+                if (_state.value.selectedChildId.isNullOrBlank()){
+                    _effect.trySend(SubscriptionEffect.NavigateToPayment)
+                }
+                else{
+                    loadStatus()
+                }
             }
 
             SubscriptionEvent.ResetResponseState -> {
@@ -69,29 +78,28 @@ class SubscriptionViewModel(
     private fun loadStatus() {
         screenModelScope.launch {
             _state.update { it.copy(subscriptionStatusState = ResponseState.Loading) }
-            try {
-                val childId = AppSettings.selectedChildId
-                val status = getSubscriptionStatusUseCase(childId)
-                Logger.d("SubscriptionVM", "status=$status")
 
-                _state.update {
-                    it.copy(
-                        subscription = status,
-                        subscriptionStatusState = ResponseState.Success(Unit)
-                    )
+            val result = getSubscriptionStatusUseCase.invoke(_state.value.selectedChildId)
+            when(result){
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            subscriptionStatusState = ResponseState.Error(message = result.message, res = result.resId)
+                        )
+                    }
                 }
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            subscription = result.data,
+                            subscriptionStatusState = ResponseState.Success(Unit)
+                        )
+                    }
 
-                Logger.d("SubscriptionVM", "status=$status")
-                // FREE yoki expired -> to'lov ekraniga effect orqali
-                if (status.planType == PlanType.FREE || status.isExpired) {
-                    _effect.trySend(SubscriptionEffect.NavigateToPayment)
-                }
-            } catch (e: Exception) {
-                Logger.d("SubscriptionVM", "error=${e.message}")
-                _state.update {
-                    it.copy(
-                        subscriptionStatusState = ResponseState.Error(res = Res.string.xatolik)
-                    )
+                    if (result.data.planType == PlanType.FREE || result.data.isExpired) {
+                        _effect.trySend(SubscriptionEffect.NavigateToPayment)
+                    }
                 }
             }
         }

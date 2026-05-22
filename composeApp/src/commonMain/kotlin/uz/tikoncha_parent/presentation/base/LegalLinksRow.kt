@@ -19,7 +19,15 @@ import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.ui.SmallTextSize
 import uz.tikoncha_parent.ui.theme.extendedColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.foydalanish_shartlari
+import tikoncha_parents.composeapp.generated.resources.maxfiylik_siyosati
+import tikoncha_parents.composeapp.generated.resources.ok
 import uz.tikoncha_parent.platform.isIos
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 
 @Composable
 fun LegalLinksRow(
@@ -38,32 +46,30 @@ fun LegalLinksRow(
     ) {
 
         // Privacy link
-        CustomText(
-            text = "Privacy Policy",
-            fontSize = SmallTextSize,
-            fontWeight = FontWeight.W600,
-            color = MaterialTheme.extendedColor.primaryColor,
+        Text(
+            text = stringResource(Res.string.maxfiylik_siyosati),
             textDecoration = TextDecoration.Underline, // ✅ underline
-            modifier = Modifier.clickable { uriHandler.openUri(privacyUrl) }
+            modifier = Modifier.clickable { uriHandler.openUri(privacyUrl) },
+            style = AppTypography.titleSmMedium,
+            color = AppColors.text.accentEmphasis
         )
 
         if (isIos()){
-            CustomText(
+            Text(
                 text = "  |  ",
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.W500,
-                color = MaterialTheme.extendedColor.hintColor
+                style = AppTypography.titleSmMedium,
+                color = AppColors.text.accentEmphasis
             )
 
             // Terms link
-            CustomText(
-                text = "Terms of Use",
-                fontSize = SmallTextSize,
-                fontWeight = FontWeight.W600,
-                color = MaterialTheme.extendedColor.primaryColor,
+            Text(
+                text = stringResource(Res.string.foydalanish_shartlari),
                 textDecoration = TextDecoration.Underline, // ✅ underline
-                modifier = Modifier.clickable { uriHandler.openUri(termsUrl) }
+                modifier = Modifier.clickable { uriHandler.openUri(termsUrl) },
+                style = AppTypography.titleSmMedium,
+                color = AppColors.text.accentEmphasis
             )
+
         }
 
 

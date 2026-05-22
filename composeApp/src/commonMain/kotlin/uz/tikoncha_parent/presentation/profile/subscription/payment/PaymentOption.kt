@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.*
 import uz.tikoncha_parent.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.painterResource
@@ -52,13 +53,20 @@ fun PaymentOption(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painter,
-                contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .width(63.dp)
-                    .height(16.dp),
-            )
+                    .background(Color.White, RoundedCornerShape(8.dp))
+            ){
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .width(63.dp)
+                        .height(16.dp),
+                )
+            }
+
             CustomRadio(
                 checked = isSelected,
                 onChecked = { onClick() }

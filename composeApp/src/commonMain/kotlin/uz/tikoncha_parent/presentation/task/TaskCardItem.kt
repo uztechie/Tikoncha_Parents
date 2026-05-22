@@ -278,8 +278,9 @@ fun TaskCardItem(
                     )
                 }
 
+
                 Row(
-                    modifier = Modifier.padding(start = 14.dp),
+                    modifier = Modifier,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -297,8 +298,9 @@ fun TaskCardItem(
                     )
                 }
 
+
                 Row(
-                    modifier = Modifier.padding(start = 14.dp),
+                    modifier = Modifier,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -319,50 +321,48 @@ fun TaskCardItem(
                 }
             }
 
-            if (!task.isCompleted) {
+            if (task.canUpdate && !task.isCompleted) {
                 SpaceMedium()
-                if (task.canUpdate) {
-                    CustomButton(
-                        // ✅ Loading paytida ham, child bosmagan paytda ham disable
-                        enabled = task.isChildDone && !isBusy,
-                        text = stringResource(Res.string.tekshirildi),
-                        onClick = {
-                            onDoneButtonClick(task)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(DialogButtonHeight),
-                        leadingIcon = {
-                            when {
-                                isCompleting -> {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(14.dp),
-                                        strokeWidth = 2.dp,
-                                        color = AppColors.icon.secondary
-                                    )
-                                }
-                                !task.isChildDone -> {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.lock),
-                                        contentDescription = null,
-                                        tint = AppColors.icon.secondary,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                }
+                CustomButton(
+                    // ✅ Loading paytida ham, child bosmagan paytda ham disable
+                    enabled = task.isChildDone && !isBusy,
+                    text = stringResource(Res.string.tekshirildi),
+                    onClick = {
+                        onDoneButtonClick(task)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(DialogButtonHeight),
+                    leadingIcon = {
+                        when {
+                            isCompleting -> {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(14.dp),
+                                    strokeWidth = 2.dp,
+                                    color = AppColors.icon.secondary
+                                )
+                            }
+                            !task.isChildDone -> {
+                                Icon(
+                                    painter = painterResource(Res.drawable.lock),
+                                    contentDescription = null,
+                                    tint = AppColors.icon.secondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
                             }
                         }
-                    )
-                    Space(8.dp)
-
-                    if (!task.isChildDone) {
-                        Text(
-                            text = stringResource(Res.string.bola_hali_bajardim_bosmagan),
-                            style = AppTypography.emphasizedXsMedium,
-                            color = AppColors.text.secondary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
+                )
+                Space(8.dp)
+
+                if (!task.isChildDone) {
+                    Text(
+                        text = stringResource(Res.string.bola_hali_bajardim_bosmagan),
+                        style = AppTypography.emphasizedXsMedium,
+                        color = AppColors.text.secondary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }

@@ -681,4 +681,6 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzand_ilovadan_chiqish_sorovi">Farzandingiz “%1$s” ilovadan chiqish uchun sizdan ruxsat so‘ramoqda</string>
     <string name="farzand_ilovani_ochirish_sorovi">Farzandingiz “%1$s” ilovani o‘chirish uchun sizdan ruxsat so‘ramoqda</string>
     <string name="farzandlarim">Farzandlarim</string>
+    <string name="maxfiylik_siyosati">Maxfiylik siyosati</string>
+    <string name="foydalanish_shartlari">Foydalanish shartlari</string>
 </resources>

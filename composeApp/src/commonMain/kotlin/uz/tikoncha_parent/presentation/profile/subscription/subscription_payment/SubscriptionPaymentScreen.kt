@@ -295,8 +295,12 @@ fun SubscriptionPaymentUi(
                     )
                 }
             }
-            Space(24.dp)
-            if (!isInfoMode) Space(130.dp)
+            if (!isInfoMode) {
+                Space(150.dp)
+            }
+            else {
+                Space(50.dp)
+            }
         }
 
         // ── Bottom button ──────────────────────────────────
@@ -354,6 +358,7 @@ fun SubscriptionPaymentUi(
                 )
             }
         }
+
     }
 }
 
@@ -366,7 +371,8 @@ fun PreviewSubscriptionScreen() {
         SubscriptionPaymentUi(
             navigator = null,
             state = SubscriptionPaymentState(),
-            event = {}
+            event = {},
+            isInfoMode = true
         )
     }
 }

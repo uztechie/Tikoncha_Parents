@@ -224,19 +224,12 @@ object DateTimeUtil {
     }
 
     fun formatDayMonthLocal(date: LocalDate, lang: LanguageType): String {
-        val uzMonths = listOf(
-            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
-            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-        )
 
-        val ruMonths = listOf(
-            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
-            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
-        )
 
         val months = when (lang) {
             LanguageType.RU -> ruMonths
             LanguageType.UZ -> uzMonths
+            LanguageType.EN -> enMonths
         }
 
         val day = date.day
@@ -288,6 +281,10 @@ object DateTimeUtil {
 
             LanguageType.RU -> {
                 "Сегодня"
+            }
+
+            LanguageType.EN -> {
+                "Today"
             }
         }
 
@@ -362,15 +359,6 @@ object DateTimeUtil {
         zone: TimeZone = TimeZone.currentSystemDefault()
     ): String {
 
-        val uzMonths = listOf(
-            "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
-            "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-        )
-
-        val ruMonths = listOf(
-            "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
-            "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
-        )
 
         if (millis == 0L) return ""
 
@@ -380,6 +368,7 @@ object DateTimeUtil {
         val months = when (lang) {
             LanguageType.RU -> ruMonths
             LanguageType.UZ -> uzMonths
+            LanguageType.EN -> enMonths
         }
 
         val day = date.day
@@ -696,4 +685,20 @@ object DateTimeUtil {
 
         return "$day $month ${ldt.year}, $weekday"
     }
+
+
+    val uzMonths = listOf(
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+        "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
+    )
+
+    val ruMonths = listOf(
+        "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня",
+        "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"
+    )
+
+    val enMonths = listOf(
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    )
 }

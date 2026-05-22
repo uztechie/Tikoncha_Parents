@@ -191,8 +191,8 @@ android {
         applicationId = "uz.tikoncha.parent"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 17
-        versionName = "1.1.7"
+        versionCode = 18
+        versionName = "1.1.8"
     }
     setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
 //    val props = Properties().apply {

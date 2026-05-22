@@ -1,0 +1,686 @@
+<resources>
+    <string name="bilimdon_bo_lishga_birinchi_qadam">First step to becoming knowledgeable</string>
+    <string name="bu_ilova_senga_kun_davomida_nimalar_qilganingni_eslatadi_o_yin_ham_dars_ham_muhim_hammasi_muvozanatda_bo_lsin">This app reminds you what you have done during the day. Games and lessons are both important — let everything be in balance!</string>
+    <string name="o_tkazib_yuborish">Skip</string>
+    <string name="keyingisi">Next</string>
+    <string name="ro_yxatdan_o_tish">Enter your phone number to register</string>
+    <string name="xush_kelibsiz">Welcome!</string>
+    <string name="ro_yxatdan_o_tish_uchun_kodni_kiriting">Enter the code to register</string>
+    <string name="kodni_qaytadan_yuborish">Resend code</string>
+    <string name="sekund">%1$s seconds</string>
+    <string name="siz_noto_g_ri_kodni_kirittingiz">You entered an incorrect code</string>
+    <string name="ismingizni_kiriting">Enter your first name</string>
+    <string name="familiyangizni_kiriting">Enter your last name</string>
+    <string name="otangizni_ismini_kiriting">Enter your father's name</string>
+    <string name="passport_id_raqamingiz">Passport / ID number</string>
+    <string name="ro_yxatdan_o_tish_uchun_quyidagilarni_to_ldiring">Fill in the following to register</string>
+    <string name="ota">Father</string>
+    <string name="ona">Mother</string>
+    <string name="ro_yxatdan_o_tish_parol_yaratish">Register and create password</string>
+    <string name="parol_kiriting">Enter password</string>
+    <string name="parolni_qayta_kiriting">Re-enter password</string>
+    <string name="farzandlaringiz">Your children</string>
+    <string name="farzandingiz_telefon_raqamini_kiriting">Enter your child's phone number</string>
+    <string name="farzand_qo_shish">Add child</string>
+    <string name="kirish_uchun_parolingizni_kiriting">Enter your password to log in</string>
+    <string name="asosiy">Home</string>
+    <string name="vazifa">Task</string>
+    <string name="suhbat">Chat</string>
+    <string name="profil">Profile</string>
+    <string name="bajarilgan">Completed</string>
+    <string name="bajarilgan_vazifalar">Completed tasks</string>
+    <string name="bajarildi">Done</string>
+    <string name="vazifalar">Tasks</string>
+    <string name="sizdan_vazifalar">Tasks from you</string>
+    <string name="barchasini_ko_rish">View all</string>
+    <string name="hozir_vazifalar_yo_q">No tasks at the moment</string>
+    <string name="farzandingiz_vazifalari">Your child's tasks</string>
+    <string name="vazifa_qo_shish">Add task</string>
+    <string name="kuzatuv">Tracking</string>
+    <string name="xarita">Map</string>
+    <string name="tugash_vaqti">End time</string>
+    <string name="yangi_vazifa_qo_shish">Add new task</string>
+    <string name="vazifa_nomi">Task name</string>
+    <string name="vazifa_malumotlari">Task details</string>
+    <string name="app_namee">Tikoncha Parents</string>
+    <string name="vazifa_haqida_qisqacha_ma_lumot">Brief information about the task</string>
+    <string name="tugatish_sanasi">End date</string>
+    <string name="muhim">Important</string>
+    <string name="o_ta_muhim">Very important</string>
+    <string name="o_rtacha">Medium</string>
+    <string name="farzandingiz">Your child</string>
+    <string name="tanlang">Select</string>
+    <string name="yuborish">Send</string>
+    <string name="bekor_qilish">Cancel</string>
+    <string name="saqlash">Save</string>
+    <string name="tugash_vaqtini_belgilang">Set end time</string>
+    <string name="shaxsiy_vazifalar">Personal tasks</string>
+    <string name="farzandingizni_tasdiqlang">Confirm your child</string>
+    <string name="hozir_emas">Not now</string>
+    <string name="davom_etish">Continue</string>
+    <string name="kodni_kiriting">Enter code</string>
+    <string name="ushbu_kodni_farzandingiz_telefonidan_kiriting">Enter this code from your child's phone</string>
+    <string name="bolaning_ilovasini_sozligi">Child's app settings</string>
+    <string name="ism_orqali_qidirish">Search by name</string>
+    <string name="xabar_yozish">Write a message</string>
+    <string name="bosh_sahifa">Home page</string>
+    <string name="farzandlaringiz_telefon_ishlatish_statistikasi">Your child's phone usage statistics</string>
+    <string name="haftalik">Weekly</string>
+    <string name="kunlik">Daily</string>
+    <string name="ijtimoiy_tarmoqlar">Social networks</string>
+    <string name="oyinlar">Games</string>
+    <string name="boshqalar">Others</string>
+    <string name="dush">Mon</string>
+    <string name="sesh">Tue</string>
+    <string name="chor">Wed</string>
+    <string name="pay">Thu</string>
+    <string name="jum">Fri</string>
+    <string name="shan">Sat</string>
+    <string name="yak">Sun</string>
+    <string name="daq">min</string>
+    <string name="soat">hour</string>
+    <string name="yon_atrofni_kuzatish">Monitor surroundings</string>
+    <string name="yon_atrofni_eshitish">Listen to surroundings</string>
+    <string name="bolaning_ilovasini_sozligini_korish">View child's app settings</string>
+    <string name="farzandingiz_bilan_suhbat">Chat with your child</string>
+    <string name="xabar_yuborish">Send message</string>
+    <string name="tangachalar">Coins</string>
+    <string name="tangachalar_orqali">Through coins, your child can use Artificial Intelligence features</string>
+    <string name="bitta_tanga">One coin is 100 soums</string>
+    <string name="hammasi">All</string>
+    <string name="sotib_olish">Buy</string>
+    <string name="til">Language</string>
+    <string name="shaxsiy_malumotlar">Personal information</string>
+    <string name="maktab">School</string>
+    <string name="sozlamalar">Settings</string>
+    <string name="bildirishnomalar">Notifications</string>
+    <string name="tema">Theme</string>
+    <string name="tasdiqlash">Confirm</string>
+    <string name="tolov">Payment</string>
+    <string name="obuna_pro">Pro Subscription</string>
+    <string name="ming_sum">thousand soums</string>
+    <string name="million">million</string>
+    <string name="ta_tanga">coins</string>
+    <string name="obuna">Subscription</string>
+    <string name="xozir_sizning_obunangiz">Your current subscription </string>
+    <string name="ilovaning_barcha_funksiyalaridan">Download the Pro version to access all app features</string>
+    <string name="premium_obuna_bilan">More freedom and exclusive features with Premium subscription</string>
+    <string name="farzandlaringiz_tangalari">Your children's coins</string>
+    <string name="farzandingiz_bajarilmagan_vazifalari">Your child's uncompleted tasks</string>
+    <string name="qr_kod">QR code</string>
+    <string name="vaqtni_tanlang">Select time</string>
+    <string name="minut">Minute</string>
+    <string name="yillik">Yearly</string>
+    <string name="oylik">Monthly</string>
+    <string name="suniy_intelekt">Artificial Intelligence</string>
+    <string name="har_oy_dan_ortiq_tangalar">More than 500 coins every month</string>
+    <string name="ai_yangi_imkoniyatlar">New possibilities with AI</string>
+    <string name="ism">Name</string>
+    <string name="yosh">Age</string>
+    <string name="yosh_1">years old</string>
+    <string name="jins">Gender</string>
+    <string name="telefon_nomer">Phone number</string>
+    <string name="sinf">Grade</string>
+    <string name="smena">Shift</string>
+    <string name="qarindoshligi">Relationship</string>
+    <string name="pasport_id">Passport ID</string>
+    <string name="reklama">Advertisement</string>
+    <string name="yorug">Light</string>
+    <string name="theme_system">Theme System</string>
+    <string name="xavfli_zona">Danger zone</string>
+    <string name="akkauntni_o_chirish">Delete account</string>
+    <string name="pochta_orqali">By email</string>
+    <string name="sms_orqali">By SMS</string>
+    <string name="qora">Black</string>
+    <string name="qorong_u">Dark</string>
+    <string name="standart">Standard</string>
+    <string name="pro">PRO</string>
+    <string name="ta">items</string>
+    <string name="kamera">Camera</string>
+    <string name="joylashuv">Location</string>
+    <string name="monitoring">Monitoring</string>
+    <string name="admin_ilova">Admin App</string>
+    <string name="ishlash_vaqti">Working time</string>
+    <string name="ustida_ko_rsatish">Display over</string>
+    <string name="eslatma_xizmati">Notification service</string>
+    <string name="batareya_tejash">Battery saver</string>
+    <string name="gps">GPS</string>
+    <string name="yoqish">Enable</string>
+    <string name="gps_o_chirilgan">GPS is disabled</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_gps_ni_yoqing">Enable GPS to fully use the map!</string>
+    <string name="record_audio_ruxsati_berilgan">Record audio permission granted.</string>
+    <string name="ruxsat_doimiy_rad_etilgan">Permission permanently denied.</string>
+    <string name="sozlamalarni_ochish">Open settings</string>
+    <string name="ruxsat_so_rash">Request permission</string>
+    <string name="joylashuv_uchun_ruxsat">Location permission</string>
+    <string name="xaritadan_to_liq_foydalanish_uchun_joylashuvga_sozlamalardan_turib_ruxsat_bering">To fully use the map, grant Location permission from settings!</string>
+    <string name="xatolik">Error</string>
+    <string name="ok">Ok</string>
+    <string name="qoshish">Add</string>
+    <string name="ogil_bola">Boy</string>
+    <string name="qiz_bola">Girl</string>
+    <string name="erkak">Male</string>
+    <string name="ayol">Female</string>
+    <string name="farzand_qoshish">Add child</string>
+    <string name="farzandingizni_tanlang">Select your child</string>
+    <string name="daqiqa">minutes</string>
+    <string name="bugun">Today</string>
+    <string name="kecha">Yesterday</string>
+    <string name="yakunlash">Finish</string>
+    <string name="bir_kunda_o_rtacha">Daily average</string>
+    <string name="eng_kop_foydalanilgan">Most used</string>
+    <string name="yangi_vazifa_yaratildi">New task created</string>
+    <string name="muvaffaqiyatli">Successful</string>
+    <string name="qisqartirish">Shorten</string>
+    <string name="vazifa_tahrirlandi">Task edited</string>
+    <string name="server_connection_error">Server connection error!</string>
+    <string name="faol">Active</string>
+    <string name="faol_emas">Inactive</string>
+    <string name="ohirgi_faollik">Last active:</string>
+    <string name="qabul_qildim">I accept</string>
+    <string name="azolar">Members</string>
+    <string name="azo">Member</string>
+    <string name="ekranni_kuzatish">Screen monitoring</string>
+    <string name="internetdagi_tarix">Internet history</string>
+    <string name="notification">Notifications</string>
+    <string name="sizda_mavjud_tangachalar">Available coins</string>
+    <string name="tangachalar_sovg_a_qiling">Gift coins to your child for completing tasks.</string>
+    <string name="jadval">Schedule</string>
+    <string name="ilovalar">Apps</string>
+    <string name="veb_sayt">Website</string>
+    <string name="boshlanishi">Start</string>
+    <string name="tugashi">End</string>
+    <string name="du">Mo</string>
+    <string name="se">Tu</string>
+    <string name="ch">We</string>
+    <string name="pa">Th</string>
+    <string name="ju">Fr</string>
+    <string name="sh">Sa</string>
+    <string name="ya">Su</string>
+    <string name="faol_vaqtlar">Active times</string>
+    <string name="vaqt">Time</string>
+    <string name="vaqtlar">Times</string>
+    <string name="faol_vaqt">Active time</string>
+    <string name="faol_vaqt_yaratish">Create active time</string>
+    <string name="kunlar">Days</string>
+    <string name="har_kuni">Every day</string>
+    <string name="kun_davomida">During the day</string>
+    <string name="oraliq_qoshish">Add interval</string>
+    <string name="bloklash_shartlari">Blocking conditions</string>
+    <string name="qachon_va_qayerda">Choose when and where not to be disturbed</string>
+    <string name="ish_vaqti_dam_olish_kuni">work hours, weekend</string>
+    <string name="wi_fi">Wi-Fi</string>
+    <string name="ishga_tushirishlar_soni">Number of launches</string>
+    <string name="wi_fi_tarmoqlarni_tanlang">Select Wi-Fi networks</string>
+    <string name="ulandi">Connected</string>
+    <string name="qora_ro_yxat">Blacklist</string>
+    <string name="shartlar">Conditions</string>
+    <string name="bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang">Select the apps or sites you want to block</string>
+    <string name="budilnik">Alarm clock</string>
+    <string name="har_kuni_bloklashni_rejalashtiring">Schedule daily blocking by time, location and other parameters</string>
+    <string name="tangachalaringiz">Your coins</string>
+    <string name="soatbay">Hourly</string>
+    <string name="limit">Limit</string>
+    <string name="shartlar_kiritish">Enter conditions</string>
+    <string name="soatlik">Hourly</string>
+    <string name="tashqarida">Outside</string>
+    <string name="ta_jadval">schedules</string>
+    <string name="jadval_muvaffaqiyatli_yaratildi">Schedule created successfully!</string>
+    <string name="barcha_farzandlar">All children</string>
+    <string name="diqqat" >Attention!</string>
+    <string name="siz_tanlagan_vaqt_oraligida">The Usage Limit will not work during the time interval you selected! That is, the time schedule has higher priority.</string>
+    <string name="limit_tugadi" >Limit reached!</string>
+    <string name="ta_ilova_sizda_o_rnatilmagan">%1$d apps are not installed on your device</string>
+    <string name="cheklovlar">Restrictions</string>
+    <string name="ta_ilovaga">to %1$d apps</string>
+    <string name="ta_vebsaytga">to %1$d websites</string>
+    <string name="ustuvorligi">Priority</string>
+    <string name="jadval_nomini_kiriting">Enter schedule name</string>
+    <string name="misol_o_quv_markaz">example: Training center</string>
+    <string name="jadval_muvaffaqiyatli_tahrirlandi">Schedule edited successfully!</string>
+    <string name="jadval_muvaffaqiyatli_o_chirildi">Schedule deleted successfully!</string>
+    <string name="siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz">Do you really want to delete this schedule?</string>
+    <string name="ochirish">Delete</string>
+    <string name="jadvalni_saqlamasdan_chiqishga_rozimisiz">Do you agree to exit without saving the schedule?</string>
+    <string name="roziman">I agree</string>
+    <string name="ushbu_oraliqdan_tashqari">Outside this interval</string>
+
+    <string name="obuna_holati">Subscription status:</string>
+    <string name="tolandi">Paid</string>
+    <string name="tolov_kutilmoqda">Payment pending</string>
+    <string name="tolanmagan">Unpaid</string>
+    <string name="tolov_click_platformasi_orqali_amalga_oshiriladi">Payment is processed through the Click platform</string>
+    <string name="tolov_summasi">Payment amount:</string>
+    <string name="tanga">%1$d Coins</string>
+    <string name="xozr_sizning_obunangiz">Your current subscription</string>
+    <string name="ilovaning_barcha_funksiyalaridan_foydalanish_uchun_pro_versiyasini_sotib_oling">We recommend purchasing the Pro or Plus version to access all app features</string>
+    <string name="baxtli_foydalanuvchimisiz">Join our happy users and use Tikoncha to its full potential with all its features.</string>
+    <string name="som">soums</string>
+    <string name="foyda">Benefit</string>
+    <string name="imkoniyatlar">Features</string>
+    <string name="obuna_faollashtirilgan">Subscription activated</string>
+    <string name="obunaga_sovga_sifatida">As a subscription gift</string>
+    <string name="premium">Premium</string>
+    <string name="sovga_qilish">Give as gift</string>
+    <string name="dostlarni_taklif_qilish">Invite friends</string>
+    <string name="faol_vazifalar">Active tasks</string>
+    <string name="farzandlaringiz_qayerdaligi">See where your children are</string>
+    <string name="farzand_va_maktab_bilan_boglaning">Connect with child and school</string>
+    <string name="tabriklaymiz">CONGRATULATIONS!</string>
+    <string name="endi_siz_ushbu_obunaga_egasiz">You now own this subscription</string>
+    <string name="maxsus_imkoniyatlar_va_qollab_quvvatlashdan_foydalaning">Enjoy special features and priority support!</string>
+    <string name="statistika">Statistics</string>
+    <string name="chegirmalar">Discounts</string>
+    <string name="chegirma">Discount</string>
+    <string name="topshiriqlar">Assignments</string>
+    <string name="jadvallar">Schedules</string>
+    <string name="ilova_cheklangan">%1$d apps restricted</string>
+    <string name="faol_vazifa">%1$d active tasks</string>
+    <string name="bugun_sarfladi">Spent today</string>
+    <string name="chiqish">Log out</string>
+    <string name="chiqishni_xohlaysizmi">Do you want to log out?</string>
+    <string name="chiqishni_tasdiqlang">Confirm the logout process.</string>
+    <string name="hisobdan_chiqish">Log out of account</string>
+    <string name="ilovani_ochirish">Delete app</string>
+    <string name="hisobdan_chiqish_uchun_sorov">You need to send a request to log out</string>
+    <string name="siz">You</string>
+    <string name="sorovlar">Requests</string>
+    <string name="ruxsat_yoq">No permission</string>
+    <string name="jarayonda">In progress</string>
+    <string name="tasdiqlandi">Approved</string>
+    <string name="hisobdan_chiqishni_tasdiqlaysizmi">Confirm logout?</string>
+    <string name="farzand_chiqish_ruxsat">Your child wants to log out of the Tikoncha account. Do you confirm the permission?</string>
+    <string name="hisobdan_chiqishni_bekor_qilasizmi">Cancel logout?</string>
+    <string name="hisobdan_chiqishni_bekor_qilish">Cancel logout</string>
+    <string name="ilovani_ochirishni_tasdiqlaysizmi">Confirm deleting the app?</string>
+    <string name="farzand_ilovani_ochirmoqchi">Your child wants to delete the Tikoncha app. If you allow it, restrictions and protection in the app will be temporarily disabled and it will become possible to uninstall the app. Do you confirm the permission?</string>
+    <string name="ha">Yes</string>
+    <string name="yoq">No</string>
+    <string name="ilovani_ochirish_uchun_sorov_kerak">You need to send a request to delete the app</string>
+    <string name="obuna_dialog_message">Buy the PLUS subscription to use this feature!</string>
+    <string name="obuna_bolish">Subscribe</string>
+    <string name="app_limit_exceeded">
+    You cannot select more than %1$d apps. Buy the Plus subscription to add more apps.
+</string>
+    <string name="sizda_vaqt_oraligi_qoshish">Your limit for adding time intervals has been reached. Purchase the PLUS subscription to create more time intervals.</string>
+    <string name="sizda_foydalanish_chegarasini_qoshish">Your limit for adding usage limits has been reached. Purchase the PLUS subscription to create more usage limits.</string>
+    <string name="belgilangan_hududdan_tashqarida">Outside the designated area</string>
+    <string name="belgilangan_hudud_ichida">Inside the designated area</string>
+    <string name="chegaralash_ishlatish_marta">Limit the specified app to a certain number of uses per day or hour</string>
+    <string name="bloklash_wifi_tarmogida">Block when connected to a specific Wi-Fi network</string>
+    <string name="bloklash_hudud_boyicha">Block within a specific designated area</string>
+    <string name="chegaralash_kun_soat_va_daqiqa">Limit usage to specific hours of the day or to a certain number of minutes per hour</string>
+    <string name="bloklash_hafta_kunlari_soatlari">Block at specific hours on weekdays</string>
+    <string name="s">h</string>
+    <string name="d">m</string>
+    <string name="location_permission_request_message">Location data is used to show where you currently are on the map and to set the necessary area for your child.
+This information is used only for these features and is not shared with third parties.</string>
+
+    <string name="ruxsat_berish">Grant permission</string>
+    <string name="iltimos_internetga_ulang">Please connect your phone to the internet!</string>
+    <string name="aloqa_uzildi">Connection lost</string>
+
+    <string name="internet_aloqa_uzildi">
+        Internet connection lost. Please turn on the network and try again.
+    </string>
+    <string name="payment_type_text">Payment will be processed through %1$s.</string>
+    <string name="tolov_amalga_oshmadi">Payment failed!</string>
+    <string name="tez_kunda">Coming soon</string>
+    <string name="tahrirlash">Edit</string>
+    <string name="farzand_malumotini_tahrirlash">Edit your child's information</string>
+    <string name="maydonlar_toliq_toldirilmagan">Fields are not fully filled in</string>
+
+    <string name="yopish">Close</string>
+    <string name="qo_llash">Apply</string>
+    <string name="promokod_tasdiqlandi">Promo code confirmed</string>
+    <string name="tekshirilmoqda">Checking</string>
+    <string name="promokodni_ishlatish">Use promo code</string>
+    <string name="promokodni_kiriting">Enter promo code</string>
+    <string name="tolov_turini_tanlang">Select payment type</string>
+    <string name="malumotlarni_tahrirlash">Edit information</string>
+    <string name="veb_sayt_tez_kunda_izoh">Website management feature will be added soon</string>
+    <string name="standart_obuna_jadval_cheklovi">
+        With the Standard subscription, you can create one schedule. Activate the Plus subscription to access more features.
+    </string>
+    <string name="akkauntdan_chiqish">Log out of account</string>
+    <string name="akkauntdan_chiqmoqchimisiz">Do you want to log out of your account?</string>
+    <string name="qayta_kirish_telefon_tasdiq">If you log out, you will need to verify your phone number to log in again.</string>
+    <string name="nimalar_saqlanib_qoladi">What will be saved?</string>
+    <string name="profil_va_sozlamalar_saqlanadi">Your profile and settings are saved on the server.</string>
+    <string name="qayta_kirsangiz_tiklanadi">When you log in again, everything will be restored.</string>
+    <string name="farzand_qoshilmagan">No child added</string>
+    <string name="farzand_qoshilgandan_keyin_korinish">Schedules, chats and reports will appear after a child is added.</string>
+    <string name="kutilmagan_xatolik_qayta_urining">An unexpected error occurred. Please try again.</string>
+    <string name="hozircha_farzand_qoshilmagan">You haven't added a child yet.</string>
+    <string name="diqqat2">ATTENTION!</string>
+    <string name="davom_etishdan_oldin_ilova_turini_tanlang">Select the app type before continuing.</string>
+    <string name="farzand_malumotlari_keyin_korinadi">Your child's information will appear after adding a child.</string>
+    <string name="otp_enter_code_with_phone">Enter the 6-digit verification code sent to your phone number (%1$s).</string>
+    <string name="javob_berish">Reply</string>
+    <string name="nusxalash">Copy</string>
+    <string name="qayta_urinish">Try again</string>
+    <string name="xabarni_tahrirlash">Edit message</string>
+    <string name="xabarni_o_chirish">Delete message</string>
+    <string name="haqiqatan_ham_bu_xabarni_o_chirmoqchimisiz">Do you really want to delete this message?</string>
+    <string name="raqamda_telegram_mavjud_emas">There is no Telegram on this number</string>
+    <string name="kod_telegramga_yuboriladi">The code will be sent to Telegram</string>
+    <string name="tasdiqlash_kodi_telegram">The verification code will be sent via Telegram. Open the Telegram app to receive the code.</string>
+    <string name="telegramga_otish">Go to Telegram</string>
+    <string name="boshqa_raqamga_ozgartish">Change to another number</string>
+    <string name="tasdiqlash_kodi_usulini_tanlash">Choose how we should send \n the verification code</string>
+    <string name="tasdiqlash_kodini_olish">Get verification code</string>
+    <string name="telegram_kod_kiritish">Enter the code sent to the Telegram linked to %1$s</string>
+    <string name="xato_kod_kiritdingiz">You entered an incorrect code</string>
+    <string name="kod_olish_usulini_ozgartirish">Change code delivery method</string>
+    <string name="versiya">Version</string>
+    <string name="jadval_yaratish">Create schedule</string>
+    <string name="sizning_cheklovlaringiz">Your restrictions</string>
+    <string name="kunlik_bloklashlarni_rejalashtiring">Schedule daily blocking by time, location and other parameters.</string>
+
+    <string name="avtomatik_bloklash_vaqti">Automatic blocking at selected days and hours</string>
+    <string name="foydalanish_vaqtini_cheklash">Limit daily or hourly usage time</string>
+    <string name="hududga_kirilganda_bloklash">Block apps when entering a specific area</string>
+    <string name="hamroh_tasdiqlash_kodi_kiritish">Enter the verification code sent to your partner's phone and link the account.</string>
+    <string name="bloklash_rejimi_tanlang">Select blocking mode</string>
+    <string name="ilovalarni_belgilash">Specify which apps will work or be blocked</string>
+    <string name="tanlangan_ilovalar_bloklanadi">Selected apps will be blocked, the rest will remain open.</string>
+    <string name="tanlangan_ilovalar_ochiq">Selected apps will remain open, the rest will be blocked.</string>
+    <string name="oq_royhat">Whitelist</string>
+    <string name="soniya">seconds</string>
+    <string name="sayt_manzilini_kiriting">Enter site address</string>
+    <string name="ilova_qidirish">Search apps</string>
+    <string name="sayt_qidirish">Search sites</string>
+    <string name="diqqatni_yoqotmasdan_organing">Learn without losing focus</string>
+    <string name="rejalashtiring_va_kuzating">Plan and track execution</string>
+    <string name="kategoriyalar">Categories</string>
+    <string name="jadval_o_chirilsinmi">Delete schedule?</string>
+    <string name="chiqmoqchimisiz">Do you want to exit?</string>
+    <string name="kiritilgan_ma_lumotlar_saqlanmaydi">The entered data will not be saved.</string>
+    <string name="qolish">Stay</string>
+    <string name="noto_g_ri_url_format">Invalid URL format</string>
+    <string name="bu_sayt_allaqachon_ro_yxatda">This site is already in the list</string>
+    <string name="to_liq_nazoratni_yoqing">Enable full control</string>
+    <string name="tikoncha_orqali_ilovalar_vaqt_va_foydalanishni_boshqaring">Manage apps, time and usage through Tikoncha. With Plus, work without restrictions and enable maximum protection via Shield mode.</string>
+    <string name="plus_imkoniyatlarini_ochish">Unlock Plus features</string>
+    <string name="sayt_limiti_plus_tavsif">You have reached the limit of %1$d websites. With the Plus subscription, select more websites and enjoy additional features.</string>
+    <string name="kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring">Activate the PLUS subscription to create schedules by category</string>
+    <string name="jadval_limit_tugadi_plus">Your limit for creating additional schedules has been reached. Purchase the PLUS subscription to create more schedules.</string>
+    <string name="jadval_qoshish">Add schedule</string>
+    <string name="jadval_nomi">Schedule name</string>
+    <string name="bloklash_rejimi">Blocking mode</string>
+    <string name="saytlar">Sites</string>
+    <string name="ilova_limiti_plus_tavsif">You have reached the limit of %1$d apps. With the Plus subscription, select more apps and enjoy additional features.</string>
+    <string name="qachon_va_qanday_holatlarda_ilova_va_veb">Specify when and under what conditions apps and websites are restricted</string>
+    <string name="sizda_faol_vaqt_yoq">You have no active time</string>
+    <string name="faol_vaqtni_qoshing">Add active time</string>
+    <string name="faqat_shu_vaqtda_ishlasin">Should work only at this time</string>
+    <string name="cheklov_vaqti">Restriction time</string>
+    <string name="vaqt_qoshish">Add time</string>
+
+
+    <string name="biz_haqimizda">About us</string>
+    <string name="ozingiz_qoshing">Add your own</string>
+    <string name="tavsiya_etilgan_paketlar">Recommended packages</string>
+    <string name="tanga_s">%1$s coins</string>
+    <string name="coins_help_use_title">Bilimdon AI coins</string>
+    <string name="coins_help_earn_title">How to earn coins?</string>
+    <string name="coins_help_use_intro">Bilimdon AI coins are digital units used to interact with Bilimdon AI inside Tikoncha.</string>
+    <string name="coins_help_earn_intro">You can earn Bilimdon AI coins in several ways:</string>
+    <string-array name="coins_help_use_bullets">
+        <item>Asking Bilimdon AI questions</item>
+        <item>Getting short and clear explanations about books, topics or assignments</item>
+        <item>Reinforcing knowledge and speeding up learning</item>
+    </string-array>
+    <string-array name="coins_help_earn_bullets">
+        <item>By using the app regularly</item>
+        <item>By completing educational assignments and actively participating</item>
+        <item>By participating in special tasks or motivational activities</item>
+        <item>Through additional opportunities provided by parents</item>
+    </string-array>
+    <string name="coins_help_use_note">A certain number of coins is spent for each question or request. The amount may depend on the complexity of the question and the length of the answer.</string>
+    <string name="coins_help_earn_note">Coins are collected gradually and can then be spent at any time to use Bilimdon AI services.</string>
+    <string name="coins_help_close">Close</string>
+    <string name="qollash">Apply</string>
+    <string name="promokod">Promo code:</string>
+    <string name="siz_tangachalarni_muvaqqiyatli_sotib_oldingiz">You have successfully purchased coins.</string>
+    <string name="narx">Price</string>
+    <string name="jami">Total</string>
+    <string name="bekor_qilindi">Cancelled!</string>
+    <string name="sorov_holati">Request status</string>
+    <string name="qanday_qilib_ishlatish">How to use</string>
+    <string name="qanday_qilib_ishlab_topish">How to earn</string>
+    <string name="yangilanish_mavjud">Update available</string>
+    <string name="app_update_desc">Tikoncha has become even more stable and convenient. Update the app to use the latest features.</string>
+    <string name="yangilash">Update</string>
+    <string name="limit_qoshish">Add limit</string>
+    <string name="foydalanish_limiti">Usage limit</string>
+    <string name="sahifaga_otish">Go to page</string>
+    <string name="farzand_ulan_di">Your child has been successfully connected, you can freely monitor their digital life</string>
+    <string name="confirm_code_instruction">Your child needs to enter this code in the "Add parent" section of the "Tikoncha" app.</string>
+
+    <string name="kerakli_hafta_kunlarini_tanlang">Please select the desired weekdays!</string>
+    <string name="kerakli_vaqt_oralig_ini_tanlang">Please select the desired time interval!</string>
+    <string name="kamida_1_ta_shart_kiriting">Enter at least 1 condition</string>
+    <string name="kamida_1_ta_ilova_kategoriya_yoki_sayt_tanlang">Select at least 1 app, category or site</string>
+    <string name="plus_obnuna_kerak">PLUS subscription required</string>
+    <string name="oq_royxat_uchun_kerakli_ilovalar_va_saytlarni_tanlang">Select the required apps and sites for the whitelist</string>
+    <string name="toliq_nazorat_statistika">Full control and statistics</string>
+    <string name="farzand_ilova_kuzatish">Track which apps your child uses and how much during the day.</string>
+    <string name="uchtagacha_jadval">Up to 3 schedules</string>
+    <string name="jadval_cheklovlar">Set separate restrictions for days, weeks or special times.</string>
+    <string name="qattiq_bloklash_qalqon">Hard blocking (Shield mode)</string>
+    <string name="farzand_cheklov_ozgartira_olmaydi">Your child cannot disable or change restrictions.</string>
+    <string name="tez_bloklash_timer">Quick blocking (Timer)</string>
+    <string name="vaqtinchalik_bloklash_tezi">Turn on temporary blocking in a few seconds when needed.</string>
+    <string name="hisobot_tahlil">Reports and analysis</string>
+    <string name="farzand_nazorat_tavsifi">Control your child's phone usage. Block unwanted apps, set usage time and create a safe environment.</string>
+    <string name="foydalanish_tahlil">Analyze usage habits and help improve them.</string>
+    <string name="istalgan_vaqtda_bekor">Can be cancelled at any time</string>
+    <string name="eng_foydali_tanlov">Best value choice</string>
+    <string name="price_uzs">%1$s UZS</string>
+    <string name="price_uzs_per_month">%1$s UZS / month</string>
+    <string name="obuna_uchun_farzand_qoshilmagan">The subscription is registered for your child. Add a child to continue.</string>
+    <string name="suhbatlar_yoq">No chats available</string>
+    <string name="hozircha_suhbat_yoq">No conversations have been started yet</string>
+    <string name="tanlangan_obuna">Selected subscription</string>
+    <string name="uzs_yillik">UZS/yearly</string>
+    <string name="uzs_oylik">UZS/monthly</string>
+    <string name="tolov_tafsilotlari">Payment details</string>
+    <string name="uzs">UZS</string>
+    <string name="about_text_html">
+        <![CDATA[
+        <strong>Tikoncha</strong> is a modern technology platform aimed at creating a safe digital environment for children and teenagers.<br/><br/>
+
+        In cooperation with parents, schools and the community, we help children use smartphones and the internet in a <b>moderate</b>, <b>conscious</b> and <b>useful</b> way.<br/>
+        With Tikoncha, your child's digital activity is under control, while <b>trust</b> and <b>respect</b> are preserved.<br/><br/>
+
+        <b>With our app:</b><br/>
+        • distracting apps and content are restricted,<br/>
+        • opportunities that serve education and development are supported,<br/>
+        • the child's safety and daily balance are ensured.<br/><br/>
+
+        <b>Tikoncha</b> is not just a control tool.<br/>
+        It is a step toward shaping digital culture in child-rearing, responsible technology and a healthy future.<br/><br/>
+
+        <i>We believe:</i><br/>
+        <b>Technology should serve not to restrict children, but to guide them in the right direction.</b>
+        ]]>
+    </string>
+    <string name="biz_bilan_aloqa">Contact us</string>
+
+    <string name="tanlangan_kun_va_soatlarda_avtomatik_bloklash">Automatic blocking at selected days and hours</string>
+    <string name="kunlik_yoki_soatlik_foydalanish_vaqtini_cheklash">Limit daily or hourly usage time</string>
+    <string name="malum_hududga_kirilganda_ilovalarni_bloklash">Block apps when entering a specific area</string>
+    <string name="uyqu_vaqti_rejasi">Sleep time plan</string>
+    <string name="farzandingiz_kun_davomida_telefondan_qancha">Set how much time your child can use the phone during the day.</string>
+    <string name="ilova_taymeri">App timers</string>
+    <string name="ilovalarni_tanlang_va_ular_uchun_umumiy">Select apps and set a total usage limit for them</string>
+    <string name="kontent_cheklovlari">Content restrictions</string>
+    <string name="farzandingizni_nomaqbul_kontentdan_himoya_qiling">Protect your child from inappropriate content</string>
+    <string name="shablonlar">Templates</string>
+    <string name="uxlash_vaqti">Sleep time</string>
+    <string name="tanlangan_ilovalar_ochiq_qoladi">Selected apps will remain open, the rest will be blocked.</string>
+
+    <string name="tracking_permission_title">Location permission required</string>
+    <string name="tracking_permission_message">Grant permission to show your location on the map</string>
+    <string name="tracking_permission_grant">Grant permission</string>
+
+    <string name="tracking_permission_settings_title">Grant permission from Settings</string>
+    <string name="tracking_permission_settings_message">You can enable Location permission from Settings. Device Settings → Tikoncha → Location → Allow</string>
+    <string name="tracking_permission_settings_open">Open Settings</string>
+
+    <string name="tracking_gps_off_title">GPS is off</string>
+    <string name="tracking_gps_off_message">Enable GPS service to detect your location</string>
+    <string name="tracking_gps_off_enable">Enable GPS</string>
+    <string name="farzandingizni_qayerda_ekanini_kuzatish">Activate the PLUS subscription to track where your child is</string>
+
+    <string name="tracking_just_now">Just now</string>
+    <string name="tracking_minutes_ago">minutes ago</string>
+    <string name="tracking_hours_ago">hours ago</string>
+    <string name="tracking_days_ago">days ago</string>
+    <string name="tracking_last_update">Last update:</string>
+    <string name="tracking_location_unavailable">Location unavailable</string>
+    <string name="tracking_retry">Try again</string>
+
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+
+    <string name="tracking_checking_settings">Checking child settings...</string>
+    <string name="tracking_watch_video">Watch video</string>
+    <string name="radius">Radius</string>
+    <string name="teskari_radius">Inverse radius</string>
+    <string name="farzandim">My child</string>
+    <string name="ozim">Myself</string>
+    <string name="faol_vazifa_yo_q">No active tasks</string>
+    <string name="farzandingiz_uchun_vazifa_yo_q">No tasks for your child</string>
+    <string name="limit_yoq">You have no limit</string>
+    <string name="web_ilova_limit">Set daily or hourly limits on websites and apps.</string>
+
+    <string name="about_intro">Tikoncha is a modern technology platform aimed at creating a safe digital environment for children and teenagers.</string>
+    <string name="about_body">In cooperation with parents, schools and the community, we help children use smartphones and the internet in a moderate, conscious and useful way. With Tikoncha, your child's digital activity is under control, while trust and respect are preserved.</string>
+    <string name="about_features_title">With our app:</string>
+    <string name="about_feature_1">distracting apps and content are restricted</string>
+    <string name="about_feature_2">opportunities that serve education and development are supported</string>
+    <string name="about_feature_3">the child's safety and daily balance are ensured</string>
+    <string name="about_mission">Tikoncha is not just a control tool. It is a step toward shaping digital culture in child-rearing, responsible technology and a healthy future.</string>
+    <string name="about_belief">Technology should serve not to restrict children, but to guide them in the right direction.</string>
+    <string name="hali_vazifa_yoq">You haven't given any tasks yet</string>
+    <string name="ota_ona_vazifalari_desc">The tasks you have given to your child will appear here</string>
+    <string name="farzand_vazifalari_desc">The tasks your child has created for themselves will appear here</string>
+
+    <string name="weekday_monday">Monday</string>
+    <string name="weekday_tuesday">Tuesday</string>
+    <string name="weekday_wednesday">Wednesday</string>
+    <string name="weekday_thursday">Thursday</string>
+    <string name="weekday_friday">Friday</string>
+    <string name="weekday_saturday">Saturday</string>
+    <string name="weekday_sunday">Sunday</string>
+
+    <string name="juda_muhim">Very important</string>
+    <string name="tekshirildi">Checked</string>
+    <string name="ko_rish">View</string>
+    <string name="vazifa_ochirilsinmi">Delete task?</string>
+    <string name="vazifa_ochirish_tasdiq">Do you really want to delete this task?</string>
+    <string name="qanday_faollashtiriladi">How is it activated?</string>
+    <string name="xaritadan_ochish">Open on map</string>
+    <string name="ulashish">Share</string>
+    <string name="vebsaytlar">Websites</string>
+
+    <string name="tikoncha_title_top">What is</string>
+    <string name="tikoncha_title_bottom">Tikoncha?</string>
+    <string name="block_child_title_line1">How do I</string>
+    <string name="block_child_title_line2">block my child?</string>
+    <string name="connect_child_line1">How does</string>
+    <string name="connect_child_line2">a child connect?</string>
+    <string name="video_qollanma">Video guide</string>
+    <string name="video_qollanma_error_message">Unfortunately, no video guide was found. Please try again later</string>
+    <string name="farzandingiz_ismi">Your child's name</string>
+    <string name="farzand_uchun_obuna">Subscription for child</string>
+    <string name="farzand_uchun_obuna_message">Your child is not registered yet. To activate the subscription, enter their phone number — we will create an account for your child and link the subscription. Once your child registers in the Tikoncha app, the subscription will be activated automatically.</string>
+    <string name="tolovlar_tarixi">Payment history</string>
+    <!-- ===== Payment History Screen ===== -->
+    <string name="tolovlar_tarixi_bos">Payment history is empty</string>
+    <string name="tolovlar_tarixi_bos_hint">It will appear here after purchases</string>
+    <string name="boshqa_yozuvlar_yoq">No more records</string>
+    <string name="xatolik_yuz_berdi">An error occurred</string>
+
+    <!-- ===== Transaction Item — Title / Subtitle ===== -->
+    <string name="tikoncha_plan_format">Tikoncha %1$s</string>
+    <string name="tanga_format">%1$s coins</string>
+    <string name="tanga_toplami">Coin pack</string>
+    <string name="nomalum_tolov">Unknown payment</string>
+
+    <!-- ===== Plan Durations ===== -->
+    <string name="obuna_oylik">Monthly subscription</string>
+    <string name="obuna_yillik">Yearly subscription</string>
+    <string name="obuna_choraklik">Quarterly subscription</string>
+
+    <!-- ===== User ===== -->
+    <string name="foydalanuvchi_nomi_yoq">No username</string>
+    <string name="hali_royxatdan_otmagan">Not registered yet</string>
+
+    <!-- ===== Expiry ===== -->
+    <string name="tugaydi_format">Expires: %1$s</string>
+
+    <!-- ===== Status pill labels ===== -->
+    <string name="status_kutilmoqda">Pending</string>
+    <string name="status_tolandi">Paid</string>
+    <string name="status_bekor_qilindi">Cancelled</string>
+    <string name="status_muvaffaqiyatsiz">Failed</string>
+    <string name="status_nomalum">Unknown</string>
+    <string name="youtube_ochilmoqda">You can watch the video guide on YouTube. \nOpening YouTube...</string>
+
+
+    <string name="izoh_ixtiyoriy">Comment (optional)</string>
+    <string name="vazifa_tangalari">Coins awarded for completing the task</string>
+    <string name="vazifani_tekshirish">Check task</string>
+    <string name="izoh">Comment</string>
+    <string name="muhimlilik_darajasi">Importance level</string>
+    <string name="ragbatlantirish_tangachalari">Reward coins</string>
+    <string name="tugatish_vaqti">Completion time</string>
+    <string name="vazifani_saqlash">Save task</string>
+    <string name="vazifa_yuborildi">Task sent</string>
+    <string name="vazifani_tahrirlash">Edit task</string>
+    <string name="muddati_otgan">Overdue</string>
+    <string name="farzandingiz_raqami">Your child's number</string>
+    <string name="yuborilmoqda">Sending...</string>
+    <string name="sorov_yuborish">Send request</string>
+    <string name="tasdiqlash_kodi">Verification code</string>
+    <string name="ochish">Open</string>
+    <string name="farzand_ilovasi">Child app</string>
+    <string name="farzand_ilovasi_info">Install this Tikoncha app on your child's phone.</string>
+    <string name="kod_nusxalandi">Code copied</string>
+    <string name="farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash">Your child needs to open the Tikoncha app and enter the verification code.</string>
+    <string name="bola_hali_bajardim_bosmagan">The child has not yet pressed the "Done" button</string>
+    <string name="foydalanilmagan">Unused</string>
+    <string name="token_eskirgan">Token expired</string>
+    <string name="tokenni_yangilash_uchun">You need to log in again to refresh the token.</string>
+    <string name="login_qilish">Log in</string>
+    <string name="profil_rasmi">Profile picture</string>
+    <string name="rasmni_ozgartirish">Change picture</string>
+    <string name="rasmni_ochirish">Remove picture</string>
+    <string name="profil_rasmi_olib_tashlanadi">Your profile picture will be removed. This action cannot be undone.</string>
+    <string name="keyingi_tolov">Next payment</string>
+    <string name="obuna_turi">Subscription type:</string>
+    <string name="obuna_boshlangan_sana">Subscription start date:</string>
+    <string name="tugash_sanasi">Subscription end date:</string>
+    <string name="qolgan_kunlar">Days remaining:</string>
+    <string name="kun">days</string>
+    <string name="tugagan">Expired</string>
+    <string name="farzandingiz_sorovlari">Your child's requests</string>
+    <string name="farzand_ilovadan_chiqish_sorovi">Your child is requesting permission to log out of "%1$s"</string>
+    <string name="farzand_ilovani_ochirish_sorovi">Your child is requesting permission to delete "%1$s"</string>
+    <string name="farzandlarim">My children</string>
+    <string name="maxfiylik_siyosati">Privacy policy</string>
+    <string name="foydalanish_shartlari">Terms of use</string>
+</resources>

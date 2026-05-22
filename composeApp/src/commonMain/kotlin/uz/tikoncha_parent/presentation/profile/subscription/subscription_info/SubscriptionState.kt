@@ -5,5 +5,6 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class SubscriptionState(
     val subscriptionStatusState: ResponseState<Unit> = ResponseState.Idle,
-    val subscription: SubscriptionStatus? = null
+    val subscription: SubscriptionStatus? = null,
+    val selectedChildId: String? = null,
 )

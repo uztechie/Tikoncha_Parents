@@ -657,4 +657,11 @@
     <string name="farzand_ilovadan_chiqish_sorovi">Ваш ребёнок «%1$s» запрашивает разрешение на выход из приложения</string>
     <string name="farzand_ilovani_ochirish_sorovi">Ваш ребёнок «%1$s» запрашивает разрешение на удаление приложения</string>
     <string name="farzandlarim">Мои дети</string>
+
+    <string name="foydalanilmagan">Не использовано</string>
+    <string name="token_eskirgan">Токен устарел</string>
+    <string name="tokenni_yangilash_uchun">Для обновления токена необходимо снова войти в аккаунт.</string>
+    <string name="login_qilish">Войти</string>
+    <string name="maxfiylik_siyosati">Политика конфиденциальности</string>
+    <string name="foydalanish_shartlari">Условия использования</string>
 </resources>
