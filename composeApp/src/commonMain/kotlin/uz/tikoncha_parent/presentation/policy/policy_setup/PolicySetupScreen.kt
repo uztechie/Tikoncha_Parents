@@ -649,7 +649,7 @@ fun PolicySetupUi(
                         .height(52.dp)
                         .padding(horizontal = 16.dp)
                         .singleClick {
-                            navigator?.push(AppWebSelectionScreen(0))
+                            navigator?.push(AppWebSelectionScreen(1))
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -686,7 +686,7 @@ fun PolicySetupUi(
                         .height(52.dp)
                         .padding(horizontal = 16.dp)
                         .singleClick {
-                            navigator?.push(AppWebSelectionScreen(1))
+                            navigator?.push(AppWebSelectionScreen(2))
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

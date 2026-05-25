@@ -20,31 +20,21 @@ import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.ic_launcher_foreground
-import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 
+/** Kategoriya kartochkasi ichidagi app qatori — checkbox yo'q, ko'rsatkich yo'q. */
 @Composable
-fun AppFeatureRowItem(
+fun CategoryAppRow(
     modifier: Modifier = Modifier,
-    feature: AppFeatureUi,
-    parentIconUrl: String?,
-    isSelected: Boolean,
-    coveredByCategory: Boolean = false,
-    enabled: Boolean = true,
-    onToggle: () -> Unit,
+    app: AppSelectionUi,
 ) {
-    // VISUAL: faqat individual selection
-    val effectiveChecked = isSelected
-    val checkboxEnabled = enabled && !coveredByCategory
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(54.dp)
-            .background(AppColors.bg.surface)
-            .singleClick { if (enabled) onToggle() },
+            .background(AppColors.bg.surface),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -55,31 +45,21 @@ fun AppFeatureRowItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(12.dp)),
-                model = parentIconUrl,
+                model = app.iconUrl,
                 contentDescription = null,
                 placeholder = painterResource(Res.drawable.ic_launcher_foreground),
                 error = painterResource(Res.drawable.ic_launcher_foreground),
                 contentScale = ContentScale.Crop,
             )
         }
-
         Space(16.dp)
-
         Text(
-            text = feature.name,
+            text = app.name,
             modifier = Modifier.weight(1f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = AppColors.text.primary,
             style = AppTypography.titleMdMedium,
-        )
-
-        Space(8.dp)
-
-        AppCheckbox(
-            checked = effectiveChecked,
-            enabled = checkboxEnabled,
-            onCheckedChange = { if (enabled) onToggle() },
         )
     }
 }

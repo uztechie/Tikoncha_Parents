@@ -12,36 +12,30 @@ import uz.tikoncha_parent.presentation.policy.policy_setup.PolicyDraftSnapshot
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
 data class PolicySharedState(
-
     val selectedChild: UserInfo? = null,
-    // ── Qoidalar ─────────────────────────────
+
     val timeList: List<TimeRuleUi> = emptyList(),
     val limitList: List<LimitRuleUi> = emptyList(),
     val locationRule: LocationRule? = null,
 
-    // ── Tanlangan resurslar ──────────────────
     val selectedPkgs: Set<String> = emptySet(),
     val selectedCategories: Set<String> = emptySet(),
     val selectedSites: Set<String> = emptySet(),
-    val selectedFeatures: Set<String> = emptySet(),               // YANGI
+    val selectedFeatures: Set<String> = emptySet(),
 
-    // ── Tab ──────────────────────────────────
     val appWebTabIndex: Int = 0,
 
-    // ── Policy asosiy ────────────────────────
     val policyTitle: String = "",
     val policyAction: PolicyAction = PolicyAction.DENY,
     val selectedPolicy: PolicyItemUi? = null,
 
-    // ── Ruxsat va limitlar ───────────────────
     val canUpdate: Boolean = true,
     val subscriptionLimitEntity: SubscriptionLimit? = null,
     val showAppLimitDialog: Boolean = false,
     val showSiteLimitDialog: Boolean = false,
     val showCategoryLimitDialog: Boolean = false,
-    val showFeatureLimitDialog: Boolean = false,                  // YANGI
+    val showFeatureLimitDialog: Boolean = false,
 
-    // ── Draft snapshot ───────────────────────
     val initialDraftSnapshot: PolicyDraftSnapshot? = null,
     val canUpdateInitialDraftSnapshot: Boolean = true,
 ) {
@@ -52,10 +46,11 @@ data class PolicySharedState(
         get() = selectedPolicy != null
 
     val selectedAppCount: Int
-        get() = selectedPkgs.size + selectedFeatures.size         // O'ZGARDI: feature ham app countga kiradi
+        get() = selectedPkgs.size + selectedFeatures.size
+
     val selectedCategoryCount: Int get() = selectedCategories.size
     val selectedSiteCount: Int get() = selectedSites.size
-    val selectedFeatureCount: Int get() = selectedFeatures.size   // YANGI
+    val selectedFeatureCount: Int get() = selectedFeatures.size
 
     val showAddRuleButton: Boolean
         get() = (limitList.isEmpty() || timeList.isEmpty() || locationRule == null) && canUpdate
@@ -71,6 +66,7 @@ data class PolicySharedState(
             return hasRule && hasResource && policyTitle.isNotBlank()
         }
 
+    /** Faqat individual selectedPkgs ni tekshiradi. Coverage uchun [isAppCoveredByCategory] ishlat. */
     fun isAppSelected(pkg: String, category: String?): Boolean {
         if (selectedPkgs.any { it.equals(pkg, ignoreCase = true) }) return true
         if (category != null && selectedCategories.any {
@@ -79,30 +75,20 @@ data class PolicySharedState(
         return false
     }
 
+    /** YANGI: app kategoriya orqali "covered" bo'lganmi? */
+    fun isAppCoveredByCategory(category: String?): Boolean {
+        if (category == null) return false
+        return selectedCategories.any { it.equals(category, ignoreCase = true) }
+    }
+
+    fun isCategorySelected(categoryName: String): Boolean =
+        selectedCategories.any { it.equals(categoryName, ignoreCase = true) }
+
     fun isSiteSelected(url: String): Boolean =
         selectedSites.any { it.equals(url, ignoreCase = true) }
 
-    fun isFeatureSelected(key: String): Boolean =                 // YANGI
+    fun isFeatureSelected(key: String): Boolean =
         selectedFeatures.any { it.equals(key, ignoreCase = true) }
-
-    /** Kategoriya checkbox holati — feature ham PARTIAL ga sabab bo'ladi */
-    fun categoryState(
-        categoryName: String,
-        appPackages: List<String>,
-        appFeatureKeys: List<String> = emptyList(),               // YANGI param
-    ): CategorySelectionState {
-        if (selectedCategories.any { it.equals(categoryName, ignoreCase = true) }) {
-            return CategorySelectionState.ALL
-        }
-        val hasSelectedApp = appPackages.any { pkg ->
-            selectedPkgs.any { it.equals(pkg, ignoreCase = true) }
-        }
-        val hasSelectedFeature = appFeatureKeys.any { key ->
-            selectedFeatures.any { it.equals(key, ignoreCase = true) }
-        }
-        return if (!hasSelectedApp && !hasSelectedFeature) CategorySelectionState.NONE
-        else CategorySelectionState.PARTIAL
-    }
 
     fun toSnapshot(): PolicyDraftSnapshot = PolicyDraftSnapshot(
         title = policyTitle,
@@ -113,7 +99,7 @@ data class PolicySharedState(
         packages = selectedPkgs.toList(),
         categories = selectedCategories.toList(),
         sites = selectedSites.toList(),
-        features = selectedFeatures.toList(),                     // YANGI — PolicyDraftSnapshot ga ham qo'shing
+        features = selectedFeatures.toList(),
     )
 
     val hasChanges: Boolean
@@ -131,7 +117,7 @@ data class PolicySharedState(
     val canSelectCategory: Boolean
         get() = subscriptionLimitEntity?.subscriptionType != SubscriptionType.FREE
 
-    val canSelectFeature: Boolean                                 // YANGI
+    val canSelectFeature: Boolean
         get() = subscriptionLimitEntity?.subscriptionType != SubscriptionType.FREE
 
     val canSaveAppWebSelection: Boolean
@@ -140,5 +126,3 @@ data class PolicySharedState(
                 selectedCategories.isNotEmpty() ||
                 selectedFeatures.isNotEmpty()
 }
-
-enum class CategorySelectionState { NONE, PARTIAL, ALL }

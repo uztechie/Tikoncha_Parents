@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -27,55 +25,30 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_down_reg
-import uz.tikoncha_parent.presentation.policy.shared.CategorySelectionState
-import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
-import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
+/**
+ * Kategoriyalar tab uchun expandable card.
+ * - Header: emoji + name + app count + checkbox (faqat ON/OFF)
+ * - Body (expand bo'lsa): kategoriya ichidagi applar (CategoryAppRow — no checkbox)
+ */
 @Composable
-fun AppCategoryHeaderItem(
+fun CategoryCardItem(
     modifier: Modifier = Modifier,
     group: CategoryGroupUi,
-    sharedState: PolicySharedState,
+    isSelected: Boolean,
     expanded: Boolean,
     enabled: Boolean,
-    searchQuery: String = "",                                    // YANGI
     onToggleExpand: () -> Unit,
-    onToggleCategory: () -> Unit,
-    onToggleApp: (AppSelectionUi) -> Unit,
-    onToggleFeature: (AppFeatureUi) -> Unit = {},                // YANGI
+    onToggleSelect: () -> Unit,
 ) {
-    val packageNames = remember(group.apps) { group.apps.map { it.packageName } }
-    val featureKeys = remember(group.apps) {                     // YANGI
-        group.apps.flatMap { app ->
-            AppFeatures.featuresFor(app.packageName).map { it.key }
-        }
-    }
-
-    val selectionState = sharedState.categoryState(group.id, packageNames, featureKeys)
-
-    val selectedCount = when (selectionState) {
-        CategorySelectionState.ALL -> group.apps.size
-        CategorySelectionState.NONE -> 0
-        CategorySelectionState.PARTIAL -> group.apps.count { app ->
-            val appSelected = sharedState.selectedPkgs.any {
-                it.equals(app.packageName, ignoreCase = true)
-            }
-            val anyFeatureSelected = AppFeatures.featuresFor(app.packageName).any { feat ->
-                sharedState.selectedFeatures.any { it.equals(feat.key, ignoreCase = true) }
-            }
-            appSelected || anyFeatureSelected
-        }
-    }
-
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = tween(300),
         label = "arrow_rotation",
     )
 
@@ -84,7 +57,7 @@ fun AppCategoryHeaderItem(
             .fillMaxWidth()
             .animateContentSize(),
     ) {
-        // ── Header row (o'zgarmagan) ───────────────────
+        // ── Header ─────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,7 +85,7 @@ fun AppCategoryHeaderItem(
                 modifier = Modifier
                     .size(32.dp)
                     .background(AppColors.bg.surface, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = group.emoji,
@@ -137,71 +110,36 @@ fun AppCategoryHeaderItem(
             Space(8.dp)
 
             Text(
-                text = "$selectedCount/${group.apps.size}",
-                color = AppColors.text.primary,
+                text = group.apps.size.toString(),
+                color = AppColors.text.secondary,
                 style = AppTypography.titleSmMedium,
             )
 
             Space(8.dp)
 
-            AppTripleCheckbox(
-                state = when (selectionState) {
-                    CategorySelectionState.NONE -> TripleCheckState.Off
-                    CategorySelectionState.PARTIAL -> TripleCheckState.Indeterminate
-                    CategorySelectionState.ALL -> TripleCheckState.On
-                },
-                onStateChange = { if (enabled) onToggleCategory() },
+            AppCheckbox(
+                checked = isSelected,
+                enabled = enabled,
+                onCheckedChange = { if (enabled) onToggleSelect() },
                 modifier = Modifier.size(24.dp),
             )
         }
 
+        // ── Body (expand bo'lsa applar ko'rinadi) ──
         if (expanded) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(AppColors.bg.surface)
-                    .padding(start = 48.dp, end = 16.dp)
+                    .padding(start = 48.dp, end = 16.dp),
             ) {
                 group.apps.forEach { app ->
-                    val visibleFeatures = AppFeatures.visibleFeaturesFor(app, searchQuery)
-                    AppRowWithFeatures(                          // YANGI: AppRowItem o'rniga
+                    CategoryAppRow(
+                        modifier = Modifier.fillMaxWidth(),
                         app = app,
-                        features = visibleFeatures,
-                        isAppSelected = sharedState.isAppSelected(app.packageName, app.category),
-                        selectedFeatureKeys = sharedState.selectedFeatures,
-                        enabled = enabled,
-                        onAppToggle = { onToggleApp(app) },
-                        onFeatureToggle = onToggleFeature,
                     )
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewCategory() {
-    TikonchaParentTheme {
-        AppCategoryHeaderItem(
-            group = CategoryGroupUi(
-                id = "Ijtimoiy tarmoqlar",
-                emoji = "\uD83D\uDC65",
-                displayName = "Ijtimoiy tarmoqlar",
-                apps = listOf(
-                    AppSelectionUi("Telegram", "org.telegram.messenger", "Social"),
-                    AppSelectionUi("Instagram", "com.instagram.android", "Social"),
-                    AppSelectionUi("TikTok", "com.zhiliaoapp.musically", "Social"),
-                ),
-            ),
-            sharedState = PolicySharedState(
-                selectedPkgs = setOf("org.telegram.messenger"),
-            ),
-            expanded = true,
-            enabled = true,
-            onToggleExpand = {},
-            onToggleCategory = {},
-            onToggleApp = {},
-        )
     }
 }

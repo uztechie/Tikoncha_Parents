@@ -24,7 +24,11 @@ class AppWebViewModel(
 
     fun onEvent(event: AppWebEvent) {
         when (event) {
-            is AppWebEvent.LoadApps -> loadChildApps(event.userId)
+            is AppWebEvent.LoadApps -> loadChildApps(
+                userId = event.userId,
+                selectedPkgs = event.selectedPkgs,
+                selectedCategories = event.selectedCategories,
+            )
 
             is AppWebEvent.OnTabSelected ->
                 _state.update { it.copy(tabIndex = event.tabIndex, searchQuery = "") }
@@ -33,6 +37,8 @@ class AppWebViewModel(
                 _state.update { it.copy(searchQuery = event.query) }
 
             is AppWebEvent.SetServerSites -> mergeServerSites(event.sites)
+
+
 
             is AppWebEvent.SetSiteInput ->
                 _state.update { it.copy(siteInput = event.url, siteInputError = null) }
@@ -80,9 +86,13 @@ class AppWebViewModel(
         }
     }
 
-    // ── Ilova yuklash ────────────────────────
 
-    private fun loadChildApps(userId: String) {
+
+    private fun loadChildApps(
+        userId: String,
+        selectedPkgs: Set<String>,
+        selectedCategories: Set<String>,
+    ) {
         screenModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(loadAppsResponseState = ResponseState.Loading) }
 
@@ -93,32 +103,56 @@ class AppWebViewModel(
                         it.copy(
                             loadAppsResponseState = ResponseState.Error(
                                 message = result.message,
-                                res = result.resId
+                                res = result.resId,
                             )
                         )
                     }
                 }
                 is Resource.Success -> {
                     val allApps = result.data.map { it.toAppSelectionUi() }
-                    val language = LanguagePrefs.loadOrDefault()
 
-                    val grouped = allApps.groupBy { AppCategory.from(it.category) }
+                    // ════════════════════════════════════════════════════
+                    // SORT: selected/covered first → usage → order → name
+                    // ViewModel ichida bir marta, screen qayta sortlamaydi
+                    // ════════════════════════════════════════════════════
+
+                    val sortedApps = allApps.sortedWith(
+                        compareByDescending<AppSelectionUi> { app ->
+                            selectedPkgs.any { it.equals(app.packageName, ignoreCase = true) }
+                        }
+                            // 2-DARAJA: Kategoriya orqali coveredlar
+                            .thenByDescending { app ->
+                                app.category != null && selectedCategories.any {
+                                    it.equals(app.category, ignoreCase = true)
+                                }
+                            }
+                            // 3-DARAJA: Usage bo'yicha
+                            .thenByDescending { it.usageMinutes }
+                            .thenByDescending { it.order }
+                            .thenBy { it.name.lowercase() }
+                    )
+
+                    val language = LanguagePrefs.loadOrDefault()
+                    val grouped = sortedApps.groupBy { AppCategory.from(it.category) }
                     val hasCategoryData = grouped.keys.any { it != AppCategory.OTHER }
 
-                    val uiGroups = grouped.map { (category, apps) ->
-                        val localized = CategoryLocalizer.localize(category, language)
-                        CategoryGroupUi(
-                            id = category.id,
-                            displayName = localized.name,
-                            emoji = localized.emoji,
-                            apps = apps.sortedBy { it.name.lowercase() },
-                        )
-                    }.sortedBy { it.id }
+                    val uiGroups = grouped
+                        .filterKeys { it != AppCategory.OTHER }
+                        .map { (category, apps) ->
+                            val localized = CategoryLocalizer.localize(category, language)
+                            CategoryGroupUi(
+                                id = category.id,
+                                displayName = localized.name,
+                                emoji = localized.emoji,
+                                apps = apps.sortedByDescending { it.order },
+                            )
+                        }
+                        .sortedByDescending { group -> group.apps.sumOf { it.order } }
 
                     _state.update {
                         it.copy(
                             loadAppsResponseState = ResponseState.Success(),
-                            apps = allApps,
+                            apps = sortedApps,
                             categoryGroups = uiGroups,
                             hasCategoryData = hasCategoryData,
                         )
@@ -127,8 +161,6 @@ class AppWebViewModel(
             }
         }
     }
-
-    // ── Site helpers ─────────────────────────
 
     private fun mergeServerSites(serverSites: List<String>) {
         val defaultUrls = DEFAULT_SITES.map { it.url }.toSet()
@@ -139,18 +171,16 @@ class AppWebViewModel(
     }
 
     private fun confirmAddSite() {
-        val url = normalizeUrl(_state.value.siteInput.trim())
-        if (!isValidUrl(url)) {
-            _state.update { it.copy(siteInputError = SiteError.INVALID_URL) }
-            return
-        }
-        if (_state.value.sites.any { it.url.equals(url, ignoreCase = true) }) {
+        val input = normalizeInput(_state.value.siteInput.trim())
+        if (input.isBlank()) return
+
+        if (_state.value.sites.any { it.url.equals(input, ignoreCase = true) }) {
             _state.update { it.copy(siteInputError = SiteError.ALREADY_EXISTS) }
             return
         }
         _state.update { s ->
             s.copy(
-                sites = s.sites + SiteUi(url = url, isDefault = false),
+                sites = s.sites + SiteUi(url = input, isDefault = false),
                 showAddSiteDialog = false,
                 siteInput = "",
                 siteInputError = null,
@@ -160,18 +190,16 @@ class AppWebViewModel(
 
     private fun confirmEditSite() {
         val old = _state.value.editingSite ?: return
-        val newUrl = normalizeUrl(_state.value.siteInput.trim())
-        if (!isValidUrl(newUrl)) {
-            _state.update { it.copy(siteInputError = SiteError.INVALID_URL) }
-            return
-        }
-        if (newUrl != old.url && _state.value.sites.any { it.url.equals(newUrl, ignoreCase = true) }) {
+        val newInput = normalizeInput(_state.value.siteInput.trim())
+        if (newInput.isBlank()) return
+
+        if (newInput != old.url && _state.value.sites.any { it.url.equals(newInput, ignoreCase = true) }) {
             _state.update { it.copy(siteInputError = SiteError.ALREADY_EXISTS) }
             return
         }
         _state.update { s ->
             s.copy(
-                sites = s.sites.map { if (it.url == old.url) it.copy(url = newUrl) else it },
+                sites = s.sites.map { if (it.url == old.url) it.copy(url = newInput) else it },
                 showSiteEditSheet = false,
                 showAddSiteDialog = false,
                 editingSite = null,
@@ -180,11 +208,9 @@ class AppWebViewModel(
         }
     }
 
-    private fun normalizeUrl(url: String): String =
-        url.removePrefix("https://").removePrefix("http://").removeSuffix("/")
-
-    private fun isValidUrl(url: String): Boolean {
-        if (url.isBlank()) return false
-        return Regex("^([\\w-]+\\.)+[\\w-]{2,}(/.*)?$").matches(url)
-    }
+    private fun normalizeInput(input: String): String =
+        input.trim()
+            .removePrefix("https://")
+            .removePrefix("http://")
+            .removeSuffix("/")
 }

@@ -1,11 +1,11 @@
 package uz.tikoncha_parent.presentation.policy.app_site_selection
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,11 +18,15 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,11 +38,13 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bu_ilova_kategoriya_orqali_tanlangan
 import tikoncha_parents.composeapp.generated.resources.bu_sayt_allaqachon_ro_yxatda
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.ilova_limiti_plus_tavsif
@@ -46,8 +52,8 @@ import tikoncha_parents.composeapp.generated.resources.ilova_qidirish
 import tikoncha_parents.composeapp.generated.resources.ilovalar
 import tikoncha_parents.composeapp.generated.resources.jadval
 import tikoncha_parents.composeapp.generated.resources.kategoriya_bo_yicha_jadval_yaratish_uchun_plus_obunasini_faollashtiring
+import tikoncha_parents.composeapp.generated.resources.kategoriyalar
 import tikoncha_parents.composeapp.generated.resources.limit_tugadi
-import tikoncha_parents.composeapp.generated.resources.noto_g_ri_url_format
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.plus_obnuna_kerak
 import tikoncha_parents.composeapp.generated.resources.saqlash
@@ -59,9 +65,9 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.PillSegmentedButton
+import uz.tikoncha_parent.presentation.base.PillSegmentedItem
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
-import uz.tikoncha_parent.presentation.policy.common.SegmentedTabBar
-import uz.tikoncha_parent.presentation.policy.common.SegmentedTabBarDefaults
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
@@ -70,16 +76,12 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.NormalIconButtonSize
 import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.AppTypography
-import uz.tikoncha_parent.ui.theme.ThemeMode
-import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
-
 
 class AppWebSelectionScreen(
     val appSiteTabIndex: Int,
     val singleTabMode: Boolean = false,
-): Screen{
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current ?: return
@@ -92,11 +94,21 @@ class AppWebSelectionScreen(
         val sharedState by sharedViewModel.state.collectAsStateWithLifecycle()
         val sharedEvent = sharedViewModel::onEvent
 
-        LaunchedEffect(Unit){
-            event(AppWebEvent.LoadApps(sharedState.selectedChild?.userId?:""))
+        // ════════════════════════════════════════════════════════════
+        // Screen ochilganda: applarni yuklash + sortlash uchun
+        // hozirgi selections'ni viewModel'ga uzatish (bir marta)
+        // ════════════════════════════════════════════════════════════
+        LaunchedEffect(Unit) {
+            event(
+                AppWebEvent.LoadApps(
+                    userId = sharedState.selectedChild?.userId ?: "",
+                    selectedPkgs = sharedState.selectedPkgs,
+                    selectedCategories = sharedState.selectedCategories,
+                )
+            )
+            event(AppWebEvent.SetServerSites(sharedState.selectedSites.toList()))
             event(AppWebEvent.OnTabSelected(appSiteTabIndex))
         }
-
 
         AppWebSelectionUi(
             navigator = navigator,
@@ -106,9 +118,7 @@ class AppWebSelectionScreen(
             sharedEvent = sharedEvent,
             singleTabMode = singleTabMode,
         )
-
     }
-
 }
 
 @Composable
@@ -123,6 +133,11 @@ fun AppWebSelectionUi(
     var isSearchMode by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var expandedCategories by remember { mutableStateOf(emptySet<String>()) }
+    var expandedApps by remember { mutableStateOf(emptySet<String>()) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var toastJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(isSearchMode) {
         if (isSearchMode) focusRequester.requestFocus()
@@ -131,38 +146,55 @@ fun AppWebSelectionUi(
     val appsLoading = appState.loadAppsResponseState is ResponseState.Loading
     val appsError = appState.loadAppsResponseState.errorText()
     var showErrorAppsDialog by remember { mutableStateOf(false) }
-    LaunchedEffect(appsError){
+    LaunchedEffect(appsError) {
         showErrorAppsDialog = appsError.isNotEmpty()
     }
 
-    // ── Search da kategoriyalar ochiq, search yo'qsa user boshqaradi ─
-    val effectiveExpanded = if (appState.searchQuery.isNotBlank()) {
-        appState.categoryGroups.map { it.id }.toSet()
-    } else {
-        expandedCategories
+    // ─── Apps filter (search) — sort viewModel'da bo'lib bo'lgan ──────
+    val filteredApps = remember(appState.apps, appState.searchQuery) {
+        if (appState.searchQuery.isBlank()) appState.apps
+        else appState.apps.filter { AppFeatures.matchesSearch(it, appState.searchQuery) }
     }
 
-    // ── Flat list uchun sort (kategoriya yo'q holatda) ─
-    val sortedApps = remember(appState.apps) {
-        val selected = sharedState.selectedPkgs
-        appState.apps.sortedWith(
-            compareByDescending<AppSelectionUi> { it.packageName in selected }
-                .thenByDescending { it.usageMinutes }
-                .thenBy { it.name }
-        )
+    // ─── Search vaqtida feature topilsa parent appni auto-expand ──────
+    val effectiveExpandedApps = remember(filteredApps, appState.searchQuery, expandedApps) {
+        if (appState.searchQuery.isNotBlank()) {
+            filteredApps
+                .filter { AppFeatures.visibleFeaturesFor(it, appState.searchQuery).isNotEmpty() }
+                .map { it.packageName }
+                .toSet()
+        } else {
+            expandedApps
+        }
     }
 
-    val filteredApps = remember(sortedApps, appState.searchQuery) {
-        if (appState.searchQuery.isBlank()) sortedApps
-        else sortedApps.filter { AppFeatures.matchesSearch(it, appState.searchQuery) }
+    // ─── Categories: search vaqtida hammasini ochish ──────────────────
+    val effectiveExpandedCategories = remember(appState.categoryGroups, appState.searchQuery, expandedCategories) {
+        if (appState.searchQuery.isNotBlank()) {
+            appState.categoryGroups.map { it.id }.toSet()
+        } else {
+            expandedCategories
+        }
     }
-    // ── Sites sort ───────────────────────────
+
+    // ─── Categories filter (search) ───────────────────────────────────
+    val visibleCategoryGroups = remember(appState.categoryGroups, appState.searchQuery) {
+        if (appState.searchQuery.isBlank()) appState.categoryGroups
+        else appState.categoryGroups.mapNotNull { group ->
+            val filtered = group.apps.filter {
+                it.name.contains(appState.searchQuery, ignoreCase = true)
+            }
+            if (filtered.isEmpty()) null else group.copy(apps = filtered)
+        }
+    }
+
+    // ─── Sites: bir marta sort (selected first + default first) ───────
     val sortedSites = remember(appState.sites) {
-        val selected = sharedState.selectedSites
+        if (appState.sites.isEmpty()) return@remember emptyList()
+        val snap = sharedState.selectedSites
         appState.sites.sortedWith(
-            compareByDescending<SiteUi> { it.url in selected }
+            compareByDescending<SiteUi> { it.url in snap }
                 .thenByDescending { it.isDefault }
-                .thenBy { it.url }
         )
     }
 
@@ -170,14 +202,19 @@ fun AppWebSelectionUi(
         if (appState.searchQuery.isBlank()) sortedSites
         else sortedSites.filter { it.url.contains(appState.searchQuery, ignoreCase = true) }
     }
+    val title = stringResource(Res.string.bu_ilova_kategoriya_orqali_tanlangan)
 
-    // ── Kategoriyali ro'yxatda search filter ─
-    val visibleGroups = remember(appState.categoryGroups, appState.searchQuery) {
-        if (appState.searchQuery.isBlank()) appState.categoryGroups
-        else appState.categoryGroups.filter { group ->
-            group.apps.any { AppFeatures.matchesSearch(it, appState.searchQuery) }
+    fun showCoveredToast() {
+        if (toastJob?.isActive == true) return
+        toastJob = scope.launch {
+            snackbarHostState.showSnackbar(
+                message = title,
+                duration = SnackbarDuration.Short,
+            )
         }
     }
+
+    // ─────────── Dialoglar ───────────
 
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -190,7 +227,6 @@ fun AppWebSelectionUi(
         onButtonClick = { showErrorAppsDialog = false },
     )
 
-
     SubscriptionBottomDialog(
         show = sharedState.showAppLimitDialog,
         title = stringResource(Res.string.limit_tugadi),
@@ -202,10 +238,9 @@ fun AppWebSelectionUi(
             sharedEvent(PolicySharedEvent.DismissAppLimitDialog)
             navigator?.push(SubscriptionPaymentScreen())
         },
-        onDismiss = {
-            sharedEvent(PolicySharedEvent.DismissAppLimitDialog)
-        }
+        onDismiss = { sharedEvent(PolicySharedEvent.DismissAppLimitDialog) },
     )
+
     SubscriptionBottomDialog(
         show = sharedState.showSiteLimitDialog,
         title = stringResource(Res.string.limit_tugadi),
@@ -217,9 +252,7 @@ fun AppWebSelectionUi(
             sharedEvent(PolicySharedEvent.DismissSiteLimitDialog)
             navigator?.push(SubscriptionPaymentScreen())
         },
-        onDismiss = {
-            sharedEvent(PolicySharedEvent.DismissSiteLimitDialog)
-        }
+        onDismiss = { sharedEvent(PolicySharedEvent.DismissSiteLimitDialog) },
     )
 
     SubscriptionBottomDialog(
@@ -230,9 +263,7 @@ fun AppWebSelectionUi(
             sharedEvent(PolicySharedEvent.DismissCategoryLimitDialog)
             navigator?.push(SubscriptionPaymentScreen())
         },
-        onDismiss = {
-            sharedEvent(PolicySharedEvent.DismissCategoryLimitDialog)
-        }
+        onDismiss = { sharedEvent(PolicySharedEvent.DismissCategoryLimitDialog) },
     )
 
     SubscriptionBottomDialog(
@@ -243,13 +274,10 @@ fun AppWebSelectionUi(
             sharedEvent(PolicySharedEvent.DismissFeatureLimitDialog)
             navigator?.push(SubscriptionPaymentScreen())
         },
-        onDismiss = {
-            sharedEvent(PolicySharedEvent.DismissFeatureLimitDialog)
-        }
+        onDismiss = { sharedEvent(PolicySharedEvent.DismissFeatureLimitDialog) },
     )
 
     val errorText = when (appState.siteInputError) {
-        SiteError.INVALID_URL -> stringResource(Res.string.noto_g_ri_url_format)
         SiteError.ALREADY_EXISTS -> stringResource(Res.string.bu_sayt_allaqachon_ro_yxatda)
         null -> null
     }
@@ -266,7 +294,6 @@ fun AppWebSelectionUi(
 
             appEvent(AppWebEvent.ConfirmAddSite)
 
-            // Edit rejimda — selectedSites dagi eski URL ni yangi ga almashtirish
             if (oldSite != null && !oldSite.url.equals(newUrl, ignoreCase = true)) {
                 val updated = sharedState.selectedSites.map {
                     if (it.equals(oldSite.url, ignoreCase = true)) newUrl else it
@@ -280,17 +307,15 @@ fun AppWebSelectionUi(
     SiteEditBottomSheet(
         show = appState.showSiteEditSheet,
         site = appState.editingSite,
-        onEdit = {
-            appState.editingSite?.let { site ->
-                appEvent(AppWebEvent.EditSite(site))
-            }
-        },
+        onEdit = { appState.editingSite?.let { appEvent(AppWebEvent.EditSite(it)) } },
         onDelete = {
             appState.editingSite?.let { site ->
                 appEvent(AppWebEvent.RemoveSite(site.url))
-                sharedEvent(PolicySharedEvent.SetSelectedSites(
-                    sharedState.selectedSites - site.url
-                ))
+                sharedEvent(
+                    PolicySharedEvent.SetSelectedSites(
+                        sharedState.selectedSites - site.url
+                    )
+                )
             }
         },
         onDismiss = { appEvent(AppWebEvent.DismissSiteEditSheet) },
@@ -298,170 +323,165 @@ fun AppWebSelectionUi(
 
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.elevated
+        navigationBarColor = AppColors.bg.elevated,
     )
 
-    // ── UI ───────────────────────────────────
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(systemBars.modifier)
-            .background(AppColors.bg.secondary),
-    ) {
-        // Header
-        if (isSearchMode) {
-            SearchHeader(
-                query = appState.searchQuery,
-                onQueryChange = { appEvent(AppWebEvent.OnSearchQueryChanged(it)) },
-                focusRequester = focusRequester,
-                placeholder = if (appState.tabIndex == 0)
-                    stringResource(Res.string.ilova_qidirish)
-                else stringResource(Res.string.sayt_qidirish),
-                onClose = {
-                    isSearchMode = false
-                    appEvent(AppWebEvent.OnSearchQueryChanged(""))
-                },
-            )
-        } else {
-            CustomHeader(
-                showBackButton = true,
-                onBackClick = { navigator?.pop() },
-                title = stringResource(Res.string.jadval),
-                trailingIcon = {
-                    IconButton(
-                        modifier = Modifier.size(NormalIconButtonSize),
-                        onClick = { isSearchMode = true },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = AppColors.icon.secondary,
-                        ),
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.search_normal),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
-                },
-            )
-        }
-
-
+    // ─────────── UI ───────────
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(),
+                .then(systemBars.modifier)
+                .background(AppColors.bg.secondary),
         ) {
-            // Tab
-
-            if (!singleTabMode) {
-
-                SegmentedTabBar(
-                    items = listOf(
-                        stringResource(Res.string.ilovalar),
-                        stringResource(Res.string.saytlar),
-                    ),
-                    selectedIndex = appState.tabIndex,
-                    borderWidth = 2.dp,
-                    textStyle = AppTypography.bodyLgMedium,
-                    onSelect = { appEvent(AppWebEvent.OnTabSelected(it)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(44.dp)
-                        .padding(horizontal = 16.dp),
-                    colors = SegmentedTabBarDefaults.colors(
-                        textColor = AppColors.text.primary,
-                        selectedBorderColor = AppColors.border.accentEmphasis,
-                        unselectedBorderColor = AppColors.border.disabled
-                    )
+            // ── Header ──
+            if (isSearchMode) {
+                SearchHeader(
+                    query = appState.searchQuery,
+                    onQueryChange = { appEvent(AppWebEvent.OnSearchQueryChanged(it)) },
+                    focusRequester = focusRequester,
+                    placeholder = when (appState.tabIndex) {
+                        2 -> stringResource(Res.string.sayt_qidirish)
+                        else -> stringResource(Res.string.ilova_qidirish)
+                    },
+                    onClose = {
+                        isSearchMode = false
+                        appEvent(AppWebEvent.OnSearchQueryChanged(""))
+                    },
+                )
+            } else {
+                CustomHeader(
+                    showBackButton = true,
+                    onBackClick = { navigator?.pop() },
+                    title = stringResource(Res.string.jadval),
+                    trailingIcon = {
+                        IconButton(
+                            modifier = Modifier.size(NormalIconButtonSize),
+                            onClick = { isSearchMode = true },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = AppColors.icon.secondary,
+                            ),
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.search_normal),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
+                    },
                 )
             }
 
-            // Content
+            // ── 3 ta tab ──
+            if (!singleTabMode) {
+                PillSegmentedButton(
+                    items = listOf(
+                        PillSegmentedItem(stringResource(Res.string.ilovalar)),
+                        PillSegmentedItem(stringResource(Res.string.kategoriyalar)),
+                        PillSegmentedItem(stringResource(Res.string.saytlar)),
+                    ),
+                    selectedIndex = appState.tabIndex,
+                    onSelected = { appEvent(AppWebEvent.OnTabSelected(it)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+            }
+
             Box(modifier = Modifier.weight(1f)) {
                 LazyColumn(
-                    contentPadding = PaddingValues(vertical = 16.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (appState.tabIndex) {
+
+                        // ════════ TAB 0: ILOVALAR ════════
                         0 -> {
                             if (appsLoading) {
-                                // ── Shimmer ──────────
                                 items(count = 12) {
                                     ShimmerAppRowItem(
-                                        modifier = Modifier
-                                            .padding(horizontal = 16.dp)
+                                        modifier = Modifier.padding(horizontal = 16.dp),
                                     )
                                 }
-
-                            } else if (!appState.hasCategoryData) {
+                            } else {
                                 items(
                                     items = filteredApps,
                                     key = { it.packageName },
                                 ) { app ->
-                                    val visibleFeatures = AppFeatures.visibleFeaturesFor(app, appState.searchQuery)
+                                    val visibleFeatures =
+                                        AppFeatures.visibleFeaturesFor(app, appState.searchQuery)
+                                    val covered = sharedState.isAppCoveredByCategory(app.category)
+                                    val isExpanded = effectiveExpandedApps.contains(app.packageName)
+
                                     AppRowWithFeatures(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(AppColors.bg.surface)
-                                            .padding(horizontal = 16.dp),
+                                        modifier = Modifier.fillMaxWidth(),
                                         app = app,
                                         features = visibleFeatures,
                                         isAppSelected = sharedState.isAppSelected(app.packageName, null),
                                         selectedFeatureKeys = sharedState.selectedFeatures,
+                                        coveredByCategory = covered,
                                         enabled = sharedState.canUpdate,
+                                        expanded = isExpanded,
+                                        onToggleExpand = {
+                                            expandedApps = if (expandedApps.contains(app.packageName))
+                                                expandedApps - app.packageName
+                                            else
+                                                expandedApps + app.packageName
+                                        },
                                         onAppToggle = {
-                                            sharedEvent(PolicySharedEvent.ToggleApp(
-                                                packageName = app.packageName,
-                                                category = null,
-                                            ))
+                                            if (covered) {
+                                                showCoveredToast()
+                                            } else {
+                                                sharedEvent(
+                                                    PolicySharedEvent.ToggleApp(
+                                                        packageName = app.packageName,
+                                                        category = null,
+                                                    )
+                                                )
+                                            }
                                         },
                                         onFeatureToggle = { feature ->
-                                            sharedEvent(PolicySharedEvent.ToggleFeature(feature.key))
+                                            if (covered) {
+                                                showCoveredToast()
+                                            } else {
+                                                sharedEvent(PolicySharedEvent.ToggleFeature(feature.key))
+                                            }
                                         },
                                     )
                                 }
-                            } else {
-                                // ── Kategoriyali ro'yxat ─────
-                                visibleGroups.forEach { group ->
-                                    item(key = "cat_${group.id}") {
-                                        val groupApps = if (appState.searchQuery.isBlank()) {
-                                            group
-                                        } else {
-                                            group.copy(
-                                                apps = group.apps.filter {
-                                                    AppFeatures.matchesSearch(it, appState.searchQuery)
-                                                }
-                                            )
-                                        }
+                            }
+                        }
 
-                                        AppCategoryHeaderItem(
-                                            group = groupApps,
-                                            sharedState = sharedState,
-                                            expanded = effectiveExpanded.contains(group.id),
+                        // ════════ TAB 1: KATEGORIYALAR ════════
+                        1 -> {
+                            if (appsLoading) {
+                                items(count = 8) {
+                                    ShimmerAppRowItem(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+                                }
+                            } else {
+                                visibleCategoryGroups.forEach { group ->
+                                    item(key = "cat_${group.id}") {
+                                        CategoryCardItem(
+                                            group = group,
+                                            isSelected = sharedState.isCategorySelected(group.id),
+                                            expanded = effectiveExpandedCategories.contains(group.id),
                                             enabled = sharedState.canUpdate,
-                                            searchQuery = appState.searchQuery,                   // YANGI
                                             onToggleExpand = {
                                                 expandedCategories = if (expandedCategories.contains(group.id))
                                                     expandedCategories - group.id
                                                 else
                                                     expandedCategories + group.id
                                             },
-                                            onToggleCategory = {
-                                                sharedEvent(PolicySharedEvent.ToggleCategory(
-                                                    categoryName = group.id,
-                                                    appPackages = group.apps.map { it.packageName },
-                                                ))
-                                            },
-                                            onToggleApp = { app ->
-                                                sharedEvent(PolicySharedEvent.ToggleApp(
-                                                    packageName = app.packageName,
-                                                    category = group.id,
-                                                    categoryAppPackages = group.apps.map { it.packageName },
-                                                ))
-                                            },
-                                            onToggleFeature = { feature ->                        // YANGI
-                                                sharedEvent(PolicySharedEvent.ToggleFeature(feature.key))
+                                            onToggleSelect = {
+                                                sharedEvent(
+                                                    PolicySharedEvent.ToggleCategory(
+                                                        categoryName = group.id,
+                                                        appPackages = group.apps.map { it.packageName },
+                                                    )
+                                                )
                                             },
                                         )
                                     }
@@ -469,15 +489,14 @@ fun AppWebSelectionUi(
                             }
                         }
 
-                        1 -> {
-                            // ── Saytlar tab ──────────
+                        // ════════ TAB 2: SAYTLAR ════════
+                        2 -> {
                             items(
                                 items = filteredSites,
                                 key = { it.url },
                             ) { site ->
                                 SiteRowItem(
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp),
+                                    modifier = Modifier.padding(horizontal = 16.dp),
                                     site = site,
                                     isSelected = sharedState.isSiteSelected(site.url),
                                     enabled = sharedState.canUpdate,
@@ -495,8 +514,8 @@ fun AppWebSelectionUi(
                     }
                 }
 
-                // FAB
-                if (appState.tabIndex == 1 && sharedState.canUpdate) {
+                // ── FAB faqat Saytlar tabida ──
+                if (appState.tabIndex == 2 && sharedState.canUpdate) {
                     FloatingActionButton(
                         onClick = { appEvent(AppWebEvent.ShowAddSiteDialog) },
                         modifier = Modifier
@@ -512,39 +531,33 @@ fun AppWebSelectionUi(
                 }
             }
 
-            // Saqlash
+            // ── Saqlash tugmasi ──
             if (sharedState.canUpdate) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(AppColors.bg.elevated, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
-                ){
+                        .background(
+                            AppColors.bg.elevated,
+                            RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                        )
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                ) {
                     CustomButtonNew(
                         enabled = sharedState.canSaveAppWebSelection,
                         text = stringResource(Res.string.saqlash),
                         onClick = { navigator?.pop() },
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
         }
-    }
-}
 
-@Preview
-@Composable
-private fun Preview() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ){
-        AppWebSelectionUi(
-            appState = AppWebState(tabIndex = 0, loadAppsResponseState = ResponseState.Loading),
-            appEvent = {},
-            sharedState = PolicySharedState(),
-            sharedEvent = {},
-            singleTabMode = true
+        // ── Snackbar (toast) pastda ──
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp),
         )
     }
 }

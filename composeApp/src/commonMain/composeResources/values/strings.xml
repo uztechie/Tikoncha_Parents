@@ -683,4 +683,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzandlarim">Farzandlarim</string>
     <string name="maxfiylik_siyosati">Maxfiylik siyosati</string>
     <string name="foydalanish_shartlari">Foydalanish shartlari</string>
+    <string name="bu_ilova_kategoriya_orqali_tanlangan">Bu ilova kategoriya orqali tanlangan.</string>
+    <string name="sayt_yoki_kalit_soz_kiriting">Sayt yoki kalit so'z kiriting</string>
+    <string name="sayt_yoki_kalit_soz_label">sayt.uz yoki kalit so'z</string>
 </resources>

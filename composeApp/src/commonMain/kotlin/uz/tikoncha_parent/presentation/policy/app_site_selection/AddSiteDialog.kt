@@ -13,7 +13,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,18 +24,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.close_remove
 import tikoncha_parents.composeapp.generated.resources.saqlash
 import tikoncha_parents.composeapp.generated.resources.sayt_manzilini_kiriting
+import tikoncha_parents.composeapp.generated.resources.sayt_yoki_kalit_soz_kiriting
+import tikoncha_parents.composeapp.generated.resources.sayt_yoki_kalit_soz_label
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
-import uz.tikoncha_parent.ui.theme.ThemeMode
-import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
 fun AddSiteDialog(
@@ -54,7 +52,7 @@ fun AddSiteDialog(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = AppColors.bg.elevated
+                containerColor = AppColors.bg.elevated,
             ),
         ) {
             Column(
@@ -67,7 +65,7 @@ fun AddSiteDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = stringResource(Res.string.sayt_manzilini_kiriting),
+                        text = stringResource(Res.string.sayt_yoki_kalit_soz_kiriting),
                         color = AppColors.text.primary,
                         style = AppTypography.titleMdSemiBold,
                         modifier = Modifier.weight(1f),
@@ -75,14 +73,12 @@ fun AddSiteDialog(
 
                     IconButton(
                         onClick = onDismiss,
-                        modifier = Modifier
-                            .size(30.dp)
+                        modifier = Modifier.size(30.dp),
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.close_remove),
                             contentDescription = "",
-                            modifier = Modifier
-                                .size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                 }
@@ -90,7 +86,7 @@ fun AddSiteDialog(
                 Spacer(Modifier.height(32.dp))
 
                 CustomTextField(
-                    label = "www.website.com",
+                    label = stringResource(Res.string.sayt_yoki_kalit_soz_label),
                     value = inputUrl,
                     singleLine = true,
                     onValueChange = onInputChange,
@@ -103,7 +99,7 @@ fun AddSiteDialog(
                         keyboardType = KeyboardType.Text,
                         capitalization = KeyboardCapitalization.None,
                         imeAction = ImeAction.Done,
-                    )
+                    ),
                 )
 
                 if (inputError != null) {
@@ -127,22 +123,5 @@ fun AddSiteDialog(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun Pre() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ) {
-        AddSiteDialog(
-            show = true,
-            inputUrl = "",
-            inputError = null,
-            onInputChange = {},
-            onConfirm = {}
-
-        ) { }
     }
 }

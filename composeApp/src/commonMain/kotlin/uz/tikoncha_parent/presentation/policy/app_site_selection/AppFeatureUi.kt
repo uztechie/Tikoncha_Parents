@@ -1,9 +1,9 @@
 package uz.tikoncha_parent.presentation.policy.app_site_selection
 
 data class AppFeatureUi(
-    val key: String,            // "YOUTUBE_SHORTS", "INSTAGRAM_REELS"
-    val name: String,           // "YouTube Shorts"
-    val parentPackage: String,  // "com.google.android.youtube"
+    val key: String,
+    val name: String,
+    val parentPackage: String,
 )
 
 object AppFeatures {
@@ -16,18 +16,10 @@ object AppFeatures {
 
     private val REGISTRY: Map<String, List<AppFeatureUi>> = mapOf(
         YOUTUBE_PACKAGE to listOf(
-            AppFeatureUi(
-                key = KEY_YOUTUBE_SHORTS,
-                name = "YouTube Shorts",
-                parentPackage = YOUTUBE_PACKAGE,
-            )
+            AppFeatureUi(KEY_YOUTUBE_SHORTS, "YouTube Shorts", YOUTUBE_PACKAGE),
         ),
         INSTAGRAM_PACKAGE to listOf(
-            AppFeatureUi(
-                key = KEY_INSTAGRAM_REELS,
-                name = "Instagram Reels",
-                parentPackage = INSTAGRAM_PACKAGE,
-            )
+            AppFeatureUi(KEY_INSTAGRAM_REELS, "Instagram Reels", INSTAGRAM_PACKAGE),
         ),
     )
 
@@ -48,5 +40,15 @@ object AppFeatures {
         return featuresFor(app.packageName).any {
             it.name.contains(searchQuery, ignoreCase = true)
         }
+    }
+
+    /** YANGI: feature kalitiga qarab parent package nomini topadi. */
+    fun parentPackageOf(featureKey: String): String? {
+        REGISTRY.forEach { (pkg, features) ->
+            if (features.any { it.key.equals(featureKey, ignoreCase = true) }) {
+                return pkg
+            }
+        }
+        return null
     }
 }
