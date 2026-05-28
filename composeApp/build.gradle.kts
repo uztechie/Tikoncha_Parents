@@ -80,6 +80,9 @@ kotlin {
             implementation("androidx.media3:media3-exoplayer:1.10.0")
             implementation("androidx.media3:media3-ui:1.10.0")
             implementation("androidx.media3:media3-exoplayer-hls:1.10.0")
+
+            //telegram login
+            implementation(libs.telegram.login.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -191,8 +194,8 @@ android {
         applicationId = "uz.tikoncha.parent"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 18
-        versionName = "1.1.8"
+        versionCode = 19
+        versionName = "1.1.9"
     }
     setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
 //    val props = Properties().apply {

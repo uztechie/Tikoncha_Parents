@@ -1,6 +1,7 @@
 package uz.tikoncha_parent
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.yandex.mapkit.MapKit
 
 import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.remote.telegram.TelegramConfig
+import uz.tikoncha_parent.data.remote.telegram.TelegramLoginCoordinator
 import uz.tikoncha_parent.presentation.push.AndroidDeepLinkParser
 import uz.tikoncha_parent.presentation.push.DeepLinkBus
 import uz.tikoncha_parent.presentation.push.FcmTokenRegister
@@ -33,6 +36,9 @@ class MainActivity : AppCompatActivity() {
 
 
         super.onCreate(savedInstanceState)
+
+        TelegramLoginCoordinator.bindActivity(this)
+        handleTelegramIntent(intent)
 
         PushPlatform.bind(this)
         PushPlatform.initialize()
@@ -72,14 +78,28 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+
+    override fun onDestroy() {
+        TelegramLoginCoordinator.unbindActivity(this)
+        super.onDestroy()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent: ")
+        handleTelegramIntent(intent)
         // App ochiq bo'lsa bus orqali darhol navigate
         AndroidDeepLinkParser.parse(intent)?.let { link ->
             Log.d(TAG, "new intent enqueue link=$link")
             PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
             DeepLinkBus.open(link)       // UI tayyor bo‘lsa darhol ochadi
+        }
+    }
+
+    private fun handleTelegramIntent(intent: Intent?) {
+        val uri: Uri = intent?.data ?: return
+        if (uri.host == TelegramConfig.REDIRECT_HOST) {
+            TelegramLoginCoordinator.handleResponse(uri)
         }
     }
 }

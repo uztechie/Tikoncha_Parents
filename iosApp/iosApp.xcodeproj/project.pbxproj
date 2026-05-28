@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		36EBCCD5259130251974763E /* IosIapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EBC863B33B47C3D1C660AC /* IosIapManager.swift */; };
 		5700FBF946BF6947404585EE /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E9CBB832E69DF3C8FA0018 /* Pods_iosApp.framework */; };
+		CEE8231C2FC56645002CF736 /* TelegramLogin in Frameworks */ = {isa = PBXBuildFile; productRef = CEE8231B2FC56645002CF736 /* TelegramLogin */; };
 		CEFC06872F0D2E0E0059981F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFC06862F0D2E0E0059981F /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEE8231C2FC56645002CF736 /* TelegramLogin in Frameworks */,
 				5700FBF946BF6947404585EE /* Pods_iosApp.framework in Frameworks */,
 				CEFC06872F0D2E0E0059981F /* StoreKit.framework in Frameworks */,
 			);
@@ -152,6 +154,9 @@
 			);
 			mainGroup = B9DA97A82DC1472C00A4DA20;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CEE8231A2FC56645002CF736 /* XCRemoteSwiftPackageReference "telegram-login-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B9DA97B22DC1472C00A4DA20 /* Products */;
 			projectDirPath = "";
@@ -516,6 +521,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CEE8231A2FC56645002CF736 /* XCRemoteSwiftPackageReference "telegram-login-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelegramMessenger/telegram-login-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CEE8231B2FC56645002CF736 /* TelegramLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEE8231A2FC56645002CF736 /* XCRemoteSwiftPackageReference "telegram-login-ios" */;
+			productName = TelegramLogin;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B9DA97A92DC1472C00A4DA20 /* Project object */;
 }

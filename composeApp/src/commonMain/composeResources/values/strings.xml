@@ -686,4 +686,5 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="bu_ilova_kategoriya_orqali_tanlangan">Bu ilova kategoriya orqali tanlangan.</string>
     <string name="sayt_yoki_kalit_soz_kiriting">Sayt yoki kalit so'z kiriting</string>
     <string name="sayt_yoki_kalit_soz_label">sayt.uz yoki kalit so'z</string>
+    <string name="kirish_bekor_qilindi">Kirish bekor qilindi</string>
 </resources>

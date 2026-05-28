@@ -2,7 +2,9 @@ package uz.tikoncha_parent
 
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
+import org.telegram.login.TelegramLogin
 import uz.tikoncha_parent.core.initKoin
+import uz.tikoncha_parent.data.remote.telegram.TelegramConfig
 import uz.tikoncha_parent.platform.appContext
 
 
@@ -14,6 +16,12 @@ class MyApp : Application() {
         initMapKit()
         initKoin(
             config = {androidContext(this@MyApp)}
+        )
+
+        TelegramLogin.init(
+            clientId = TelegramConfig.CLIENT_ID,
+            redirectUri = TelegramConfig.REDIRECT_URI_ANDROID,
+            scopes = TelegramConfig.SCOPES
         )
     }
 }

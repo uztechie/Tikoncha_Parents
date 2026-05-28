@@ -2,6 +2,8 @@ package uz.tikoncha_parent.presentation.login
 
 data class LoginState(
     val number: String = "",
+    val isTelegramLoading: Boolean = false,
+    val errorMessage: String? = null,
 ) {
     val isPhoneNumberValid: Boolean
         get() = number.length == 9 &&

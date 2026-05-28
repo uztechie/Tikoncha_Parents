@@ -16,9 +16,21 @@ import uz.saidburxon.newedu.data.model.VerifyOtpRequest
 import uz.saidburxon.newedu.data.model.VerifyOtpResponse
 import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
+import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginRequest
+import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginResponse
 import uz.tikoncha_parent.domain.model.UserInfo
 
 class LoginApiService(private val client: HttpClient) {
+
+    suspend fun telegramLogin(request: TelegramLoginRequest): TelegramLoginResponse =
+        client.safeRequest(
+            method = HttpMethod.Post,
+            url = "auth/telegram-login",
+            block = {
+                header("APP_CODE", AppCode.currentAppCode)
+                setBody(request)
+            }
+        )
 
 
     suspend fun sendOtp(request: SendOtpRequest): SendOtpResponse =
@@ -44,7 +56,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun registerUser(request: RegisterUserRequest): RegisterUserResponse =
         client.safeRequest(
             method = HttpMethod.Post,
-            url = "users/parent-subscription_info",
+            url = "users/parent-info",
             block = {
                 setBody(request)
             }
@@ -53,7 +65,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun userInfoEdit(request: RegisterUserRequest): RegisterUserResponse =
         client.safeRequest(
             method = HttpMethod.Put,
-            url = "users/parent-subscription_info",
+            url = "users/parent-info",
             block = {
                 setBody(request)
             }
@@ -71,7 +83,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun userInfo(): UserInfoResponse =
         client.safeRequest(
             method = HttpMethod.Get,
-            url = "users/parent-subscription_info",
+            url = "users/parent-info",
             block = {
                 parameter("user_id", AppSettings.userId)
             }
@@ -81,7 +93,7 @@ class LoginApiService(private val client: HttpClient) {
     suspend fun childInfoEdit(body: UserInfoDto): UserInfoResponse =
         client.safeRequest(
             method = HttpMethod.Patch,
-            url = "/users/student-subscription_info",
+            url = "/users/student-info",
             block = {
                 setBody(body)
             }

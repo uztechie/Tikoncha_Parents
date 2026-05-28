@@ -23,6 +23,8 @@ ktor = "3.4.3"
 kotlinSerialization = "1.11.0"
 settings = "1.0.3"
 
+telegramLoginAndroid = "1.0.0"
+
 
 [libraries]
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
@@ -65,6 +67,9 @@ ktor-client-websocket = { module = "io.ktor:ktor-client-websockets", version.ref
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 
 remember-settings = { module = "dev.burnoo:compose-remember-setting", version.ref = "settings" }
+
+telegram-login-android = { module = "org.telegram:login-sdk", version.ref = "telegramLoginAndroid" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

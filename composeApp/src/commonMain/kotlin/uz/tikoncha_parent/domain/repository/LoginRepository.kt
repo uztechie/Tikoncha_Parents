@@ -10,11 +10,14 @@ import uz.saidburxon.newedu.data.model.SendOtpResponse
 import uz.saidburxon.newedu.data.model.VerifyOtpRequest
 import uz.saidburxon.newedu.data.model.VerifyOtpResponse
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
+import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginRequest
+import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginResponse
 import uz.tikoncha_parent.domain.model.UserInfo
 
 
 interface LoginRepository {
 
+    suspend fun telegramLogin(request: TelegramLoginRequest): TelegramLoginResponse
     suspend fun sendOtp(request: SendOtpRequest): SendOtpResponse
 
     suspend fun verifyOtp(request: VerifyOtpRequest): VerifyOtpResponse
