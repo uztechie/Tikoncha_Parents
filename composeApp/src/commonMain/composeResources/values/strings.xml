@@ -687,4 +687,14 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="sayt_yoki_kalit_soz_kiriting">Sayt yoki kalit so'z kiriting</string>
     <string name="sayt_yoki_kalit_soz_label">sayt.uz yoki kalit so'z</string>
     <string name="kirish_bekor_qilindi">Kirish bekor qilindi</string>
+
+    <string name="telegram_orqali_kirish">Telegram orqali kirish</string>
+    <string name="yoki">yoki</string>
+    <string name="telefon_raqami">Telefon raqami</string>
+    <string name="kirish_subtitle">Davom etish uchun hisobingizga kiring</string>
+    <string name="login_privacy">Davom etish orqali siz Maxfiylik siyosati va Foydalanish shartlariga rozilik bildirasiz</string>
+
+    <string name="telegram_ochilmoqda">Telegram ochilmoqda…</string>
+    <string name="telegram_phone_note">Telegram orqali kirganda telefon raqamingiz soʻraladi — buni Telegram oynasida koʻrasiz</string>
+    <string name="qayta_yuborish">Qayta yuborish</string>
 </resources>

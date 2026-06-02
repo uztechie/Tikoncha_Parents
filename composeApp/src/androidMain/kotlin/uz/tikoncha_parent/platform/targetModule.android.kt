@@ -9,10 +9,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import uz.tikoncha_parent.data.in_app_update.InAppUpdateDataSource
 import uz.tikoncha_parent.data.player.PlayerEngine
-import uz.tikoncha_parent.data.remote.telegram.TelegramAuthClient
-import uz.tikoncha_parent.domain.model.in_app_update.InstallEvent
-import uz.tikoncha_parent.domain.model.in_app_update.UpdateStatus
-import uz.tikoncha_parent.domain.model.in_app_update.UpdateType
 import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
@@ -62,7 +58,6 @@ actual val targetModule = module {
 
     single { PlayerEngine(androidContext()) }
 
-    single { TelegramAuthClient() }
 
 
 }

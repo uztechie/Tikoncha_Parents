@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,60 +21,52 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import com.yourpackage.utils.formatTwoDigits
-import uz.tikoncha_parent.presentation.base.LoadingDialog
-import uz.tikoncha_parent.presentation.base.LogoHeader
-import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.presentation.register.RegisterScreen
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.Util.maskPhone
-import uz.tikoncha_parent.platform.openTelegram
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
-import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.TopBackButton
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.presentation.register.RegisterScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
-
+private const val OTP_LENGTH = 6
 class OtpScreen(
-    private val phoneNumber: String
+    private val phoneNumber: String,
 ) : Screen {
 
     @Composable
     override fun Content() {
-
         val viewModel = koinScreenModel<OtpViewmodel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
-
-        LaunchedEffect(phoneNumber) {
-            event(OtpEvent.SetPhone(phoneNumber))
-        }
-
         val navigator = LocalNavigator.current
 
-        OtpUi(
-            navigator = navigator,
-            state = state,
-            event = event
-        )
+        LaunchedEffect(phoneNumber) {
+            viewModel.onEvent(OtpEvent.SetPhone(phoneNumber))
+        }
+
+        OtpUi(navigator = navigator, state = state, event = viewModel::onEvent)
     }
 }
 
@@ -80,11 +74,11 @@ class OtpScreen(
 fun OtpUi(
     navigator: Navigator?,
     state: OtpState,
-    event: (OtpEvent) -> Unit
+    event: (OtpEvent) -> Unit,
 ) {
     val isOtpCodeValid = state.otpCode.length == 6 && state.otpCode.all { it.isDigit() }
     val maskedPhone = remember(state.phoneNumber) { maskPhone(state.phoneNumber) }
-    val formattedTime = formatTwoDigits(state.timeLife)
+    val formattedTime = state.timeLife.toString().padStart(2, '0')
 
     val borderColor = when {
         state.hasInputError -> OtpErrorColor
@@ -95,52 +89,37 @@ fun OtpUi(
     val showLoading = state.responseState is ResponseState.Loading || state.isSendingOtp
     val errorText = state.responseState.errorText()
     val isSuccess = state.responseState is ResponseState.Success
+
     var showErrorDialog by remember { mutableStateOf(false) }
-    // Ekranga kirgan zahoti method selection dialog ochiladi (SMS / Telegram / boshqa raqam)
-    var showTelegramDialog by rememberSaveable { mutableStateOf(true) }
-    var showMethodDialog by rememberSaveable { mutableStateOf(false) }
-    var hasMadeSelection by rememberSaveable { mutableStateOf(false) }
     var hasNavigated by rememberSaveable { mutableStateOf(false) }
 
-    val textSubTitle = if (state.isTelegram == true) {
-        stringResource(Res.string.telegram_kod_kiritish, maskedPhone)
-    } else {
-        stringResource(Res.string.otp_enter_code_with_phone, maskedPhone)
-    }
-
     LaunchedEffect(errorText) {
-        if (errorText.isNotEmpty()) {
-            showErrorDialog = true
-        }
+        if (errorText.isNotEmpty()) showErrorDialog = true
     }
 
     LoadingDialog(show = showLoading)
 
-    CustomBottomDialog(
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
         show = showErrorDialog,
         title = stringResource(Res.string.xatolik),
         message = errorText,
-        confirmButtonText = if (!state.deleteAccountUrl.isNullOrBlank()) {
+        buttonText = if (!state.deleteAccountUrl.isNullOrBlank()) {
             stringResource(Res.string.sahifaga_otish)
         } else {
             stringResource(Res.string.ok)
         },
-        showCancelButton = !state.deleteAccountUrl.isNullOrBlank(),
+        showCloseButton = !state.deleteAccountUrl.isNullOrBlank(),
         onDismiss = {
             showErrorDialog = false
             event(OtpEvent.ResetError)
         },
-        onConfirm = {
+        onButtonClick = {
             showErrorDialog = false
             val url = state.deleteAccountUrl
-            if (!url.isNullOrBlank()){
-                openUrl(url)
-            } else {
-                event(OtpEvent.ResetError)
-            }
-        }
+            if (!url.isNullOrBlank()) openUrl(url) else event(OtpEvent.ResetError)
+        },
     )
-
 
     LaunchedEffect(isSuccess) {
         if (isSuccess && !hasNavigated) {
@@ -157,160 +136,128 @@ fun OtpUi(
         }
     }
 
-    TelegramOtpDialog(
-        show = showTelegramDialog,
-        onDismiss = {
-            showTelegramDialog = false
-            showMethodDialog = true
-        },
-        onConfirm = {
-            showTelegramDialog = false
-            hasMadeSelection = true
-            event(OtpEvent.SetTelegram(true))
-            openTelegram(state.phoneNumber)
-            event(OtpEvent.TimeStart)
-        }
-    )
-
-    OtpMethodSelectionDialog(
-        show = showMethodDialog,
-        onDismiss = {
-            showMethodDialog = false
-            if (!hasMadeSelection) {
-                navigator?.pop()
-            }
-        },
-        onConfirmSMS = {
-            showMethodDialog = false
-            hasMadeSelection = true
-            event(OtpEvent.SetTelegram(false))
-            event(OtpEvent.SendOtp)
-        },
-        onOtherNumber = {
-            showMethodDialog = false
-            hasMadeSelection = true
-            navigator?.pop()
-        },
-        onConfirmTelegram = {
-            showMethodDialog = false
-            hasMadeSelection = true
-            event(OtpEvent.SetTelegram(true))
-            openTelegram(state.phoneNumber)
-            event(OtpEvent.TimeStart)
-        }
-    )
-
     val systemBars = rememberScreenSystemBars(
-        statusBarColor = AppColors.bg.secondary,
-        navigationBarColor = AppColors.bg.secondary
+        statusBarColor = AppColors.bg.page,
+        navigationBarColor = AppColors.bg.page,
     )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
-            .background(AppColors.bg.secondary)
-            .padding(horizontal = 20.dp)
-            .imePadding()
+            .background(AppColors.bg.page),
+        horizontalAlignment = Alignment.Start,
     ) {
-        LogoHeader()
+        TopBackButton(
+            modifier = Modifier.padding(top = 25.dp, start = 16.dp),
+            onClick = { navigator?.pop() },
+        )
 
-        CustomText(
-            text = stringResource(Res.string.xush_kelibsiz),
-            fontSize = LargeTextSize,
-            fontWeight = FontWeight.W600,
-        )
-        SpaceMedium()
-
-        CustomText(
-            text = textSubTitle,
-            fontSize = NormalTextSize,
-            fontStyle = FontStyle.Normal,
-            color = MaterialTheme.extendedColor.hintColor,
-            fontWeight = FontWeight.W500,
-        )
-        SpaceLarge()
-        OtpInput(
-            onBorderColor = borderColor,
-            onOtpUpdate = {
-                event(OtpEvent.OnOtpUpdate(it))
-            }
-        )
+        Spacer(Modifier.fillMaxHeight(0.1f))
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 30.dp),
         ) {
-            SpaceLarge()
+            Text(
+                text = stringResource(Res.string.kodni_kiriting),
+                style = AppTypography.headlineMdSemiBold,
+                color = AppColors.text.primary,
+            )
+            Spacer(Modifier.height(12.dp))
 
-            when {
-                state.isRunning -> {
+            Text(
+                text = stringResource(Res.string.otp_enter_code_with_phone, maskedPhone),
+                style = AppTypography.emphasizedMdMedium,
+                color = AppColors.text.secondary,
+            )
+            Spacer(Modifier.height(24.dp))
+
+            val otpTextCode = if (state.hasInputError) {
+                AppColors.text.accentDanger
+            } else {
+                AppColors.text.primary
+            }
+
+            OtpInput(
+                otpLength = OTP_LENGTH,
+                textColor = otpTextCode,
+                autoFocus = state.isRunning,
+                otpText = state.otpCode,
+                onOtpUpdate = {
+                    event(OtpEvent.OnOtpUpdate(it))
+                }
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(Modifier.height(24.dp))
+
+                if (state.isRunning) {
                     if (state.hasInputError) {
-                        CustomText(
+                        Text(
                             text = stringResource(Res.string.xato_kod_kiritdingiz),
-                            color = OtpErrorColor
+                            style = AppTypography.titleSmMedium,
+                            color = AppColors.text.accentDanger,
                         )
                         SpaceUltraSmall()
-                        CustomText(text = stringResource(Res.string.sekund, formattedTime))
-                    } else {
-                        CustomText(text = stringResource(Res.string.sekund, formattedTime))
                     }
-                }
-
-                state.hasInputError -> {
-                    CustomText(
-                        text = stringResource(Res.string.xato_kod_kiritdingiz),
-                        color = OtpErrorColor
+                    Text(
+                        text = stringResource(Res.string.sekund, formattedTime),
+                        style = AppTypography.titleSmMedium,
+                        color = AppColors.text.accentEmphasis,
                     )
-                    SpaceUltraSmall()
-                    CustomText(
-                        text = stringResource(Res.string.kod_olish_usulini_ozgartirish),
-                        color = MaterialTheme.extendedColor.primaryColor,
+                } else {
+                    if (state.hasInputError) {
+                        Text(
+                            text = stringResource(Res.string.xato_kod_kiritdingiz),
+                            style = AppTypography.titleSmMedium,
+                            color = AppColors.text.accentDanger,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    Text(
+                        text = stringResource(Res.string.qayta_yuborish),
+                        style = AppTypography.titleSmMedium.copy(textDecoration = TextDecoration.Underline),
+                        color = AppColors.text.accentEmphasis,
                         modifier = Modifier.clickable(
                             interactionSource = null,
-                            indication = null
-                        ) { showMethodDialog = true }
-                    )
-                }
-                state.isTelegram != null && !state.isRunning -> {
-                    CustomText(
-                        text = stringResource(Res.string.kod_olish_usulini_ozgartirish),
-                        color = MaterialTheme.extendedColor.primaryColor,
-                        modifier = Modifier.clickable(
-                            interactionSource = null,
-                            indication = null
-                        ) { showMethodDialog = true }
+                            indication = null,
+                        ) { event(OtpEvent.SendOtp) },
                     )
                 }
             }
-        }
-        Spacer(modifier = Modifier.weight(1f))
 
-        CustomButton(
-            onClick = {
-                if (!showLoading && !hasNavigated) {
-                    event(OtpEvent.OnConfirmClicked)
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ButtonHeight),
-            enabled = isOtpCodeValid && !showLoading,
-            text = stringResource(Res.string.keyingisi)
-        )
-        SpaceLarge()
+            Spacer(Modifier.weight(1f))
+
+            Column(
+                modifier = Modifier
+                    .imePadding()
+                    .padding(bottom = 16.dp),
+            ) {
+                CustomButton(
+                    enabled = isOtpCodeValid && !showLoading,
+                    text = stringResource(Res.string.davom_etish),
+                    onClick = {
+                        if (!showLoading && !hasNavigated) event(OtpEvent.OnConfirmClicked)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(ButtonHeight),
+                )
+            }
+        }
     }
 }
-
 
 @Preview
 @Composable
 private fun Preview() {
     TikonchaParentTheme(ThemeMode.DARK) {
-        OtpUi(
-            navigator = null,
-            state = OtpState(),
-            event = {}
-        )
+        OtpUi(navigator = null, state = OtpState(), event = {})
     }
 }

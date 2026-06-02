@@ -1,48 +1,42 @@
 package uz.tikoncha_parent.data.remote.telegram
 
 import android.app.Activity
+import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.net.Uri
-import kotlinx.coroutines.suspendCancellableCoroutine
 import org.telegram.login.TelegramLogin
+import uz.tikoncha_parent.domain.model.auth.TelegramAuthResult
 import java.lang.ref.WeakReference
-import kotlin.coroutines.resume
 
 object TelegramLoginCoordinator {
 
-    // O'zgartirish: WeakReference orqali Activity'ni ushlash
+    private var appContext: Context? = null
     private var activityRef: WeakReference<Activity>? = null
-    private var pendingCallback: ((TelegramAuthResult) -> Unit)? = null
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
 
     fun bindActivity(activity: Activity) {
         activityRef = WeakReference(activity)
     }
 
     fun unbindActivity(activity: Activity) {
-        if (activityRef?.get() === activity) {
-            activityRef = null
-        }
+        if (activityRef?.get() === activity) activityRef = null
     }
 
-    suspend fun startLogin(): TelegramAuthResult = suspendCancellableCoroutine { cont ->
-        val activity = activityRef?.get()
-        if (activity == null) {
-            cont.resume(TelegramAuthResult.Error("Activity mavjud emas"))
-            return@suspendCancellableCoroutine
-        }
+    fun currentContext(): Context? = activityRef?.get() ?: appContext
 
-        pendingCallback = { result ->
-            if (cont.isActive) cont.resume(result)
-        }
-
-        try {
+    fun startLogin(): Boolean {
+        val activity = activityRef?.get() ?: return false
+        return try {
             TelegramLogin.startLogin(activity)
+            true
         } catch (e: Throwable) {
-            pendingCallback = null
-            cont.resume(TelegramAuthResult.Error(e.message ?: "Telegram login boshlanmadi"))
-        }
-
-        cont.invokeOnCancellation {
-            pendingCallback = null
+            TelegramAuthBus.emitResult(
+                TelegramAuthResult.Error(e.message ?: "Telegram login boshlanmadi")
+            )
+            false
         }
     }
 
@@ -50,15 +44,15 @@ object TelegramLoginCoordinator {
         TelegramLogin.handleLoginResponse(
             uri = uri,
             onSuccess = { data ->
-                val cb = pendingCallback
-                pendingCallback = null
-                cb?.invoke(TelegramAuthResult.Success(data.idToken))
+                TelegramAuthBus.emitResult(TelegramAuthResult.Success(data.idToken))
             },
             onError = { error ->
-                val cb = pendingCallback
-                pendingCallback = null
-                cb?.invoke(TelegramAuthResult.Error(error.message ?: "Telegram xatosi"))
+                TelegramAuthBus.emitResult(
+                    TelegramAuthResult.Error(error.message ?: "Telegram xatosi")
+                )
             }
         )
     }
+
+
 }

@@ -87,8 +87,9 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent: ")
+
         handleTelegramIntent(intent)
-        // App ochiq bo'lsa bus orqali darhol navigate
+
         AndroidDeepLinkParser.parse(intent)?.let { link ->
             Log.d(TAG, "new intent enqueue link=$link")
             PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
@@ -98,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleTelegramIntent(intent: Intent?) {
         val uri: Uri = intent?.data ?: return
-        if (uri.host == TelegramConfig.REDIRECT_HOST) {
+        if (TelegramConfig.isTelegramHost(uri.host)) {
             TelegramLoginCoordinator.handleResponse(uri)
         }
     }

@@ -7,10 +7,9 @@ data class OtpState(
     val phoneNumber: String = "",
     val otpCode: String = "",
     val isRunning: Boolean = false,
-    val isTelegram: Boolean? = null,
     val hasInputError: Boolean = false,
     var timeLife: Int = 0,
     var isSendingOtp: Boolean = false,
     val responseState: ResponseState<VerifyOtpResponseData> = ResponseState.Idle,
-    val deleteAccountUrl: String? = null
+    val deleteAccountUrl: String? = null,
 )

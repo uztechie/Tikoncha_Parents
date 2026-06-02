@@ -54,6 +54,7 @@ import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
 import uz.tikoncha_parent.data.repository.PermissionStatusRepositoryImpl
 import uz.tikoncha_parent.data.repository.PlayerRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
+import uz.tikoncha_parent.data.repository.TelegramAuthRepositoryImpl
 import uz.tikoncha_parent.data.repository.TutorialRepositoryImpl
 import uz.tikoncha_parent.data.repository.UpdateRepositoryImpl
 import uz.tikoncha_parent.domain.model.UserInfo
@@ -68,6 +69,7 @@ import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.domain.repository.PlayerRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.repository.TelegramAuthRepository
 import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
@@ -80,6 +82,7 @@ import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.UpdateParentRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoEditUseCase
+import uz.tikoncha_parent.domain.use_case.auth.TelegramLoginUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
@@ -198,6 +201,8 @@ val sharedModule = module {
     single<PlayerRepository> { PlayerRepositoryImpl(get()) }
     single<TutorialRepository> { TutorialRepositoryImpl(get()) }
 
+    single<TelegramAuthRepository> { TelegramAuthRepositoryImpl() }
+
 
 
     //use case module
@@ -269,11 +274,12 @@ val sharedModule = module {
 
     factory { DeleteAvatarFromServerUseCase(get()) }
     factory { GetSubscriptionStatusUseCase(get()) }
+    factory { TelegramLoginUseCase(get()) }
 
 
 
 
-    factory { LoginViewModel() }
+    factory { LoginViewModel(get(), get(), get()) }
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
     factory { ProfileViewModel(get(), get(), get(), get(), get(), get()) }

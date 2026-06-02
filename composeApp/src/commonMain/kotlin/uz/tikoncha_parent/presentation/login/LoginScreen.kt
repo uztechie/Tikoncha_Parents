@@ -1,55 +1,83 @@
-@file:Suppress("DEPRECATION")
-
 package uz.tikoncha_parent.presentation.login
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.presentation.base.LogoHeader
-import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
-import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.presentation.otp.OtpScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.*
+import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.CustomButtonNew
+import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
+import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
+import uz.tikoncha_parent.presentation.otp.OtpScreen
+import uz.tikoncha_parent.presentation.register.RegisterScreen
+import uz.tikoncha_parent.ui.ButtonHeight
+import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
+
+// Telegram brand rangi — design token emas
+private val TelegramBlue = Color(0xFF229ED9)
 
 class LoginScreen : Screen {
 
@@ -57,94 +85,161 @@ class LoginScreen : Screen {
     override fun Content() {
         val viewModel = koinScreenModel<LoginViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
-        val event = viewModel::onEvent
         val navigator = LocalNavigator.current
+
+        LaunchedEffect(Unit) {
+            viewModel.sideEffects.collect { effect ->
+                when (effect) {
+                    LoginSideEffect.NavigateToHome -> navigator?.replaceAll(NewHomeScreen())
+                    LoginSideEffect.NavigateToRegister -> navigator?.push(RegisterScreen())
+                    is LoginSideEffect.NavigateToOtp -> navigator?.push(OtpScreen(effect.phoneNumber))
+                }
+            }
+        }
 
         LoginUi(
             navigator = navigator,
             state = state,
-            event = event
+            event = viewModel::onEvent,
         )
     }
 }
-
 
 @Composable
 fun LoginUi(
     navigator: Navigator?,
     state: LoginState,
-    event: (LoginEvent) -> Unit
+    event: (LoginEvent) -> Unit,
 ) {
-    val isKeyboardOpen = rememberIsKeyboardOpen()
-
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
-        navigationBarColor = AppColors.bg.page
+        navigationBarColor = AppColors.bg.page,
+    )
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+
+    val errorText: String? = when {
+        state.errorMessage != null -> state.errorMessage
+        state.errorRes != null -> stringResource(state.errorRes)
+        else -> null
+    }
+
+    val dialogError: String? = when {
+        state.dialogErrorMessage != null -> state.dialogErrorMessage
+        state.dialogErrorRes != null -> stringResource(state.dialogErrorRes)
+        else -> null
+    }
+    LoadingDialog(show = state.isPhoneLoading)
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
+        show = dialogError != null,
+        title = stringResource(Res.string.xatolik),
+        message = dialogError ?: "",
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = { event(LoginEvent.OnDialogErrorDismissed) },
+        onButtonClick = { event(LoginEvent.OnDialogErrorDismissed) },
     )
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
-            .background(AppColors.bg.page)
-            .imePadding()
+            .background(AppColors.bg.page),
     ) {
+        // Terms uchun pastda joy qoldirib, qolganini ikki teng yarmga bo'lamiz
+        val termsReserve = 64.dp
+        val halfHeight = (maxHeight - termsReserve) / 2f
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+                .imePadding()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 20.dp),
         ) {
-            LogoHeader()
-
-            AnimatedVisibility(visible = !isKeyboardOpen) {
-                Image(
-                    painter = painterResource(Res.drawable.slider_normal),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(4f / 3f),
-                    contentScale = ContentScale.FillBounds
-                )
+            // YUQORI YARM — hero markazda
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = halfHeight),
+                contentAlignment = Alignment.Center,
+            ) {
+                HeroSection(modifier = Modifier.fillMaxWidth())
             }
-            SpaceLarge()
-            CustomText(
-                text = stringResource(Res.string.xush_kelibsiz),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.W600,
-            )
-            SpaceMedium()
-            CustomText(
-                text = stringResource(Res.string.ro_yxatdan_o_tish),
-                fontSize = 16.sp,
-                color = MaterialTheme.extendedColor.hintColor,
-                fontWeight = FontWeight.W500,
-            )
-            SpaceMedium()
-            PhoneNumberInputField(
-                phoneNumber = state.number,
-                onPhoneNumberChange = {
-                    event(LoginEvent.OnNumberInsert(it))
-                },
+
+            // PASTKI YARM — telegram + telefon/button markazda
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AppColors.field.secondary, RoundedCornerShape(TextFieldCornerRadius))
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            CustomButton(
-                onClick = {
-                    if (state.isPhoneNumberValid) {
-                        navigator?.push(OtpScreen(state.fullNumber))
+                    .heightIn(min = halfHeight),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    TelegramLoginButton(
+                        isLoading = state.isTelegramLoading,
+                        onClick = { event(LoginEvent.OnTelegramClicked) },
+                    )
+                    if (errorText != null) {
+                        Space(4.dp)
+                        Text(
+                            text = errorText,
+                            style = AppTypography.emphasizedSmMedium,
+                            color = AppColors.text.accentDanger,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
-                },
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxWidth()
-                    .height(ButtonHeight),
-                enabled = state.isPhoneNumberValid,
-                text = stringResource(Res.string.keyingisi)
-            )
-            SpaceSmall()
+                    Space(12.dp)
+                    PhonePermissionNote()
+
+                    if (state.showPhone) {
+                        Space(30.dp)
+                        OrDivider()
+                        Space(30.dp)
+
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = stringResource(Res.string.telefon_raqami),
+                                style = AppTypography.emphasizedSmMedium,
+                                color = AppColors.text.tertiary,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            PhoneNumberInputField(
+                                phoneNumber = state.number,
+                                onPhoneNumberChange = { event(LoginEvent.OnNumberInsert(it)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onFocusChanged { focus ->
+                                        if (focus.isFocused) {
+                                            scope.launch {
+                                                delay(300)
+                                                scrollState.animateScrollTo(scrollState.maxValue)
+                                            }
+                                        }
+                                    }
+                                    .background(
+                                        AppColors.field.secondary,
+                                        RoundedCornerShape(TextFieldCornerRadius),
+                                    ),
+                            )
+                        }
+                        Space(16.dp)
+                        CustomButtonNew(
+                            onClick = { event(LoginEvent.OnPhoneContinue) },
+                            enabled = state.isPhoneNumberValid && !state.isPhoneLoading,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(ButtonHeight),
+                            text = stringResource(Res.string.davom_etish),
+                        )
+                    }
+                }
+            }
+
+            // TERMS — pastda
+            TermsText(modifier = Modifier.padding(horizontal = 16.dp))
+            Space(16.dp)
         }
     }
 }
@@ -153,20 +248,148 @@ fun LoginUi(
 private fun rememberIsKeyboardOpen(): Boolean {
     val ime = WindowInsets.ime
     val density = LocalDensity.current
-    val isOpen by remember {
-        derivedStateOf { ime.getBottom(density) > 0 }
-    }
+    val isOpen by remember { derivedStateOf { ime.getBottom(density) > 0 } }
     return isOpen
+}
+@Composable
+private fun HeroSection(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Image(
+            painter = painterResource(Res.drawable.hedgehog_heart),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+        )
+        Spacer(Modifier.height(20.dp))
+        Text(
+            text = stringResource(Res.string.xush_kelibsiz),
+            style = AppTypography.headlineMdSemiBold,
+            color = AppColors.text.primary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(Res.string.kirish_subtitle),
+            style = AppTypography.emphasizedMdMedium,
+            color = AppColors.text.secondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.widthIn(max = 280.dp),
+        )
+    }
 }
 
 @Composable
-@Preview
-private fun Preview() {
-    TikonchaParentTheme(ThemeMode.LIGHT) {
-        LoginUi(
-            navigator = null,
-            state = LoginState(),
-            event = {}
+private fun TelegramLoginButton(
+    isLoading: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        enabled = !isLoading,
+        shape = RoundedCornerShape(16.dp),
+        color = TelegramBlue,
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = ButtonHeight),
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            if (isLoading) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        color = AppColors.icon.inverse,
+                        strokeWidth = 2.5.dp,
+                    )
+                    Text(
+                        text = stringResource(Res.string.telegram_ochilmoqda),
+                        style = AppTypography.titleSmSemiBold,
+                        color = AppColors.text.onPrimary,
+                    )
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.telegram),
+                        contentDescription = null,
+                        tint = AppColors.icon.inverse,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Text(
+                        text = stringResource(Res.string.telegram_orqali_kirish),
+                        style = AppTypography.titleMdSemiBold,
+                        color = AppColors.text.onPrimary,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PhonePermissionNote(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(Res.string.telegram_phone_note),
+        style = AppTypography.emphasizedXsRegular,
+        color = AppColors.text.tertiary,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+    )
+}
+
+@Composable
+private fun OrDivider(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Box(Modifier.weight(1f).height(1.dp).background(AppColors.border.secondary))
+        Text(
+            text = stringResource(Res.string.yoki),
+            style = AppTypography.bodyMdSemiBold,
+            color = AppColors.text.tertiary,
         )
+        Box(Modifier.weight(1f).height(1.dp).background(AppColors.border.secondary))
+    }
+}
+
+@Composable
+private fun TermsText(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(Res.string.login_privacy),
+        style = AppTypography.emphasizedXsRegular,
+        color = AppColors.text.tertiary,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp, start = 12.dp, end = 12.dp),
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewWithPhone() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        LoginUi(navigator = null, state = LoginState(showPhone = true), event = {})
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewTelegramOnly() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        LoginUi(navigator = null, state = LoginState(showPhone = false), event = {})
     }
 }

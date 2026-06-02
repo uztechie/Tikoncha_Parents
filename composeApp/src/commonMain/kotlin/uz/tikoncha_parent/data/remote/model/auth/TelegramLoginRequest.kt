@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TelegramLoginRequest(
-    val id_token: String,
+    val token: String
 )

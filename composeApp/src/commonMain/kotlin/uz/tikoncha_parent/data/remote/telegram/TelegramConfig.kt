@@ -1,20 +1,29 @@
 package uz.tikoncha_parent.data.remote.telegram
 
+import uz.tikoncha_parent.platform.BuildConfig
 
 object TelegramConfig {
-    // BotFather'dan olingan Client ID (raqam)
     const val CLIENT_ID: String = "8358248073"
 
-    // BotFather generatsiya qiladi: app{CLIENT_ID}-login.tg.dev
-    // Masalan: app123456-login.tg.dev
-    const val REDIRECT_HOST: String = "app2429439482-login.tg.dev"
+    // Android — debug/release SHA farqli, 2 ta host
+    const val ANDROID_HOST_DEBUG: String = "app2429439482-login.tg.dev"
+    const val ANDROID_HOST_RELEASE: String = "app3295584582-login.tg.dev"
 
-    // Android: /tglogin path bilan
-    const val REDIRECT_URI_ANDROID: String = "https://$REDIRECT_HOST/tglogin"
+    // iOS — alohida host(lar)
+    const val IOS_HOST: String = "app2596149294-login.tg.dev"
 
-    // iOS: faqat root host
-    const val REDIRECT_URI_IOS: String = "https://app2596149294-login.tg.dev"
-
-    // Scope'lar: openid majburiy, profile va phone — sizning talab
     val SCOPES: List<String> = listOf("openid", "profile", "phone")
+
+    // Joriy platforma + build uchun host
+    val redirectHost: String
+        get() = if (BuildConfig.deviceType == "IOS") {
+            IOS_HOST
+        } else {
+            if (BuildConfig.isDebug) ANDROID_HOST_DEBUG else ANDROID_HOST_RELEASE
+        }
+
+    // Redirect qaytganda — barcha hostlarga tekshiramiz (har platforma o'zinikiga tushadi)
+    fun isTelegramHost(host: String?): Boolean =
+        host == ANDROID_HOST_DEBUG || host == ANDROID_HOST_RELEASE ||
+                host == IOS_HOST
 }
