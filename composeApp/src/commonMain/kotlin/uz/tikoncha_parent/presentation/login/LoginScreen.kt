@@ -339,7 +339,7 @@ private fun TelegramLoginButton(
 private fun PhonePermissionNote(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(Res.string.telegram_phone_note),
-        style = AppTypography.emphasizedXsRegular,
+        style = AppTypography.bodyMdMedium,
         color = AppColors.text.tertiary,
         textAlign = TextAlign.Center,
         modifier = modifier
