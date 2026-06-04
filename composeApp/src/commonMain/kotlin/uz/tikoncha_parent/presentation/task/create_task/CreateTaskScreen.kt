@@ -49,6 +49,7 @@ import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.common.DateTimeUtil.formatTime
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
+import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CalendarBottomSheet
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDialog
 import uz.tikoncha_parent.presentation.base.bottomShadow
@@ -84,7 +85,8 @@ class CreateTaskScreen(
         LaunchedEffect(taskToEdit?.id) {
             if (taskToEdit != null) {
                 event(CreateTaskEvent.OnEditTask(taskToEdit))
-            } else {
+            } else if (state.isEditing) {
+                Logger.d("CreateTaskScreen", "onResetLaunch:${event(CreateTaskEvent.OnReset)}")
                 event(CreateTaskEvent.OnReset)
             }
             // Coin balansini har safar yangilash
@@ -93,12 +95,17 @@ class CreateTaskScreen(
 
         CollectEffects(viewModel.effect) { effect ->
             when (effect) {
-                is CreateTaskEffect.ShowSuccessDialog -> successDialogMessage = effect.message
+                is CreateTaskEffect.ShowSuccessDialog -> {
+                    successDialogMessage = effect.message
+                }
                 CreateTaskEffect.NavigateBack -> {
                     navigator?.pop()
+                    Logger.d("CreateTaskScreen", "onResetCollect:${event(CreateTaskEvent.OnReset)}")
                     event(CreateTaskEvent.OnReset)
                 }
-                is CreateTaskEffect.ShowError -> errorMessage = effect.message
+                is CreateTaskEffect.ShowError -> {
+                    errorMessage = effect.message
+                }
                 // ✅ Agar user CheckScreen'dan back qaytsa, lekin request muvaffaqiyatli bo'lsa,
                 // bu yerda success ekraniga o'tkazamiz
                 CreateTaskEffect.NavigateToSuccess -> {

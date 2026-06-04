@@ -221,17 +221,6 @@ fun NewHomeUi(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                ProfileCard(
-                    modifier = Modifier.widthIn(140.dp, 160.dp),
-                    name = state.userName,
-                    imageUrl = state.userImageUrl?:"",
-                    onClick = {
-                        navigator?.push(ProfileScreen())
-                    }
-                )
-
-                Spacer(Modifier.weight(1f))
-
                 if (!showTikonchaTutorialCard) {
                     IconButton(
                         onClick = {
@@ -267,6 +256,16 @@ fun NewHomeUi(
                         modifier = Modifier.size(NormalIconSize)
                     )
                 }
+                Spacer(Modifier.weight(1f))
+
+                ProfileCard(
+                    modifier = Modifier.widthIn(140.dp, 160.dp),
+                    name = state.userName,
+                    imageUrl = state.userImageUrl?:"",
+                    onClick = {
+                        navigator?.push(ProfileScreen())
+                    }
+                )
             }
 
             LazyColumn(

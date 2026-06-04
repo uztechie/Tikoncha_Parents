@@ -89,9 +89,15 @@ class CreateTaskCheckScreen : Screen {
 
         CollectEffects(viewModel.effect) { effect ->
             when (effect) {
-                CreateTaskEffect.NavigateToSuccess -> navigator?.push(TaskSuccessScreen())
-                is CreateTaskEffect.ShowError -> errorMessage = effect.message
-                CreateTaskEffect.NavigateBack -> navigator?.pop()
+                CreateTaskEffect.NavigateToSuccess -> {
+                    navigator?.push(TaskSuccessScreen())
+                }
+                is CreateTaskEffect.ShowError -> {
+                    errorMessage = effect.message
+                }
+                CreateTaskEffect.NavigateBack -> {
+                    navigator?.pop()
+                }
                 is CreateTaskEffect.ShowSuccessDialog -> { /* bu yerga kelmaydi */ }
             }
         }
