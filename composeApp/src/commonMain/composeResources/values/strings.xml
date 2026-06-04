@@ -697,4 +697,26 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="telegram_ochilmoqda">Telegram ochilmoqda…</string>
     <string name="telegram_phone_note">Telegram orqali kirganda telefon raqamingiz soʻraladi — buni Telegram oynasida koʻrasiz</string>
     <string name="qayta_yuborish">Qayta yuborish</string>
+
+    <string name="mp_select_country_title">Davlatni tanlang</string>
+    <string name="mp_search_hint">Qidirish...</string>
+    <string name="mp_cd_clear">Tozalash</string>
+    <string name="mp_cd_back">Orqaga</string>
+    <string name="mp_cd_select_country">Davlatni tanlash</string>
+    <string name="mp_cd_selected">Tanlangan</string>
+    <string name="mp_phone_label">Telefon raqami</string>
+    <!-- Country names -->
+    <string name="country_uz">O'zbekiston</string>
+    <string name="country_ru">Rossiya</string>
+    <string name="country_kz">Qozog'iston</string>
+    <string name="country_kg">Qirg'iziston</string>
+    <string name="country_tj">Tojikiston</string>
+    <string name="country_tm">Turkmaniston</string>
+    <string name="country_tr">Turkiya</string>
+    <string name="country_af">Afg'oniston</string>
+    <string name="country_ae">BAA</string>
+    <string name="country_us">AQSh</string>
+    <string name="country_gb">Buyuk Britaniya</string>
+    <string name="country_de">Germaniya</string>
+    <string name="country_kr">Janubiy Koreya</string>
 </resources>

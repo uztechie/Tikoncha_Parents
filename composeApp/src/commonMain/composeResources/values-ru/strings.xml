@@ -664,4 +664,26 @@
     <string name="login_qilish">Войти</string>
     <string name="maxfiylik_siyosati">Политика конфиденциальности</string>
     <string name="foydalanish_shartlari">Условия использования</string>
+
+    <string name="mp_select_country_title">Выберите страну</string>
+    <string name="mp_search_hint">Поиск...</string>
+    <string name="mp_cd_clear">Очистить</string>
+    <string name="mp_cd_back">Назад</string>
+    <string name="mp_cd_select_country">Выбрать страну</string>
+    <string name="mp_cd_selected">Выбрано</string>
+    <string name="mp_phone_label">Номер телефона</string>
+    <!-- Country names -->
+    <string name="country_uz">Узбекистан</string>
+    <string name="country_ru">Россия</string>
+    <string name="country_kz">Казахстан</string>
+    <string name="country_kg">Киргизия</string>
+    <string name="country_tj">Таджикистан</string>
+    <string name="country_tm">Туркменистан</string>
+    <string name="country_tr">Турция</string>
+    <string name="country_af">Афганистан</string>
+    <string name="country_ae">ОАЭ</string>
+    <string name="country_us">США</string>
+    <string name="country_gb">Великобритания</string>
+    <string name="country_de">Германия</string>
+    <string name="country_kr">Южная Корея</string>
 </resources>

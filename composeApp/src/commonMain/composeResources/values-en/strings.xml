@@ -683,4 +683,26 @@ This information is used only for these features and is not shared with third pa
     <string name="farzandlarim">My children</string>
     <string name="maxfiylik_siyosati">Privacy policy</string>
     <string name="foydalanish_shartlari">Terms of use</string>
+
+    <string name="mp_select_country_title">Select country</string>
+    <string name="mp_search_hint">Search...</string>
+    <string name="mp_cd_clear">Clear</string>
+    <string name="mp_cd_back">Back</string>
+    <string name="mp_cd_select_country">Select country</string>
+    <string name="mp_cd_selected">Selected</string>
+    <string name="mp_phone_label">Phone number</string>
+    <!-- Country names -->
+    <string name="country_uz">Uzbekistan</string>
+    <string name="country_ru">Russia</string>
+    <string name="country_kz">Kazakhstan</string>
+    <string name="country_kg">Kyrgyzstan</string>
+    <string name="country_tj">Tajikistan</string>
+    <string name="country_tm">Turkmenistan</string>
+    <string name="country_tr">Turkey</string>
+    <string name="country_af">Afghanistan</string>
+    <string name="country_ae">UAE</string>
+    <string name="country_us">United States</string>
+    <string name="country_gb">United Kingdom</string>
+    <string name="country_de">Germany</string>
+    <string name="country_kr">South Korea</string>
 </resources>

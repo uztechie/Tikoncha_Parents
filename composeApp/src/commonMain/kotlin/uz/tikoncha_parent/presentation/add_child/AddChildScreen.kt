@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ContentCopy
@@ -81,6 +80,7 @@ import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
 import uz.tikoncha_parent.presentation.base.ToastData
 import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
+import uz.tikoncha_parent.presentation.base.multi_phone_input.CountryPhoneInputField
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.NormalIconSize
@@ -137,7 +137,7 @@ class AddChildScreen : Screen {
                 if (state.showCopiedSnackbar) {
                     toast.show(
                         toast = ToastData(
-                            title =copiedMsg,
+                            title = copiedMsg,
                             type = ToastType.Info
                         ),
                         durationMs = 1500
@@ -147,7 +147,7 @@ class AddChildScreen : Screen {
             }
 
             // --- Error snackbar
-            val errorText = state.errorMessage?:state.errorRes?.let { stringResource(it) }
+            val errorText = state.errorMessage ?: state.errorRes?.let { stringResource(it) }
             LaunchedEffect(errorText) {
                 if (!errorText.isNullOrBlank()) {
                     toast.show(
@@ -201,7 +201,7 @@ private fun AddChildContent(
         navigationBarColor = AppColors.bg.surface
     )
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .then(systemBars.modifier)
@@ -214,7 +214,7 @@ private fun AddChildContent(
             onBackClick = onBack,
             showBackButton = true,
             trailingIcon = {
-                if (!state.showBindChildTutorial){
+                if (!state.showBindChildTutorial) {
                     IconButton(
                         onClick = {
                             onTutorial()
@@ -249,7 +249,7 @@ private fun AddChildContent(
             AnimatedVisibility(
                 visible = state.showBindChildTutorial,
                 enter = fadeIn() + expandVertically(),
-                exit  = fadeOut() + shrinkVertically()
+                exit = fadeOut() + shrinkVertically()
             ) {
                 Space(12.dp)
                 ConnectChildTutorialCard(
@@ -280,7 +280,9 @@ private fun AddChildContent(
                     )
                 } else {
                     CustomButtonNew(
-                        text = if (state.isLoading) stringResource(Res.string.yuborilmoqda) else stringResource(Res.string.sorov_yuborish),
+                        text = if (state.isLoading) stringResource(Res.string.yuborilmoqda) else stringResource(
+                            Res.string.sorov_yuborish
+                        ),
                         enabled = state.canRequestCode,
                         onClick = { onIntent(AddChildEvent.RequestCode) },
                         modifier = Modifier.fillMaxWidth(),
@@ -311,8 +313,6 @@ private fun AddChildContent(
 }
 
 
-
-
 @Composable
 private fun PhoneInputCard(
     phone: String,
@@ -333,14 +333,12 @@ private fun PhoneInputCard(
         )
         Spacer(Modifier.height(10.dp))
 
-        PhoneNumberInputField(
+        CountryPhoneInputField(
+            phoneNumber = phone,
+            onPhoneNumberChange = { onPhoneChange(it) },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(AppColors.field.page, RoundedCornerShape(TextFieldCornerRadius)),
-            phoneNumber = phone,
-            onPhoneNumberChange = {
-                onPhoneChange(it)
-            }
         )
     }
 }
