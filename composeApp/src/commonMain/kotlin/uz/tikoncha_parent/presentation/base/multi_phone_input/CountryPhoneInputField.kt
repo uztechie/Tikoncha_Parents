@@ -101,6 +101,7 @@ fun CountryPhoneInputField(
                 text = country.dial,
                 style = AppTypography.titleSmMedium,
                 color = AppColors.text.tertiary,
+                modifier = Modifier.width(46.dp)
             )
             Spacer(Modifier.width(4.dp))
             Icon(

@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_warning
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi_info
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
@@ -66,14 +69,17 @@ import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
 import tikoncha_parents.composeapp.generated.resources.kod_nusxalandi
 import tikoncha_parents.composeapp.generated.resources.media_play
 import tikoncha_parents.composeapp.generated.resources.ochish
+import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.sorov_yuborish
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash_kodi
 import tikoncha_parents.composeapp.generated.resources.ulashish
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import tikoncha_parents.composeapp.generated.resources.yuborilmoqda
 import uz.tikoncha_parent.platform.copyPlainText
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.platform.shareText
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.ToastData
@@ -81,6 +87,7 @@ import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.base.multi_phone_input.Country
 import uz.tikoncha_parent.presentation.base.multi_phone_input.CountryPhoneInputField
+import uz.tikoncha_parent.presentation.login.LoginEvent
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.NormalIconSize
@@ -146,20 +153,20 @@ class AddChildScreen : Screen {
                 }
             }
 
-            // --- Error snackbar
+            // --- Error -> CustomDialog
             val errorText = state.errorMessage ?: state.errorRes?.let { stringResource(it) }
-            LaunchedEffect(errorText) {
-                if (!errorText.isNullOrBlank()) {
-                    toast.show(
-                        toast = ToastData(
-                            title = errorText,
-                            type = ToastType.Error
-                        ),
-                        durationMs = 3000
-                    )
-                    screenModel.onEvent(AddChildEvent.DismissError)
-                }
-            }
+            val showErrorDialog = !errorText.isNullOrBlank()
+
+            CustomDialog(
+                painter = painterResource(Res.drawable.dialog_warning),
+                show = showErrorDialog,
+                title = stringResource(Res.string.xatolik),
+                message = errorText.orEmpty(),
+                buttonText = stringResource(Res.string.ok),
+                showCloseButton = false,
+                onDismiss = { screenModel.onEvent(AddChildEvent.DismissError) },
+                onButtonClick = { screenModel.onEvent(AddChildEvent.DismissError) },
+            )
 
             AddChildContent(
                 state = state,
@@ -196,6 +203,7 @@ private fun AddChildContent(
     onBack: () -> Unit = {},
 ) {
 
+    val focusManager = LocalFocusManager.current
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
         navigationBarColor = AppColors.bg.surface
@@ -287,7 +295,10 @@ private fun AddChildContent(
                             Res.string.sorov_yuborish
                         ),
                         enabled = state.canRequestCode,
-                        onClick = { event(AddChildEvent.RequestCode) },
+                        onClick = {
+                            focusManager.clearFocus()
+                            event(AddChildEvent.RequestCode)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = if (state.isLoading) {
                             {
@@ -340,7 +351,7 @@ private fun PhoneInputCard(
         CountryPhoneInputField(
             phoneNumber = phone,
             onPhoneNumberChange = { onPhoneChange(it) },
-            onCountryChange = { country->
+            onCountryChange = { country ->
                 onCountryChange(country)
             },
             modifier = Modifier
