@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,8 +54,9 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
  * API eski PhoneNumberInputField bilan mos: [phoneNumber] faqat raqamlardan iborat,
  * [onPhoneNumberChange] ham faqat tozalangan raqamlarni qaytaradi.
  *
- * Tanlangan davlat ichkarida boshqariladi (default — O'zbekiston). Dial code'ni
- * tashqarida ishlatish kerak bo'lsa, [onCountryChange] orqali oling.
+ * Tanlangan davlat ichkarida boshqariladi (default — O'zbekiston). Davlat o'zgarsa
+ * (va dastlab ochilganda ham) [onCountryChange] chaqiriladi — undan kutilayotgan raqam
+ * uzunligini `country.maxDigits` orqali olasiz (masalan UZ -> 9). Dial code esa `country.dial`.
  * Matnlar uz/ru/en — string resource orqali.
  */
 @Composable
@@ -68,6 +70,12 @@ fun CountryPhoneInputField(
 ) {
     var country by remember { mutableStateOf(initialCountry) }
     var sheetOpen by remember { mutableStateOf(false) }
+
+    // Dastlab ochilganda + har safar davlat o'zgarganda parentga joriy davlatni beramiz.
+    // Kutilayotgan raqam soni: country.maxDigits (UZ -> 9).
+    LaunchedEffect(country) {
+        onCountryChange(country)
+    }
 
     val placeholder = stringResource(Res.string.telefon_nomer)
     val selectCountryCd = stringResource(Res.string.mp_cd_select_country)
@@ -148,7 +156,7 @@ fun CountryPhoneInputField(
             onSelect = { picked ->
                 if (picked.iso != country.iso) {
                     country = picked
-                    onCountryChange(picked)
+                    // LaunchedEffect(country) onCountryChange ni chaqiradi (maxDigits bilan).
                     // Mask uzunligi farq qilishi mumkin — raqamni tozalaymiz.
                     // Tozalashni xohlamasangiz, shu qatorni olib tashlang.
                     onPhoneNumberChange("")

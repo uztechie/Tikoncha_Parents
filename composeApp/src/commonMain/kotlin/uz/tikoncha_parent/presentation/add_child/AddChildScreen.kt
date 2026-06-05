@@ -76,10 +76,10 @@ import uz.tikoncha_parent.platform.shareText
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LocalToastHost
-import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
 import uz.tikoncha_parent.presentation.base.ToastData
 import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
+import uz.tikoncha_parent.presentation.base.multi_phone_input.Country
 import uz.tikoncha_parent.presentation.base.multi_phone_input.CountryPhoneInputField
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
@@ -163,7 +163,7 @@ class AddChildScreen : Screen {
 
             AddChildContent(
                 state = state,
-                onIntent = { intent ->
+                event = { intent ->
                     // Copy intent'da clipboard'ga yozamiz (KMP-friendly)
                     if (intent is AddChildEvent.CodeCopied) {
                         state.code?.let { code ->
@@ -191,7 +191,7 @@ class AddChildScreen : Screen {
 @Composable
 private fun AddChildContent(
     state: AddChildState,
-    onIntent: (AddChildEvent) -> Unit,
+    event: (AddChildEvent) -> Unit,
     onTutorial: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
@@ -262,7 +262,10 @@ private fun AddChildContent(
             // 2) Telefon raqami
             PhoneInputCard(
                 phone = state.phoneNumber,
-                onPhoneChange = { onIntent(AddChildEvent.PhoneChanged(it)) },
+                onPhoneChange = { event(AddChildEvent.PhoneChanged(it)) },
+                onCountryChange = {
+                    event(AddChildEvent.OnCountryChange(it))
+                },
                 enabled = !state.isLoading
             )
 
@@ -275,8 +278,8 @@ private fun AddChildContent(
                     CodeCard(
                         code = state.code,
                         isRefreshing = state.isLoading,
-                        onRefresh = { onIntent(AddChildEvent.RefreshCode) },
-                        onCopy = { onIntent(AddChildEvent.CodeCopied) }
+                        onRefresh = { event(AddChildEvent.RefreshCode) },
+                        onCopy = { event(AddChildEvent.CodeCopied) }
                     )
                 } else {
                     CustomButtonNew(
@@ -284,7 +287,7 @@ private fun AddChildContent(
                             Res.string.sorov_yuborish
                         ),
                         enabled = state.canRequestCode,
-                        onClick = { onIntent(AddChildEvent.RequestCode) },
+                        onClick = { event(AddChildEvent.RequestCode) },
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = if (state.isLoading) {
                             {
@@ -303,8 +306,8 @@ private fun AddChildContent(
 
             // 4) Share card — pastda
             ShareCard(
-                onOpen = { onIntent(AddChildEvent.OpenAppLink) },
-                onShare = { onIntent(AddChildEvent.ShareLink) }
+                onOpen = { event(AddChildEvent.OpenAppLink) },
+                onShare = { event(AddChildEvent.ShareLink) }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -317,6 +320,7 @@ private fun AddChildContent(
 private fun PhoneInputCard(
     phone: String,
     onPhoneChange: (String) -> Unit,
+    onCountryChange: (Country) -> Unit,
     enabled: Boolean
 ) {
     Column(
@@ -336,6 +340,9 @@ private fun PhoneInputCard(
         CountryPhoneInputField(
             phoneNumber = phone,
             onPhoneNumberChange = { onPhoneChange(it) },
+            onCountryChange = { country->
+                onCountryChange(country)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(AppColors.field.page, RoundedCornerShape(TextFieldCornerRadius)),
@@ -555,7 +562,7 @@ private fun AddChildPreview_Initial() {
     TikonchaParentTheme(ThemeMode.DARK) {
         AddChildContent(
             state = AddChildState(),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -566,7 +573,7 @@ private fun AddChildPreview_PhoneTyped() {
     TikonchaParentTheme(ThemeMode.DARK) {
         AddChildContent(
             state = AddChildState(phoneNumber = "119952666"),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -580,7 +587,7 @@ private fun AddChildPreview_Loading() {
                 phoneNumber = "119952666",
                 isLoading = true
             ),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -596,7 +603,7 @@ private fun AddChildPreview_CodeReady() {
                 code = "796961",
                 showBindChildTutorial = true
             ),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -613,7 +620,7 @@ private fun AddChildPreview_Refreshing() {
                 showBindChildTutorial = true,
                 isLoading = true     // ↻ icon spinner ko'rsatadi
             ),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -629,7 +636,7 @@ private fun AddChildPreview_PhoneChangedAfterCode() {
                 code = "796961",                   // state'da bor lekin showCodeCard=false
                 showBindChildTutorial = true           // tutorial header'da qoladi
             ),
-            onIntent = {}
+            event = {}
         )
     }
 }
@@ -645,7 +652,7 @@ private fun AddChildPreview_CodeReady_Light() {
                 code = "796961",
                 showBindChildTutorial = true
             ),
-            onIntent = {}
+            event = {}
         )
     }
 }

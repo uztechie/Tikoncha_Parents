@@ -14,6 +14,7 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.AddChildRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.use_case.AddChildUseCase
+import uz.tikoncha_parent.presentation.add_child.AddChildEffect.*
 
 internal const val CHILD_APP_URL = "https://play.google.com/store/apps/details?id=uz.tikoncha.student&hl=en"
 
@@ -35,28 +36,34 @@ class AddChildScreenModel(
         }
     }
 
-    fun onEvent(intent: AddChildEvent) {
-        when (intent) {
-            is AddChildEvent.PhoneChanged -> onPhoneChanged(intent.value)
+    fun onEvent(event: AddChildEvent) {
+        when (event) {
+            is AddChildEvent.PhoneChanged -> onPhoneChanged(event.value)
             AddChildEvent.RequestCode     -> requestCode()
             AddChildEvent.RefreshCode     -> requestCode()
             AddChildEvent.CodeCopied      -> _state.update { it.copy(showCopiedSnackbar = true) }
             AddChildEvent.DismissSnackbar -> _state.update { it.copy(showCopiedSnackbar = false) }
             AddChildEvent.DismissError    -> _state.update { it.copy(errorRes = null, errorMessage = null) }
-            AddChildEvent.OpenAppLink     -> _effects.trySend(AddChildEffect.OpenUrl(CHILD_APP_URL))
-            AddChildEvent.ShareLink       -> _effects.trySend(AddChildEffect.ShareText(CHILD_APP_URL))
+            AddChildEvent.OpenAppLink     -> _effects.trySend(OpenUrl(CHILD_APP_URL))
+            AddChildEvent.ShareLink       -> _effects.trySend(ShareText(CHILD_APP_URL))
             AddChildEvent.PlayTutorial    -> _effects.trySend(AddChildEffect.PlayTutorialVideo)
             AddChildEvent.NavigateBack    -> _effects.trySend(AddChildEffect.NavigateBack)
+            is AddChildEvent.OnCountryChange -> {
+                _state.update {
+                    it.copy(
+                        selectedCountry = event.country
+                    )
+                }
+            }
         }
     }
 
     private fun onPhoneChanged(value: String) {
-        val digits = value.filter { it.isDigit() }.take(9)
         _state.update { current ->
             current.copy(
-                phoneNumber = digits,
+                phoneNumber = value,
                 // Telefon o'zgartirilsa va requested phone'dan farq qilsa — kodni tozalaymiz
-                code = if (digits == current.requestedPhone) current.code else null,
+                code = if (value == current.requestedPhone) current.code else null,
                 errorRes = null,
                 errorMessage = null
             )
@@ -65,12 +72,13 @@ class AddChildScreenModel(
 
     private fun requestCode() {
         val phone = _state.value.phoneNumber
-        if (phone.length != 9 || _state.value.isLoading) return
+        val fullPhoneNumber = _state.value.fullPhoneNumber
+        if (phone.length != _state.value.selectedCountry.maxDigits || _state.value.isLoading) return
 
         screenModelScope.launch {
             _state.update { it.copy(isLoading = true, errorRes = null, errorMessage = null) }
 
-            val result = addChildUseCase(AddChildRequest(phone_number = "+998$phone"))
+            val result = addChildUseCase(AddChildRequest(phone_number = fullPhoneNumber))
 
             when (result) {
                 is Resource.Success -> _state.update {
