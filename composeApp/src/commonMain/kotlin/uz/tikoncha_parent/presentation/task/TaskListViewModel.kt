@@ -49,24 +49,91 @@ class TaskListViewModel(
 
     fun onEvent(event: TaskListEvent) {
         when (event) {
-            TaskListEvent.LoadTasks -> initialLoad()
-            TaskListEvent.OnRefresh -> refresh()
-            TaskListEvent.OnLoadMore -> loadMore()
-            TaskListEvent.OnRetry -> firstPage()
-            TaskListEvent.LoadAllChildrenActiveTasks -> loadAllChildrenActiveTasks()
-            TaskListEvent.ClearError -> _state.update { it.copy(errorMessage = null) }
+            TaskListEvent.LoadTasks -> {
+                initialLoad()
+            }
 
-            is TaskListEvent.OnFilterChipToggled -> toggleChip(event.chip)
+            TaskListEvent.OnRefresh -> {
+                refresh()
+            }
 
-            is TaskListEvent.OnTaskSelected -> changeTab(event.taskIndex)
-            is TaskListEvent.OnChildSelected -> selectChild(event.child)
+            TaskListEvent.OnLoadMore -> {
+                loadMore()
+            }
+
+            TaskListEvent.OnRetry -> {
+                firstPage()
+            }
+
+            TaskListEvent.LoadAllChildrenActiveTasks -> {
+                loadAllChildrenActiveTasks()
+            }
+
+            TaskListEvent.ClearError -> {
+                _state.update {
+                    it.copy(
+                        errorMessage = null
+                    )
+                }
+            }
+
+            is TaskListEvent.OnFilterChipToggled -> {
+                toggleChip(event.chip)
+            }
+
+            is TaskListEvent.OnTaskSelected -> {
+                changeTab(event.taskIndex)
+            }
+
+            is TaskListEvent.OnChildSelected -> {
+                selectChild(event.child)
+            }
 
 
-            is TaskListEvent.OnCompletedTask -> completeTask(event.task)
-            is TaskListEvent.OnDeleteTask -> deleteTask(event.task)
+            is TaskListEvent.OnCompletedTask -> {
+                completeTask(event.task)
+            }
 
-            TaskListEvent.ShowMineAll -> _state.update { it.copy(showMineAll = !it.showMineAll) }
-            TaskListEvent.ShowChildrenAll -> _state.update { it.copy(showChildrenAll = !it.showChildrenAll) }
+            is TaskListEvent.OnDeleteTask -> {
+                deleteTask(event.task)
+            }
+
+            TaskListEvent.ShowMineAll -> {
+                _state.update {
+                    it.copy(
+                        showMineAll = !it.showMineAll
+                    )
+                }
+            }
+
+            TaskListEvent.ShowChildrenAll -> {
+                _state.update {
+                    it.copy(
+                        showChildrenAll = !it.showChildrenAll
+                    )
+                }
+            }
+
+            TaskListEvent.SyncChildren -> {
+                syncChildren()
+            }
+        }
+    }
+
+    private fun syncChildren() {
+        val freshChildren = AppSettings.children
+        val previousId = state.value.selectedChild?.userId
+
+        // Joriy tanlovni saqlab, ma'lumotini yangilaymiz; bo'lmasa birinchisini olamiz
+        val resolvedSelected = freshChildren.firstOrNull { it.userId == previousId }
+            ?: AppSettings.selectedChild
+            ?: freshChildren.firstOrNull()
+
+        _state.update {
+            it.copy(
+                childrenList = freshChildren,
+                selectedChild = resolvedSelected
+            )
         }
     }
 
@@ -369,17 +436,20 @@ class TaskListViewModel(
                 isExpired = false,
                 createdByRole = role
             )
+
             TaskFilterChip.DONE_BY_CHILD -> TodoFilter(
                 isCompleted = false,
                 isChildDone = true,
                 isExpired = null,
                 createdByRole = role
             )
+
             TaskFilterChip.OVERDUE -> TodoFilter(
                 isCompleted = false,
                 isExpired = true,
                 createdByRole = role
             )
+
             null -> TodoFilter(
                 isCompleted = false,
                 createdByRole = role

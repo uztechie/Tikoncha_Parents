@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task.completedTask
+package uz.tikoncha_parent.presentation.task.completed_task
 
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.task.model.Task

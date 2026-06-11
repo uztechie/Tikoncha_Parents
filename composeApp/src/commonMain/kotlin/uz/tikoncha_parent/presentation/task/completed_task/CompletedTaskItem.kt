@@ -1,5 +1,6 @@
-package uz.tikoncha_parent.presentation.task.completedTask
+package uz.tikoncha_parent.presentation.task.completed_task
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -207,6 +208,31 @@ fun CompletedTaskItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+
+                if (task.coin != 0) {
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                AppColors.text.accentSuccess.copy(0.3f),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Image(
+                            painter = painterResource(Res.drawable.coin),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "+ ${task.coin}",
+                            color = AppColors.text.accentSuccess,
+                            style = AppTypography.bodyMdMedium
+                        )
+                    }
+                }
             }
         }
     }
@@ -232,7 +258,7 @@ private fun Pre() {
                 authorId = "1",
                 targetUserId = "1",
                 createdAt = 123123123123,
-                coin = 123
+                coin = 2
             )
         )
     }

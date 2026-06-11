@@ -146,6 +146,7 @@ fun ChildrenSelectUi(
                         gadget = child.phoneNumber,
                         lastSeen = child.last_seen ?: "",
                         imageUrl = child.avatarUrl ?: "",
+                        subscription = child.subscription,
                         onClick = { navigator?.push(ChildDetailScreen(child)) },
                         onMenuClick = { menuChild = child }
                     )

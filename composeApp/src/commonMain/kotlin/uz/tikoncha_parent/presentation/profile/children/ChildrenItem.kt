@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,10 +29,13 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.plus_home_sheet_subscribe
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import tikoncha_parents.composeapp.generated.resources.vertical_menu
+import uz.tikoncha_parent.data.local.AppSettings.userInfo
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.SuccessColor
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -46,8 +50,12 @@ fun ChildrenItem(
     imageUrl: String = "",
     lastSeen: String = "",
     gadget: String = "",
-    name: String = ""
+    name: String = "",
+    subscription: String? = null,
 ) {
+    val hasSubscription = !subscription.isNullOrBlank() && subscription != "FREE"
+
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -57,33 +65,52 @@ fun ChildrenItem(
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // ── Avatar: clip qilingan doira + yonida (kesilmaydigan) badge ──
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .aspectRatio(1f)
-                .border(1.dp, AppColors.bg.surface, CircleShape)
-                .background(AppColors.bg.primaryContainer, CircleShape),
+                .aspectRatio(1f),
             contentAlignment = Alignment.Center
         ) {
-            when {
-                imageUrl.isNotEmpty() -> {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "",
-                        error = painterResource(Res.drawable.profile_hedgehog_img),
-                        placeholder = painterResource(Res.drawable.profile_hedgehog_img),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
+            // Doira + rasm (clip qilinadi, border shu yerda)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+                    .then(
+                        if (hasSubscription) {
+                            Modifier.border(2.dp, SuccessColor, CircleShape)
+                        } else {
+                            Modifier
+                        }
                     )
-                }
-                else -> {
+                    .background(AppColors.bg.primaryContainer, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "",
+                    error = painterResource(Res.drawable.profile_hedgehog_img),
+                    placeholder = painterResource(Res.drawable.profile_hedgehog_img),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            }
+
+            // Obuna belgisi — clip QILINMAGAN tashqi Box ichida, shuning uchun kesilmaydi
+            if (hasSubscription) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = (-8).dp)
+                ) {
                     Image(
-                        painter = painterResource(Res.drawable.profile_hedgehog_img),
+                        painter = painterResource(Res.drawable.plus_home_sheet_subscribe),
                         contentDescription = "",
                         modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
+                            .height(22.dp)
+                            .width(36.dp)
                     )
                 }
             }
@@ -123,7 +150,7 @@ fun ChildrenItem(
 
         if (endingIcon != null) {
             endingIcon()
-        } else {
+        }else {
 //            Icon(
 //                painter = painterResource(Res.drawable.vertical_menu),
 //                contentDescription = "",

@@ -719,4 +719,8 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="country_gb">Buyuk Britaniya</string>
     <string name="country_de">Germaniya</string>
     <string name="country_kr">Janubiy Koreya</string>
+    <string name="ismi">Ismi</string>
+    <string name="familiyasi">Familiyasi</string>
+    <string name="otasining_ismi">Otasining ismi</string>
+    <string name="tugilgan_sanasi">Tug'ilgan sanasi</string>
 </resources>

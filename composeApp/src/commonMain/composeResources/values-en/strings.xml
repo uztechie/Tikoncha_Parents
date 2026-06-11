@@ -705,4 +705,8 @@ This information is used only for these features and is not shared with third pa
     <string name="country_gb">United Kingdom</string>
     <string name="country_de">Germany</string>
     <string name="country_kr">South Korea</string>
+    <string name="ismi">First name</string>
+    <string name="familiyasi">Last name</string>
+    <string name="otasining_ismi">Middle name</string>
+    <string name="tugilgan_sanasi">Date of birth</string>
 </resources>

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -36,7 +37,6 @@ import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.parameter.parametersOf
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.presentation.base.CustomButton
@@ -148,11 +148,11 @@ fun ChildEditUi(
             ) {
                 CustomTextField(
                     value = state.firstName,
+                    label = stringResource(Res.string.ismi),
                     onValueChange = {
                         event(ChildEditEvent.OnFirstName(it))
                     },
                     modifier = Modifier.height(TextFieldHeight),
-                    label = stringResource(Res.string.ismingizni_kiriting),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words,
                         imeAction = ImeAction.Next
@@ -170,11 +170,11 @@ fun ChildEditUi(
 
                 CustomTextField(
                     value = state.lastName,
+                    label = stringResource(Res.string.familiyasi),
                     onValueChange = {
                         event(ChildEditEvent.OnLastName(it))
                     },
                     modifier = Modifier.height(TextFieldHeight),
-                    label = stringResource(Res.string.familiyangizni_kiriting),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         imeAction = ImeAction.Next
@@ -192,11 +192,11 @@ fun ChildEditUi(
 
                 CustomTextField(
                     value = state.patronymic,
+                    label = stringResource(Res.string.otasining_ismi),
                     onValueChange = {
                         event(ChildEditEvent.OnPatronymic(it))
                     },
                     modifier = Modifier.height(TextFieldHeight),
-                    label = stringResource(Res.string.otangizni_ismini_kiriting),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         imeAction = ImeAction.Next
@@ -214,11 +214,11 @@ fun ChildEditUi(
 
                 CustomTextField(
                     value = state.age,
+                    label = stringResource(Res.string.tugilgan_sanasi),
                     onValueChange = {
                         event(ChildEditEvent.OnAge(it))
                     },
                     modifier = Modifier.height(TextFieldHeight),
-                    label = stringResource(Res.string.yosh),
                     leadingIcon = {
                         Image(
                             painter = painterResource(Res.drawable.id_card),

@@ -24,4 +24,5 @@ sealed interface TaskListEvent {
     // Actions
     data class OnCompletedTask(val task: Task) : TaskListEvent
     data class OnDeleteTask(val task: Task) : TaskListEvent
+    data object SyncChildren : TaskListEvent
 }

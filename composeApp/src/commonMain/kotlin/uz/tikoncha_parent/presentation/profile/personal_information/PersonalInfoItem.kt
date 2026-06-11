@@ -69,11 +69,11 @@ fun PersonalInfoItem(
         )
         SpaceUltraSmall()
 
-        if (userInfo?.age != 0){
+        if (userInfo?.age != 0 && userInfo?.age != null){
             PersonalInformationItemRow(
                 icon = Res.drawable.calendar,
                 title = stringResource(Res.string.yosh),
-                value = "${userInfo?.age}"
+                value = "${userInfo.age}"
             )
             SpaceUltraSmall()
         }
@@ -166,7 +166,7 @@ private fun PreviewPersonalInformationScreen() {
                 lastName = "Isomiddinov",
                 patronymic = "Islomjon o'g'li",
                 genderType = GenderType.MALE,
-                age = 10,
+                age = 12,
                 schoolName = "13-Maktab",
                 schoolClassName = "11-A",
                 shift = "Kunduzgi"

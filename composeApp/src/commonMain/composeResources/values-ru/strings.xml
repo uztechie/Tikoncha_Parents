@@ -686,4 +686,8 @@
     <string name="country_gb">Великобритания</string>
     <string name="country_de">Германия</string>
     <string name="country_kr">Южная Корея</string>
+    <string name="ismi">Имя</string>
+    <string name="familiyasi">Фамилия</string>
+    <string name="otasining_ismi">Отчество</string>
+    <string name="tugilgan_sanasi">Дата рождения</string>
 </resources>

@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task.completedTask
+package uz.tikoncha_parent.presentation.task.completed_task
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

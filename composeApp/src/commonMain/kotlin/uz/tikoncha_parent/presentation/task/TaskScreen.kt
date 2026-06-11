@@ -62,7 +62,7 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
-import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskScreen
+import uz.tikoncha_parent.presentation.task.completed_task.CompletedTaskScreen
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
 import uz.tikoncha_parent.presentation.task.detail.TaskDetailScreen
 import uz.tikoncha_parent.presentation.task.model.Task
@@ -90,15 +90,20 @@ class TaskScreen : Screen {
         LaunchedEffect(Unit) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is TaskListEffect.ShowError -> localError = effect.message
-                    is TaskListEffect.ShowMessage -> localError = effect.message
-                    TaskListEffect.TaskDeleted -> { /* snackbar bo'lsa shu yerda */ }
-                    TaskListEffect.TaskMarkedAsCompleted -> { /* snackbar bo'lsa shu yerda */ }
+                    is TaskListEffect.ShowError -> {
+                        localError = effect.message
+                    }
+                    is TaskListEffect.ShowMessage -> {
+                        localError = effect.message
+                    }
+                    TaskListEffect.TaskDeleted -> {}
+                    TaskListEffect.TaskMarkedAsCompleted -> {}
                 }
             }
         }
 
         LifecycleStartEffect(Unit) {
+            event(TaskListEvent.SyncChildren)
             event(TaskListEvent.LoadTasks)
             onStopOrDispose {}
         }
@@ -196,29 +201,63 @@ fun TaskUi(
     val headerHeightPx = with(density) { headerHeight.toPx() }
     val headerOffsetPx = remember { mutableFloatStateOf(0f) }
 
+//    val collapseConnection = remember(headerHeightPx, listState) {
+//        object : NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//                val delta = available.y
+//                val old = headerOffsetPx.floatValue
+//
+//                return when {
+//                    delta < 0 && old > -headerHeightPx -> {
+//                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+//                        headerOffsetPx.floatValue = new
+//                        Offset(0f, new - old)
+//                    }
+//                    delta > 0 && old < 0f && !listState.canScrollBackward -> {
+//                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+//                        headerOffsetPx.floatValue = new
+//                        Offset(0f, new - old)
+//                    }
+//                    else -> Offset.Zero
+//                }
+//            }
+//        }
+//    }
+
     val collapseConnection = remember(headerHeightPx, listState) {
         object : NestedScrollConnection {
+
+            // ⬆️ YUQORIGA — header yig'ilishi (oldingidek pre da qoladi)
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
                 val old = headerOffsetPx.floatValue
+                return if (delta < 0 && old > -headerHeightPx) {
+                    val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+                    headerOffsetPx.floatValue = new
+                    Offset(0f, new - old)
+                } else {
+                    Offset.Zero
+                }
+            }
 
-                return when {
-                    delta < 0 && old > -headerHeightPx -> {
-                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
-                        headerOffsetPx.floatValue = new
-                        Offset(0f, new - old)
-                    }
-                    delta > 0 && old < 0f && !listState.canScrollBackward -> {
-                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
-                        headerOffsetPx.floatValue = new
-                        Offset(0f, new - old)
-                    }
-                    else -> Offset.Zero
+            // ⬇️ PASTGA — header ochilishi: endi POST da, ya'ni PTR o'z ulushini olgandan KEYIN
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                val delta = available.y
+                val old = headerOffsetPx.floatValue
+                return if (delta > 0 && old < 0f) {
+                    val new = (old + delta).coerceIn(-headerHeightPx, 0f)
+                    headerOffsetPx.floatValue = new
+                    Offset(0f, new - old)
+                } else {
+                    Offset.Zero
                 }
             }
         }
     }
-
     val headerCurrentHeight = with(density) {
         (headerHeightPx + headerOffsetPx.floatValue).toDp()
     }
@@ -301,7 +340,10 @@ fun TaskUi(
             // ── Scrollable: ChildSelector + StatusChips + List ──
             PullToRefreshBox(
                 isRefreshing = state.isRefreshing,
-                onRefresh = { event(TaskListEvent.OnRefresh) },
+                onRefresh = {
+                    headerOffsetPx.floatValue = 0f
+                    event(TaskListEvent.OnRefresh)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -351,6 +393,7 @@ fun TaskUi(
                                 TaskCardItemShimmer()
                             }
                         }
+
                         state.selectedChild == null -> {
                             item(key = "no-child") {
                                 EmptyTaskState(
@@ -362,6 +405,7 @@ fun TaskUi(
                                 )
                             }
                         }
+
                         state.taskList.isEmpty() -> {
                             item(key = "empty") {
                                 EmptyTaskState(
@@ -379,6 +423,7 @@ fun TaskUi(
                                 )
                             }
                         }
+
                         else -> {
                             items(items = state.taskList, key = { it.id }) { task ->
                                 TaskCardItem(

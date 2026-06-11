@@ -51,7 +51,6 @@ import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
 import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionScreen
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.task.TaskListEvent
 import uz.tikoncha_parent.presentation.task.TaskListViewModel
 import uz.tikoncha_parent.presentation.task.TaskScreen

@@ -148,7 +148,7 @@ import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
 import uz.tikoncha_parent.presentation.task.TaskListViewModel
-import uz.tikoncha_parent.presentation.task.completedTask.CompletedTaskViewModel
+import uz.tikoncha_parent.presentation.task.completed_task.CompletedTaskViewModel
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreenModel
 
 val sharedModule = module {

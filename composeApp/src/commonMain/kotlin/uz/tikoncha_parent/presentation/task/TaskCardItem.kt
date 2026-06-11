@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.task
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -318,6 +319,31 @@ fun TaskCardItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                }
+
+                if (task.coin != 0) {
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                AppColors.bg.accentWarningContainer,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Image(
+                            painter = painterResource(Res.drawable.coin),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "+ ${task.coin}",
+                            color = AppColors.text.accentWarning,
+                            style = AppTypography.bodyMdMedium
+                        )
+                    }
                 }
             }
 

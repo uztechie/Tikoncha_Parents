@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.task.completedTask
+package uz.tikoncha_parent.presentation.task.completed_task
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
