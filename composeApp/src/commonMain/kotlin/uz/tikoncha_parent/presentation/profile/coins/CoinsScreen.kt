@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.profile.coins
 
+import androidx.compose.animation.SharedTransitionDefaults
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -83,6 +85,7 @@ fun CoinsUi(
 ) {
     val borderColor = AppColors.border.tertiary
     var helpType by remember { mutableStateOf<CoinsHelpType?>(null) }
+    val currentLocale = SharedTransitionDefaults
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -97,6 +100,17 @@ fun CoinsUi(
                 showDialog = false
             }
         )
+    }
+
+    key(currentLocale) {
+        if (helpType != null) {
+            helpType?.let { type ->
+                CoinsHelpBottomSheet(
+                    type = type,
+                    onDismiss = { helpType = null },
+                )
+            }
+        }
     }
 
     val systemBars = rememberScreenSystemBars(

@@ -709,4 +709,8 @@ This information is used only for these features and is not shared with third pa
     <string name="familiyasi">Last name</string>
     <string name="otasining_ismi">Middle name</string>
     <string name="tugilgan_sanasi">Date of birth</string>
+
+    <string name="farzand_himoyasi">Child Protection</string>
+    <string name="ta_ruxsat_ochirilgan">%1$d permissions disabled</string>
+    <string name="ta_yangi_sorov_kutilmoqda">%1$d new requests pending</string>
 </resources>

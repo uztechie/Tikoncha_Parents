@@ -306,6 +306,17 @@ fun NewHomeUi(
                     }
                 }
 
+                // NewHomeUi'da — hozirgi "Farzandingiz so'rovlari" item'i o'rnida:
+                item {
+                    ChildProtectionCard(
+                        permissionOffCount = 1,      // ruxsat monitoring ma'lumotingizdan
+                        pendingRequestCount = 2,     // yoki state.strictDisableRequests.size
+                        onClick = {  },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Space(16.dp)
+                }
+
                 item {
                     if (parentRequestCount > 0) {
                         Row(

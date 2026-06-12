@@ -690,4 +690,8 @@
     <string name="familiyasi">Фамилия</string>
     <string name="otasining_ismi">Отчество</string>
     <string name="tugilgan_sanasi">Дата рождения</string>
+
+    <string name="farzand_himoyasi">Защита ребёнка</string>
+    <string name="ta_ruxsat_ochirilgan">%1$d разрешений отключено</string>
+    <string name="ta_yangi_sorov_kutilmoqda">Ожидается %1$d новых запросов</string>
 </resources>
