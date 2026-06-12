@@ -727,4 +727,95 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzand_himoyasi">Farzand himoyasi</string>
     <string name="ta_ruxsat_ochirilgan">%1$d ta ruxsat o‘chirilgan</string>
     <string name="ta_yangi_sorov_kutilmoqda">%1$d ta yangi so‘rov kutilmoqda</string>
+
+
+    <!-- Himoya -->
+    <string name="himoya">Himoya</string>
+
+    <string name="mode_default_title">Default</string>
+    <string name="mode_gujanak_title">Gujanak</string>
+    <string name="mode_qalqon_title">Qalqon</string>
+
+    <string name="mode_default_desc">Himoya o‘chiq — faqat kuzatuv ishlaydi</string>
+    <string name="mode_gujanak_desc">Jadval bo‘yicha bloklash faol</string>
+    <string name="mode_qalqon_desc">To‘liq himoya — kuchaytirilgan bloklash faol</string>
+
+    <string name="holat_nomalum">Holat noma’lum</string>
+    <string name="holat_nomalum_desc">Farzand qurilmasi hali sinxron bo‘lmagan</string>
+
+    <string name="himoya_boshlangich">Boshlang‘ich</string>
+    <string name="himoya_orta">O‘rta himoya</string>
+    <string name="himoya_toliq">To‘liq himoya</string>
+
+    <!-- Sync -->
+    <string name="sinxron">Sinxron:</string>
+    <string name="sinxron_yoq">hali bo‘lmagan</string>
+    <string name="hozirgina">hozirgina</string>
+    <string name="daqiqa_oldin">%1$d daqiqa oldin</string>
+    <string name="soat_oldin">%1$d soat oldin</string>
+    <string name="kun_oldin">%1$d kun oldin</string>
+
+    <string name="onlayn">Onlayn</string>
+    <string name="oflayn">Oflayn</string>
+
+    <!-- Disable methods -->
+    <string name="ochirish_usuli">O‘chirish usuli</string>
+    <string name="usul_taymer">Taymer</string>
+    <string name="usul_maxfiy_kod">Maxfiy kod</string>
+    <string name="usul_maxfiy_matn">Maxfiy matn</string>
+    <string name="ota_ona_ruxsati">Ota-ona ruxsati</string>
+
+    <string name="korsatish">Ko‘rsatish</string>
+    <string name="yashirish">Yashirish</string>
+
+    <!-- Requests -->
+    <string name="farzand_sorovlari">Farzand so‘rovlari</string>
+    <string name="n_ta_yangi">%1$d ta yangi</string>
+
+    <string name="qalqonni_ochirish_sorovi">Qalqonni o‘chirish so‘rovi</string>
+    <string name="tasdiqlasangiz_qalqon_ochadi">Tasdiqlasangiz farzandingizda Qalqon darhol o‘chadi</string>
+
+    <string name="rad_etish">Rad etish</string>
+
+    <string name="sorov_tasdiqlandi">So‘rov tasdiqlandi</string>
+    <string name="sorov_rad_etildi">So‘rov rad etildi</string>
+    <string name="sorov_muddati_tugadi">So‘rov muddati tugadi</string>
+
+    <string name="qalqon_ochirishga_ruxsat">Qalqonni o‘chirishga ruxsat berasizmi?</string>
+    <string name="qalqon_ochirish_ruxsat_desc">
+    Tasdiqlasangiz farzandingiz Qalqonni darhol o‘chira oladi.
+</string>
+
+    <!-- Permissions -->
+    <string name="ruxsatlar">Ruxsatlar</string>
+    <string name="x_dan_y_berilgan">%1$d/%2$d berilgan</string>
+
+    <string name="berilgan">Berilgan</string>
+    <string name="berilmagan">Berilmagan</string>
+
+    <string name="boshqa_rejimlar_uchun">Boshqa rejimlar uchun — hozircha shart emas</string>
+    <string name="gujanak_uchun">Gujanak uchun</string>
+    <string name="qalqon_uchun">Qalqon uchun</string>
+
+    <string name="n_ta_zarur_ruxsat_ochiq">%1$d ta zarur ruxsat o‘chiq</string>
+    <string name="zarur_ruxsat_banner_desc">Bularsiz himoya to‘liq ishlamaydi — farzandingiz qurilmasida yoqib qo‘ying</string>
+
+    <!-- Permission names -->
+    <string name="perm_notification">Bildirishnomalar</string>
+    <string name="perm_usage_stats">Ilova statistikasi</string>
+    <string name="perm_overlay">Boshqa ilovalar ustida ko‘rsatish</string>
+    <string name="perm_overlay_popup">Orqa fonda oyna ochish (Xiaomi)</string>
+    <string name="perm_location">Joylashuv</string>
+    <string name="perm_gps">GPS yoniq</string>
+    <string name="perm_battery">Batareya cheklovsiz</string>
+    <string name="perm_auto_start">Avto-ishga tushish</string>
+    <string name="perm_accessibility">Maxsus imkoniyatlar</string>
+    <string name="perm_device_admin">Qurilma administratori</string>
+
+    <string name="farzand_qalqon_ochirish_sorovi">Farzandingiz "%1$s" Qalqonni o‘chirish uchun sizdan ruxsat so‘ramoqda</string>
+    <string name="javob_uchun">Javob uchun: %1$s</string>
+    <string name="rad_etildi">Rad etildi</string>
+    <string name="muddati_tugagan">Muddati tugagan</string>
+
+
 </resources>

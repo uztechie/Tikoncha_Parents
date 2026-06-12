@@ -6,6 +6,7 @@ DEFAULT = f"{BASE}/values/strings.xml"
 
 TARGETS = {
     "ru": f"{BASE}/values-ru/strings.xml",
+    "en": f"{BASE}/values-en/strings.xml",
 }
 
 def load_strings(path):

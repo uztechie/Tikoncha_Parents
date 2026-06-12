@@ -1,0 +1,266 @@
+package uz.tikoncha_parent.presentation.protection
+
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
+import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusData
+import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
+import uz.tikoncha_parent.domain.model.protection.AccountRequestStatus
+import uz.tikoncha_parent.domain.model.protection.ChildMode
+import uz.tikoncha_parent.domain.model.protection.ChildPermission
+import uz.tikoncha_parent.domain.model.protection.StrictMethod
+import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
+import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
+import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
+import uz.tikoncha_parent.domain.use_case.protection.UpdateAccountRequestStatusUseCase
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import kotlin.time.Duration.Companion.minutes
+
+class ProtectionViewModel(
+    private val protectionStatusUseCase: ProtectionStatusUseCase,
+    private val approveStrictRequestUseCase: ApproveStrictDisableRequestUseCase,
+    private val rejectStrictRequestUseCase: RejectStrictDisableRequestUseCase,
+    private val updateAccountRequestStatusUseCase: UpdateAccountRequestStatusUseCase,
+) : ScreenModel {
+
+    private val _state = MutableStateFlow(ProtectionState())
+    val state = _state.asStateFlow()
+
+    private var currentChildId: String? = null
+    private var countdownJob: Job? = null
+
+    fun onEvent(event: ProtectionEvent) {
+        when (event) {
+            is ProtectionEvent.LoadStatus -> loadStatus(event.childId, silent = false)
+            is ProtectionEvent.Refresh -> loadStatus(event.childId, silent = true)
+
+            ProtectionEvent.ToggleCodeVisibility ->
+                _state.update { it.copy(isCodeVisible = !it.isCodeVisible) }
+
+            is ProtectionEvent.ApproveStrictRequest ->
+                decideStrictRequest(event.requestId, approve = true)
+
+            is ProtectionEvent.RejectStrictRequest ->
+                decideStrictRequest(event.requestId, approve = false)
+
+            is ProtectionEvent.AllowAccountRequest ->
+                decideAccountRequest(event.action, allow = true)
+
+            is ProtectionEvent.DenyAccountRequest ->
+                decideAccountRequest(event.action, allow = false)
+
+            ProtectionEvent.ActionErrorDismissed ->
+                _state.update { it.copy(actionResponseState = ResponseState.Idle) }
+        }
+    }
+
+    // ─────────────────────── Status yuklash ───────────────────────
+
+    private fun loadStatus(childId: String, silent: Boolean) {
+        currentChildId = childId
+        screenModelScope.launch(Dispatchers.IO) {
+            if (silent) {
+                _state.update { it.copy(isRefreshing = true) }
+            } else {
+                _state.update { it.copy(responseState = ResponseState.Loading) }
+            }
+
+            when (val result = protectionStatusUseCase.invoke(childId)) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            isRefreshing = false,
+                            responseState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId,
+                            ),
+                        )
+                    }
+                }
+                is Resource.Success -> applyStatus(result.data)
+            }
+        }
+    }
+
+    private fun applyStatus(data: ProtectionStatusData) {
+        val modeStatus = data.modeStatus
+        val mode = ChildMode.from(modeStatus?.currentMode)
+        val lastSync = parseInstant(data.lastSyncAt)
+
+        _state.update {
+            it.copy(
+                responseState = ResponseState.Success(),
+                isRefreshing = false,
+                mode = mode,
+                strictMethod = if (mode == ChildMode.STRICT) {
+                    StrictMethod.from(modeStatus?.strictMethod)
+                } else null,
+                unlockData = modeStatus?.unlockData,
+                isCodeVisible = false,
+                lastSyncAt = lastSync,
+                isOnline = isOnline(lastSync),
+                enabledPermissions = modeStatus?.enabled.orEmpty()
+                    .mapNotNull { key -> ChildPermission.from(key) }.toSet(),
+                disabledPermissions = modeStatus?.disabled.orEmpty()
+                    .mapNotNull { key -> ChildPermission.from(key) }.toSet(),
+                strictDisableRequest = data.strictDisableRequest,
+                logoutRequest = data.logoutRequest,
+                deleteRequest = data.deleteRequest,
+            )
+        }
+        restartCountdown(data.strictDisableRequest)
+    }
+
+    // ─────────────── Qalqon o'chirish so'rovi (strict) ───────────────
+
+    private fun decideStrictRequest(requestId: String, approve: Boolean) {
+        if (_state.value.actionInProgressId != null) return
+
+        screenModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(actionInProgressId = requestId) }
+
+            val result = if (approve) {
+                approveStrictRequestUseCase.invoke(requestId)
+            } else {
+                rejectStrictRequestUseCase.invoke(requestId)
+            }
+
+            when (result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            actionInProgressId = null,
+                            actionResponseState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId,
+                            ),
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    countdownJob?.cancel()
+                    _state.update {
+                        it.copy(
+                            actionInProgressId = null,
+                            strictDisableRequest = result.data,   // approved / rejected holati
+                            remainingSeconds = 0,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    // ───────── Hisobdan chiqish / ilovani o'chirish (account) ─────────
+
+    private fun decideAccountRequest(action: AccountRequestAction, allow: Boolean) {
+        if (_state.value.actionInProgressId != null) return
+
+        val request = when (action) {
+            AccountRequestAction.LOGOUT -> _state.value.logoutRequest
+            AccountRequestAction.DELETE -> _state.value.deleteRequest
+            AccountRequestAction.UNKNOWN -> null
+        } ?: return
+        val requestId = request.id ?: return
+
+        screenModelScope.launch(Dispatchers.IO) {
+            _state.update { it.copy(actionInProgressId = requestId) }
+
+            val status = if (allow) AccountRequestStatus.ACCESS else AccountRequestStatus.DENY
+            when (val result = updateAccountRequestStatusUseCase.invoke(requestId, status)) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            actionInProgressId = null,
+                            actionResponseState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId,
+                            ),
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    // Javob berildi — so'rov ekrandan yo'qoladi
+                    _state.update {
+                        when (action) {
+                            AccountRequestAction.LOGOUT ->
+                                it.copy(actionInProgressId = null, logoutRequest = null)
+                            else ->
+                                it.copy(actionInProgressId = null, deleteRequest = null)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ─────────────────────── Countdown ───────────────────────
+
+    private fun restartCountdown(request: ChildRequestDto?) {
+        countdownJob?.cancel()
+
+        val isPending = request?.status.equals("pending", ignoreCase = true)
+        val expiresAt = parseInstant(request?.expiresAt)
+        if (!isPending || expiresAt == null) {
+            _state.update { it.copy(remainingSeconds = 0) }
+            return
+        }
+
+        countdownJob = screenModelScope.launch {
+            while (true) {
+                val remaining = (expiresAt - kotlin.time.Clock.System.now()).inWholeSeconds.toInt()
+                if (remaining <= 0) {
+                    _state.update { it.copy(remainingSeconds = 0) }
+                    // Muddati tugadi — serverdan yangi holat (lazy-expiry)
+                    currentChildId?.let { loadStatus(it, silent = true) }
+                    return@launch
+                }
+                _state.update { it.copy(remainingSeconds = remaining) }
+                delay(1_000)
+            }
+        }
+    }
+
+    // ─────────────────────── Helpers ───────────────────────
+
+    /**
+     * Backend sanalarni timezone'siz yuboradi ("2026-06-12T19:30:02.017574").
+     * Avval to'liq ISO (Z bilan), bo'lmasa LocalDateTime sifatida UTC deb o'qiymiz.
+     * TODO: backend bilan tasdiqlang — bu vaqtlar UTC bo'lishi shart.
+     */
+    private fun parseInstant(iso: String?): Instant? {
+        if (iso.isNullOrBlank()) return null
+        runCatching { return Instant.parse(iso) }
+        return runCatching {
+            LocalDateTime.parse(iso).toInstant(TimeZone.UTC)
+        }.getOrNull()
+    }
+
+    private fun isOnline(lastSync: Instant?): Boolean =
+        lastSync != null && (kotlin.time.Clock.System.now() - lastSync) <= ONLINE_THRESHOLD
+
+    override fun onDispose() {
+        countdownJob?.cancel()
+        super.onDispose()
+    }
+
+    companion object {
+        private val ONLINE_THRESHOLD = 5.minutes
+    }
+}

@@ -39,8 +39,8 @@ import uz.tikoncha_parent.presentation.map.MapKitInitializer
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
-import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.protection.ProtectionScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
 import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.presentation.push.PendingDeepLinks
@@ -163,7 +163,7 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
     )
     is DeepLink.News -> listOf(NewHomeScreen(), NotificationScreen())
     is DeepLink.Todo -> listOf(NewHomeScreen(), TaskScreen())
-    DeepLink.ChildRequest -> listOf(NewHomeScreen(), ParentRequestScreen())
+    DeepLink.ChildRequest -> listOf(NewHomeScreen(), ProtectionScreen())
     else -> null
 }
 

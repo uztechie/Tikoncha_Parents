@@ -713,4 +713,97 @@ This information is used only for these features and is not shared with third pa
     <string name="farzand_himoyasi">Child Protection</string>
     <string name="ta_ruxsat_ochirilgan">%1$d permissions disabled</string>
     <string name="ta_yangi_sorov_kutilmoqda">%1$d new requests pending</string>
+
+    <string name="himoya">Protection</string>
+
+    <string name="mode_default_title">Default</string>
+    <string name="mode_gujanak_title">Hedgehog</string>
+    <string name="mode_qalqon_title">Shield</string>
+
+    <string name="mode_default_desc">Protection disabled — monitoring only</string>
+    <string name="mode_gujanak_desc">Scheduled blocking is active</string>
+    <string name="mode_qalqon_desc">Full protection — enhanced blocking is active</string>
+
+    <string name="holat_nomalum">Unknown status</string>
+    <string name="holat_nomalum_desc">Child device has not synchronized yet</string>
+
+    <string name="himoya_boshlangich">Basic</string>
+    <string name="himoya_orta">Moderate protection</string>
+    <string name="himoya_toliq">Full protection</string>
+
+    <string name="sinxron">Synced:</string>
+    <string name="sinxron_yoq">not yet</string>
+    <string name="hozirgina">just now</string>
+    <string name="daqiqa_oldin">%1$d minutes ago</string>
+    <string name="soat_oldin">%1$d hours ago</string>
+    <string name="kun_oldin">%1$d days ago</string>
+
+    <string name="onlayn">Online</string>
+    <string name="oflayn">Offline</string>
+
+    <string name="ochirish_usuli">Disable method</string>
+    <string name="usul_taymer">Timer</string>
+    <string name="usul_maxfiy_kod">Secret code</string>
+    <string name="usul_maxfiy_matn">Secret phrase</string>
+    <string name="ota_ona_ruxsati">Parent approval</string>
+
+    <string name="korsatish">Show</string>
+    <string name="yashirish">Hide</string>
+
+    <string name="farzand_sorovlari">Child requests</string>
+    <string name="n_ta_yangi">%1$d new</string>
+
+    <string name="qalqonni_ochirish_sorovi">Shield disable request</string>
+    <string name="tasdiqlasangiz_qalqon_ochadi">If approved, Shield will be disabled immediately on your child's device</string>
+
+    <string name="rad_etish">Reject</string>
+
+    <string name="sorov_tasdiqlandi">Request approved</string>
+    <string name="sorov_rad_etildi">Request rejected</string>
+    <string name="sorov_muddati_tugadi">Request expired</string>
+
+    <string name="qalqon_ochirishga_ruxsat">Allow disabling Shield?</string>
+    <string name="qalqon_ochirish_ruxsat_desc">If approved, your child will be able to disable Shield immediately.</string>
+
+    <string name="ruxsatlar">Permissions</string>
+    <string name="x_dan_y_berilgan">%1$d/%2$d granted</string>
+
+    <string name="berilgan">Granted</string>
+    <string name="berilmagan">Not granted</string>
+
+    <string name="boshqa_rejimlar_uchun">Not required for other modes at the moment</string>
+    <string name="gujanak_uchun">For Hedgehog mode</string>
+    <string name="qalqon_uchun">For Shield mode</string>
+
+    <string name="n_ta_zarur_ruxsat_ochiq">%1$d required permissions disabled</string>
+    <string name="zarur_ruxsat_banner_desc">Without these permissions protection cannot work fully — enable them on your child's device</string>
+
+    <string name="perm_notification">Notifications</string>
+    <string name="perm_usage_stats">Usage access</string>
+    <string name="perm_overlay">Display over other apps</string>
+    <string name="perm_overlay_popup">Background popup window (Xiaomi)</string>
+    <string name="perm_location">Location</string>
+    <string name="perm_gps">GPS enabled</string>
+    <string name="perm_battery">Unrestricted battery</string>
+    <string name="perm_auto_start">Auto start</string>
+    <string name="perm_accessibility">Accessibility</string>
+    <string name="perm_device_admin">Device administrator</string>
+
+    <string name="bu_ilova_kategoriya_orqali_tanlangan">This app was selected through a category.</string>
+    <string name="sayt_yoki_kalit_soz_kiriting">Enter a website or keyword</string>
+    <string name="sayt_yoki_kalit_soz_label">site.com or keyword</string>
+    <string name="kirish_bekor_qilindi">Sign in canceled</string>
+    <string name="telegram_orqali_kirish">Sign in with Telegram</string>
+    <string name="yoki">or</string>
+    <string name="telefon_raqami">Phone number</string>
+    <string name="kirish_subtitle">Sign in to your account to continue</string>
+    <string name="login_privacy">By continuing, you agree to the Privacy Policy and Terms of Use</string>
+    <string name="telegram_ochilmoqda">Opening Telegram…</string>
+    <string name="telegram_phone_note">When signing in with Telegram, your phone number will be requested — you will see this in the Telegram window</string>
+    <string name="qayta_yuborish">Resend</string>
+    <string name="farzand_qalqon_ochirish_sorovi">Your child is requesting permission to disable Shield for "%1$s"</string>
+    <string name="javob_uchun">Time remaining to respond: %1$s</string>
+    <string name="rad_etildi">Rejected</string>
+    <string name="muddati_tugagan">Expired</string>
+
 </resources>

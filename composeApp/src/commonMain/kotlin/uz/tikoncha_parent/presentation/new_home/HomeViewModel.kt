@@ -16,12 +16,15 @@ import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
+import uz.tikoncha_parent.domain.model.protection.pendingRequestCount
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
+import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
@@ -36,6 +39,7 @@ class HomeViewModel(
     private val todoListUseCase: TodoListUseCase,
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
     private val todayUsageUseCase: TodayUsageUseCase,
+    private val protectionStatusUseCase: ProtectionStatusUseCase,
 ) : ScreenModel {
 
     private val TAG = "HomeViewModel"
@@ -50,6 +54,8 @@ class HomeViewModel(
 
     private var childrenJob: Job? = null
     private var todayUsageJob: Job? = null
+
+    private var protectionJob: Job? = null
 
     init {
         loadOnce()
@@ -75,7 +81,10 @@ class HomeViewModel(
 
             HomeEvent.GetChildren -> loadChildren()
             HomeEvent.ReloadUserInfo -> reloadUserInfo()
-            HomeEvent.RefreshParentRequest -> loadParentRequestsCount()
+            HomeEvent.RefreshParentRequest -> {
+                loadParentRequestsCount()
+                loadProtectionStatus()
+            }
 
             HomeEvent.SyncSelectedChildFromSettings -> {
                 Logger.d(TAG, "SyncSelectedChildFromSettings = ${AppSettings.selectedChild}")
@@ -96,6 +105,34 @@ class HomeViewModel(
         }
         if (hasAppUsageLoaded.value != selectedChildId){
             loadTodayUsage()
+        }
+        loadProtectionStatus()
+    }
+
+    private fun loadProtectionStatus() {
+        val childId = _state.value.selectedChild?.userId
+        if (childId.isNullOrEmpty()) {
+            _state.update {
+                it.copy(
+                    protectionPendingRequestCount = 0,
+                    protectionPermissionOffCount = 0,
+                )
+            }
+            return
+        }
+        protectionJob?.cancel()
+        protectionJob = screenModelScope.launch {
+            when (val result = protectionStatusUseCase.invoke(childId)) {
+                is Resource.Success -> {
+                    _state.update {
+                        it.copy(
+                            protectionPendingRequestCount = result.data.pendingRequestCount(),
+                            protectionPermissionOffCount = result.data.missingRequiredPermissionCount(),
+                        )
+                    }
+                }
+                else -> Unit   // xato bo'lsa eski raqam qolaveradi, karta baribir ochiladi
+            }
         }
     }
 

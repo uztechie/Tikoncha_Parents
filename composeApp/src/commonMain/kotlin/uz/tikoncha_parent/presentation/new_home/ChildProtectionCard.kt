@@ -46,7 +46,7 @@ fun ChildProtectionCard(
     modifier: Modifier = Modifier,
 ) {
     val total = permissionOffCount + pendingRequestCount
-    if (total <= 0) return
+    
 
     val isDanger = permissionOffCount > 0
     val subtitle = if (isDanger) {

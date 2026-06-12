@@ -694,4 +694,110 @@
     <string name="farzand_himoyasi">Защита ребёнка</string>
     <string name="ta_ruxsat_ochirilgan">%1$d разрешений отключено</string>
     <string name="ta_yangi_sorov_kutilmoqda">Ожидается %1$d новых запросов</string>
+
+    <string name="himoya">Защита</string>
+
+    <string name="mode_default_title">По умолчанию</string>
+    <string name="mode_gujanak_title">Гужанак</string>
+    <string name="mode_qalqon_title">Щит</string>
+
+    <string name="mode_default_desc">Защита отключена — работает только мониторинг</string>
+    <string name="mode_gujanak_desc">Блокировка по расписанию активна</string>
+    <string name="mode_qalqon_desc">Полная защита — усиленная блокировка активна</string>
+
+    <string name="holat_nomalum">Статус неизвестен</string>
+    <string name="holat_nomalum_desc">Устройство ребёнка ещё не синхронизировано</string>
+
+    <string name="himoya_boshlangich">Базовая</string>
+    <string name="himoya_orta">Средняя защита</string>
+    <string name="himoya_toliq">Полная защита</string>
+
+    <string name="sinxron">Синхронизация:</string>
+    <string name="sinxron_yoq">ещё не было</string>
+    <string name="hozirgina">только что</string>
+    <string name="daqiqa_oldin">%1$d мин. назад</string>
+    <string name="soat_oldin">%1$d ч. назад</string>
+    <string name="kun_oldin">%1$d дн. назад</string>
+
+    <string name="onlayn">Онлайн</string>
+    <string name="oflayn">Офлайн</string>
+
+    <string name="ochirish_usuli">Способ отключения</string>
+    <string name="usul_taymer">Таймер</string>
+    <string name="usul_maxfiy_kod">Секретный код</string>
+    <string name="usul_maxfiy_matn">Секретная фраза</string>
+    <string name="ota_ona_ruxsati">Разрешение родителя</string>
+
+    <string name="korsatish">Показать</string>
+    <string name="yashirish">Скрыть</string>
+
+    <string name="farzand_sorovlari">Запросы ребёнка</string>
+    <string name="n_ta_yangi">%1$d новых</string>
+
+    <string name="qalqonni_ochirish_sorovi">Запрос на отключение Щита</string>
+    <string name="tasdiqlasangiz_qalqon_ochadi">Если подтвердить, Щит будет немедленно отключён на устройстве ребёнка</string>
+
+    <string name="rad_etish">Отклонить</string>
+
+    <string name="sorov_tasdiqlandi">Запрос подтверждён</string>
+    <string name="sorov_rad_etildi">Запрос отклонён</string>
+    <string name="sorov_muddati_tugadi">Срок запроса истёк</string>
+
+    <string name="qalqon_ochirishga_ruxsat">Разрешить отключение Щита?</string>
+    <string name="qalqon_ochirish_ruxsat_desc">После подтверждения ребёнок сможет немедленно отключить Щит.</string>
+
+    <string name="ruxsatlar">Разрешения</string>
+    <string name="x_dan_y_berilgan">%1$d из %2$d предоставлено</string>
+
+    <string name="berilgan">Предоставлено</string>
+    <string name="berilmagan">Не предоставлено</string>
+
+    <string name="boshqa_rejimlar_uchun">Для других режимов пока не требуется</string>
+    <string name="gujanak_uchun">Для режима Гужанак</string>
+    <string name="qalqon_uchun">Для режима Щит</string>
+
+    <string name="n_ta_zarur_ruxsat_ochiq">%1$d обязательных разрешений отключено</string>
+    <string name="zarur_ruxsat_banner_desc">Без этих разрешений защита не сможет работать полноценно — включите их на устройстве ребёнка</string>
+
+    <string name="perm_notification">Уведомления</string>
+    <string name="perm_usage_stats">Статистика использования</string>
+    <string name="perm_overlay">Отображение поверх других приложений</string>
+    <string name="perm_overlay_popup">Всплывающее окно в фоне (Xiaomi)</string>
+    <string name="perm_location">Местоположение</string>
+    <string name="perm_gps">GPS включён</string>
+    <string name="perm_battery">Без ограничений батареи</string>
+    <string name="perm_auto_start">Автозапуск</string>
+    <string name="perm_accessibility">Специальные возможности</string>
+    <string name="perm_device_admin">Администратор устройства</string>
+
+    <string name="bu_ilova_kategoriya_orqali_tanlangan">Это приложение выбрано через категорию.</string>
+
+    <string name="sayt_yoki_kalit_soz_kiriting">Введите сайт или ключевое слово</string>
+    <string name="sayt_yoki_kalit_soz_label">site.ru или ключевое слово</string>
+
+    <string name="kirish_bekor_qilindi">Вход отменён</string>
+
+    <string name="telegram_orqali_kirish">Войти через Telegram</string>
+    <string name="yoki">или</string>
+
+    <string name="telefon_raqami">Номер телефона</string>
+
+    <string name="kirish_subtitle">Войдите в свой аккаунт, чтобы продолжить</string>
+
+    <string name="login_privacy">Продолжая, вы соглашаетесь с Политикой конфиденциальности и Условиями использования</string>
+
+    <string name="telegram_ochilmoqda">Открывается Telegram…</string>
+
+    <string name="telegram_phone_note">При входе через Telegram будет запрошен ваш номер телефона — вы увидите это в окне Telegram</string>
+
+    <string name="qayta_yuborish">Отправить повторно</string>
+
+    <string name="farzand_qalqon_ochirish_sorovi">Ваш ребёнок запрашивает разрешение на отключение режима «Щит» для «%1$s»</string>
+
+    <string name="javob_uchun">Время на ответ: %1$s</string>
+
+    <string name="rad_etildi">Отклонено</string>
+
+    <string name="muddati_tugagan">Срок истёк</string>
+
 </resources>

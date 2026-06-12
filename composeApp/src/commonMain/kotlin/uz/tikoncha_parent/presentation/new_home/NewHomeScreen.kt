@@ -68,9 +68,9 @@ import uz.tikoncha_parent.presentation.in_app_update.InAppUpdateDialog
 import uz.tikoncha_parent.presentation.in_app_update.UpdateEvent
 import uz.tikoncha_parent.presentation.in_app_update.UpdateUiState
 import uz.tikoncha_parent.presentation.in_app_update.UpdateViewModel
-import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.policy.policy_list.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
+import uz.tikoncha_parent.presentation.protection.ProtectionScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.statistic.durationStringWithZero
 import uz.tikoncha_parent.presentation.task.TaskScreen
@@ -309,56 +309,62 @@ fun NewHomeUi(
                 // NewHomeUi'da — hozirgi "Farzandingiz so'rovlari" item'i o'rnida:
                 item {
                     ChildProtectionCard(
-                        permissionOffCount = 1,      // ruxsat monitoring ma'lumotingizdan
-                        pendingRequestCount = 2,     // yoki state.strictDisableRequests.size
-                        onClick = {  },
+                        permissionOffCount = state.protectionPermissionOffCount,
+                        pendingRequestCount = state.protectionPendingRequestCount,
+                        onClick = {
+                            if (state.childrenList.isEmpty()) {
+                                internetCheck.check { showChildDialog = true }
+                            } else {
+                                navigator?.push(ProtectionScreen())
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Space(16.dp)
                 }
 
-                item {
-                    if (parentRequestCount > 0) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .simpleShadow(RoundedCornerShape(CardCornerRadius))
-                                .background(
-                                    MaterialTheme.extendedColor.cardColor,
-                                    RoundedCornerShape(CardCornerRadius)
-                                )
-                                .clip(RoundedCornerShape(CardCornerRadius))
-                                .clickable {
-                                    navigator?.push(ParentRequestScreen())
-                                }
-                                .padding(horizontal = CardCornerPadding, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.farzandingiz_sorovlari),
-                                style = AppTypography.titleSmMedium,
-                                color = AppColors.text.primary,
-                                modifier = Modifier.weight(1f)
-                            )
-                            if (parentRequestCount > 0) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(AppColors.bg.accentWarning, CircleShape)
-                                        .size(24.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
-                                        style = AppTypography.titleSmMedium,
-                                        color = AppColors.text.inverse,
-                                        maxLines = 1,
-                                    )
-                                }
-                            }
-                        }
-                        Space(12.dp)
-                    }
-                }
+//                item {
+//                    if (parentRequestCount > 0) {
+//                        Row(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .simpleShadow(RoundedCornerShape(CardCornerRadius))
+//                                .background(
+//                                    MaterialTheme.extendedColor.cardColor,
+//                                    RoundedCornerShape(CardCornerRadius)
+//                                )
+//                                .clip(RoundedCornerShape(CardCornerRadius))
+//                                .clickable {
+//                                    navigator?.push(ParentRequestScreen())
+//                                }
+//                                .padding(horizontal = CardCornerPadding, vertical = 8.dp),
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+//                            Text(
+//                                text = stringResource(Res.string.farzandingiz_sorovlari),
+//                                style = AppTypography.titleSmMedium,
+//                                color = AppColors.text.primary,
+//                                modifier = Modifier.weight(1f)
+//                            )
+//                            if (parentRequestCount > 0) {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .background(AppColors.bg.accentWarning, CircleShape)
+//                                        .size(24.dp),
+//                                    contentAlignment = Alignment.Center
+//                                ) {
+//                                    Text(
+//                                        text = if (parentRequestCount > 99) "99" else parentRequestCount.toString(),
+//                                        style = AppTypography.titleSmMedium,
+//                                        color = AppColors.text.inverse,
+//                                        maxLines = 1,
+//                                    )
+//                                }
+//                            }
+//                        }
+//                        Space(12.dp)
+//                    }
+//                }
 
                 item {
                     InAppUpdateCard(

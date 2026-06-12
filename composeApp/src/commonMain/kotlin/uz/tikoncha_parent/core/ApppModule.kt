@@ -43,6 +43,7 @@ import uz.tikoncha_parent.data.remote.NewApiService
 import uz.tikoncha_parent.data.remote.PaymentApiService
 import uz.tikoncha_parent.data.remote.PermissionStatusApiService
 import uz.tikoncha_parent.data.remote.PolicyApiService
+import uz.tikoncha_parent.data.remote.ProtectionApiService
 import uz.tikoncha_parent.data.remote.TutorialApiService
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
@@ -54,6 +55,7 @@ import uz.tikoncha_parent.data.repository.PaymentRepositoryImpl
 import uz.tikoncha_parent.data.repository.PermissionStatusRepositoryImpl
 import uz.tikoncha_parent.data.repository.PlayerRepositoryImpl
 import uz.tikoncha_parent.data.repository.PolicyRepositoryImpl
+import uz.tikoncha_parent.data.repository.ProtectionRepositoryImpl
 import uz.tikoncha_parent.data.repository.TelegramAuthRepositoryImpl
 import uz.tikoncha_parent.data.repository.TutorialRepositoryImpl
 import uz.tikoncha_parent.data.repository.UpdateRepositoryImpl
@@ -69,6 +71,7 @@ import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.domain.repository.PlayerRepository
 import uz.tikoncha_parent.domain.repository.PolicyRepository
+import uz.tikoncha_parent.domain.repository.ProtectionRepository
 import uz.tikoncha_parent.domain.repository.TelegramAuthRepository
 import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
@@ -116,6 +119,11 @@ import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseC
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
+import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
+import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
+import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
+import uz.tikoncha_parent.domain.use_case.protection.StrictDisableRequestsUseCase
+import uz.tikoncha_parent.domain.use_case.protection.UpdateAccountRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
@@ -146,6 +154,7 @@ import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionVie
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
+import uz.tikoncha_parent.presentation.protection.ProtectionViewModel
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
 import uz.tikoncha_parent.presentation.task.TaskListViewModel
 import uz.tikoncha_parent.presentation.task.completed_task.CompletedTaskViewModel
@@ -182,6 +191,8 @@ val sharedModule = module {
     single { PermissionStatusApiService(get()) }
     single { TutorialApiService(get()) }
 
+    single { ProtectionApiService(get()) }
+
     //repository
     single<LoginRepository> { LoginRepositoryImpl(get()) }
     single<TodoRepository> { TodoRepositoryImpl(get()) }
@@ -202,6 +213,7 @@ val sharedModule = module {
     single<TutorialRepository> { TutorialRepositoryImpl(get()) }
 
     single<TelegramAuthRepository> { TelegramAuthRepositoryImpl() }
+    single<ProtectionRepository> { ProtectionRepositoryImpl(get()) }
 
 
 
@@ -275,6 +287,11 @@ val sharedModule = module {
     factory { DeleteAvatarFromServerUseCase(get()) }
     factory { GetSubscriptionStatusUseCase(get()) }
     factory { TelegramLoginUseCase(get()) }
+    single { ProtectionStatusUseCase(get()) }
+    single { StrictDisableRequestsUseCase(get()) }
+    single { ApproveStrictDisableRequestUseCase(get()) }
+    single { RejectStrictDisableRequestUseCase(get()) }
+    single { UpdateAccountRequestStatusUseCase(get()) }
 
 
 
@@ -289,7 +306,7 @@ val sharedModule = module {
     factory { CreateTaskViewModel(get(), get(), get()) }
     factory { CompletedTaskViewModel(get()) }
     factory { StatisticViewModel(get(), get(), get(), get()) }
-    factory { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { HomeViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
 
     factory {
         ChatViewModel(
@@ -344,5 +361,6 @@ val sharedModule = module {
     factory { VideoTutorialScreenModel(get()) }
     factory { PaymentHistoryScreenModel(get()) }
     factory { SubscriptionViewModel(get()) }
+    factory { ProtectionViewModel(get(), get(), get(), get()) }
 
 }

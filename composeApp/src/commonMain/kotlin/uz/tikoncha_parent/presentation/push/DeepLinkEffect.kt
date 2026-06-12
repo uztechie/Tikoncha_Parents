@@ -8,8 +8,8 @@ import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
 import uz.tikoncha_parent.presentation.model.ChatType
-import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestScreen
 import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.protection.ProtectionScreen
 import uz.tikoncha_parent.presentation.task.TaskScreen
 
 @Composable
@@ -73,7 +73,7 @@ fun navigateByDeepLink(navigator: Navigator, link: DeepLink) {
 
         DeepLink.ChildRequest -> {
             Logger.d("DeepLinkEffect", "request ChildRequest")
-            navigator.push(ParentRequestScreen())
+            navigator.push(ProtectionScreen())
         }
 
         else -> {

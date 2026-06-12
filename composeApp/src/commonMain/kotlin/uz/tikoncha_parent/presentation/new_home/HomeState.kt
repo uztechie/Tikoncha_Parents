@@ -19,4 +19,7 @@ data class HomeState(
 
     /* ----- HomeScreen card uchun bugungi usage ----- */
     val todayUsage: HourMinute = HourMinute(0, 0),
+
+    val protectionPendingRequestCount: Int = 0,
+    val protectionPermissionOffCount: Int = 0,
 )
