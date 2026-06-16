@@ -71,14 +71,16 @@ fun ChildProtectionCard(
                 style = AppTypography.displaySmRegular,
                 color = AppColors.text.primary,
             )
-            Text(
-                text = subtitle,
-                style = AppTypography.titleSmMedium,
-                color = if (isDanger) AppColors.text.accentDanger else AppColors.text.secondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 2.dp),
-            )
+            if (total != 0) {
+                Text(
+                    text = subtitle,
+                    style = AppTypography.titleSmMedium,
+                    color = if (isDanger) AppColors.text.accentDanger else AppColors.text.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
         }
 
         Spacer(Modifier.width(12.dp))
@@ -90,23 +92,25 @@ fun ChildProtectionCard(
                 modifier = Modifier.size(80.dp),
             )
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = 6.dp, y = (-6).dp)
-                    .size(20.dp)
-                    .background(
-                        if (isDanger) AppColors.bg.accentDanger else AppColors.bg.accentWarning,
-                        CircleShape,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = if (total > 99) "99" else total.toString(),
-                    style = AppTypography.bodySmSemiBold,
-                    color = AppColors.text.inverse,
-                    maxLines = 1,
-                )
+            if (total != 0) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 6.dp, y = (-6).dp)
+                        .size(20.dp)
+                        .background(
+                            if (isDanger) AppColors.bg.accentDanger else AppColors.bg.accentWarning,
+                            CircleShape,
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = if (total > 99) "99" else total.toString(),
+                        style = AppTypography.bodySmSemiBold,
+                        color = AppColors.text.inverse,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
@@ -130,7 +134,7 @@ private fun ChildProtectionCardPreview() {
             Space(12.dp)
             ChildProtectionCard(
                 permissionOffCount = 0,
-                pendingRequestCount = 2,
+                pendingRequestCount = 0,
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
             )
