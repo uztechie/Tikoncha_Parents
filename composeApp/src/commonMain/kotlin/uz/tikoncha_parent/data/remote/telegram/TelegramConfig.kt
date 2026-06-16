@@ -7,12 +7,13 @@ object TelegramConfig {
 
     // Android — debug/release SHA farqli, 2 ta host
     const val ANDROID_HOST_DEBUG: String = "app2429439482-login.tg.dev"
+    const val ANDROID_HOST_DEBUG2: String = "app2944167514-login.tg.dev"
     const val ANDROID_HOST_RELEASE: String = "app3295584582-login.tg.dev"
 
     // iOS — alohida host(lar)
     const val IOS_HOST: String = "app2596149294-login.tg.dev"
 
-    val SCOPES: List<String> = listOf("openid", "profile", "phone")
+    val SCOPES: List<String> = listOf("openid", "profile", "phone", "telegram:bot_access")
 
     // Joriy platforma + build uchun host
     val redirectHost: String

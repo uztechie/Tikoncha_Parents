@@ -1,7 +1,6 @@
 package uz.tikoncha_parent.presentation.profile.settings.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,40 +48,47 @@ class ThemeScreen : Screen {
 }
 
 @Composable
-fun ThemeUi(
-    navigator: Navigator?
-) {
+fun ThemeUi(navigator: Navigator?) {
     val savedMode by ThemeController.mode.collectAsState()
-    val isSystemDark = isSystemInDarkTheme()
     var draftMode by remember(savedMode) { mutableStateOf(savedMode) }
-    val highlightedMode = remember(draftMode, isSystemDark) {
-        when (draftMode) {
-            ThemeMode.SYSTEM -> {
-                if (isSystemDark) ThemeMode.DARK else ThemeMode.LIGHT
-            }
 
-            else -> draftMode
-        }
-    }
-
-    val hasChanged = highlightedMode != savedMode
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.page,
         navigationBarColor = AppColors.bg.page
     )
 
+    ThemeContent(
+        selectedMode = draftMode,
+        hasChanged = draftMode != savedMode,
+        containerModifier = systemBars.modifier,
+        onModeSelected = { theme -> draftMode = theme },
+        onBackClick = { navigator?.pop() },
+        onSaveClick = {
+            ThemeController.setMode(draftMode)
+            navigator?.replaceAll(NewHomeScreen())
+        }
+    )
+}
+
+@Composable
+private fun ThemeContent(
+    selectedMode: ThemeMode,
+    hasChanged: Boolean,
+    onModeSelected: (ThemeMode) -> Unit,
+    onBackClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    containerModifier: Modifier = Modifier,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .then(systemBars.modifier)
+            .then(containerModifier)
             .background(AppColors.bg.page)
     ) {
         CustomHeader(
             title = stringResource(Res.string.tema),
             showBackButton = true,
-            onBackClick = {
-                navigator?.pop()
-            }
+            onBackClick = onBackClick
         )
         SpaceMedium()
 
@@ -91,22 +97,26 @@ fun ThemeUi(
                 .fillMaxSize()
                 .padding(horizontal = ContainerPadding)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-
-                ThemeMode.entries.filterNot { it == ThemeMode.SYSTEM }.forEach { mode ->
-                    ThemeSelectorWithImage(
-                        selectedTheme = mode,
-                        modifier = Modifier.weight(1f),
-                        selected = mode == highlightedMode,
-                        onThemeSelected = { theme ->
-                            draftMode = theme
-                        }
-                    )
+            ThemeMode.entries.chunked(2).forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    rowItems.forEach { mode ->
+                        ThemeSelectorWithImage(
+                            selectedTheme = mode,
+                            modifier = Modifier.weight(1f),
+                            selected = mode == selectedMode,
+                            onThemeSelected = onModeSelected
+                        )
+                    }
+                    if (rowItems.size < 2) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
             CustomButton(
@@ -115,10 +125,7 @@ fun ThemeUi(
                     .fillMaxWidth()
                     .height(ButtonHeight),
                 enabled = hasChanged,
-                onClick = {
-                    ThemeController.setMode(draftMode)
-                    navigator?.replaceAll(NewHomeScreen())
-                }
+                onClick = onSaveClick
             )
             SpaceLarge()
         }
@@ -127,10 +134,30 @@ fun ThemeUi(
 
 @Preview
 @Composable
-private fun PreviewThemeScreen() {
-    TikonchaParentTheme(
-        ThemeMode.DARK
-    ) {
-        ThemeUi(navigator = null)
+private fun PreviewThemeContentLight() {
+    var selected by remember { mutableStateOf(ThemeMode.LIGHT) }
+    TikonchaParentTheme(ThemeMode.LIGHT) {
+        ThemeContent(
+            selectedMode = selected,
+            hasChanged = selected != ThemeMode.LIGHT,
+            onModeSelected = { selected = it },
+            onBackClick = {},
+            onSaveClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewThemeContentDark() {
+    var selected by remember { mutableStateOf(ThemeMode.DARK) }
+    TikonchaParentTheme(ThemeMode.DARK) {
+        ThemeContent(
+            selectedMode = selected,
+            hasChanged = selected != ThemeMode.DARK,
+            onModeSelected = { selected = it },
+            onBackClick = {},
+            onSaveClick = {}
+        )
     }
 }
