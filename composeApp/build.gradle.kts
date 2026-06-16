@@ -198,21 +198,34 @@ android {
         versionName = "1.2.1"
     }
     setProperty("archivesBaseName", "Tikoncha_Parent_v${defaultConfig.versionName}")
-//    val props = Properties().apply {
-//        val f = rootProject.file("local.properties")
-//        if (f.exists()) load(f.inputStream())
-//    }
 
-//    signingConfigs {
-//        create("release") {
-//            val storeFilePath = props.getProperty("RELEASE_STORE_FILE")
-//            storeFile = rootProject.file(storeFilePath)
-//
-//            storePassword = props.getProperty("RELEASE_STORE_PASSWORD")
-//            keyAlias = props.getProperty("RELEASE_KEY_ALIAS")
-//            keyPassword = props.getProperty("RELEASE_KEY_PASSWORD")
-//        }
-//    }
+
+    val props = Properties().apply {
+        val f = rootProject.file("local.properties")
+        if (f.exists()) load(f.inputStream())
+    }
+
+
+
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(props.getProperty("RELEASE_STORE_FILE"))
+            storePassword = props.getProperty("RELEASE_STORE_PASSWORD")
+            keyAlias = props.getProperty("RELEASE_KEY_ALIAS")
+            keyPassword = props.getProperty("RELEASE_KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("release")   // debug ham release kalit bilan
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
 
     packaging {
         resources {
