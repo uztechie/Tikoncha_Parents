@@ -2,19 +2,29 @@ package uz.tikoncha_parent.presentation.protection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -30,11 +40,15 @@ import tikoncha_parents.composeapp.generated.resources.farzand_chiqish_ruxsat
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirmoqchi
 import tikoncha_parents.composeapp.generated.resources.ha
 import tikoncha_parents.composeapp.generated.resources.himoya
+import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqishni_tasdiqlaysizmi
+import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish
 import tikoncha_parents.composeapp.generated.resources.ilovani_ochirishni_tasdiqlaysizmi
 import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.qalqon_ochirishga_ruxsat
 import tikoncha_parents.composeapp.generated.resources.qalqon_ochirish_ruxsat_desc
+import tikoncha_parents.composeapp.generated.resources.ruxsatlar
+import tikoncha_parents.composeapp.generated.resources.sorovlar
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import tikoncha_parents.composeapp.generated.resources.yoq
 import uz.tikoncha_parent.data.local.AppSettings
@@ -46,6 +60,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ProtectionScreen : Screen {
@@ -55,9 +70,9 @@ class ProtectionScreen : Screen {
 
         val viewModel = koinScreenModel<ProtectionViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val remainingSeconds by viewModel.remainingSeconds.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        // Tanlangan farzand — boshqa ekranlardagi kabi AppSettings'dan
         val selectedChild = AppSettings.selectedChild
         val childId = selectedChild?.userId ?: ""
         val childName = selectedChild?.name ?: ""
@@ -69,6 +84,7 @@ class ProtectionScreen : Screen {
         ProtectionUi(
             navigator = navigator,
             state = state,
+            remainingSeconds = remainingSeconds,
             event = event,
             childId = childId,
             childName = childName,
@@ -81,9 +97,10 @@ class ProtectionScreen : Screen {
 fun ProtectionUi(
     navigator: Navigator?,
     state: ProtectionState,
+    remainingSeconds: Int,
     event: (ProtectionEvent) -> Unit,
     childId: String,
-    childName: String
+    childName: String,
 ) {
     // ─────────── Dialog holatlari ───────────
     var approveStrictDialog by remember { mutableStateOf(false) }
@@ -102,6 +119,7 @@ fun ProtectionUi(
 
     Loading(state.responseState is ResponseState.Loading)
 
+    // ─────────── Error ───────────
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
         show = showErrorDialog,
@@ -119,7 +137,7 @@ fun ProtectionUi(
         },
     )
 
-    // Qalqon o'chirish so'rovini tasdiqlash
+    // ─────────── Qalqon o'chirishni tasdiqlash ───────────
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_warning),
         show = approveStrictDialog,
@@ -137,7 +155,7 @@ fun ProtectionUi(
         },
     )
 
-    // Hisobdan chiqishga ruxsat
+    // ─────────── Hisobdan chiqishga ruxsat ───────────
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_warning),
         show = allowLogoutDialog,
@@ -153,7 +171,7 @@ fun ProtectionUi(
         },
     )
 
-    // Ilovani o'chirishga ruxsat
+    // ─────────── Ilovani o'chirishga ruxsat ───────────
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_warning),
         show = allowDeleteDialog,
@@ -184,7 +202,6 @@ fun ProtectionUi(
             title = stringResource(Res.string.himoya),
             showBackButton = true,
             onBackClick = { navigator?.pop() },
-            // trailingIcon = { ChildSelectionButton(...) }  // TODO: boshqa ekranlardagi kabi ulang
         )
 
         PullToRefreshBox(
@@ -197,42 +214,113 @@ fun ProtectionUi(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(ContainerPadding),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                item(key = "hero") {
+                // ════════ HERO ════════
+                item(key = "hero", contentType = "hero") {
                     ProtectionHeroCard(state = state, event = event)
                 }
 
+                // ════════ SO'ROVLAR sarlavhasi ════════
                 if (state.showRequestsCard) {
-                    item(key = "requests") {
-                        ProtectionRequestsCard(
-                            state = state,
-                            childName = childName,
-                            onApproveStrict = { approveStrictDialog = true },
-                            onRejectStrict = { id ->
-                                event(ProtectionEvent.RejectStrictRequest(id))
-                            },
-                            onAllowAccount = { action ->
-                                when (action) {
-                                    AccountRequestAction.LOGOUT -> allowLogoutDialog = true
-                                    AccountRequestAction.DELETE -> allowDeleteDialog = true
-                                    else -> {}
+                    item(key = "requests_header", contentType = "header") {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 6.dp, start = 2.dp, end = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.sorovlar),
+                                style = AppTypography.emphasizedSmSemiBold,
+                                color = AppColors.text.secondary,
+                                modifier = Modifier.weight(1f),
+                            )
+                            if (state.pendingRequestCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(100.dp))
+                                        .background(AppColors.bg.accentDanger)
+                                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                                ) {
+                                    Text(
+                                        text = state.pendingRequestCount.toString(),
+                                        style = AppTypography.bodyMdMedium,
+                                        color = AppColors.text.inverse,
+                                    )
                                 }
-                            },
-                            onDenyAccount = { action ->
-                                event(ProtectionEvent.DenyAccountRequest(action))
+                            }
+                        }
+                    }
+                }
+
+                // ── Qalqonni o'chirish so'rovi ──
+                state.strictDisableRequest?.let { request ->
+                    item(key = "strict_request", contentType = "request") {
+                        ProtectionStrictRequestCard(
+                            request = request,
+                            childName = request.childName ?: childName,
+                            isPending = state.isStrictRequestPending,
+                            remainingSeconds = remainingSeconds,
+                            isProcessing = state.actionInProgressId == request.id,
+                            onApprove = { approveStrictDialog = true },
+                            onReject = {
+                                request.id?.let { event(ProtectionEvent.RejectStrictRequest(it)) }
                             },
                         )
                     }
                 }
 
+                // ── Hisobdan chiqish ──
+                state.logoutRequest?.let { logout ->
+                    item(key = "logout_request", contentType = "request") {
+                        ProtectionAccountRequestCard(
+                            request = logout,
+                            childName = childName,
+                            title = stringResource(Res.string.hisobdan_chiqish),
+                            isProcessing = state.actionInProgressId == logout.id,
+                            onAllow = { allowLogoutDialog = true },
+                            onDeny = {
+                                event(ProtectionEvent.DenyAccountRequest(AccountRequestAction.LOGOUT))
+                            },
+                        )
+                    }
+                }
+
+                // ── Ilovani o'chirish ──
+                state.deleteRequest?.let { delete ->
+                    item(key = "delete_request", contentType = "request") {
+                        ProtectionAccountRequestCard(
+                            request = delete,
+                            childName = childName,
+                            title = stringResource(Res.string.ilovani_ochirish),
+                            isProcessing = state.actionInProgressId == delete.id,
+                            onAllow = { allowDeleteDialog = true },
+                            onDeny = {
+                                event(ProtectionEvent.DenyAccountRequest(AccountRequestAction.DELETE))
+                            },
+                        )
+                    }
+                }
+
+                // ════════ WARNING BANNER ════════
                 if (state.missingRequiredPermissions.isNotEmpty()) {
-                    item(key = "warning") {
+                    item(key = "warning", contentType = "warning") {
+                        Spacer(Modifier.height(6.dp))
                         MissingPermissionsBanner(missing = state.missingRequiredPermissions)
                     }
                 }
 
-                item(key = "permissions") {
+                // ════════ RUXSATLAR ════════
+                item(key = "permissions_header", contentType = "header") {
+                    Text(
+                        text = stringResource(Res.string.ruxsatlar),
+                        style = AppTypography.emphasizedSmSemiBold,
+                        color = AppColors.text.secondary,
+                        modifier = Modifier.padding(top = 6.dp, start = 2.dp, end = 2.dp),
+                    )
+                }
+                item(key = "permissions", contentType = "permissions") {
                     ProtectionPermissionsCard(state = state)
                 }
             }

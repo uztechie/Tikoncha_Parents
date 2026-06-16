@@ -39,6 +39,11 @@ class ProtectionViewModel(
     private val _state = MutableStateFlow(ProtectionState())
     val state = _state.asStateFlow()
 
+    // ── Countdown alohida flow: har soniya yangilansa ham faqat
+    //    bitta Text recompose bo'ladi, butun ekran emas ──
+    private val _remainingSeconds = MutableStateFlow(0)
+    val remainingSeconds = _remainingSeconds.asStateFlow()
+
     private var currentChildId: String? = null
     private var countdownJob: Job? = null
 
@@ -154,11 +159,11 @@ class ProtectionViewModel(
                 }
                 is Resource.Success -> {
                     countdownJob?.cancel()
+                    _remainingSeconds.value = 0
                     _state.update {
                         it.copy(
                             actionInProgressId = null,
-                            strictDisableRequest = result.data,   // approved / rejected holati
-                            remainingSeconds = 0,
+                            strictDisableRequest = result.data,
                         )
                     }
                 }
@@ -196,13 +201,15 @@ class ProtectionViewModel(
                     }
                 }
                 is Resource.Success -> {
-                    // Javob berildi — so'rov ekrandan yo'qoladi
+                    // Karta yo'qolmaydi — yangilangan status (access/deny) bilan qoladi.
+                    // Keyingi refresh'da API qaytarmasa tabiiy o'chadi.
+                    val updated = request.copy(status = status.value)
                     _state.update {
                         when (action) {
                             AccountRequestAction.LOGOUT ->
-                                it.copy(actionInProgressId = null, logoutRequest = null)
+                                it.copy(actionInProgressId = null, logoutRequest = updated)
                             else ->
-                                it.copy(actionInProgressId = null, deleteRequest = null)
+                                it.copy(actionInProgressId = null, deleteRequest = updated)
                         }
                     }
                 }
@@ -218,7 +225,7 @@ class ProtectionViewModel(
         val isPending = request?.status.equals("pending", ignoreCase = true)
         val expiresAt = parseInstant(request?.expiresAt)
         if (!isPending || expiresAt == null) {
-            _state.update { it.copy(remainingSeconds = 0) }
+            _remainingSeconds.value = 0
             return
         }
 
@@ -226,12 +233,11 @@ class ProtectionViewModel(
             while (true) {
                 val remaining = (expiresAt - kotlin.time.Clock.System.now()).inWholeSeconds.toInt()
                 if (remaining <= 0) {
-                    _state.update { it.copy(remainingSeconds = 0) }
-                    // Muddati tugadi — serverdan yangi holat (lazy-expiry)
+                    _remainingSeconds.value = 0
                     currentChildId?.let { loadStatus(it, silent = true) }
                     return@launch
                 }
-                _state.update { it.copy(remainingSeconds = remaining) }
+                _remainingSeconds.value = remaining
                 delay(1_000)
             }
         }
@@ -239,11 +245,6 @@ class ProtectionViewModel(
 
     // ─────────────────────── Helpers ───────────────────────
 
-    /**
-     * Backend sanalarni timezone'siz yuboradi ("2026-06-12T19:30:02.017574").
-     * Avval to'liq ISO (Z bilan), bo'lmasa LocalDateTime sifatida UTC deb o'qiymiz.
-     * TODO: backend bilan tasdiqlang — bu vaqtlar UTC bo'lishi shart.
-     */
     private fun parseInstant(iso: String?): Instant? {
         if (iso.isNullOrBlank()) return null
         runCatching { return Instant.parse(iso) }

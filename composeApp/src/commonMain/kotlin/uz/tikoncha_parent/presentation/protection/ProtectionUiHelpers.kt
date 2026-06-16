@@ -2,16 +2,22 @@ package uz.tikoncha_parent.presentation.protection
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GppMaybe
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
@@ -112,10 +118,16 @@ fun Modifier.clickableNoRipple(onClick: () -> Unit): Modifier = composed {
     )
 }
 
-/** "12.06.2026" formatida sana (qurilma vaqt zonasida) */
-fun formatDateShort(instant: Instant?): String {
-    if (instant == null) return ""
-    val dt = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    fun p(n: Int) = n.toString().padStart(2, '0')
-    return "${p(dt.day)}.${p(dt.month.number)}.${dt.year}"
+
+fun ChildMode.icon(): ImageVector = when (this) {
+    ChildMode.STRICT -> Icons.Default.Security    // to'liq himoya
+    ChildMode.GUJANAK -> Icons.Default.Shield      // o'rta
+    else -> Icons.Default.GppMaybe                 // himoya o'chiq / noma'lum
+}
+
+fun ChildMode.shortDesc(): StringResource = when (this) {
+    ChildMode.DEFAULT -> Res.string.himoya_ochiq_qisqa
+    ChildMode.GUJANAK -> Res.string.gujanak_faol_qisqa
+    ChildMode.STRICT -> Res.string.toliq_himoya_faol_qisqa
+    ChildMode.UNKNOWN -> Res.string.holat_nomalum_desc
 }

@@ -13,7 +13,6 @@ data class HomeState(
     val userImageUrl: String? = null,
     val showTikonchaTutorialCard: Boolean = false,
 
-    val parentRequestCount: Int = 0,
     val activeTaskCount: Int = 0,
     val parentPolicyCount: Int = 0,
 

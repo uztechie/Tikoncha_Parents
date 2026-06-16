@@ -20,7 +20,6 @@ import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
 import uz.tikoncha_parent.domain.model.protection.pendingRequestCount
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.ParentRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
@@ -35,7 +34,6 @@ class HomeViewModel(
     private val childrenUseCase: ChildrenUseCase,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
     private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-    private val parentRequestUseCase: ParentRequestsUseCase,
     private val todoListUseCase: TodoListUseCase,
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
     private val todayUsageUseCase: TodayUsageUseCase,
@@ -82,7 +80,6 @@ class HomeViewModel(
             HomeEvent.GetChildren -> loadChildren()
             HomeEvent.ReloadUserInfo -> reloadUserInfo()
             HomeEvent.RefreshParentRequest -> {
-                loadParentRequestsCount()
                 loadProtectionStatus()
             }
 
@@ -194,23 +191,12 @@ class HomeViewModel(
                         )
                     }
 
-                    loadParentRequestsCount()
                     loadAll()
                 }
             }
         }
     }
 
-    private fun loadParentRequestsCount() = screenModelScope.launch {
-        when (val result = parentRequestUseCase()) {
-            is Resource.Success -> {
-                val count = result.data?.size ?: 0
-                _state.update { it.copy(parentRequestCount = count) }
-            }
-
-            else -> Unit
-        }
-    }
 
     private fun loadTasks() = screenModelScope.launch {
         val selectedId = state.value.selectedChild?.userId ?: return@launch

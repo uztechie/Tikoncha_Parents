@@ -146,7 +146,6 @@ fun NewHomeUi(
         event(HomeEvent.RefreshParentRequest)
     }
 
-    val parentRequestCount = state.parentRequestCount
     val showTikonchaTutorialCard = state.showTikonchaTutorialCard
     val taskCount = state.activeTaskCount
     val tableCount = state.parentPolicyCount

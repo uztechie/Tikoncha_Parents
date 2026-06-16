@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -37,36 +38,39 @@ import tikoncha_parents.composeapp.generated.resources.berilgan
 import tikoncha_parents.composeapp.generated.resources.berilmagan
 import tikoncha_parents.composeapp.generated.resources.boshqa_rejimlar_uchun
 import tikoncha_parents.composeapp.generated.resources.delete
+import tikoncha_parents.composeapp.generated.resources.eye
+import tikoncha_parents.composeapp.generated.resources.eye_slash
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovadan_chiqish_sorovi
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirish_sorovi
 import tikoncha_parents.composeapp.generated.resources.farzand_qalqon_ochirish_sorovi
-import tikoncha_parents.composeapp.generated.resources.farzand_sorovlari
 import tikoncha_parents.composeapp.generated.resources.gujanak_uchun
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
+import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish_ruxsat_berildi_desc
 import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish
-import tikoncha_parents.composeapp.generated.resources.jarayonda
+import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish_ruxsat_berildi_desc
 import tikoncha_parents.composeapp.generated.resources.javob_uchun
 import tikoncha_parents.composeapp.generated.resources.korsatish
 import tikoncha_parents.composeapp.generated.resources.logout
-import tikoncha_parents.composeapp.generated.resources.muddati_tugagan
-import tikoncha_parents.composeapp.generated.resources.n_ta_yangi
-import tikoncha_parents.composeapp.generated.resources.n_ta_zarur_ruxsat_ochiq
 import tikoncha_parents.composeapp.generated.resources.ochirish_usuli
-import tikoncha_parents.composeapp.generated.resources.oflayn
-import tikoncha_parents.composeapp.generated.resources.onlayn
 import tikoncha_parents.composeapp.generated.resources.qalqon_uchun
-import tikoncha_parents.composeapp.generated.resources.qalqonni_ochirish_sorovi
-import tikoncha_parents.composeapp.generated.resources.rad_etildi
+import tikoncha_parents.composeapp.generated.resources.qalqonni_ochirish
 import tikoncha_parents.composeapp.generated.resources.rad_etish
 import tikoncha_parents.composeapp.generated.resources.ruxsat_berish
 import tikoncha_parents.composeapp.generated.resources.ruxsatlar
-import tikoncha_parents.composeapp.generated.resources.sinxron
-import tikoncha_parents.composeapp.generated.resources.tasdiqlandi
+import tikoncha_parents.composeapp.generated.resources.sorovlar
+import tikoncha_parents.composeapp.generated.resources.oxirgi_sinxron
+import tikoncha_parents.composeapp.generated.resources.kod
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash
-import tikoncha_parents.composeapp.generated.resources.tasdiqlasangiz_qalqon_ochadi
 import tikoncha_parents.composeapp.generated.resources.x_dan_y_berilgan
 import tikoncha_parents.composeapp.generated.resources.yashirish
 import tikoncha_parents.composeapp.generated.resources.zarur_ruxsat_banner_desc
+import tikoncha_parents.composeapp.generated.resources.n_ta_zarur_ruxsat_ochiq
+import tikoncha_parents.composeapp.generated.resources.qalqon_ochirish_rad_etildi_desc
+import tikoncha_parents.composeapp.generated.resources.qalqon_ochirish_tasdiqlandi_desc
+import tikoncha_parents.composeapp.generated.resources.rad_etildi
+import tikoncha_parents.composeapp.generated.resources.ruxsat_berildi
+import tikoncha_parents.composeapp.generated.resources.sorov_rad_etildi_desc
+import tikoncha_parents.composeapp.generated.resources.tasdiqlandi
 import uz.tikoncha_parent.data.remote.model.protection.AccountRequestDto
 import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
 import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
@@ -75,26 +79,46 @@ import uz.tikoncha_parent.domain.model.protection.ChildPermission
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.ui.DialogButtonHeight
-import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 
-// ═══════════════════════ Umumiy karta ═══════════════════════
+// ═══════════════════════ Umumiy oq karta ═══════════════════════
 
 @Composable
 private fun ProtectionCard(content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(AppColors.bg.surface)
             .padding(16.dp),
         content = content,
     )
 }
 
-/** Farzand ismini accent rang bilan ajratib beradi */
+/** Kalit-qiymat qatori (hero ichidagi detallar) */
+@Composable
+private fun KeyValueRow(
+    label: String,
+    modifier: Modifier = Modifier,
+    valueContent: @Composable () -> Unit,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = AppTypography.emphasizedSmRegular,
+            color = AppColors.text.secondary,
+            modifier = Modifier.weight(1f),
+        )
+        valueContent()
+    }
+}
+
+/** Farzand ismini accent rang bilan ajratadi */
 @Composable
 private fun highlightedChildText(fullText: String, childName: String): AnnotatedString =
     buildAnnotatedString {
@@ -103,7 +127,7 @@ private fun highlightedChildText(fullText: String, childName: String): Annotated
             val start = fullText.indexOf(childName)
             if (start >= 0) {
                 addStyle(
-                    style = AppTypography.titleSmSemiBold
+                    style = AppTypography.emphasizedSmSemiBold
                         .copy(color = AppColors.text.accentEmphasis)
                         .toSpanStyle(),
                     start = start,
@@ -113,23 +137,6 @@ private fun highlightedChildText(fullText: String, childName: String): Annotated
         }
     }
 
-/** Eski kartadagi kabi to'liq rangli status pill (oq matn) */
-@Composable
-private fun SolidStatusPill(text: String, bgColor: Color) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(100.dp))
-            .background(bgColor)
-            .padding(horizontal = 10.dp, vertical = 3.dp),
-    ) {
-        Text(
-            text = text,
-            style = AppTypography.bodyMdMedium,
-            color = AppColors.text.inverse,
-        )
-    }
-}
-
 // ═══════════════════════ HERO KARTA ═══════════════════════
 
 @Composable
@@ -138,18 +145,35 @@ fun ProtectionHeroCard(
     event: (ProtectionEvent) -> Unit,
 ) {
     ProtectionCard {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Sarlavha qatori: ikona + nom/tavsif + daraja pill
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(AppColors.bg.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = state.mode.icon(),
+                    contentDescription = null,
+                    tint = AppColors.icon.accentPrimary,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+            Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(state.mode.title()),
                     style = AppTypography.titleLgSemiBold,
                     color = AppColors.text.primary,
                 )
-                Spacer(Modifier.height(2.dp))
                 Text(
-                    text = stringResource(state.mode.desc()),
-                    style = AppTypography.emphasizedSmRegular,
-                    color = AppColors.text.tertiary,
+                    text = stringResource(state.mode.shortDesc()),
+                    style = AppTypography.bodyLgRegular,
+                    color = AppColors.text.secondary,
                 )
             }
             Spacer(Modifier.width(8.dp))
@@ -167,51 +191,24 @@ fun ProtectionHeroCard(
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Space(14.dp)
         HorizontalDivider(color = AppColors.border.secondary)
-        Spacer(Modifier.height(12.dp))
+        Space(14.dp)
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Oxirgi sinxron
+        KeyValueRow(label = stringResource(Res.string.oxirgi_sinxron)) {
             Text(
-                text = stringResource(Res.string.sinxron) + " " +
-                        relativeTimeText(state.lastSyncAt),
-                style = AppTypography.emphasizedSmRegular,
-                color = AppColors.text.tertiary,
-                modifier = Modifier.weight(1f),
-            )
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (state.isOnline) AppColors.text.accentSuccess
-                        else AppColors.text.tertiary
-                    ),
-            )
-            Spacer(Modifier.width(6.dp))
-            Text(
-                text = stringResource(
-                    if (state.isOnline) Res.string.onlayn else Res.string.oflayn
-                ),
-                style = AppTypography.emphasizedSmMedium,
-                color = if (state.isOnline) AppColors.text.accentSuccess
-                else AppColors.text.tertiary,
+                text = relativeTimeText(state.lastSyncAt),
+                style = AppTypography.emphasizedSmSemiBold,
+                color = AppColors.text.primary,
             )
         }
 
+        // O'chirish usuli — faqat Qalqon faol bo'lganda
         val method = state.strictMethod
         if (state.mode == ChildMode.STRICT && method != null) {
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider(color = AppColors.border.secondary)
-            Spacer(Modifier.height(12.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(Res.string.ochirish_usuli),
-                    style = AppTypography.emphasizedSmRegular,
-                    color = AppColors.text.tertiary,
-                    modifier = Modifier.weight(1f),
-                )
+            Space(10.dp)
+            KeyValueRow(label = stringResource(Res.string.ochirish_usuli)) {
                 Text(
                     text = stringResource(method.title()),
                     style = AppTypography.emphasizedSmSemiBold,
@@ -219,37 +216,28 @@ fun ProtectionHeroCard(
                 )
             }
 
+            // Maxfiy kod — yashirin/ko'rsatish
             val code = state.unlockData
             if (method == StrictMethod.SECRET_CODE && !code.isNullOrEmpty()) {
-                Spacer(Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(AppColors.field.secondary)
-                            .padding(horizontal = 14.dp, vertical = 8.dp),
-                    ) {
+                Space(10.dp)
+                KeyValueRow(label = stringResource(Res.string.kod)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = if (state.isCodeVisible) code else "••••",
                             style = AppTypography.titleMdSemiBold,
                             color = AppColors.text.primary,
                         )
-                    }
-                    Spacer(Modifier.weight(1f))
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(AppColors.bg.secondaryContainer)
-                            .clickableNoRipple { event(ProtectionEvent.ToggleCodeVisibility) }
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                    ) {
-                        Text(
-                            text = stringResource(
-                                if (state.isCodeVisible) Res.string.yashirish
-                                else Res.string.korsatish
+                        Spacer(Modifier.width(8.dp))
+                        Icon(
+                            painter = painterResource(
+                                if (state.isCodeVisible) Res.drawable.eye_slash
+                                else Res.drawable.eye
                             ),
-                            style = AppTypography.emphasizedSmSemiBold,
-                            color = AppColors.text.accentEmphasis,
+                            contentDescription = null,
+                            tint = AppColors.icon.accentPrimary,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .clickableNoRipple { event(ProtectionEvent.ToggleCodeVisibility) },
                         )
                     }
                 }
@@ -258,117 +246,11 @@ fun ProtectionHeroCard(
     }
 }
 
-// ═══════════════════════ SO'ROVLAR KARTASI ═══════════════════════
-
-
-@Composable
-private fun RequestItemContainer(content: @Composable ColumnScope.() -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(AppColors.bg.tertiary)
-            .padding(12.dp),
-        content = content,
-    )
-}
-
-
+// ═══════════════════════ SO'ROVLAR ═══════════════════════
+// Har bir so'rov — ALOHIDA oq karta (karta ichida karta yo'q)
 
 @Composable
-fun ProtectionRequestsCard(
-    state: ProtectionState,
-    childName: String,
-    onApproveStrict: () -> Unit,
-    onRejectStrict: (String) -> Unit,
-    onAllowAccount: (AccountRequestAction) -> Unit,
-    onDenyAccount: (AccountRequestAction) -> Unit,
-) {
-    ProtectionCard {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(Res.string.farzand_sorovlari),
-                style = AppTypography.titleMdSemiBold,
-                color = AppColors.text.primary,
-                modifier = Modifier.weight(1f),
-            )
-            if (state.pendingRequestCount > 0) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(100.dp))
-                        .background(AppColors.bg.accentWarningContainer)
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(Res.string.n_ta_yangi, state.pendingRequestCount),
-                        style = AppTypography.emphasizedXsMedium,
-                        color = AppColors.text.accentWarning,
-                    )
-                }
-            }
-        }
-
-        var firstItem = true
-
-        // ── 1. Qalqonni o'chirish so'rovi ──
-        val strictRequest = state.strictDisableRequest
-        if (strictRequest != null) {
-            Space(12.dp)
-            RequestItemContainer {
-                StrictRequestItem(
-                    request = strictRequest,
-                    childName = strictRequest.childName ?: childName,
-                    isPending = state.isStrictRequestPending,
-                    remainingSeconds = state.remainingSeconds,
-                    isProcessing = state.actionInProgressId == strictRequest.id,
-                    onApprove = onApproveStrict,
-                    onReject = { strictRequest.id?.let(onRejectStrict) },
-                )
-            }
-            firstItem = false
-        }
-
-        // ── 2. Hisobdan chiqish ──
-        if (state.isLogoutRequestPending) {
-            Space(if (firstItem) 12.dp else 10.dp)
-            RequestItemContainer {
-                AccountRequestItem(
-                    request = state.logoutRequest,
-                    childName = childName,
-                    title = stringResource(Res.string.hisobdan_chiqish),
-                    subtitle = stringResource(
-                        Res.string.farzand_ilovadan_chiqish_sorovi, childName
-                    ),
-                    isProcessing = state.actionInProgressId == state.logoutRequest?.id,
-                    onAllow = { onAllowAccount(AccountRequestAction.LOGOUT) },
-                    onDeny = { onDenyAccount(AccountRequestAction.LOGOUT) },
-                )
-            }
-            firstItem = false
-        }
-
-        // ── 3. Ilovani o'chirish ──
-        if (state.isDeleteRequestPending) {
-            Space(if (firstItem) 12.dp else 10.dp)
-            RequestItemContainer {
-                AccountRequestItem(
-                    request = state.deleteRequest,
-                    childName = childName,
-                    title = stringResource(Res.string.ilovani_ochirish),
-                    subtitle = stringResource(
-                        Res.string.farzand_ilovani_ochirish_sorovi, childName
-                    ),
-                    isProcessing = state.actionInProgressId == state.deleteRequest?.id,
-                    onAllow = { onAllowAccount(AccountRequestAction.DELETE) },
-                    onDeny = { onDenyAccount(AccountRequestAction.DELETE) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun StrictRequestItem(
+fun ProtectionStrictRequestCard(
     request: ChildRequestDto,
     childName: String,
     isPending: Boolean,
@@ -380,92 +262,59 @@ private fun StrictRequestItem(
     val approved = request.status.equals("approved", ignoreCase = true)
     val rejected = request.status.equals("rejected", ignoreCase = true)
 
-    Column {
-        // Sarlavha + status pill
+    ProtectionCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
                 tint = if (isPending) AppColors.icon.accentDanger
                 else AppColors.icon.secondary,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = stringResource(Res.string.qalqonni_ochirish_sorovi),
+                text = stringResource(Res.string.qalqonni_ochirish),
                 style = AppTypography.titleMdSemiBold,
                 color = AppColors.text.primary,
                 modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.width(8.dp))
             when {
-                isPending -> SolidStatusPill(
-                    text = stringResource(Res.string.jarayonda),
-                    bgColor = AppColors.bg.accentWarning,
+                isPending && remainingSeconds > 0 -> Text(
+                    text = formatCountdown(remainingSeconds),
+                    style = AppTypography.emphasizedSmSemiBold,
+                    color = if (remainingSeconds < 60) AppColors.text.accentDanger
+                    else AppColors.text.accentWarning,
                 )
-                approved -> SolidStatusPill(
+                approved -> ResultStatusPill(
                     text = stringResource(Res.string.tasdiqlandi),
-                    bgColor = AppColors.text.accentSuccess,
+                    color = AppColors.text.accentSuccess,
                 )
-                rejected -> SolidStatusPill(
+                rejected -> ResultStatusPill(
                     text = stringResource(Res.string.rad_etildi),
-                    bgColor = AppColors.bg.accentDanger,
+                    color = AppColors.text.accentDanger,
                 )
-                else -> SolidStatusPill(
-                    text = stringResource(Res.string.muddati_tugagan),
-                    bgColor = AppColors.text.tertiary,
-                )
+                else -> {}
             }
         }
-        Space(12.dp)
 
-        // Tavsif — farzand ismi ajratilgan
+        Space(8.dp)
+        val strictDescRes = when {
+            isPending -> Res.string.farzand_qalqon_ochirish_sorovi
+            approved -> Res.string.qalqon_ochirish_tasdiqlandi_desc
+            rejected -> Res.string.qalqon_ochirish_rad_etildi_desc
+            else -> Res.string.farzand_qalqon_ochirish_sorovi
+        }
         Text(
             text = highlightedChildText(
-                fullText = stringResource(Res.string.farzand_qalqon_ochirish_sorovi, childName),
+                fullText = stringResource(strictDescRes, childName),
                 childName = childName,
             ),
-            style = AppTypography.titleSmMedium,
+            style = AppTypography.emphasizedSmRegular,
             color = AppColors.text.secondary,
         )
 
         if (isPending) {
-            Space(6.dp)
-            Text(
-                text = stringResource(Res.string.tasdiqlasangiz_qalqon_ochadi),
-                style = AppTypography.bodyMdMedium,
-                color = AppColors.text.accentWarning,
-            )
-        }
-        Space(8.dp)
-
-        // Countdown (chap) + sana (o'ng)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (isPending && remainingSeconds > 0) {
-                Text(
-                    text = stringResource(
-                        Res.string.javob_uchun, formatCountdown(remainingSeconds)
-                    ),
-                    style = AppTypography.bodyMdMedium,
-                    color = if (remainingSeconds < 60) AppColors.text.accentDanger
-                    else AppColors.text.accentWarning,
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = formatDateShort(parseInstantOrNull(request.createdAt)),
-                style = AppTypography.bodySmMedium,
-                color = AppColors.text.placeholder,
-            )
-        }
-
-        if (isPending) {
-            Space(8.dp)
-            DividerHorizontal()
-            Space(8.dp)
+            Space(12.dp)
             RequestActionButtons(
                 isProcessing = isProcessing,
                 allowText = stringResource(Res.string.tasdiqlash),
@@ -478,25 +327,36 @@ private fun StrictRequestItem(
 }
 
 @Composable
-private fun AccountRequestItem(
+fun ProtectionAccountRequestCard(
     request: AccountRequestDto?,
     childName: String,
     title: String,
-    subtitle: String,
     isProcessing: Boolean,
     onAllow: () -> Unit,
     onDeny: () -> Unit,
 ) {
-    Column {
+    val isPending = request?.status.equals("process", ignoreCase = true)
+    val accessed = request?.status.equals("access", ignoreCase = true)
+    val denied = request?.status.equals("deny", ignoreCase = true)
+    val isDelete = request?.action == "delete"
+
+    // Holatga mos matn — "so'ramoqda" faqat pending'da
+    val descRes = when {
+        isPending && isDelete -> Res.string.farzand_ilovani_ochirish_sorovi
+        isPending -> Res.string.farzand_ilovadan_chiqish_sorovi
+        accessed && isDelete -> Res.string.ilovani_ochirish_ruxsat_berildi_desc
+        accessed -> Res.string.hisobdan_chiqish_ruxsat_berildi_desc
+        else -> Res.string.sorov_rad_etildi_desc
+    }
+
+    ProtectionCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(
-                    if (request?.action == "delete") Res.drawable.delete
-                    else Res.drawable.logout
-                ),
+                imageVector = if (isDelete) Icons.Default.Delete
+                else Icons.Default.Logout,
                 contentDescription = null,
                 tint = AppColors.icon.accentWarning,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -505,42 +365,48 @@ private fun AccountRequestItem(
                 color = AppColors.text.primary,
                 modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.width(8.dp))
-            SolidStatusPill(
-                text = stringResource(Res.string.jarayonda),
-                bgColor = AppColors.bg.accentWarning,
-            )
+            when {
+                isPending -> Text(
+                    text = relativeTimeText(parseInstantOrNull(request?.createdAt)),
+                    style = AppTypography.bodyMdRegular,
+                    color = AppColors.text.tertiary,
+                )
+                accessed -> ResultStatusPill(
+                    text = stringResource(Res.string.ruxsat_berildi),
+                    color = AppColors.text.accentSuccess,
+                )
+                denied -> ResultStatusPill(
+                    text = stringResource(Res.string.rad_etildi),
+                    color = AppColors.text.accentDanger,
+                )
+                else -> {}
+            }
         }
-        Space(12.dp)
 
+        Space(8.dp)
         Text(
-            text = highlightedChildText(fullText = subtitle, childName = childName),
-            style = AppTypography.titleSmMedium,
+            text = highlightedChildText(
+                fullText = stringResource(descRes, childName),
+                childName = childName,
+            ),
+            style = AppTypography.emphasizedSmRegular,
             color = AppColors.text.secondary,
         )
-        Space(8.dp)
 
-        Text(
-            text = formatDateShort(parseInstantOrNull(request?.createdAt)),
-            style = AppTypography.bodySmMedium,
-            color = AppColors.text.placeholder,
-            modifier = Modifier.align(Alignment.End),
-        )
-
-        Space(8.dp)
-        DividerHorizontal()
-        Space(8.dp)
-
-        RequestActionButtons(
-            isProcessing = isProcessing,
-            allowText = stringResource(Res.string.ruxsat_berish),
-            denyText = stringResource(Res.string.rad_etish),
-            onAllow = onAllow,
-            onDeny = onDeny,
-        )
+        if (isPending) {
+            Space(12.dp)
+            RequestActionButtons(
+                isProcessing = isProcessing,
+                allowText = stringResource(Res.string.ruxsat_berish),
+                denyText = stringResource(Res.string.rad_etish),
+                onAllow = onAllow,
+                onDeny = onDeny,
+            )
+        }
     }
 }
 
+/** Ikkala tugma ham CustomButtonNew — rad etish = section fon (dialogdagi cancel kabi) */
 @Composable
 private fun RequestActionButtons(
     isProcessing: Boolean,
@@ -556,10 +422,9 @@ private fun RequestActionButtons(
     ) {
         CustomButtonNew(
             text = denyText,
-            enabled = !isProcessing,
+            onClick = onDeny,
             containerColor = AppColors.section.section,
             contentColor = AppColors.text.primary,
-            onClick = onDeny,
             modifier = Modifier
                 .weight(1f)
                 .height(DialogButtonHeight),
@@ -567,7 +432,6 @@ private fun RequestActionButtons(
         Box(modifier = Modifier.weight(1f)) {
             CustomButtonNew(
                 text = allowText,
-                enabled = !isProcessing,
                 onClick = onAllow,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -654,7 +518,7 @@ fun ProtectionPermissionsCard(state: ProtectionState) {
             }
         }
 
-        Spacer(Modifier.height(4.dp))
+        Space(4.dp)
 
         for (permission in state.requiredPermissions) {
             PermissionRow(
@@ -664,20 +528,37 @@ fun ProtectionPermissionsCard(state: ProtectionState) {
         }
 
         if (state.higherTierPermissions.isNotEmpty()) {
-            Spacer(Modifier.height(8.dp))
+            Space(8.dp)
             HorizontalDivider(color = AppColors.border.secondary)
-            Spacer(Modifier.height(8.dp))
+            Space(8.dp)
             Text(
                 text = stringResource(Res.string.boshqa_rejimlar_uchun),
                 style = AppTypography.emphasizedXsRegular,
                 color = AppColors.text.tertiary,
             )
-            Spacer(Modifier.height(4.dp))
+            Space(4.dp)
 
             for (permission in state.higherTierPermissions) {
                 HigherTierPermissionRow(permission = permission)
             }
         }
+    }
+}
+
+
+@Composable
+private fun ResultStatusPill(text: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(100.dp))
+            .background(color.copy(alpha = 0.12f))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+    ) {
+        Text(
+            text = text,
+            style = AppTypography.emphasizedXsSemiBold,
+            color = color,
+        )
     }
 }
 

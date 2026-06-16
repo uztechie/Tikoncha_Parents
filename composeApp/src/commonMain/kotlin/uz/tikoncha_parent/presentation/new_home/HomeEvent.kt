@@ -2,7 +2,6 @@ package uz.tikoncha_parent.presentation.new_home
 
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.domain.model.UsagePeriod
-import uz.tikoncha_parent.presentation.new_home.logout.ParentRequestEvent
 
 sealed interface HomeEvent {
     data object GetChildren : HomeEvent
