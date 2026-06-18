@@ -1,3 +1,4 @@
+// composeApp/src/androidMain/kotlin/uz/tikoncha_parent/presentation/push/PushPlatform.android.kt
 package uz.tikoncha_parent.presentation.push
 
 import android.app.Activity
@@ -9,7 +10,6 @@ import uz.tikoncha_parent.data.service.AndroidNotificationHelper
 import java.lang.ref.WeakReference
 
 actual object PushPlatform {
-    private const val CHANNEL_ID = "general_channel"
     private var activityRef: WeakReference<Activity>? = null
     private var appContext: Context? = null
 
@@ -19,25 +19,19 @@ actual object PushPlatform {
         appContext = activity.applicationContext
     }
 
-
     actual fun initialize() {
-        val ctx = appContext ?: activityRef?.get()?:return
+        val ctx = appContext ?: activityRef?.get() ?: return
         AndroidNotificationHelper.ensureChannel(ctx)
-
     }
 
     actual fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-
         val act = activityRef?.get() ?: return
-        val nmEnabled = NotificationManagerCompat.from(act).areNotificationsEnabled()
-        if (nmEnabled) return // allaqachon ruxsat berilgan
-
-        // POST_NOTIFICATIONS permissionini so'raymiz
+        if (NotificationManagerCompat.from(act).areNotificationsEnabled()) return
         ActivityCompat.requestPermissions(
             act,
             arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-            /* requestCode = */ 1001
+            1001
         )
     }
 }

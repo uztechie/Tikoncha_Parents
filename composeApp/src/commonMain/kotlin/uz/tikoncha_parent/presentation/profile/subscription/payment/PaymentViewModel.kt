@@ -345,7 +345,8 @@ class PaymentViewModel(
             }
             val request = PromoCodeValidationRequest(
                 code = _state.value.promoCode,
-                amount = _state.value.originalAmount
+                amount = _state.value.originalAmount,
+                plan_duration = _state.value.subscriptionDuration.name
             )
             val result = promoCodeValidationUseCase.invoke(request)
             when(result){

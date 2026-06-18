@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.platform
+package uz.tikoncha_parent.di
 
 import org.koin.core.module.Module
 

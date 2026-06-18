@@ -1,18 +1,18 @@
-package uz.tikoncha_parent.platform
+package uz.tikoncha_parent.di
 
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.Priority
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.permissions.PermissionsController
-import kotlinx.coroutines.flow.emptyFlow
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import uz.tikoncha_parent.data.in_app_update.InAppUpdateDataSource
 import uz.tikoncha_parent.data.player.PlayerEngine
 import uz.tikoncha_parent.domain.service.AndroidPaymentService
 import uz.tikoncha_parent.domain.service.PaymentService
+import uz.tikoncha_parent.platform.AndroidAppIconLoader
+import uz.tikoncha_parent.platform.AppIconLoader
+import uz.tikoncha_parent.platform.PlayCoreInAppUpdateDataSource
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreenModel
-import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
 import uz.tikoncha_parent.presentation.tracking.TrackingScreenModel
 
 actual val targetModule = module {

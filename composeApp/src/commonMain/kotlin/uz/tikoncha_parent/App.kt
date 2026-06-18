@@ -1,35 +1,25 @@
+// composeApp/src/commonMain/kotlin/uz/tikoncha_parent/App.kt
 package uz.tikoncha_parent
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalInspectionMode
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
-import cafe.adriel.voyager.transitions.SlideTransition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import uz.tikoncha_parent.platform.AppEnvironment
-import uz.tikoncha_parent.presentation.splash.SplashScreen
-
-
-import uz.tikoncha_parent.presentation.profile.language.LanguageController
-import uz.tikoncha_parent.presentation.profile.language.LocalLanguageController
-import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
-import uz.tikoncha_parent.ui.theme.ThemeController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
-import tikoncha_parents.composeapp.generated.resources.dialog_warning
 import tikoncha_parents.composeapp.generated.resources.login_qilish
-import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.token_eskirgan
 import tikoncha_parents.composeapp.generated.resources.tokenni_yangilash_uchun
 import uz.tikoncha_parent.data.remote.AuthEvent
 import uz.tikoncha_parent.data.remote.AuthEventBus
 import uz.tikoncha_parent.domain.model.DeepLink
+import uz.tikoncha_parent.platform.AppEnvironment
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatScreen
@@ -39,100 +29,69 @@ import uz.tikoncha_parent.presentation.map.MapKitInitializer
 import uz.tikoncha_parent.presentation.model.ChatType
 import uz.tikoncha_parent.presentation.navigation.SwipeBackContent
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
-import uz.tikoncha_parent.presentation.notification.NotificationScreen
+import uz.tikoncha_parent.presentation.profile.language.LanguageController
+import uz.tikoncha_parent.presentation.profile.language.LocalLanguageController
 import uz.tikoncha_parent.presentation.protection.ProtectionScreen
 import uz.tikoncha_parent.presentation.push.DeepLinkEffect
-import uz.tikoncha_parent.presentation.push.FcmEventListenerEffect
 import uz.tikoncha_parent.presentation.push.PendingDeepLinks
 import uz.tikoncha_parent.presentation.push.navigateByDeepLink
-import uz.tikoncha_parent.presentation.task.TaskScreen
-
+import uz.tikoncha_parent.presentation.splash.SplashScreen
+import uz.tikoncha_parent.ui.theme.PlatformThemeBridge
+import uz.tikoncha_parent.ui.theme.ThemeController
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
 @Preview
 fun App() {
 
-    println("APP screem")
-
-
     val langController = remember { LanguageController() }
-
     val mode by ThemeController.mode.collectAsState()
+    val restartKey by AppRestartBus.key.collectAsState()
 
-    val inPreview = androidx.compose.ui.platform.LocalInspectionMode.current
+    val inPreview = LocalInspectionMode.current
     if (!inPreview) {
         SideEffect { PlatformThemeBridge.onModeChanged(mode) }
     }
 
-    val restartKey by AppRestartBus.key.collectAsState()
-
-    FcmEventListenerEffect(
-        onApp = { app ->
-            // AppRuleEntity ga map qilib saqlash va hokazo
-        },
-        onTodo = { todo, title, message ->
-            // Floating overlay yoki notification
-        },
-        onNews = { news, title, message ->
-            // NewsRefreshEventBus.notifyRefresh(), notification ko'rsatish, deep link
-        },
-        onChat = { msg, title, message ->
-            // createChatPendingIntent(...), ChatUnreadEventBus.tryEmit(...)
-        },
-        onGeneral = { title, message ->
-            // Oddiy bildirish noma
-        }
-    )
-
     AppEnvironment {
-
-        CompositionLocalProvider(
-            LocalLanguageController provides langController
-        )
-        {
-
+        CompositionLocalProvider(LocalLanguageController provides langController) {
 
             val disposeBehavior = remember {
                 NavigatorDisposeBehavior(
-                    disposeNestedNavigators = true, // ✅ nested navigatorlar ham dispose bo‘lsin
-                    disposeSteps = true
+                    disposeNestedNavigators = true,
+                    disposeSteps = true,
                 )
             }
 
-            TikonchaParentTheme(
-                mode = mode
-            ) {
-
+            TikonchaParentTheme(mode = mode) {
                 Surface {
 
+                    // Cold start uchun yig'ilgan deep linklar
                     val pendingLinks = remember { PendingDeepLinks.drain() }
-
-
-
                     val initialStack: List<Screen> = remember(pendingLinks) {
                         initialStackFor(pendingLinks.firstOrNull()) ?: emptyList()
                     }
 
-                    Logger.d("Appppp", "pendingLinks=$pendingLinks")
-                    Logger.d("Appppp", "initialStack=$initialStack")
+                    Logger.d("App", "pendingLinks=$pendingLinks")
+                    Logger.d("App", "initialStack=$initialStack")
 
-
-                    key(restartKey){
+                    key(restartKey) {
                         if (initialStack.isNotEmpty()) {
                             val first = initialStack.first()
-                            val rest  = initialStack.drop(1)
+                            val rest = initialStack.drop(1)
+
                             Navigator(first, disposeBehavior) { nav ->
                                 SwipeBackContent(nav)
                                 DeepLinkEffect(nav)
                                 AuthEventListener(nav)
-                                // Stack’ni to‘liq tiklash
-                                LaunchedEffect(rest) {
-                                    rest.forEach { screen -> nav.push(screen) }
-                                }
 
-                                // Pending’larni navbatdan o‘tkazish
+                                // Stack'ni to'liq tiklash
+                                LaunchedEffect(rest) {
+                                    rest.forEach { nav.push(it) }
+                                }
+                                // Qolgan pendinglarni navbatdan o'tkazish
                                 LaunchedEffect(pendingLinks) {
-                                    pendingLinks.drop(1).forEach { link -> navigateByDeepLink(nav, link) }
+                                    pendingLinks.drop(1).forEach { navigateByDeepLink(nav, it) }
                                 }
                             }
                         } else {
@@ -143,13 +102,13 @@ fun App() {
                             }
                         }
                     }
-
                 }
             }
         }
     }
 }
 
+/** Cold start'da deep link bo'yicha boshlang'ich stack */
 private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
     is DeepLink.Chat -> listOf(
         NewHomeScreen(),
@@ -158,27 +117,24 @@ private fun initialStackFor(link: DeepLink?): List<Screen>? = when (link) {
             chatId = link.chatId,
             chatAvatar = "",
             chatTitle = link.chatTitle ?: "",
-            chatType = ChatType.NONE
+            chatType = ChatType.NONE,
         )
     )
-    is DeepLink.News -> listOf(NewHomeScreen(), NotificationScreen())
-    is DeepLink.Todo -> listOf(NewHomeScreen(), TaskScreen())
-    DeepLink.ChildRequest -> listOf(NewHomeScreen(), ProtectionScreen())
-    else -> null
+    DeepLink.ParentalRequest -> listOf(NewHomeScreen(), ProtectionScreen())
+    // ⬇️ StrictDisable ekraniga moslang (hozircha ProtectionScreen)
+    DeepLink.StrictDisable -> listOf(NewHomeScreen(), ProtectionScreen())
+    is DeepLink.General, null -> null
 }
 
 fun initMapKit() {
     try {
-        val MAP_KEY: String = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
-        MapKitInitializer.initialize(MAP_KEY)
-        println("✅ MAPKIT_OK initialized")
+        val mapKey = "21612db3-4394-4fde-b579-d2e7a1f9afa3"
+        MapKitInitializer.initialize(mapKey)
+        Logger.d("App", "MAPKIT_OK initialized")
     } catch (e: Throwable) {
-        println("❌ MAPKIT_ERROR: ${e::class.simpleName}: ${e.message}")
-        e.printStackTrace()
+        Logger.d("App", "MAPKIT_ERROR: ${e::class.simpleName}: ${e.message}")
     }
-
 }
-
 
 @Composable
 private fun AuthEventListener(navigator: Navigator) {
@@ -199,19 +155,14 @@ private fun AuthEventListener(navigator: Navigator) {
                 navigator.replaceAll(LoginScreen())
             }
         },
-        onDismiss = {
-            showDialog = false
-        }
+        onDismiss = { showDialog = false },
     )
 
     LaunchedEffect(navigator) {
         AuthEventBus.events.collect { event ->
             when (event) {
-                AuthEvent.SessionExpired -> {
-                    showDialog = true
-                }
+                AuthEvent.SessionExpired -> showDialog = true
             }
         }
     }
 }
-

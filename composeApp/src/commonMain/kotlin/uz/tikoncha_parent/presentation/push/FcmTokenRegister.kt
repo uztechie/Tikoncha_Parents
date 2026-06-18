@@ -25,9 +25,7 @@ object FcmTokenRegister {
         )
 
         val useCase: RegisterDeviceUseCase = KoinPlatform.getKoin().get()
-        scope.launch {
-            useCase.invoke(request)
-        }
+        scope.launch { runCatching { useCase.invoke(request) } }
 
     }
 }

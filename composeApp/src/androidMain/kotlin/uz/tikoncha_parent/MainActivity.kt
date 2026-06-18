@@ -1,3 +1,4 @@
+// composeApp/src/androidMain/kotlin/uz/tikoncha_parent/MainActivity.kt
 package uz.tikoncha_parent
 
 import android.content.Intent
@@ -8,33 +9,26 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.google.firebase.messaging.FirebaseMessaging
-import com.yandex.mapkit.MapKit
-
+import org.koin.android.ext.android.inject
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.telegram.TelegramConfig
 import uz.tikoncha_parent.data.remote.telegram.TelegramLoginCoordinator
-import uz.tikoncha_parent.presentation.push.AndroidDeepLinkParser
-import uz.tikoncha_parent.presentation.push.DeepLinkBus
+import uz.tikoncha_parent.platform.push.AndroidDeepLinkParser
 import uz.tikoncha_parent.presentation.push.FcmTokenRegister
-import uz.tikoncha_parent.presentation.push.PendingDeepLinks
+import uz.tikoncha_parent.presentation.push.PushCoordinator
 import uz.tikoncha_parent.presentation.push.PushPlatform
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
+    private val coordinator: PushCoordinator by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
-
-        Log.d(TAG, "onCreate: ")
-
-
         super.onCreate(savedInstanceState)
 
         TelegramLoginCoordinator.bindActivity(this)
@@ -45,56 +39,31 @@ class MainActivity : AppCompatActivity() {
         PushPlatform.requestNotificationPermissionIfNeeded()
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
-            Log.d("TAG", "onCreate: token=$token")
+            Log.d(TAG, "token=$token")
             AppSettings.fcmToken = token
             FcmTokenRegister.submit(token)
         }
 
-        // Cold startda Intent’dan deep link kelsa — queue ga tashlaymiz
-
-        AndroidDeepLinkParser.parse(intent)?.let { link ->
-            Log.d(TAG, "enqueue link=$link")
-            PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
-            DeepLinkBus.open(link)       // UI tayyor bo‘lsa darhol ochadi
-        }
-
-        Log.d(TAG, "onCreate: intent=${intent.data}")
+        // Cold start: UI hali tayyor emas -> enqueue (App() drain qiladi)
+        AndroidDeepLinkParser.parse(intent)?.let { coordinator.onTapped(it, uiReady = false) }
 
         intent?.data = null
         setIntent(intent)
 
-
-        setContent {
-            App()
-        }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-
-    override fun onDestroy() {
-        TelegramLoginCoordinator.unbindActivity(this)
-        super.onDestroy()
+        setContent { App() }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Log.d(TAG, "onNewIntent: ")
-
+        setIntent(intent)
         handleTelegramIntent(intent)
+        // Warm start: UI tayyor -> darhol ochish
+        AndroidDeepLinkParser.parse(intent)?.let { coordinator.onTapped(it, uiReady = true) }
+    }
 
-        AndroidDeepLinkParser.parse(intent)?.let { link ->
-            Log.d(TAG, "new intent enqueue link=$link")
-            PendingDeepLinks.enqueue(link)   // UI tayyor bo‘lganda o‘qiydi
-            DeepLinkBus.open(link)       // UI tayyor bo‘lsa darhol ochadi
-        }
+    override fun onDestroy() {
+        TelegramLoginCoordinator.unbindActivity(this)
+        super.onDestroy()
     }
 
     private fun handleTelegramIntent(intent: Intent?) {
@@ -103,10 +72,4 @@ class MainActivity : AppCompatActivity() {
             TelegramLoginCoordinator.handleResponse(uri)
         }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
 }

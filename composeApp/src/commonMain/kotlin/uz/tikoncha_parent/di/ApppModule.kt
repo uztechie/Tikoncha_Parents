@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.core
+package uz.tikoncha_parent.di
 
 import uz.tikoncha_parent.data.remote.AvatarApiService
 import uz.tikoncha_parent.data.remote.ChildApiService
@@ -33,6 +33,7 @@ import uz.tikoncha_parent.presentation.login.LoginViewModel
 import uz.tikoncha_parent.presentation.otp.OtpViewmodel
 import uz.tikoncha_parent.presentation.register.RegisterViewmodel
 import org.koin.dsl.module
+import uz.tikoncha_parent.core.HttpClientEngineFactory
 import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.DeviceApiService
@@ -120,6 +121,7 @@ import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestU
 import uz.tikoncha_parent.domain.use_case.protection.StrictDisableRequestsUseCase
 import uz.tikoncha_parent.domain.use_case.protection.UpdateAccountRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
@@ -268,7 +270,7 @@ val sharedModule = module {
 
     single { GetTodosUseCase(get()) }
     single { GetTodoByIdUseCase(get()) }
-    single { uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase(get()) }
+    single { CreateTodoUseCase(get()) }
     single { uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase(get()) }
     single { DeleteTodoUseCase(get()) }
     single { CompleteTodoUseCase(get()) }

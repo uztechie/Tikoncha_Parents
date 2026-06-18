@@ -69,7 +69,8 @@ class CoinPurchaseViewModel (
             }
             val request = PromoCodeValidationRequest(
                 code = _state.value.promoCode,
-                amount = _state.value.totalPrice - _state.value.discountPrice
+                amount = _state.value.totalPrice - _state.value.discountPrice,
+                plan_duration = null
             )
             when(val result = promoCodeValidationUseCase.invoke(request)){
                 is Resource.Error -> {

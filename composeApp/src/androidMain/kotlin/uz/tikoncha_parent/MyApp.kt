@@ -1,13 +1,13 @@
+// composeApp/src/androidMain/kotlin/uz/tikoncha_parent/MyApp.kt
 package uz.tikoncha_parent
 
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.telegram.login.TelegramLogin
-import uz.tikoncha_parent.core.initKoin
+import uz.tikoncha_parent.di.initKoin
 import uz.tikoncha_parent.data.remote.telegram.TelegramConfig
 import uz.tikoncha_parent.data.remote.telegram.TelegramLoginCoordinator
 import uz.tikoncha_parent.platform.appContext
-
 
 class MyApp : Application() {
     override fun onCreate() {
@@ -15,9 +15,8 @@ class MyApp : Application() {
         appContext = applicationContext
         AppHolder.app = this
         initMapKit()
-        initKoin(
-            config = {androidContext(this@MyApp)}
-        )
+
+        initKoin { androidContext(this@MyApp) }
 
         TelegramLoginCoordinator.init(this)
         TelegramLogin.init(
@@ -25,10 +24,9 @@ class MyApp : Application() {
             redirectUri = "https://${TelegramConfig.redirectHost}/tglogin",
             scopes = TelegramConfig.SCOPES,
         )
-
     }
 }
 
-object AppHolder{
+object AppHolder {
     lateinit var app: Application
 }
