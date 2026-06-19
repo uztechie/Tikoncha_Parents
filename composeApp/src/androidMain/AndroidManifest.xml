@@ -80,6 +80,10 @@
             </intent-filter>
 
         </activity>
+
+        <property
+            android:name="android.app.isMonitoringTool"
+            android:value="parental_control" />
         
         
         <service android:name=".data.service.AppFirebaseMessagingService"
