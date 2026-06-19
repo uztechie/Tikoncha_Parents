@@ -314,6 +314,7 @@ fun PolicyListUi(
                         imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzand_qo_shish),
                         trailingIcon = state.childrenList.isNotEmpty(),
+                        userInfo = state.selectedChild,
                         onClick = {
                             if (state.childrenList.isEmpty()) {
                                 navigator?.push(AddChildScreen())

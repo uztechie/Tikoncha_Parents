@@ -270,9 +270,8 @@ fun NewHomeUi(
                         imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzand_qo_shish),
                         trailingIcon = state.childrenList.isNotEmpty(),
-                        modifier = Modifier
-                            .height(40.dp)
-                            .fillMaxWidth(),
+                        userInfo = state.selectedChild,
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             if (state.childrenList.isEmpty()) {
                                 navigator?.push(AddChildScreen())

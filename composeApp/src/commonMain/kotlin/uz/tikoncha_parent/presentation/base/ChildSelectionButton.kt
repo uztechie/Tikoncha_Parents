@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,19 +28,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_down_reg
-import tikoncha_parents.composeapp.generated.resources.arrows_vertical_expand
+import tikoncha_parents.composeapp.generated.resources.plus_home_sheet_subscribe
 import tikoncha_parents.composeapp.generated.resources.plus_symbol
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.ui.ColorWhite
 import uz.tikoncha_parent.ui.DialogButtonHeight
-import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SuccessColor
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -54,8 +58,10 @@ fun ChildSelectionButton(
     onClick: () -> Unit,
     shape: Shape = CircleShape,
     trailingIcon: Boolean = true,
+    userInfo: UserInfo? = null,
     background: Color = AppColors.section.tertiary,
     textStyle: TextStyle = AppTypography.titleSmMedium,
+    hasSubscription: Boolean = !userInfo?.subscription.isNullOrBlank() && userInfo.subscription != "FREE",
 ) {
     val color = if (text.isEmpty()) AppColors.text.secondary else AppColors.text.primary
     val newText = text.ifEmpty { label }
@@ -64,76 +70,95 @@ fun ChildSelectionButton(
         modifier = modifier.fillMaxWidth()
     ) {
         val isCompact = maxWidth < 360.dp
-        val buttonHeight =
-            if (isCompact) DialogButtonHeight.coerceAtMost(48.dp) else DialogButtonHeight
-        val avatarSize = if (isCompact) 28.dp else 36.dp
-        val paddingH = if (isCompact) 10.dp else 12.dp
+        val buttonHeight = if (isCompact) DialogButtonHeight.coerceAtMost(48.dp) else DialogButtonHeight
 
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .height(buttonHeight)
-                .clip(shape)
+//                .height(buttonHeight)
                 .background(background, shape)
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = {
-                        onClick()
-                    }
+                    onClick = { onClick() }
                 )
-                .padding(start = 4.dp, end = 12.dp),
+                .padding(start = 4.dp, end = 12.dp)
+                .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .border(1.dp, AppColors.bg.surface, CircleShape)
-                    .background(AppColors.bg.primaryContainer, CircleShape),
+                modifier = Modifier.size(44.dp),
                 contentAlignment = Alignment.Center
             ) {
-                when {
-                    text.isEmpty() -> {
-                        Icon(
-                            painter = painterResource(Res.drawable.plus_symbol),
-                            contentDescription = "",
-                            modifier = Modifier.size(16.dp),
-                            tint = AppColors.icon.accentPrimary
+                // Avatar doirasi (border shu yerda)
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .border(1.dp, AppColors.bg.surface, CircleShape)
+                        .then(
+                            if (hasSubscription) {
+                                Modifier.border(2.dp, SuccessColor, CircleShape)
+                            } else {
+                                Modifier
+                            }
                         )
-                    }
+                        .background(AppColors.bg.primaryContainer, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when {
+                        text.isEmpty() -> {
+                            Icon(
+                                painter = painterResource(Res.drawable.plus_symbol),
+                                contentDescription = "",
+                                modifier = Modifier.size(16.dp),
+                                tint = AppColors.icon.accentPrimary
+                            )
+                        }
 
-                    imageUrl.isNotEmpty() -> {
-                        AsyncImage(
-                            model = imageUrl,
-                            contentDescription = "",
-                            error = painterResource(Res.drawable.profile_hedgehog_img),
-                            placeholder = painterResource(Res.drawable.profile_hedgehog_img),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                        )
-                    }
+                        imageUrl.isNotEmpty() -> {
+                            AsyncImage(
+                                model = imageUrl,
+                                contentDescription = "",
+                                error = painterResource(Res.drawable.profile_hedgehog_img),
+                                placeholder = painterResource(Res.drawable.profile_hedgehog_img),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        }
 
-                    else -> {
-                        Image(
-                            painter = painterResource(Res.drawable.profile_hedgehog_img),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                        )
+                        else -> {
+                            Image(
+                                painter = painterResource(Res.drawable.profile_hedgehog_img),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        }
                     }
                 }
+
+                // PLUS badge — avatar Box'dan TASHQARIDA (sibling), shuning uchun border USTIDA chiziladi
+                if (hasSubscription) {
+                    Image(
+                        painter = painterResource(Res.drawable.plus_home_sheet_subscribe),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = (-2).dp, y = (-4).dp)
+                            .height(18.dp)
+                            .width(26.dp)
+                    )
+                }
             }
-            SpaceSmall()
 
             Text(
                 text = newText,
                 style = textStyle,
                 color = color,
                 maxLines = 1,
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(4.dp))
 
@@ -152,21 +177,35 @@ fun ChildSelectionButton(
 
 @Preview
 @Composable
-private fun Pre() {
-    TikonchaParentTheme(
-        ThemeMode.LIGHT
-    ) {
+private fun ChildSelectionButtonPreview() {
+    TikonchaParentTheme(ThemeMode.LIGHT) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(ColorWhite)
-                .padding(vertical = 100.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            // 1) Bola tanlanmagan — "+" holati
             ChildSelectionButton(
                 text = "",
+                label = "Bola tanlang",
                 onClick = {},
-                label = "Viloyat"
+            )
+
+            // 2) Oddiy bola — obunasiz (badge yoq)
+            ChildSelectionButton(
+                text = "Ali",
+                imageUrl = "",
+                onClick = {},
+            )
+
+            // 3) PLUS obunali bola — yashil ramka + PLUS badge (rasimdagidek)
+            ChildSelectionButton(
+                text = "Vali",
+                imageUrl = "",
+                onClick = {},
+                hasSubscription = true
             )
         }
     }

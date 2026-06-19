@@ -14,6 +14,8 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
 import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusData
 import uz.tikoncha_parent.domain.model.Resource
@@ -22,6 +24,7 @@ import uz.tikoncha_parent.domain.model.protection.AccountRequestStatus
 import uz.tikoncha_parent.domain.model.protection.ChildMode
 import uz.tikoncha_parent.domain.model.protection.ChildPermission
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
+import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
 import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
@@ -34,6 +37,7 @@ class ProtectionViewModel(
     private val approveStrictRequestUseCase: ApproveStrictDisableRequestUseCase,
     private val rejectStrictRequestUseCase: RejectStrictDisableRequestUseCase,
     private val updateAccountRequestStatusUseCase: UpdateAccountRequestStatusUseCase,
+    private val childrenUseCase: ChildrenUseCase,
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(ProtectionState())
@@ -46,6 +50,8 @@ class ProtectionViewModel(
 
     private var currentChildId: String? = null
     private var countdownJob: Job? = null
+    private var childrenJob: Job? = null
+
 
     fun onEvent(event: ProtectionEvent) {
         when (event) {
@@ -69,11 +75,53 @@ class ProtectionViewModel(
 
             ProtectionEvent.ActionErrorDismissed ->
                 _state.update { it.copy(actionResponseState = ResponseState.Idle) }
+
+            is ProtectionEvent.OnChildSelected -> {
+                _state.update { it.copy(selectedChild = event.child) }
+                AppSettings.selectedChildId = event.child.userId
+                AppSettings.selectedChild = event.child
+            }
+
+            ProtectionEvent.GetChildren -> {
+                loadChildren()
+            }
         }
     }
 
-    // ─────────────────────── Status yuklash ───────────────────────
+    private fun loadChildren() {
+        childrenJob?.cancel()
+        childrenJob = screenModelScope.launch {
+            _state.update { it.copy(childrenResponseState = ResponseState.Loading) }
 
+            when (val response = childrenUseCase.invoke()) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> _state.update {
+                    it.copy(
+                        childrenResponseState = ResponseState.Error(
+                            res = response.resId, message = response.message
+                        )
+                    )
+                }
+
+                is Resource.Success -> {
+                    val children = response.data.map { it.toUserInfo() }
+                    AppSettings.syncSelectedChildWith(children)
+                    if (children.isEmpty()) {
+                        AppSettings.selectedChild = null
+                        AppSettings.selectedChildId = ""
+                    }
+                    _state.update {
+                        it.copy(
+                            childrenResponseState = ResponseState.Success(),
+                            childrenList = AppSettings.children,
+                            selectedChild = AppSettings.selectedChild,
+                        )
+                    }
+                }
+            }
+        }
+    }
+    // ─────────────────────── Status yuklash ───────────────────────
     private fun loadStatus(childId: String, silent: Boolean) {
         currentChildId = childId
         screenModelScope.launch(Dispatchers.IO) {

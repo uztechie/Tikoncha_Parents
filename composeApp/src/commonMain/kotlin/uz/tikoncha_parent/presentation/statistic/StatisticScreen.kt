@@ -144,6 +144,7 @@ fun StatisticUi(
                         text = state.selectedChild?.name ?: "",
                         imageUrl = state.selectedChild?.avatarUrl ?: "",
                         label = stringResource(Res.string.farzandingizni_tanlang),
+                        userInfo = state.selectedChild,
                         onClick = {
                             if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
                             else showChildSheet = true

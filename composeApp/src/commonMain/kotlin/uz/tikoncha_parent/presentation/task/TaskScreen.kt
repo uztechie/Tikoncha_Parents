@@ -364,9 +364,8 @@ fun TaskUi(
                             text = state.selectedChild?.name.orEmpty(),
                             label = stringResource(Res.string.farzandlaringiz),
                             imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(TextFieldHeight),
+                            modifier = Modifier.fillMaxWidth(),
+                            userInfo = state.selectedChild,
                             onClick = {
                                 if (state.childrenList.isEmpty()) navigator?.push(AddChildScreen())
                                 else showChildSelector = true
