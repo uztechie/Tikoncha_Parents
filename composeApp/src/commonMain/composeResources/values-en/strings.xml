@@ -806,4 +806,17 @@ This information is used only for these features and is not shared with third pa
     <string name="rad_etildi">Rejected</string>
     <string name="muddati_tugagan">Expired</string>
 
+    <string name="oxirgi_sinxron">Last sync</string>
+    <string name="kod">Code</string>
+    <string name="qalqonni_ochirish">Disable Shield</string>
+    <string name="himoya_ochiq_qisqa">Protection disabled</string>
+    <string name="gujanak_faol_qisqa">Hedgehog active</string>
+    <string name="toliq_himoya_faol_qisqa">Full protection active</string>
+    <string name="ruxsat_berildi">Permission granted</string>
+    <string name="qalqon_ochirish_tasdiqlandi_desc">You approved the request — Shield will be disabled on your child's device.</string>
+    <string name="qalqon_ochirish_rad_etildi_desc">You declined the request. Shield remains active.</string>
+    <string name="hisobdan_chiqish_ruxsat_berildi_desc">You approved the request — your child can now sign out of the app.</string>
+    <string name="ilovani_ochirish_ruxsat_berildi_desc">You approved the request — your child can now uninstall the app.</string>
+    <string name="sorov_rad_etildi_desc">You declined the request.</string>
+
 </resources>

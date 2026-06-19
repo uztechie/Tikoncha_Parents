@@ -800,4 +800,17 @@
 
     <string name="muddati_tugagan">Срок истёк</string>
 
+    <string name="oxirgi_sinxron">Последняя синхронизация</string>
+    <string name="kod">Код</string>
+    <string name="qalqonni_ochirish">Отключить Щит</string>
+    <string name="himoya_ochiq_qisqa">Защита отключена</string>
+    <string name="gujanak_faol_qisqa">Ёжик активен</string>
+    <string name="toliq_himoya_faol_qisqa">Полная защита активна</string>
+    <string name="ruxsat_berildi">Разрешено</string>
+    <string name="qalqon_ochirish_tasdiqlandi_desc">Вы дали разрешение — у вашего ребёнка Щит будет отключён.</string>
+    <string name="qalqon_ochirish_rad_etildi_desc">Вы отклонили запрос. Щит остался активным.</string>
+    <string name="hisobdan_chiqish_ruxsat_berildi_desc">Вы дали разрешение — ваш ребёнок может выйти из приложения.</string>
+    <string name="ilovani_ochirish_ruxsat_berildi_desc">Вы дали разрешение — ваш ребёнок может удалить приложение.</string>
+    <string name="sorov_rad_etildi_desc">Вы отклонили запрос.</string>
+
 </resources>
