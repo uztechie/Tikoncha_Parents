@@ -352,6 +352,6 @@ val sharedModule = module {
     factory { VideoTutorialScreenModel(get()) }
     factory { PaymentHistoryScreenModel(get()) }
     factory { SubscriptionViewModel(get()) }
-    factory { ProtectionViewModel(get(), get(), get(), get()) }
+    factory { ProtectionViewModel(get(), get(), get(), get(), get()) }
 
 }

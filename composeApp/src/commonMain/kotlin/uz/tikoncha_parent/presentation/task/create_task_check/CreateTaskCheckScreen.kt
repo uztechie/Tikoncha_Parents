@@ -179,9 +179,8 @@ fun CreateTaskCheckUI(
                     text = state.selectedChild?.name.orEmpty(),
                     imageUrl = state.selectedChild?.avatarUrl.orEmpty(),
                     label = stringResource(Res.string.farzandlaringiz),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(TextFieldHeight)
+                    userInfo = state.selectedChild,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Space(12.dp)
 

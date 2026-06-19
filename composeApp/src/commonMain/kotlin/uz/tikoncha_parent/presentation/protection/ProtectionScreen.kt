@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -38,6 +39,8 @@ import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.dialog_warning
 import tikoncha_parents.composeapp.generated.resources.farzand_chiqish_ruxsat
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirmoqchi
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.ha
 import tikoncha_parents.composeapp.generated.resources.himoya
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
@@ -53,14 +56,19 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import tikoncha_parents.composeapp.generated.resources.yoq
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
+import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.Loading
+import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class ProtectionScreen : Screen {
@@ -79,6 +87,7 @@ class ProtectionScreen : Screen {
 
         LaunchedEffect(childId) {
             if (childId.isNotEmpty()) event(ProtectionEvent.LoadStatus(childId))
+            event(ProtectionEvent.GetChildren)
         }
 
         ProtectionUi(
@@ -107,9 +116,24 @@ fun ProtectionUi(
     var allowLogoutDialog by remember { mutableStateOf(false) }
     var allowDeleteDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     val loadErrorText = state.responseState.errorText()
     val actionErrorText = state.actionResponseState.errorText()
+
+    if (showDialog) {
+        SelectionChildBottomSheet(
+            navigator = navigator,
+            items = state.childrenList,
+            selectedItem = state.selectedChild,
+            onDismiss = { showDialog = false },
+            title = stringResource(Res.string.farzandlaringiz),
+            onItemSelected = {
+                event(ProtectionEvent.OnChildSelected(it))
+                showDialog = false
+            }
+        )
+    }
 
     LaunchedEffect(loadErrorText, actionErrorText) {
         if (loadErrorText.isNotEmpty() || actionErrorText.isNotEmpty()) {
@@ -201,13 +225,14 @@ fun ProtectionUi(
         CustomHeader(
             title = stringResource(Res.string.himoya),
             showBackButton = true,
-            onBackClick = { navigator?.pop() },
+            onBackClick = { navigator?.pop() }
         )
 
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = {
                 if (childId.isNotEmpty()) event(ProtectionEvent.Refresh(childId))
+                event(ProtectionEvent.GetChildren)
             },
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -216,6 +241,25 @@ fun ProtectionUi(
                 contentPadding = PaddingValues(ContainerPadding),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
+                // ════════ CHILD SELECTED ════════
+                item {
+                    ChildSelectionButton(
+                        text = state.selectedChild?.name ?: "",
+                        imageUrl = state.selectedChild?.avatarUrl ?: "",
+                        label = stringResource(Res.string.farzand_qo_shish),
+                        trailingIcon = state.childrenList.isNotEmpty(),
+                        userInfo = state.selectedChild,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            if (state.childrenList.isEmpty()) {
+                                navigator?.push(AddChildScreen())
+                            } else {
+                                showDialog = true
+                            }
+                        },
+                    )
+                }
+
                 // ════════ HERO ════════
                 item(key = "hero", contentType = "hero") {
                     ProtectionHeroCard(state = state, event = event)
@@ -325,5 +369,22 @@ fun ProtectionUi(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Pre(){
+    TikonchaParentTheme(
+        ThemeMode.DARK
+    ){
+        ProtectionUi(
+            navigator = null,
+            state = ProtectionState(),
+            event = {},
+            childId = "",
+            childName = "Abbos",
+            remainingSeconds = 2
+        )
     }
 }

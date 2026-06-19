@@ -59,6 +59,7 @@ import uz.tikoncha_parent.common.DateTimeUtil.formatTime
 import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
 import uz.tikoncha_parent.common.Util.millisToLocalDate
 import uz.tikoncha_parent.common.Util.millisToLocalTime
+import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
@@ -66,6 +67,7 @@ import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.bottomShadow
+import uz.tikoncha_parent.presentation.domain.model.Subscription
 import uz.tikoncha_parent.presentation.task.TaskListEffect
 import uz.tikoncha_parent.presentation.task.TaskListEvent
 import uz.tikoncha_parent.presentation.task.TaskListViewModel
@@ -142,6 +144,7 @@ class TaskDetailScreen(
         TaskDetailUI(
             navigator = navigator,
             task = currentTask,
+            subscription = listState.selectedChild,
             childName = taskChild?.name.orEmpty(),
             childAvatarUrl = taskChild?.avatarUrl.orEmpty(),
             onEditClick = {
@@ -160,6 +163,7 @@ fun TaskDetailUI(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     navigator: Navigator? = null,
+    subscription: UserInfo? = null
 ) {
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
@@ -211,9 +215,8 @@ fun TaskDetailUI(
                     text = childName,
                     imageUrl = childAvatarUrl,
                     label = stringResource(Res.string.farzandlaringiz),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(TextFieldHeight)
+                    userInfo = subscription,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Space(12.dp)
 
