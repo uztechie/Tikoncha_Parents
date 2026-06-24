@@ -29,10 +29,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.link
 import tikoncha_parents.composeapp.generated.resources.plus_home_sheet_subscribe
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
-import tikoncha_parents.composeapp.generated.resources.vertical_menu
-import uz.tikoncha_parent.data.local.AppSettings.userInfo
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SuccessColor
@@ -150,15 +149,15 @@ fun ChildrenItem(
 
         if (endingIcon != null) {
             endingIcon()
-        }else {
-//            Icon(
-//                painter = painterResource(Res.drawable.vertical_menu),
-//                contentDescription = "",
-//                tint = AppColors.icon.secondary,
-//                modifier = Modifier
-//                    .size(24.dp)
-//                    .singleClick { onMenuClick() }
-//            )
+        } else {
+            Icon(
+                painter = painterResource(Res.drawable.link),
+                contentDescription = "",
+                tint = AppColors.icon.secondary,
+                modifier = Modifier
+                    .size(24.dp)
+                    .singleClick { onMenuClick() }
+            )
         }
     }
 }
@@ -168,7 +167,7 @@ fun ChildrenItem(
 private fun Preview() {
     TikonchaParentTheme(
         ThemeMode.DARK
-    ){
+    ) {
         ChildrenItem(
             name = "Jaloliddin",
             gadget = "Samsung A12",

@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
@@ -59,6 +61,14 @@ fun SwipeBackContent(navigator: Navigator) {
 
     var isSwiping by remember { mutableStateOf(false) }
     var gestureStarted by remember { mutableStateOf(false) }
+    var skipNextAnim by remember { mutableStateOf(false) }
+
+    LaunchedEffect(navigator.lastItem.key) {
+        if (skipNextAnim) {
+            withFrameNanos { }   // bir frame
+            skipNextAnim = false
+        }
+    }
 
     val previousScreen = remember(navigator.items) {
         if (navigator.items.size >= 2) navigator.items[navigator.items.size - 2] else null
@@ -134,6 +144,7 @@ fun SwipeBackContent(navigator: Navigator) {
                                                     screenWidth,
                                                     tween(200, easing = FastOutSlowInEasing)
                                                 )
+                                                skipNextAnim = true
                                                 navigator.pop()
                                                 offsetX.snapTo(0f)
                                             } else {
@@ -186,7 +197,7 @@ fun SwipeBackContent(navigator: Navigator) {
             // (chunki swipe o'zi qo'lda render qilyapti)
             AnimatedScreenContent(
                 navigator = navigator,
-                skipAnimation = isSwiping
+                skipAnimation = isSwiping || skipNextAnim
             )
         }
     }

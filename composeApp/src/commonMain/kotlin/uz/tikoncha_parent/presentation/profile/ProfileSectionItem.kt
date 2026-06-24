@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.presentation.profile
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,11 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.profile
+import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -41,10 +41,7 @@ fun ProfileSectionItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp)
-            .clickable(
-                enabled = true,
-                onClick = { onItemClick() }
-            ),
+            .singleClick{ onItemClick() },
         contentAlignment = Alignment.Center
     ) {
         Row(

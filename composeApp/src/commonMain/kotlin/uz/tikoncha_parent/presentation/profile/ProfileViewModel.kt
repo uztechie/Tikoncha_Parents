@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.domain.model.Resource
@@ -14,6 +16,7 @@ import uz.tikoncha_parent.domain.model.UploadPart
 import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
+import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
 import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
@@ -26,18 +29,20 @@ class ProfileViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
-    private val deleteAvatarFromServerUseCase: DeleteAvatarFromServerUseCase
-): ScreenModel {
+    private val deleteAvatarFromServerUseCase: DeleteAvatarFromServerUseCase,
+    private val unlinkChildUseCase: UnlinkChildUseCase
+) : ScreenModel {
     var userInfoJob: Job? = null
     var childrenJob: Job? = null
     var avatarJob: Job? = null
     var deleteAvatarJob: Job? = null
+    var unlinkJob: Job? = null
 
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
     init {
-        Logger.d("ProfileViewModel"," AppSettings.userInfo=${AppSettings.userInfo}")
+        Logger.d("ProfileViewModel", " AppSettings.userInfo=${AppSettings.userInfo}")
         _state.update {
             it.copy(
                 userInfo = AppSettings.userInfo,
@@ -50,8 +55,8 @@ class ProfileViewModel(
         getAvatar()
     }
 
-    fun onEvent(event: ProfileEvent){
-        when(event){
+    fun onEvent(event: ProfileEvent) {
+        when (event) {
             is ProfileEvent.OnAvatarPhotoSelected -> {
                 uploadAvatar(event.part)
             }
@@ -97,14 +102,101 @@ class ProfileViewModel(
                     )
                 }
             }
+
             ProfileEvent.RequestDeleteAvatar -> {
                 deleteAvatar()
+            }
+
+            is ProfileEvent.OnUnlinkClicked -> {
+                _state.update {
+                    it.copy(
+                        unlinkTarget = event.child
+                    )
+                }
+            }
+
+            ProfileEvent.DismissUnlinkDialog -> {
+                _state.update {
+                    it.copy(
+                        unlinkTarget = null
+                    )
+                }
+            }
+
+            ProfileEvent.ConfirmUnlink -> {
+                unlinkChild()
+            }
+
+            ProfileEvent.ClearUnlinkState -> {
+                _state.update {
+                    it.copy(
+                        unlinkState = ResponseState.Idle
+                    )
+                }
             }
         }
     }
 
 
-    private fun deleteAvatar(){
+    private fun unlinkChild() {
+        val child = _state.value.unlinkTarget
+        val parentId = AppSettings.userInfo?.userId ?: _state.value.userInfo?.userId ?: ""
+
+        if (parentId.isEmpty()) {
+            _state.update {
+                it.copy(
+                    unlinkState = ResponseState.Error(
+                        res = Res.string.kutilmagan_xatolik_qayta_urining
+                    )
+                )
+            }
+            return
+        }
+
+        unlinkJob?.cancel()
+        _state.update {
+            it.copy(
+                unlinkState = ResponseState.Loading
+            )
+        }
+
+        unlinkJob = screenModelScope.launch {
+            val result = unlinkChildUseCase(
+                childUserId = child?.userId ?: "",
+                parentUserId = parentId
+            )
+
+            when (result) {
+                is Resource.Loading -> {}
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            unlinkState = ResponseState.Error(
+                                message = result.message,
+                                res = result.resId
+                            )
+                        )
+                    }
+                }
+
+                is Resource.Success -> {
+                    val update = _state.value.children.filterNot { it.userId == child?.userId }
+                    AppSettings.children = update
+
+                    _state.update {
+                        it.copy(
+                            children = update,
+                            unlinkTarget = null,
+                            unlinkState = ResponseState.Success()
+                        )
+                    }
+                    getChildren()
+                }
+            }
+        }
+    }
+
+    private fun deleteAvatar() {
         deleteAvatarJob?.cancel()
         _state.update {
             it.copy(
@@ -114,7 +206,7 @@ class ProfileViewModel(
 
         deleteAvatarJob = screenModelScope.launch {
             val result = deleteAvatarFromServerUseCase()
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -126,6 +218,7 @@ class ProfileViewModel(
                         )
                     }
                 }
+
                 is Resource.Success -> {
                     AppSettings.profileImageUrl = ""
                     _state.update {
@@ -139,36 +232,40 @@ class ProfileViewModel(
             }
         }
     }
-    private fun uploadAvatar(part: UploadPart){
+
+    private fun uploadAvatar(part: UploadPart) {
         avatarJob?.cancel()
 
         avatarJob = screenModelScope.launch {
             when (val res = uploadAvatarToServerUseCase(part)) {
                 is Resource.Success -> {
-                    val url = res.data.avatar_url ?:""
+                    val url = res.data.avatar_url ?: ""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }
+
                 else -> Unit
             }
         }
     }
-    private fun getAvatar(){
+
+    private fun getAvatar() {
         avatarJob?.cancel()
 
         avatarJob = screenModelScope.launch {
             when (val res = loadAvatarFromServerUseCase()) {
                 is Resource.Success -> {
-                    val url = res.data.avatar_url?:""
+                    val url = res.data.avatar_url ?: ""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }
+
                 else -> Unit
             }
         }
     }
 
-    private fun logoutRequest(){
+    private fun logoutRequest() {
         _state.update {
             it.copy(
                 logoutState = ResponseState.Loading
@@ -176,7 +273,7 @@ class ProfileViewModel(
         }
         screenModelScope.launch {
             val result = logoutUseCase.invoke(AppSettings.fcmToken)
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
                     _state.update {
@@ -188,6 +285,7 @@ class ProfileViewModel(
                         )
                     }
                 }
+
                 is Resource.Success -> {
                     AppSettings.clearSession()
                     _state.update {
@@ -201,15 +299,16 @@ class ProfileViewModel(
         }
     }
 
-    private fun userInfoJob(){
+    private fun userInfoJob() {
         userInfoJob?.cancel()
         userInfoJob = screenModelScope.launch {
             val result = userInfoUseCase()
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
 
                 }
+
                 is Resource.Success -> {
                     AppSettings.userInfo = result.data.toUserInfo()
                     _state.update {
@@ -223,15 +322,16 @@ class ProfileViewModel(
         }
     }
 
-    fun getChildren(){
+    fun getChildren() {
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {
             val result = childrenUseCase()
-            when(result){
+            when (result) {
                 is Resource.Loading -> {}
                 is Resource.Error -> {
 
                 }
+
                 is Resource.Success -> {
                     AppSettings.children = result.data.map { it.toUserInfo() }
                     _state.update {

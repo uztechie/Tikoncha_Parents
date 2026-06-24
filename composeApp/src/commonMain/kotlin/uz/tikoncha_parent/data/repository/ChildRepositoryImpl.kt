@@ -6,6 +6,8 @@ import uz.tikoncha_parent.data.remote.model.AddChildResponse
 import uz.tikoncha_parent.data.remote.model.AppUsageResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenResponse
+import uz.tikoncha_parent.data.remote.model.UnlinkChildRequest
+import uz.tikoncha_parent.data.remote.model.UnlinkChildResponse
 import uz.tikoncha_parent.domain.repository.ChildRepository
 
 class ChildRepositoryImpl(
@@ -25,5 +27,9 @@ class ChildRepositoryImpl(
 
     override suspend fun childrenLocation(): ChildrenLocationResponse {
         return api.childrenLocation()
+    }
+
+    override suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse {
+        return api.unlinkChild(request)
     }
 }

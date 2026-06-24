@@ -34,19 +34,31 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.add
+import tikoncha_parents.composeapp.generated.resources.child_unlinked_success
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_success
 import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
 import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzand_qoshilmagan
 import tikoncha_parents.composeapp.generated.resources.farzandlarim
-import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
-import uz.tikoncha_parent.domain.model.UserInfo
+import tikoncha_parents.composeapp.generated.resources.muvaffaqiyatli
+import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.unlink_child_action
+import tikoncha_parents.composeapp.generated.resources.unlink_child_message
+import tikoncha_parents.composeapp.generated.resources.unlink_child_title
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
+import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonDash
+import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.DashedBorderButton
+import uz.tikoncha_parent.presentation.chat.chat_list.ChatEvent
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
+import uz.tikoncha_parent.presentation.ui_state.ResponseState
+import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -80,10 +92,72 @@ fun ChildrenSelectUi(
     state: ProfileState,
     event: (ProfileEvent) -> Unit
 ) {
-    var menuChild by remember { mutableStateOf<UserInfo?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    val errorText = state.unlinkState.errorText()
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.secondary
+    )
+
+    LaunchedEffect(state.unlinkState) {
+        if (state.unlinkState is ResponseState.Success) {
+            showSuccessDialog = true
+        }
+    }
+
+    LaunchedEffect(errorText) {
+        showErrorDialog = errorText.isNotEmpty()
+    }
+
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_success),
+        show = showSuccessDialog,
+        title = stringResource(Res.string.muvaffaqiyatli),
+        message = stringResource(Res.string.child_unlinked_success),
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showSuccessDialog = false
+            event(ProfileEvent.ClearUnlinkState)
+        },
+        onButtonClick = {
+            showSuccessDialog = false
+            event(ProfileEvent.ClearUnlinkState)
+        }
+    )
+
+
+    CustomDialog(
+        painter = painterResource(Res.drawable.dialog_failed),
+        show = showErrorDialog,
+        title = stringResource(Res.string.xatolik),
+        message = errorText,
+        buttonText = stringResource(Res.string.ok),
+        showCloseButton = false,
+        onDismiss = {
+            showDialog = false
+
+        },
+        onButtonClick = {
+            showDialog = false
+        }
+    )
+
+    CustomBottomDialog(
+        show = showDialog,
+        title = stringResource(Res.string.unlink_child_title),
+        message = stringResource(Res.string.unlink_child_message, state.unlinkTarget?.name ?:""),
+        confirmButtonText = stringResource(Res.string.unlink_child_action),
+        onDismiss = {
+            showDialog = false
+            event(ProfileEvent.DismissUnlinkDialog)
+        },
+        onConfirm = {
+            showDialog = false
+            event(ProfileEvent.ConfirmUnlink)
+        }
     )
 
     Column(
@@ -98,14 +172,14 @@ fun ChildrenSelectUi(
             onBackClick = { navigator?.pop() }
         )
 
-        if (state.children.isEmpty()){
+        if (state.children.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
-            ){
+            ) {
 
                 Icon(
                     imageVector = Icons.Default.NoAccounts,
@@ -115,7 +189,8 @@ fun ChildrenSelectUi(
                         .size(80.dp)
                 )
                 Space(40.dp)
-                val text = "${stringResource(Res.string.farzand_qoshilmagan)} \n ${stringResource(Res.string.farzand_malumotlari_keyin_korinadi)}"
+                val text =
+                    "${stringResource(Res.string.farzand_qoshilmagan)} \n ${stringResource(Res.string.farzand_malumotlari_keyin_korinadi)}"
                 Text(
                     text = text,
                     color = AppColors.text.secondary,
@@ -132,8 +207,7 @@ fun ChildrenSelectUi(
                         .fillMaxWidth()
                 )
             }
-        }
-        else{
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -148,7 +222,10 @@ fun ChildrenSelectUi(
                         imageUrl = child.avatarUrl ?: "",
                         subscription = child.subscription,
                         onClick = { navigator?.push(ChildDetailScreen(child)) },
-                        onMenuClick = { menuChild = child }
+                        onMenuClick = {
+                            event(ProfileEvent.OnUnlinkClicked(child))
+                            showDialog = true
+                        }
                     )
                 }
 

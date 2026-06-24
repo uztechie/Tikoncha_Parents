@@ -5,6 +5,8 @@ import uz.tikoncha_parent.data.remote.model.AddChildResponse
 import uz.tikoncha_parent.data.remote.model.AppUsageResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenResponse
+import uz.tikoncha_parent.data.remote.model.UnlinkChildRequest
+import uz.tikoncha_parent.data.remote.model.UnlinkChildResponse
 
 interface ChildRepository {
 
@@ -14,4 +16,6 @@ interface ChildRepository {
     suspend fun appUsages(params: Map<String, Any>): AppUsageResponse
 
     suspend fun childrenLocation(): ChildrenLocationResponse
+
+    suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse
 }

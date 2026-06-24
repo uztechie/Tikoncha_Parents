@@ -818,5 +818,8 @@ This information is used only for these features and is not shared with third pa
     <string name="hisobdan_chiqish_ruxsat_berildi_desc">You approved the request — your child can now sign out of the app.</string>
     <string name="ilovani_ochirish_ruxsat_berildi_desc">You approved the request — your child can now uninstall the app.</string>
     <string name="sorov_rad_etildi_desc">You declined the request.</string>
-
+    <string name="unlink_child_title">Disconnect child?</string>
+    <string name="unlink_child_message">After this action, monitoring on %1$s's device will be stopped!</string>
+    <string name="unlink_child_action">Disconnect</string>
+    <string name="child_unlinked_success">Child disconnected successfully</string>
 </resources>

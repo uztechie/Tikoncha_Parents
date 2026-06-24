@@ -9,6 +9,8 @@ import uz.tikoncha_parent.data.remote.model.AddChildResponse
 import uz.tikoncha_parent.data.remote.model.AppUsageResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenResponse
+import uz.tikoncha_parent.data.remote.model.UnlinkChildRequest
+import uz.tikoncha_parent.data.remote.model.UnlinkChildResponse
 
 class ChildApiService(private val client: HttpClient) {
 
@@ -47,6 +49,12 @@ class ChildApiService(private val client: HttpClient) {
             block = {}
         )
 
-
-
+    suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse =
+        client.safeRequest(
+            method = HttpMethod.Post,
+            url = "users/unlink-parent",
+            block = {
+                setBody(request)
+            }
+        )
 }

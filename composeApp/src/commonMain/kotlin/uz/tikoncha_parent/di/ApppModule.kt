@@ -80,6 +80,7 @@ import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.NewsUseCase
 import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
+import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
 import uz.tikoncha_parent.domain.use_case.UserInfoEditUseCase
 import uz.tikoncha_parent.domain.use_case.auth.TelegramLoginUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
@@ -284,6 +285,7 @@ val sharedModule = module {
     single { ApproveStrictDisableRequestUseCase(get()) }
     single { RejectStrictDisableRequestUseCase(get()) }
     single { UpdateAccountRequestStatusUseCase(get()) }
+    single { UnlinkChildUseCase(get()) }
 
 
 
@@ -291,7 +293,7 @@ val sharedModule = module {
     factory { LoginViewModel(get(), get(), get()) }
     factory { OtpViewmodel(get() , get()) }
     factory { RegisterViewmodel(get()) }
-    factory { ProfileViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { AddChildScreenModel(get()) }
     factory { ChildConfirmViewModel() }
     factory { TaskListViewModel(get(), get(), get(), get()) }

@@ -812,5 +812,8 @@
     <string name="hisobdan_chiqish_ruxsat_berildi_desc">Вы дали разрешение — ваш ребёнок может выйти из приложения.</string>
     <string name="ilovani_ochirish_ruxsat_berildi_desc">Вы дали разрешение — ваш ребёнок может удалить приложение.</string>
     <string name="sorov_rad_etildi_desc">Вы отклонили запрос.</string>
-
+    <string name="unlink_child_title">Разорвать связь?</string>
+    <string name="unlink_child_message">После выполнения этого действия контроль на устройстве «%1$s» будет прекращён!</string>
+    <string name="unlink_child_action">Разорвать связь</string>
+    <string name="child_unlinked_success">Ребёнок успешно отвязан</string>
 </resources>
