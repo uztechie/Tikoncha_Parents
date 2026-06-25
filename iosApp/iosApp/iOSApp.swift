@@ -28,12 +28,16 @@ struct iOSApp: App {
             ContentView()
                 // Universal Link (native Telegram qaytishi) — asosiy yo'l
                 .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    
+                    print("UL continue: \(activity.webpageURL?.absoluteString ?? "nil")")
+                    
                     if let url = activity.webpageURL {
                         handleTelegram(url)
                     }
                 }
                 // Zaxira yo'l
                 .onOpenURL { url in
+                    print("UL openURL: \(url)")
                     handleTelegram(url)
                 }
         }

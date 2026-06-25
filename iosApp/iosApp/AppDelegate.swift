@@ -3,7 +3,7 @@ import UserNotifications
 import FirebaseCore
 import FirebaseMessaging
 import ComposeApp
-
+import TelegramLogin
 
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
 
@@ -26,6 +26,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("Device token:\(deviceToken)")
         Messaging.messaging().apnsToken = deviceToken
     }
+    
+    func application(_ application: UIApplication,
+                     continue userActivity: NSUserActivity,
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let url = userActivity.webpageURL else { return false }
+        print("AppDelegate continue: \(url)")
+        if TelegramConfig.shared.isTelegramHost(host: url.host) {
+            TelegramLogin.handle(url)
+            return true
+        }
+        return false
+    }
+
+    func application(_ app: UIApplication, open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("AppDelegate open: \(url)")
+        if TelegramConfig.shared.isTelegramHost(host: url.host) {
+            TelegramLogin.handle(url)
+            return true
+        }
+        return false
+    }
+    
+    
+    
     
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                     willPresent notification: UNNotification,
