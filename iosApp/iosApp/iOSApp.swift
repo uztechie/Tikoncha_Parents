@@ -45,6 +45,7 @@ struct iOSApp: App {
         }
     }
 
+
     private func handleTelegram(_ url: URL) {
         if TelegramConfig.shared.isTelegramHost(host: url.host) {
             print("TG -> host mos, handle() chaqirilmoqda")
