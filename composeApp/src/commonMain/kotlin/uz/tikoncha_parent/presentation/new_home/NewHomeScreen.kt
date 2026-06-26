@@ -107,7 +107,7 @@ class NewHomeScreen : Screen {
         LaunchedEffect(Unit) {
             event(HomeEvent.SyncSelectedChildFromSettings)
             event(HomeEvent.GetChildren)
-            updateEvent(UpdateEvent.ScreenStarted)
+//            updateEvent(UpdateEvent.ScreenStarted)
         }
 
         HandleUpdateEffect(updateViewModel)

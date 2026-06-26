@@ -15,10 +15,15 @@ struct iOSApp: App {
         let _ = YMKMapKit.sharedInstance()
 
         // --- Telegram login ---
+        // MUHIM: redirectUri BotFather generatsiya qilgan Universal Link bilan
+        // AYNAN bir xil bo'lishi shart — PATH YO'Q.
+        // Android'dagi "/tglogin" boshqa host uchun, iOS'ga tegishli emas.
+        let redirect = "https://\(TelegramConfig.shared.redirectHost)"
+        print("TG_CONFIG redirectUri=\(redirect)")
         TelegramLogin.configure(
             clientId: TelegramConfig.shared.CLIENT_ID,
-            redirectUri: "https://\(TelegramConfig.shared.redirectHost)",
-            scopes: ["openid", "profile", "phone"]
+            redirectUri: redirect,
+            scopes: ["openid", "profile", "phone", "telegram:bot_access"]
         )
         TelegramAuthBridgeProvider.shared.bridge = TelegramAuthBridgeImpl()
     }
@@ -26,18 +31,15 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                // Universal Link (native Telegram qaytishi) — asosiy yo'l
+                // Native Telegram qaytgandagi ASOSIY yo'l (Universal Link)
                 .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-                    
-                    print("UL continue: \(activity.webpageURL?.absoluteString ?? "nil")")
-                    
-                    if let url = activity.webpageURL {
-                        handleTelegram(url)
-                    }
+                    let url = activity.webpageURL
+                    print("TG continue url=\(url?.absoluteString ?? "nil") host=\(url?.host ?? "nil")")
+                    if let url { handleTelegram(url) }
                 }
-                // Zaxira yo'l
+                // Custom scheme zaxira yo'li (hozir ishlatilmasa ham zarar qilmaydi)
                 .onOpenURL { url in
-                    print("UL openURL: \(url)")
+                    print("TG openURL url=\(url.absoluteString) host=\(url.host ?? "nil")")
                     handleTelegram(url)
                 }
         }
@@ -45,7 +47,10 @@ struct iOSApp: App {
 
     private func handleTelegram(_ url: URL) {
         if TelegramConfig.shared.isTelegramHost(host: url.host) {
+            print("TG -> host mos, handle() chaqirilmoqda")
             TelegramLogin.handle(url)
+        } else {
+            print("TG -> host MOS EMAS: \(url.host ?? "nil") (tashlab yuborildi)")
         }
     }
 }

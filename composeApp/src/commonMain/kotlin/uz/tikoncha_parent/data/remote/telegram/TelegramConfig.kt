@@ -25,5 +25,5 @@ object TelegramConfig {
     // Redirect qaytganda — barcha hostlarga tekshiramiz (har platforma o'zinikiga tushadi)
     fun isTelegramHost(host: String?): Boolean =
         host == ANDROID_HOST_DEBUG || host == ANDROID_HOST_RELEASE ||
-                host == IOS_HOST
+                host == IOS_HOST || host == "tglogin"
 }
