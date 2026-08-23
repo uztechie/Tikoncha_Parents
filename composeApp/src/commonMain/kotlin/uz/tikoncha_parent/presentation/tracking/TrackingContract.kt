@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.tracking
 
 import androidx.compose.runtime.Immutable
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionIssue
 import uz.tikoncha_parent.presentation.map.LatLng
 
@@ -23,7 +24,7 @@ data class TrackingState(
     val self: Person? = null,
     val selectedPersonId: String? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    val error: Outcome.Failure? = null,
     val permissionAsked: Boolean = false,           // avval so'ralganmi
     val permissionDenied: Boolean = false,          // bekor qilingan
     val permissionDeniedAlways: Boolean = false,    // "Don't ask again" yoki Settings'dan
@@ -66,12 +67,12 @@ sealed interface TrackingEvent {
     data class OpenYoutubeUrl(val url: String) : TrackingEvent
 
     data class SetSelfText(val text: String) : TrackingEvent
+    data object DismissError : TrackingEvent
 }
 
 sealed interface TrackingEffect {
     data class MoveCamera(val target: LatLng, val zoom: Float = 16f) : TrackingEffect
     data class FitBounds(val points: List<LatLng>) : TrackingEffect
-    data class ShowError(val message: String) : TrackingEffect
     data class OpenUrl(val url: String) : TrackingEffect
 
     data object RequestPermission : TrackingEffect       // UI permission dialog ochishi kerak

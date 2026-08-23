@@ -46,7 +46,7 @@ actual val targetModule = module {
 
     factory {
         TrackingScreenModel(
-            childrenLocationUseCase = get(),
+            childRepository = get(),
             locationTracker = get(),
             permissionsController = get(),
             paymentRepository = get(),

@@ -5,6 +5,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import uz.tikoncha_parent.data.mapper.toAppUsageList
 import uz.tikoncha_parent.data.mapper.toChildLinkCode
+import uz.tikoncha_parent.data.mapper.toChildLocation
 import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.ChildApiService
 import uz.tikoncha_parent.data.remote.app_error.ApiErrorMapper
@@ -13,6 +14,7 @@ import uz.tikoncha_parent.data.remote.model.ChildrenLocationResponse
 import uz.tikoncha_parent.data.remote.model.UnlinkChildRequest
 import uz.tikoncha_parent.data.remote.model.UnlinkChildResponse
 import uz.tikoncha_parent.domain.model.ChildLinkCode
+import uz.tikoncha_parent.domain.model.ChildLocation
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
@@ -65,9 +67,17 @@ class ChildRepositoryImpl(
             }
         }
 
-    override suspend fun childrenLocation(): ChildrenLocationResponse {
-        return api.childrenLocation()
-    }
+    override suspend fun childrenLocation(): Outcome<List<ChildLocation>> =
+        apiCall(TAG) {
+            val r = api.childrenLocation()
+            val body = r.data
+            when {
+                r.success && body != null ->
+                    Outcome.Success(body.items.mapNotNull { it.toChildLocation() })
+                r.success -> Outcome.Failure(ErrorCause.InvalidResponse)
+                else -> Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
+            }
+        }
 
     override suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse {
         return api.unlinkChild(request)

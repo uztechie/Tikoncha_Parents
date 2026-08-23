@@ -58,7 +58,6 @@ import uz.tikoncha_parent.domain.repository.TodoRepository
 import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
-import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
@@ -212,7 +211,6 @@ val sharedModule = module {
     single { UpdateTodoUseCase(get()) }
     single { UploadAvatarToServerUseCase(get()) }
     single { LoadAvatarFromServerUseCase(get()) }
-    single { ChildrenLocationUseCase(get()) }
 
     single { ChatStatusUseCase(get()) }
     single { ObserveChatStatusUseCase(get()) }

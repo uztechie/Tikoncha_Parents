@@ -16,13 +16,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionType
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
+import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
-import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
 import uz.tikoncha_parent.presentation.map.LatLng
@@ -34,7 +33,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 class TrackingScreenModel(
-    private val childrenLocationUseCase: ChildrenLocationUseCase,
+    private val childRepository: ChildRepository,
     private val locationTracker: LocationTracker,
     private val permissionsController: PermissionsController,
     private val paymentRepository: PaymentRepository,
@@ -75,6 +74,8 @@ class TrackingScreenModel(
             }
 
             TrackingEvent.RetryLocation -> loadChildren()
+
+            TrackingEvent.DismissError -> mutableState.update { it.copy(error = null) }
 
             // ── Dialog/sheet dismisses ──
             TrackingEvent.DismissGpsDialog ->
@@ -317,20 +318,16 @@ class TrackingScreenModel(
 
     private fun loadChildren() {
         screenModelScope.launch {
-            mutableState.update { it.copy(isLoading = true, errorMessage = null) }
-            when (val res = childrenLocationUseCase()) {
-                is Resource.Success -> {
-                    val children = res.data.orEmpty().mapNotNull { it.toPerson() }
+            mutableState.update { it.copy(isLoading = true, error = null) }
+
+            when (val res = childRepository.childrenLocation()) {
+                is Outcome.Success -> {
+                    val children = res.data.map { it.toPerson() }
                     mutableState.update { it.copy(people = children, isLoading = false) }
                 }
-
-                is Resource.Error -> {
-                    val msg = res.message ?: "Xatolik"
-                    mutableState.update { it.copy(isLoading = false, errorMessage = msg) }
-                    _effect.send(TrackingEffect.ShowError(msg))
+                is Outcome.Failure -> {
+                    mutableState.update { it.copy(isLoading = false, error = res) }
                 }
-
-                else -> Unit
             }
         }
     }

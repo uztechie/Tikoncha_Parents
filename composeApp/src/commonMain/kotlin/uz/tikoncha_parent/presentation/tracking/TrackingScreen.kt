@@ -20,7 +20,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
@@ -55,7 +55,10 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.arrow_back
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.dialog_info
+import tikoncha_parents.composeapp.generated.resources.dialog_warning
+import tikoncha_parents.composeapp.generated.resources.diqqat
 import tikoncha_parents.composeapp.generated.resources.farzandingizni_qayerda_ekanini_kuzatish
+import tikoncha_parents.composeapp.generated.resources.ok
 import tikoncha_parents.composeapp.generated.resources.plus_obnuna_kerak
 import tikoncha_parents.composeapp.generated.resources.profile_hedgehog_img
 import tikoncha_parents.composeapp.generated.resources.siz
@@ -76,8 +79,9 @@ import uz.tikoncha_parent.platform.openLocationSettings
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.platform.shareLocation
 import uz.tikoncha_parent.presentation.base.CustomDialog
-import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.OnScreenActive
+import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.map.CameraPosition
 import uz.tikoncha_parent.presentation.map.LatLng
 import uz.tikoncha_parent.presentation.map.MapCircle
@@ -103,7 +107,6 @@ class TrackingScreen : Screen {
         val state by screenModel.state.collectAsState()
         val event = screenModel::onEvent
         val mapController = rememberMapController()
-        val snackbarHostState = remember { SnackbarHostState() }
         val navigator = LocalNavigator.current
 
         val permissionsController: PermissionsController = koinInject()
@@ -142,8 +145,6 @@ class TrackingScreen : Screen {
                         mapController.moveTo(CameraPosition(eff.target, eff.zoom))
                     is TrackingEffect.FitBounds ->
                         mapController.fitBounds(eff.points)
-                    is TrackingEffect.ShowError ->
-                        snackbarHostState.showSnackbar(eff.message)
                     TrackingEffect.OpenAppSettings -> openAppSettings()
                     TrackingEffect.OpenLocationSettings -> openLocationSettings()
                     TrackingEffect.RequestPermission -> Unit
@@ -240,6 +241,17 @@ class TrackingScreen : Screen {
                 showGpsDialog = false
                 screenModel.onEvent(TrackingEvent.DismissGpsDialog)
             }
+        )
+
+        CustomDialog(
+            show = state.error != null,
+            title = stringResource(Res.string.diqqat),
+            message = state.error?.asText() ?: "",
+            painter = painterResource(Res.drawable.dialog_warning),
+            buttonText = stringResource(Res.string.ok),
+            showCloseButton = false,
+            onDismiss = { event(TrackingEvent.DismissError)},
+            onButtonClick = { event(TrackingEvent.DismissError)}
         )
 
         // ============== BOTTOM SHEET ==============

@@ -1,32 +1,22 @@
 package uz.tikoncha_parent.presentation.tracking
 
 import uz.tikoncha_parent.common.DateTimeUtil
-import uz.tikoncha_parent.data.remote.model.ChildrenLocationItemDto
+import uz.tikoncha_parent.domain.model.ChildLocation
 import uz.tikoncha_parent.presentation.map.LatLng
 
-internal fun ChildrenLocationItemDto.toPerson(): Person? {
-    val id = child_user_id ?: return null
-    val lat = lat
-    val lon = lng
+internal fun ChildLocation.toPerson(): Person {
     val location = if (
-        lat != null && lon != null &&
-        !(lat == 0.0 && lon == 0.0)
-    ) {
-        LatLng(lat, lon)
-    } else null
-
-    val fullName = listOfNotNull(first_name, last_name)
-        .filter { it.isNotBlank() }
-        .joinToString(" ")
-        .ifBlank { "User" }
+        latitude != null && longitude != null &&
+        !(latitude == 0.0 && longitude == 0.0)
+    ) LatLng(latitude, longitude) else null
 
     return Person(
-        id = id,
-        name = first_name?:"User",
+        id = childId,
+        name = firstName ?: "User",
         location = location,
         isSelf = false,
-        lastSeen = this.updated_at?:"",
-        lastSeenEpochMs = DateTimeUtil.toMillis(this.updated_at),
-        avatarUrl = avatar_url
+        lastSeen = updatedAt ?: "",
+        lastSeenEpochMs = DateTimeUtil.toMillis(updatedAt),
+        avatarUrl = avatarUrl,
     )
 }
