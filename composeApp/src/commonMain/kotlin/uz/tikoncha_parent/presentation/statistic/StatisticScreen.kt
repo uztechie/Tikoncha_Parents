@@ -169,7 +169,7 @@ fun StatisticUi(
                         PermissionWarningCard(
                             title = issue.title,
                             body = issue.body,
-                            videoUrl = issue.video_url,
+                            videoUrl = issue.videoUrl,
                             onVideoClick = { openUrl(it) }
                         )
                         Space(12.dp)

@@ -15,16 +15,16 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
 import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusData
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
 import uz.tikoncha_parent.domain.model.protection.AccountRequestStatus
 import uz.tikoncha_parent.domain.model.protection.ChildMode
 import uz.tikoncha_parent.domain.model.protection.ChildPermission
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
 import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
@@ -37,7 +37,7 @@ class ProtectionViewModel(
     private val approveStrictRequestUseCase: ApproveStrictDisableRequestUseCase,
     private val rejectStrictRequestUseCase: RejectStrictDisableRequestUseCase,
     private val updateAccountRequestStatusUseCase: UpdateAccountRequestStatusUseCase,
-    private val childrenUseCase: ChildrenUseCase,
+    private val childRepository: ChildRepository
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(ProtectionState())
@@ -93,18 +93,13 @@ class ProtectionViewModel(
         childrenJob = screenModelScope.launch {
             _state.update { it.copy(childrenResponseState = ResponseState.Loading) }
 
-            when (val response = childrenUseCase.invoke()) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        childrenResponseState = ResponseState.Error(
-                            res = response.resId, message = response.message
-                        )
-                    )
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
                 }
 
-                is Resource.Success -> {
-                    val children = response.data.map { it.toUserInfo() }
+                is Outcome.Success -> {
+                    val children = res.data
                     AppSettings.syncSelectedChildWith(children)
                     if (children.isEmpty()) {
                         AppSettings.selectedChild = null

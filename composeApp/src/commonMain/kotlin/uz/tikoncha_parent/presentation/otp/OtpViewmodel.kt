@@ -8,18 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.saidburxon.newedu.data.model.SendOtpRequest
-import uz.saidburxon.newedu.data.model.VerifyOtpRequest
-import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
-import uz.tikoncha_parent.domain.use_case.VerifyOtpUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.AuthRepository
+import uz.tikoncha_parent.domain.repository.SessionRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class OtpViewmodel(
-    private val verifyOtpUseCase: VerifyOtpUseCase,
-    private val sendOtpUseCase: SendOtpUseCase,
+    private val auth: AuthRepository,
+    private val session: SessionRepository
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(OtpState())
@@ -32,28 +28,53 @@ class OtpViewmodel(
     fun onEvent(event: OtpEvent) {
         when (event) {
             is OtpEvent.SetPhone -> {
-                if (_state.value.phoneNumber.isEmpty()) {
-                    _state.update { it.copy(phoneNumber = event.phoneNumber) }
-                    startTimer() // kod login ekranida yuborilgan — timer darrov ketadi
+                val change = _state.value.phoneNumber != event.phoneNumber
+                _state.update {
+                    it.copy(
+                        otpCode = "",
+                        hasInputError = false,
+                        phoneNumber = event.phoneNumber,
+                        responseState = ResponseState.Idle
+                    )
+                }
+                if (change || !_state.value.isRunning) {
+                    startTimer()
                 }
             }
 
             is OtpEvent.OnOtpUpdate -> {
                 val clean = event.otpCode.filter { it.isDigit() }.take(6)
-                _state.update { it.copy(otpCode = clean, hasInputError = false) }
+                _state.update {
+                    it.copy(
+                        otpCode = clean,
+                        hasInputError = false
+                    )
+                }
             }
 
-            OtpEvent.OnConfirmClicked -> verifyOtp()
-            OtpEvent.SendOtp -> resendOtp()
+            OtpEvent.OnConfirmClicked -> {
+                verifyOtp()
+            }
 
-            OtpEvent.Reset -> _state.update { it.copy(responseState = ResponseState.Idle) }
+            OtpEvent.SendOtp -> {
+                resendOtp()
+            }
 
-            OtpEvent.ResetError -> _state.update {
-                it.copy(
-                    responseState = ResponseState.Idle,
-                    deleteAccountUrl = null,
-                    hasInputError = false,
-                )
+            OtpEvent.Reset -> {
+                _state.update {
+                    it.copy(
+                        responseState = ResponseState.Idle
+                    )
+                }
+            }
+
+            OtpEvent.ResetError -> {
+                _state.update {
+                    it.copy(
+                        hasInputError = false,
+                        responseState = ResponseState.Idle,
+                    )
+                }
             }
         }
     }
@@ -67,25 +88,23 @@ class OtpViewmodel(
         verifyOtpJob = screenModelScope.launch {
             _state.update { it.copy(responseState = ResponseState.Loading) }
 
-            val request = VerifyOtpRequest(phone = current.phoneNumber, otp_code = current.otpCode)
-            when (val response = verifyOtpUseCase(request)) {
-                is Resource.Loading -> {}
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        hasInputError = true,
-                        responseState = ResponseState.Error(res = response.resId, message = response.message),
-                    )
+            when (val res = auth.verifyOtp(current.phoneNumber, current.otpCode)) {
+                is Outcome.Failure -> {
+                    _state.update {
+                        it.copy(
+                            hasInputError = true,
+                            responseState = ResponseState.Error(failure = res),
+                        )
+                    }
                 }
-                is Resource.Success -> {
-                    val data = response.data
-                    AppSettings.refreshToken = data.refresh_token ?: ""
-                    AppSettings.accessToken = data.access_token ?: ""
-                    AppSettings.hasUserLogin = data.user_info != null
-                    AppSettings.userId = data.user_id ?: ""
-                    AppSettings.userInfo = data.user_info?.toUserInfo()
-                    AppSettings.isTestAccount = current.phoneNumber.startsWith(TEST_ACCOUNT_PREFIX)
 
-                    _state.update { it.copy(responseState = ResponseState.Success(data = data)) }
+                is Outcome.Success -> {
+                    session.save(res.data, phone = current.phoneNumber)
+                    _state.update {
+                        it.copy(
+                            responseState = ResponseState.Success(data = res.data)
+                        )
+                    }
                 }
             }
         }
@@ -101,8 +120,8 @@ class OtpViewmodel(
         sendOtpJob = screenModelScope.launch {
             _state.update { it.copy(isSendingOtp = true) }
 
-            when (val res = sendOtpUseCase(SendOtpRequest(phone = phone))) {
-                is Resource.Success -> {
+            when (val res = auth.sendOtp(phone)) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             otpCode = "",
@@ -113,14 +132,16 @@ class OtpViewmodel(
                     }
                     startTimer()
                 }
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        isSendingOtp = false,
-                        responseState = ResponseState.Error(res = res.resId, message = res.message),
-                        deleteAccountUrl = res.data,
-                    )
+
+                is Outcome.Failure -> {
+                    _state.update {
+                        it.copy(
+                            isSendingOtp = false,
+                            hasInputError = false,
+                            responseState = ResponseState.Error(failure = res)
+                        )
+                    }
                 }
-                is Resource.Loading -> {}
             }
         }
     }
@@ -139,6 +160,5 @@ class OtpViewmodel(
 
     companion object {
         private const val TIMER_SECONDS = 60
-        private const val TEST_ACCOUNT_PREFIX = "+99811"
     }
 }

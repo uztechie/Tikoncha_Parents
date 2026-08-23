@@ -4,15 +4,12 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppFeatures
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
-class PolicySharedModel(
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase
-) : ViewModel() {
+class PolicySharedModel() : ViewModel() {
 
     private val _state = MutableStateFlow(PolicySharedState())
     val state = _state.asStateFlow()

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -55,9 +54,7 @@ import tikoncha_parents.composeapp.generated.resources.tracking_location_unavail
 import tikoncha_parents.composeapp.generated.resources.tracking_watch_video
 import tikoncha_parents.composeapp.generated.resources.ulashish
 import tikoncha_parents.composeapp.generated.resources.xaritadan_ochish
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
-import uz.tikoncha_parent.presentation.base.CustomButtonNew
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.domain.model.permission_status.PermissionIssue
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.map.LatLng
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -70,7 +67,7 @@ import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 fun PersonInfoSheet(
     show: Boolean,
     person: Person?,
-    issues: List<PermissionStatusIssus> = emptyList(),
+    issues: List<PermissionIssue> = emptyList(),
     isCheckingStatus: Boolean = false,
     onDismiss: () -> Unit,
     onWatchVideo: (String) -> Unit = {},
@@ -208,7 +205,7 @@ fun PersonInfoSheet(
                         issues.forEach { issue ->
                             IssueWarningBlock(
                                 issue = issue,
-                                onWatchVideo = { onWatchVideo(issue.video_url?:"") }
+                                onWatchVideo = { onWatchVideo(issue.videoUrl?:"") }
                             )
                             Space(12.dp)
                         }
@@ -257,7 +254,7 @@ fun PersonInfoSheet(
  */
 @Composable
 private fun IssueWarningBlock(
-    issue: PermissionStatusIssus,
+    issue: PermissionIssue,
     onWatchVideo: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -289,7 +286,7 @@ private fun IssueWarningBlock(
             )
 
             // Video tugma (URL bo'lsa)
-            if (!issue.video_url.isNullOrBlank()) {
+            if (!issue.videoUrl.isNullOrBlank()) {
                 Space(4.dp)
                 Box(
                     modifier = Modifier
@@ -380,12 +377,12 @@ fun Pre_WithIssue() {
                 avatarUrl = ""
             ),
             issues = listOf(
-                PermissionStatusIssus(
+                PermissionIssue(
                     state = "monitor",
-                    missing_permissions = listOf("location"),
+                    missingPermissions = listOf("location"),
                     title = "Joylashuvni sozlash kerak",
                     body = "Farzandingizning joylashuvini ko'rish uchun uning telefonidagi G'ujanak rejimini yoqish kerak.",
-                    video_url = "https://youtu.be/NI1e38qD-Sg"
+                    videoUrl = "https://youtu.be/NI1e38qD-Sg"
                 )
             ),
             onDismiss = {},

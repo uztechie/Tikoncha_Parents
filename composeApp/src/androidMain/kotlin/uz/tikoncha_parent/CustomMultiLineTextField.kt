@@ -29,12 +29,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.ChatMessageBackgroundColor
+import uz.tikoncha_parent.ui.DisableButtonColor
+import uz.tikoncha_parent.ui.DisableButtonContentColor
+import uz.tikoncha_parent.ui.HintTextColor
+import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.TextColor
+import uz.tikoncha_parent.ui.TextFieldCornerRadius
+import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.TextFieldInnerPadding
 
 @Composable
 fun CustomMultiLineTextField(

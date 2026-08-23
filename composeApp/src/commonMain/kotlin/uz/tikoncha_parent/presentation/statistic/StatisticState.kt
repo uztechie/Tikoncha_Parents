@@ -1,10 +1,10 @@
 package uz.tikoncha_parent.presentation.statistic
 
 import kotlinx.datetime.LocalDate
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.model.app_usage.AppUsage
+import uz.tikoncha_parent.domain.model.permission_status.PermissionIssue
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class StatisticState(
@@ -17,7 +17,7 @@ data class StatisticState(
     val selectedChild: UserInfo? = null,
 
     /* ----- Permission / Subscription ----- */
-    val permissionIssueList: List<PermissionStatusIssus> = emptyList(),
+    val permissionIssueList: List<PermissionIssue> = emptyList(),
     val subscriptionLimit: SubscriptionLimit? = null,
     val showBlur: Boolean = false,
 

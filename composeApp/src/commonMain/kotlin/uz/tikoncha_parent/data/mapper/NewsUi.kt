@@ -1,8 +1,7 @@
 package uz.tikoncha_parent.data.mapper
 
-import uz.tikoncha_parent.common.DateTimeUtil
-import uz.tikoncha_parent.data.remote.model.NewLocalizedText
-import uz.tikoncha_parent.data.remote.model.NewsDto
+import uz.tikoncha_parent.domain.model.news.LocalizedText
+import uz.tikoncha_parent.domain.model.news.News
 
 
 data class NewsUi(
@@ -16,30 +15,20 @@ data class NewsUi(
     val modifiedAt: Long
 )
 
-fun NewsDto.toUi(lang: String = "uz"): NewsUi {
-    val chosenTitle = title.pick(lang)
-    val chosenMsg = message.pick(lang)
-
-    val createdAt = DateTimeUtil.toMillisUtc(created_at)
-    val modifiedAt = DateTimeUtil.toMillisUtc(modified_at)
-
-
+fun News.toUi(lang: String = "uz"): NewsUi {
     return NewsUi(
         id = id,
-        authorId = author_id,
-        title = chosenTitle,
-        message = chosenMsg,
+        authorId = authorId,
+        title = title.pick(lang),
+        message = message.pick(lang),
         published = published,
         createdAt = createdAt,
         modifiedAt = modifiedAt,
-        isRead = is_read
+        isRead = isRead,
     )
 }
-private fun NewLocalizedText.pick(lang: String): String {
-    // Default: uz -> ru -> empty
-    return when (lang.lowercase()) {
-        "uz" -> uz ?: ru ?: ""
-        "ru" -> ru ?: uz ?: ""
-        else -> uz ?: ru ?: ""
-    }
+
+private fun LocalizedText.pick(lang: String): String = when (lang.lowercase()) {
+    "ru" -> ru ?: uz ?: ""
+    else -> uz ?: ru ?: ""
 }

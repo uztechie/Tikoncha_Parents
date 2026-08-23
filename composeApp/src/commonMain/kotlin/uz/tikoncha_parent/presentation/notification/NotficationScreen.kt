@@ -27,14 +27,18 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.notification
+import tikoncha_parents.composeapp.generated.resources.read_notification
 import uz.tikoncha_parent.data.mapper.toUi
-import uz.tikoncha_parent.data.remote.model.NewsDto
+import uz.tikoncha_parent.domain.model.news.News
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.domain.model.LanguageType
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
-import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.LargeIconButtonPadding
+import uz.tikoncha_parent.ui.LargeIconButtonSize
+import uz.tikoncha_parent.ui.PrimaryColor
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
@@ -66,8 +70,7 @@ class NotificationScreen : Screen {
 
 @Composable
 fun NotificationUi(
-    items: List<NewsDto>,
-    language: String = "uz",
+    items: List<News>,
     navigator: Navigator?,
     markAll: () -> Unit,
     markRead: (Long) -> Unit

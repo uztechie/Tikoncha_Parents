@@ -2,7 +2,7 @@ package uz.tikoncha_parent.data.remote.model.auth
 
 
 import kotlinx.serialization.Serializable
-import uz.saidburxon.newedu.data.model.VerifyOtpResponseData
+import uz.tikoncha_parent.data.remote.model.VerifyOtpResponseData
 
 /**
  * Backend access_token + refresh_token + user_info ni xuddi

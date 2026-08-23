@@ -53,7 +53,7 @@ import tikoncha_parents.composeapp.generated.resources.maktab
 import tikoncha_parents.composeapp.generated.resources.media_play
 import tikoncha_parents.composeapp.generated.resources.siz
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
+import uz.tikoncha_parent.domain.model.permission_status.PermissionIssue
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
@@ -66,7 +66,6 @@ import uz.tikoncha_parent.presentation.base.PermissionWarningCard
 import uz.tikoncha_parent.presentation.base.PillSegmentedButton
 import uz.tikoncha_parent.presentation.base.PillSegmentedButtonDefaults
 import uz.tikoncha_parent.presentation.base.PillSegmentedItem
-import uz.tikoncha_parent.presentation.base.SegmentedToggle
 import uz.tikoncha_parent.presentation.base.SubscriptionBottomDialog
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.base.simpleShadow
@@ -79,7 +78,6 @@ import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
-import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialScreen
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.NormalIconSize
 import uz.tikoncha_parent.ui.Space
@@ -335,7 +333,7 @@ fun PolicyListUi(
                         PermissionWarningCard(
                             title = issue.title,
                             body = issue.body,
-                            videoUrl = issue.video_url,
+                            videoUrl = issue.videoUrl,
                             onVideoClick = { url ->
                                 openUrl(url)
                             }
@@ -470,12 +468,12 @@ private fun Pre() {
             navigator = null,
             state = PolicyState(
                 permissionIssueList = listOf(
-                    PermissionStatusIssus(
+                    PermissionIssue(
                         state = "",
-                        missing_permissions = emptyList(),
+                        missingPermissions = emptyList(),
                         title = "Issue",
                         body = "Big issue",
-                        video_url = "sdsds"
+                        videoUrl = "sdsds"
                     )
                 )
             ),

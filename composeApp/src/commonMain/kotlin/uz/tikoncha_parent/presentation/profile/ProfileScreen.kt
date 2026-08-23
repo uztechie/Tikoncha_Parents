@@ -1,14 +1,28 @@
 package uz.tikoncha_parent.presentation.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -20,35 +34,72 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import uz.tikoncha_parent.data.mapper.toUploadPart
-import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
-import uz.tikoncha_parent.platform.rememberImagePicker
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.common.TransparentQrScreen
-import uz.tikoncha_parent.presentation.profile.coins.CoinsScreen
-import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInformationScreen
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import qrgenerator.qrkitpainter.rememberQrKitPainter
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.add
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.biz_bilan_aloqa
+import tikoncha_parents.composeapp.generated.resources.biz_haqimizda
+import tikoncha_parents.composeapp.generated.resources.chat_group
+import tikoncha_parents.composeapp.generated.resources.chiqish
+import tikoncha_parents.composeapp.generated.resources.chiqishni_xohlaysizmi
+import tikoncha_parents.composeapp.generated.resources.coin_3d
+import tikoncha_parents.composeapp.generated.resources.coins_profile
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.faol_vazifalar
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandlarim
+import tikoncha_parents.composeapp.generated.resources.file_3d
+import tikoncha_parents.composeapp.generated.resources.global
+import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqishni_tasdiqlaysizmi
+import tikoncha_parents.composeapp.generated.resources.info_profile_us
+import tikoncha_parents.composeapp.generated.resources.logout
+import tikoncha_parents.composeapp.generated.resources.money_light
+import tikoncha_parents.composeapp.generated.resources.obuna
+import tikoncha_parents.composeapp.generated.resources.ochirish
+import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.person
+import tikoncha_parents.composeapp.generated.resources.profil
+import tikoncha_parents.composeapp.generated.resources.profil_rasmi_olib_tashlanadi
+import tikoncha_parents.composeapp.generated.resources.rasmni_ochirish
+import tikoncha_parents.composeapp.generated.resources.settings
+import tikoncha_parents.composeapp.generated.resources.shaxsiy_malumotlar
+import tikoncha_parents.composeapp.generated.resources.sozlamalar
+import tikoncha_parents.composeapp.generated.resources.support_icon
+import tikoncha_parents.composeapp.generated.resources.ta
+import tikoncha_parents.composeapp.generated.resources.tangachalar
+import tikoncha_parents.composeapp.generated.resources.tangachalaringiz
+import tikoncha_parents.composeapp.generated.resources.telegrams_star
+import tikoncha_parents.composeapp.generated.resources.til
+import tikoncha_parents.composeapp.generated.resources.tolovlar_tarixi
+import tikoncha_parents.composeapp.generated.resources.versiya
+import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.data.mapper.toUploadPart
+import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
+import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
 import uz.tikoncha_parent.platform.getAppVersion
 import uz.tikoncha_parent.platform.openUrl
+import uz.tikoncha_parent.platform.rememberImagePicker
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.common.TransparentQrScreen
 import uz.tikoncha_parent.presentation.login.LoginScreen
 import uz.tikoncha_parent.presentation.profile.about_us.AboutUsScreen
 import uz.tikoncha_parent.presentation.profile.children.ChildrenSelectScreen
+import uz.tikoncha_parent.presentation.profile.coins.CoinsScreen
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.language.LanguageScreen
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreen
+import uz.tikoncha_parent.presentation.profile.personal_information.PersonalInformationScreen
 import uz.tikoncha_parent.presentation.profile.settings.SettingsScreen
 import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionScreen
 import uz.tikoncha_parent.presentation.task.TaskListEvent
@@ -57,6 +108,9 @@ import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
+import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.ProfileStatsContainerHeight
+import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -75,12 +129,12 @@ class ProfileScreen : Screen {
 
         val useCase: GetMyCoinsUseCase = koinInject()
         val coinCase: GetCoinPackageListUseCase = koinInject()
-        val childCase: ChildrenUseCase = koinInject()
+        val childRepo: ChildRepository = koinInject()
         val coinsViewModel = remember {
             CoinsViewModel(
                 getMyCoinsUseCase = useCase,
                 coinsPackageListUseCase = coinCase,
-                childrenUseCase = childCase
+                childRepository = childRepo
             )
         }
         LaunchedEffect(state.value.userInfo) {

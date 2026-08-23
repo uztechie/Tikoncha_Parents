@@ -12,17 +12,17 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
 import uz.tikoncha_parent.domain.model.protection.pendingRequestCount
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.repository.ChildRepository
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.TodayUsageUseCase
+import uz.tikoncha_parent.domain.use_case.app_usage.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
 import uz.tikoncha_parent.platform.Logger
@@ -31,9 +31,9 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
-    private val childrenUseCase: ChildrenUseCase,
+    private val childRepository: ChildRepository,
     private val registerDeviceUseCase: RegisterDeviceUseCase,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
+    private val paymentRepository: PaymentRepository,
     private val todoListUseCase: TodoListUseCase,
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
     private val todayUsageUseCase: TodayUsageUseCase,
@@ -158,7 +158,7 @@ class HomeViewModel(
     }
 
     private fun getSubscriptionLimit() = screenModelScope.launch {
-        subscriptionLimitUseCase.invoke()
+        paymentRepository.syncSubscriptionLimits()
     }
 
     private fun loadChildren() {
@@ -166,18 +166,12 @@ class HomeViewModel(
         childrenJob = screenModelScope.launch {
             _state.update { it.copy(childrenResponseState = ResponseState.Loading) }
 
-            when (val response = childrenUseCase.invoke()) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        childrenResponseState = ResponseState.Error(
-                            res = response.resId, message = response.message
-                        )
-                    )
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
                 }
-
-                is Resource.Success -> {
-                    val children = response.data.map { it.toUserInfo() }
+                is Outcome.Success -> {
+                    val children = res.data
                     AppSettings.syncSelectedChildWith(children)
                     if (children.isEmpty()) {
                         AppSettings.selectedChild = null
@@ -239,11 +233,11 @@ class HomeViewModel(
         todayUsageJob?.cancel()
         todayUsageJob = screenModelScope.launch {
             when (val res = todayUsageUseCase.invoke(childId)) {
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     _state.update { it.copy(todayUsage = res.data) }
                     hasAppUsageLoaded.value = _state.value.selectedChild?.userId
                 }
-                else -> Unit
+                is Outcome.Failure -> Unit
             }
         }
     }

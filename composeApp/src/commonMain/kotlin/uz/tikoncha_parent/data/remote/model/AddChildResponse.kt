@@ -12,5 +12,6 @@ data class AddChildResponse(
 
 @Serializable
 data class AddChildData(
-    val code: String
+    val code: String,
+    val expires_at: String? = null,
 )

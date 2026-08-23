@@ -1,8 +1,5 @@
 package uz.tikoncha_parent.presentation.login
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,10 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,25 +48,38 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.presentation.base.CustomBottomDialog
-import uz.tikoncha_parent.presentation.base.CustomButton
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
+import tikoncha_parents.composeapp.generated.resources.kirish_subtitle
+import tikoncha_parents.composeapp.generated.resources.login_privacy
+import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.operator_kodi_topilmadi
+import tikoncha_parents.composeapp.generated.resources.telefon_raqami
+import tikoncha_parents.composeapp.generated.resources.telegram
+import tikoncha_parents.composeapp.generated.resources.telegram_ochilmoqda
+import tikoncha_parents.composeapp.generated.resources.telegram_orqali_kirish
+import tikoncha_parents.composeapp.generated.resources.telegram_phone_note
+import tikoncha_parents.composeapp.generated.resources.xatolik
+import tikoncha_parents.composeapp.generated.resources.xush_kelibsiz
+import tikoncha_parents.composeapp.generated.resources.yoki
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.OnScreenActive
 import uz.tikoncha_parent.presentation.base.PhoneNumberInputField
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.new_home.NewHomeScreen
 import uz.tikoncha_parent.presentation.otp.OtpScreen
 import uz.tikoncha_parent.presentation.register.RegisterScreen
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.TextFieldCornerRadius
-import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 // Telegram brand rangi — design token emas
@@ -118,17 +124,9 @@ fun LoginUi(
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
-    val errorText: String? = when {
-        state.errorMessage != null -> state.errorMessage
-        state.errorRes != null -> stringResource(state.errorRes)
-        else -> null
-    }
+    val errorText: String? = state.error?.asText()
 
-    val dialogError: String? = when {
-        state.dialogErrorMessage != null -> state.dialogErrorMessage
-        state.dialogErrorRes != null -> stringResource(state.dialogErrorRes)
-        else -> null
-    }
+    val dialogError: String? = state.dialogError?.asText()
     LoadingDialog(show = state.isPhoneLoading)
     CustomDialog(
         painter = painterResource(Res.drawable.dialog_failed),
@@ -139,6 +137,11 @@ fun LoginUi(
         showCloseButton = false,
         onDismiss = { event(LoginEvent.OnDialogErrorDismissed) },
         onButtonClick = { event(LoginEvent.OnDialogErrorDismissed) },
+    )
+
+    OnScreenActive(
+        launchedToSettings = state.isTelegramLoading,
+        onReturned = { event(LoginEvent.OnTelegramReturned)}
     )
 
     BoxWithConstraints(
@@ -223,6 +226,17 @@ fun LoginUi(
                                         RoundedCornerShape(TextFieldCornerRadius),
                                     ),
                             )
+
+                            if (state.showPrefixHint) {
+                                Spacer(Modifier.height(6.dp))
+                                Text(
+                                    text = stringResource(Res.string.operator_kodi_topilmadi),
+                                    style = AppTypography.emphasizedSm,
+                                    color = AppColors.text.accentWarning,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.End
+                                )
+                            }
                         }
                         Space(16.dp)
                         CustomButtonNew(

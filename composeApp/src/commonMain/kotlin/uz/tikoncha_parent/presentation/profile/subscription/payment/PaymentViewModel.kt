@@ -17,16 +17,16 @@ import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.PurchaseResult
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.service.PaymentService
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PaymentViewModel(
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
+    private val paymentRepository: PaymentRepository,
     private val paymentUseCase: SubscriptionPaymentUseCase,
     private val paymentStatusUseCase: PaymentStatusUseCase,
     private val purchaseIApPremiumUseCase: PurchaseIApPremiumUseCase,
@@ -313,7 +313,7 @@ class PaymentViewModel(
 
     private fun requestSubscriptionLimit(){
         screenModelScope.launch {
-            subscriptionLimitUseCase.invoke()
+            paymentRepository.syncSubscriptionLimits()
         }
     }
     private fun openClickPayment(

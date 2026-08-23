@@ -10,15 +10,14 @@ import uz.tikoncha_parent.data.remote.model.RefreshTokenResponse
 import uz.tikoncha_parent.data.remote.model.RegisterUserRequest
 import uz.tikoncha_parent.data.remote.model.RegisterUserResponse
 import uz.tikoncha_parent.data.remote.model.UserInfoResponse
-import uz.saidburxon.newedu.data.model.SendOtpRequest
-import uz.saidburxon.newedu.data.model.SendOtpResponse
-import uz.saidburxon.newedu.data.model.VerifyOtpRequest
-import uz.saidburxon.newedu.data.model.VerifyOtpResponse
+import uz.tikoncha_parent.data.remote.model.SendOtpRequest
+import uz.tikoncha_parent.data.remote.model.SendOtpResponse
+import uz.tikoncha_parent.data.remote.model.VerifyOtpRequest
+import uz.tikoncha_parent.data.remote.model.VerifyOtpResponse
 import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
 import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginRequest
 import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginResponse
-import uz.tikoncha_parent.domain.model.UserInfo
 
 class LoginApiService(private val client: HttpClient) {
 

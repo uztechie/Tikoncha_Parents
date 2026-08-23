@@ -6,4 +6,5 @@ sealed interface LoginEvent {
     data object OnPhoneContinue : LoginEvent          // YANGI
     data object OnErrorDismissed : LoginEvent
     data object OnDialogErrorDismissed : LoginEvent    // YANGI
+    data object OnTelegramReturned : LoginEvent
 }

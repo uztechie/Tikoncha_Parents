@@ -1,8 +1,8 @@
 package uz.tikoncha_parent.presentation.tracking
 
 import androidx.compose.runtime.Immutable
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusIssus
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.permission_status.PermissionIssue
 import uz.tikoncha_parent.presentation.map.LatLng
 
 
@@ -35,7 +35,7 @@ data class TrackingState(
     val sheetPerson: Person? = null,             // ⬅️ YANGI — sheet ichidagi bola
     val showPersonSheet: Boolean = false,           // ⬅️ YANGI
 
-    val sheetIssues: List<PermissionStatusIssus> = emptyList(),
+    val sheetIssues: List<PermissionIssue> = emptyList(),
     val isCheckingPermissionStatus: Boolean = false,
 
     val selfText: String = "",

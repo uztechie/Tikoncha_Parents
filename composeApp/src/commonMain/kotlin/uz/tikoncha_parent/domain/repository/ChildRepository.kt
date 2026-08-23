@@ -1,19 +1,25 @@
 package uz.tikoncha_parent.domain.repository
 
-import uz.tikoncha_parent.data.remote.model.AddChildRequest
-import uz.tikoncha_parent.data.remote.model.AddChildResponse
+import kotlinx.datetime.LocalDate
 import uz.tikoncha_parent.data.remote.model.AppUsageResponse
 import uz.tikoncha_parent.data.remote.model.ChildrenLocationResponse
-import uz.tikoncha_parent.data.remote.model.ChildrenResponse
 import uz.tikoncha_parent.data.remote.model.UnlinkChildRequest
 import uz.tikoncha_parent.data.remote.model.UnlinkChildResponse
+import uz.tikoncha_parent.domain.model.ChildLinkCode
+import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.model.app_usage.AppUsage
 
 interface ChildRepository {
 
-    suspend fun addChild(request: AddChildRequest): AddChildResponse
-    suspend fun children(): ChildrenResponse
+    suspend fun addChild(phone: String): Outcome<ChildLinkCode>
+    suspend fun children(): Outcome<List<UserInfo>>
 
-    suspend fun appUsages(params: Map<String, Any>): AppUsageResponse
+    suspend fun appUsages(
+        childId: String,
+        from: LocalDate,
+        to: LocalDate,
+    ): Outcome<List<AppUsage>>
 
     suspend fun childrenLocation(): ChildrenLocationResponse
 

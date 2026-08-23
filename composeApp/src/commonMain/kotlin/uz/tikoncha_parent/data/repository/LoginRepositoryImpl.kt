@@ -4,16 +4,15 @@ import uz.tikoncha_parent.data.remote.LoginApiService
 import uz.tikoncha_parent.data.remote.model.RefreshTokenResponse
 import uz.tikoncha_parent.data.remote.model.RegisterUserRequest
 import uz.tikoncha_parent.data.remote.model.RegisterUserResponse
-import uz.tikoncha_parent.data.remote.model.UserInfoResponse
-import uz.tikoncha_parent.domain.repository.LoginRepository
-import uz.saidburxon.newedu.data.model.SendOtpRequest
-import uz.saidburxon.newedu.data.model.SendOtpResponse
-import uz.saidburxon.newedu.data.model.VerifyOtpRequest
-import uz.saidburxon.newedu.data.model.VerifyOtpResponse
+import uz.tikoncha_parent.data.remote.model.SendOtpRequest
+import uz.tikoncha_parent.data.remote.model.SendOtpResponse
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
+import uz.tikoncha_parent.data.remote.model.UserInfoResponse
+import uz.tikoncha_parent.data.remote.model.VerifyOtpRequest
+import uz.tikoncha_parent.data.remote.model.VerifyOtpResponse
 import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginRequest
 import uz.tikoncha_parent.data.remote.model.auth.TelegramLoginResponse
-import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.repository.LoginRepository
 
 class LoginRepositoryImpl(private val api: LoginApiService): LoginRepository {
     override suspend fun telegramLogin(request: TelegramLoginRequest): TelegramLoginResponse {
@@ -26,10 +25,6 @@ class LoginRepositoryImpl(private val api: LoginApiService): LoginRepository {
 
     override suspend fun verifyOtp(request: VerifyOtpRequest): VerifyOtpResponse {
         return api.verifyOtp(request)
-    }
-
-    override suspend fun registerUser(request: RegisterUserRequest): RegisterUserResponse {
-        return api.registerUser(request)
     }
 
     override suspend fun refreshToken(): RefreshTokenResponse {

@@ -1,7 +1,8 @@
 package uz.tikoncha_parent.domain.repository
 
-import uz.tikoncha_parent.data.remote.model.tutorial.VideoTutorialResponse
+import uz.tikoncha_parent.domain.model.TutorialUrls
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 
 interface TutorialRepository {
-    suspend fun videoTutorials(): VideoTutorialResponse
+    suspend fun videoTutorials(): Outcome<TutorialUrls>
 }

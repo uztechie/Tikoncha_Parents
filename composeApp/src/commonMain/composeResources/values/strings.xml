@@ -833,4 +833,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="unlink_child_message">Ushbu amal bajarilgandan so‘ng “%1$s” qurilmasidagi nazorat to‘xtatiladi!</string>
     <string name="unlink_child_action">Bog‘lanishni uzish</string>
     <string name="child_unlinked_success">Farzand muvaffaqiyatli uzildi</string>
+    <string name="operator_kodi_topilmadi">Bunday operator kodi mavjud emas</string>
+    <string name="kod_amal_qilish_muddati">Kod amal qiladi: %1$s</string>
+    <string name="kod_muddati_tugadi">Kod muddati tugadi</string>
 </resources>

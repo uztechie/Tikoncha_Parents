@@ -34,9 +34,19 @@ data class Country(
     val dial: String,
     val flag: String,
     val mask: String,
+    val knownPrefixes: Set<String> = emptySet()
 ) {
     /** Mask bo'yicha kiritish mumkin bo'lgan maksimal raqamlar soni. */
     val maxDigits: Int get() = mask.count { it == '#' }
+
+    fun isComplete(digits: String): Boolean =
+        digits.length == maxDigits && digits.all { it.isDigit() }
+
+    /** Prefiks ma'lum ro'yxatda yo'q — foydalanuvchiga izoh ko'rsatiladi. */
+    fun hasUnknownPrefix(digits: String): Boolean =
+        knownPrefixes.isNotEmpty() &&
+                digits.length >= 2 &&
+                knownPrefixes.none { digits.startsWith(it) }
 }
 
 /**
@@ -44,7 +54,8 @@ data class Country(
  * Nomlar string resource orqali keladi -> til (uz/ru/en) avtomatik moslashadi.
  */
 val Countries: List<Country> = listOf(
-    Country("UZ", Res.string.country_uz, "+998", "🇺🇿", "## ### ## ##"),
+    Country("UZ", Res.string.country_uz, "+998", "🇺🇿", "## ### ## ##",
+        knownPrefixes = setOf("33", "50", "55", "77", "88", "90", "91", "93", "94", "95", "97", "98", "99", "11")),
     Country("RU", Res.string.country_ru, "+7",   "🇷🇺", "### ### ## ##"),
     Country("KZ", Res.string.country_kz, "+7",   "🇰🇿", "### ### ## ##"),
     Country("KG", Res.string.country_kg, "+996", "🇰🇬", "### ### ###"),

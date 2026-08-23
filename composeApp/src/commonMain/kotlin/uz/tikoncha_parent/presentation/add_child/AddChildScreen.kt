@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +59,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.dialog_failed
 import tikoncha_parents.composeapp.generated.resources.dialog_warning
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovasi_info
@@ -66,10 +66,13 @@ import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
 import tikoncha_parents.composeapp.generated.resources.farzandingiz_raqami
 import tikoncha_parents.composeapp.generated.resources.farzandingiz_tikoncha_ilovasidan_kirib_tasdiqlash
 import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
+import tikoncha_parents.composeapp.generated.resources.kod_amal_qilish_muddati
+import tikoncha_parents.composeapp.generated.resources.kod_muddati_tugadi
 import tikoncha_parents.composeapp.generated.resources.kod_nusxalandi
 import tikoncha_parents.composeapp.generated.resources.media_play
 import tikoncha_parents.composeapp.generated.resources.ochish
 import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.operator_kodi_topilmadi
 import tikoncha_parents.composeapp.generated.resources.sorov_yuborish
 import tikoncha_parents.composeapp.generated.resources.tasdiqlash_kodi
 import tikoncha_parents.composeapp.generated.resources.ulashish
@@ -85,9 +88,9 @@ import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.ToastData
 import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.multi_phone_input.Country
 import uz.tikoncha_parent.presentation.base.multi_phone_input.CountryPhoneInputField
-import uz.tikoncha_parent.presentation.login.LoginEvent
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
 import uz.tikoncha_parent.presentation.video_tutorial.VideoTutorialYoutubeScreen
 import uz.tikoncha_parent.ui.NormalIconSize
@@ -154,7 +157,7 @@ class AddChildScreen : Screen {
             }
 
             // --- Error -> CustomDialog
-            val errorText = state.errorMessage ?: state.errorRes?.let { stringResource(it) }
+            val errorText = state.error?.asText()
             val showErrorDialog = !errorText.isNullOrBlank()
 
             CustomDialog(
@@ -277,6 +280,16 @@ private fun AddChildContent(
                 enabled = !state.isLoading
             )
 
+            if (state.showPrefixHint) {
+                Text(
+                    text = stringResource(Res.string.operator_kodi_topilmadi),
+                    style = AppTypography.emphasizedSm,
+                    color = AppColors.text.accentWarning,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End
+                )
+            }
+
             // 3) Tugma <-> Kod card (telefon raqam ostida)
             AnimatedContent(
                 targetState = state.showCodeCard,
@@ -286,6 +299,8 @@ private fun AddChildContent(
                     CodeCard(
                         code = state.code,
                         isRefreshing = state.isLoading,
+                        isExpired = state.isCodeExpired,
+                        remainingText = state.remainingText,
                         onRefresh = { event(AddChildEvent.RefreshCode) },
                         onCopy = { event(AddChildEvent.CodeCopied) }
                     )
@@ -365,6 +380,8 @@ private fun PhoneInputCard(
 private fun CodeCard(
     code: String,
     isRefreshing: Boolean,
+    remainingText: String,
+    isExpired: Boolean,
     onRefresh: () -> Unit,
     onCopy: () -> Unit
 ) {
@@ -448,6 +465,24 @@ private fun CodeCard(
                     modifier = Modifier.size(16.dp)
                 )
             }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        if (isExpired) {
+            Text(
+                text = stringResource(Res.string.kod_muddati_tugadi),
+                style = AppTypography.emphasizedSmMedium,
+                color = AppColors.text.accentWarning,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End
+            )
+        } else if (remainingText != "0:00") {
+            Text(
+                text = stringResource(Res.string.kod_amal_qilish_muddati, remainingText),
+                style = AppTypography.emphasizedSmMedium,
+                color = AppColors.text.secondary
+            )
         }
 
         Spacer(Modifier.height(10.dp))

@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionType
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
+import uz.tikoncha_parent.domain.repository.PaymentRepository
+import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.domain.use_case.ChildrenLocationUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
-import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.isLocationServiceEnabled
 import uz.tikoncha_parent.presentation.map.LatLng
@@ -37,8 +37,8 @@ class TrackingScreenModel(
     private val childrenLocationUseCase: ChildrenLocationUseCase,
     private val locationTracker: LocationTracker,
     private val permissionsController: PermissionsController,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-    private val permissionStatusUseCase: PermissionStatusUseCase,
+    private val paymentRepository: PaymentRepository,
+    private val permissionStatusRepository: PermissionStatusRepository
 ) : StateScreenModel<TrackingState>(TrackingState()) {
 
     private val _effect = Channel<TrackingEffect>(Channel.BUFFERED)
@@ -73,17 +73,21 @@ class TrackingScreenModel(
                 loadSubscriptionLimits()
                 ensureLocation()
             }
+
             TrackingEvent.RetryLocation -> loadChildren()
 
             // ── Dialog/sheet dismisses ──
             TrackingEvent.DismissGpsDialog ->
                 mutableState.update { it.copy(showGpsDialog = false) }
+
             TrackingEvent.DismissPermissionDialog ->
                 mutableState.update {
                     it.copy(permissionDenied = false, permissionDeniedAlways = false)
                 }
+
             TrackingEvent.DismissSubscriptionDialog ->
                 mutableState.update { it.copy(showSubscriptionDialog = false) }
+
             TrackingEvent.DismissPersonSheet ->
                 mutableState.update {
                     it.copy(
@@ -106,6 +110,7 @@ class TrackingScreenModel(
             // ── Misc ──
             is TrackingEvent.OpenYoutubeUrl ->
                 _effect.trySend(TrackingEffect.OpenUrl(event.url))
+
             is TrackingEvent.SetSelfText ->
                 mutableState.update { it.copy(selfText = event.text) }
 
@@ -141,14 +146,17 @@ class TrackingScreenModel(
                     startTrackingIfNeeded()
                     if (focusSelf) moveCameraToSelf()
                 }
+
                 PermissionState.NotDetermined -> {
                     if (focusSelf) requestPermission()
                 }
+
                 PermissionState.Denied, PermissionState.NotGranted -> {
                     if (focusSelf) mutableState.update {
                         it.copy(permissionAsked = true, permissionDenied = true)
                     }
                 }
+
                 PermissionState.DeniedAlways -> {
                     if (focusSelf) mutableState.update {
                         it.copy(permissionAsked = true, permissionDeniedAlways = true)
@@ -279,19 +287,17 @@ class TrackingScreenModel(
 
     private fun loadPermissionStatus(childUserId: String) {
         screenModelScope.launch {
-            when (val res = permissionStatusUseCase.invoke(
-                PermissionStatusRequest(
-                    userId = childUserId,
-                    state = PermissionStatusType.LOCATION.name,
-                )
+            when (val res = permissionStatusRepository.permissionStatus(
+                childId = childUserId,
+                state = PermissionStatusType.LOCATION,
             )) {
-                is Resource.Success -> mutableState.update {
-                    it.copy(isCheckingPermissionStatus = false, sheetIssues = res.data.issues)
+                is Outcome.Success -> mutableState.update {
+                    it.copy(isCheckingPermissionStatus = false, sheetIssues = res.data)
                 }
-                is Resource.Error -> mutableState.update {
+
+                is Outcome.Failure -> mutableState.update {
                     it.copy(isCheckingPermissionStatus = false, sheetIssues = emptyList())
                 }
-                else -> Unit
             }
         }
     }
@@ -304,7 +310,7 @@ class TrackingScreenModel(
 
     private fun loadSubscriptionLimits() {
         screenModelScope.launch {
-            subscriptionLimitUseCase.invoke()
+            paymentRepository.syncSubscriptionLimits()
             mutableState.update { it.copy(subscriptionLimits = AppSettings.subscriptionLimitList) }
         }
     }
@@ -317,11 +323,13 @@ class TrackingScreenModel(
                     val children = res.data.orEmpty().mapNotNull { it.toPerson() }
                     mutableState.update { it.copy(people = children, isLoading = false) }
                 }
+
                 is Resource.Error -> {
                     val msg = res.message ?: "Xatolik"
                     mutableState.update { it.copy(isLoading = false, errorMessage = msg) }
                     _effect.send(TrackingEffect.ShowError(msg))
                 }
+
                 else -> Unit
             }
         }

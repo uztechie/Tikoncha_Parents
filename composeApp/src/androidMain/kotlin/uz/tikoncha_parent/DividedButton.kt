@@ -27,12 +27,23 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_right
+import tikoncha_parents.composeapp.generated.resources.arrow_right_rounded
+import tikoncha_parents.composeapp.generated.resources.permission_denied
+import tikoncha_parents.composeapp.generated.resources.permission_granted
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.ui.ButtonCornerRadius
+import uz.tikoncha_parent.ui.ButtonHeight
+import uz.tikoncha_parent.ui.Failed
+import uz.tikoncha_parent.ui.NormalTextSize
+import uz.tikoncha_parent.ui.PermissionBorderColor
+import uz.tikoncha_parent.ui.PrimaryColor
+import uz.tikoncha_parent.ui.SmallIconButtonSize
+import uz.tikoncha_parent.ui.SpaceSmall
 
 
 @Composable

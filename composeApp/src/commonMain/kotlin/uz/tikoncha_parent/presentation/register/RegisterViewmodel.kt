@@ -7,25 +7,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.data.remote.model.RegisterUserRequest
 import uz.tikoncha_parent.domain.model.GenderType
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.RegisterUseCase
+import uz.tikoncha_parent.domain.model.RegistrationData
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.AuthRepository
+import uz.tikoncha_parent.domain.repository.SessionRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class RegisterViewmodel(
-    private val registerUseCase: RegisterUseCase
-): ScreenModel {
+    private val auth: AuthRepository,
+    private val session: SessionRepository
+) : ScreenModel {
 
     private var registerJob: Job? = null
 
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.asStateFlow()
 
-    fun onEvent(event: RegisterEvent){
-        when(event){
+    fun onEvent(event: RegisterEvent) {
+        when (event) {
             is RegisterEvent.OnNameInsert -> {
                 _state.update {
                     it.copy(
@@ -33,6 +33,7 @@ class RegisterViewmodel(
                     )
                 }
             }
+
             is RegisterEvent.OnLastNameInsert -> {
                 _state.update {
                     it.copy(
@@ -40,6 +41,7 @@ class RegisterViewmodel(
                     )
                 }
             }
+
             is RegisterEvent.OnMiddleNameInsert -> {
                 _state.update {
                     it.copy(
@@ -47,6 +49,7 @@ class RegisterViewmodel(
                     )
                 }
             }
+
             is RegisterEvent.OnIdNumberInsert -> {
                 _state.update {
                     it.copy(
@@ -54,6 +57,7 @@ class RegisterViewmodel(
                     )
                 }
             }
+
             is RegisterEvent.OnGenderSelected -> {
                 _state.update {
                     it.copy(
@@ -61,6 +65,7 @@ class RegisterViewmodel(
                     )
                 }
             }
+
             RegisterEvent.OnConfirmClicked -> {
                 requestRegistration()
             }
@@ -77,40 +82,34 @@ class RegisterViewmodel(
     }
 
 
-    private fun requestRegistration(){
+    private fun requestRegistration() {
         registerJob?.cancel()
         registerJob = screenModelScope.launch {
             _state.update {
                 it.copy(
                     registerResponseState = ResponseState.Loading
-
                 )
             }
-            val request = RegisterUserRequest(
-                age = 0,
-                user_id = AppSettings.userId,
-                first_name = _state.value.name,
-                last_name = _state.value.lastName,
-                passport_id = _state.value.idNumber,
+            val data = RegistrationData(
+                userId = session.currentUserId,
+                firstName = _state.value.name,
+                lastName = _state.value.lastName,
                 patronymic = _state.value.middleName,
-                gender = GenderType.getGenderByIndex(_state.value.genderIndex).key
+                passportId = _state.value.idNumber,
+                gender = GenderType.getGenderByIndex(_state.value.genderIndex)
             )
 
-            when(val result = registerUseCase(request)){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (val res = auth.register(data)) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            registerResponseState = ResponseState.Error(
-                                res = result.resId,
-                                message = result.message
-                            )
+                            registerResponseState = ResponseState.Error(failure = res)
                         )
                     }
                 }
-                is Resource.Success -> {
-                    AppSettings.hasUserLogin = true
-                    AppSettings.userInfo = result.data.toUserInfo()
+
+                is Outcome.Success -> {
+                    session.saveUserInfo(res.data)
                     _state.update {
                         it.copy(
                             registerResponseState = ResponseState.Success()

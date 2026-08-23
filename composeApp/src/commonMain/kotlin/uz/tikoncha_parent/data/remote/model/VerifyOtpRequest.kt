@@ -1,4 +1,4 @@
-package uz.saidburxon.newedu.data.model
+package uz.tikoncha_parent.data.remote.model
 
 import kotlinx.serialization.Serializable
 

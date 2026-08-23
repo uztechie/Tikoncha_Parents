@@ -9,23 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
-import uz.saidburxon.newedu.data.model.SendOtpRequest
-import uz.saidburxon.newedu.data.model.VerifyOtpResponseData
-import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.auth.TelegramAuthResult
+import uz.tikoncha_parent.domain.repository.AuthRepository
+import uz.tikoncha_parent.domain.repository.SessionRepository
 import uz.tikoncha_parent.domain.repository.TelegramAuthRepository
-import uz.tikoncha_parent.domain.use_case.SendOtpUseCase
-import uz.tikoncha_parent.domain.use_case.auth.TelegramLoginUseCase
 import uz.tikoncha_parent.platform.BuildConfig
 
 class LoginViewModel(
     private val telegramAuth: TelegramAuthRepository,
-    private val telegramLoginUseCase: TelegramLoginUseCase,
-    private val sendOtpUseCase: SendOtpUseCase,
+    private val session: SessionRepository,
+    private val auth: AuthRepository
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(LoginState())
@@ -59,12 +54,25 @@ class LoginViewModel(
                 val clean = event.number.filter { it.isDigit() }.take(9)
                 _state.update { it.copy(number = clean) }
             }
+
             LoginEvent.OnTelegramClicked -> handleTelegramClick()
             LoginEvent.OnPhoneContinue -> handlePhoneContinue()
             LoginEvent.OnErrorDismissed ->
-                _state.update { it.copy(errorMessage = null, errorRes = null) }
+                _state.update { it.copy(error = null) }
+
             LoginEvent.OnDialogErrorDismissed ->
-                _state.update { it.copy(dialogErrorMessage = null, dialogErrorRes = null) }
+                _state.update { it.copy(dialogError = null) }
+
+            LoginEvent.OnTelegramReturned -> {
+                if (exchangeJob?.isActive != true) {
+                    _state.update {
+                        it.copy(
+                            showPhone = true,
+                            isTelegramLoading = false
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -73,13 +81,13 @@ class LoginViewModel(
         if (_state.value.isTelegramLoading) return
         val started = telegramAuth.startLogin()
         if (started) {
-            _state.update { it.copy(isTelegramLoading = true, errorMessage = null, errorRes = null) }
+            _state.update { it.copy(isTelegramLoading = true, error = null) }
         } else {
             _state.update {
                 it.copy(
                     isTelegramLoading = false,
                     showPhone = true,
-                    errorRes = Res.string.kutilmagan_xatolik_qayta_urining,
+                    error = Outcome.Failure(ErrorCause.Unknown),
                 )
             }
         }
@@ -89,10 +97,18 @@ class LoginViewModel(
         when (result) {
             TelegramAuthResult.Cancelled ->
                 _state.update { it.copy(isTelegramLoading = false, showPhone = true) }
+
             is TelegramAuthResult.Error ->
                 _state.update {
-                    it.copy(isTelegramLoading = false, showPhone = true, errorMessage = result.message)
+                    it.copy(
+                        showPhone = true,
+                        isTelegramLoading = false,
+                        error = Outcome.Failure(
+                            ErrorCause.Unknown, result.message
+                        )
+                    )
                 }
+
             is TelegramAuthResult.Success -> exchange(result.idToken)
         }
     }
@@ -100,22 +116,26 @@ class LoginViewModel(
     private fun exchange(idToken: String) {
         exchangeJob?.cancel()
         exchangeJob = screenModelScope.launch {
-            _state.update { it.copy(isTelegramLoading = true, errorMessage = null, errorRes = null) }
-            when (val res = telegramLoginUseCase(idToken)) {
-                is Resource.Loading -> {}
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        isTelegramLoading = false,
-                        showPhone = true,
-                        errorRes = res.resId,
-                        errorMessage = res.message,
-                    )
+            _state.update { it.copy(isTelegramLoading = true, error = null) }
+            when (val res = auth.telegramLogin(idToken)) {
+                is Outcome.Failure -> {
+                    _state.update {
+                        it.copy(
+                            error = res,
+                            showPhone = true,
+                            isTelegramLoading = false
+                        )
+                    }
                 }
-                is Resource.Success -> {
-                    saveSession(res.data)
+
+                is Outcome.Success -> {
+                    session.save(res.data)
                     _state.update { it.copy(isTelegramLoading = false) }
-                    if (res.data.user_info == null) _sideEffects.send(LoginSideEffect.NavigateToRegister)
-                    else _sideEffects.send(LoginSideEffect.NavigateToHome)
+                    if (res.data.needsRegistration) {
+                        _sideEffects.send(LoginSideEffect.NavigateToRegister)
+                    } else {
+                        _sideEffects.send(LoginSideEffect.NavigateToHome)
+                    }
                 }
             }
         }
@@ -129,30 +149,26 @@ class LoginViewModel(
 
         sendOtpJob?.cancel()
         sendOtpJob = screenModelScope.launch {
-            _state.update { it.copy(isPhoneLoading = true, dialogErrorMessage = null, dialogErrorRes = null) }
+            _state.update {
+                it.copy(
+                    isPhoneLoading = true,
+                    dialogError = null,
+                )
+            }
 
-            when (val res = sendOtpUseCase(SendOtpRequest(phone = current.fullNumber))) {
-                is Resource.Loading -> {}
-                is Resource.Error -> _state.update {
+            when (val res = auth.sendOtp(current.fullNumber)) {
+                is Outcome.Failure -> _state.update {
                     it.copy(
                         isPhoneLoading = false,
-                        dialogErrorMessage = res.message,
-                        dialogErrorRes = res.resId,
+                        dialogError = res,
                     )
                 }
-                is Resource.Success -> {
+
+                is Outcome.Success -> {
                     _state.update { it.copy(isPhoneLoading = false) }
                     _sideEffects.send(LoginSideEffect.NavigateToOtp(current.fullNumber))
                 }
             }
         }
-    }
-
-    private fun saveSession(data: VerifyOtpResponseData) {
-        AppSettings.refreshToken = data.refresh_token ?: ""
-        AppSettings.accessToken = data.access_token ?: ""
-        AppSettings.hasUserLogin = data.user_info != null
-        AppSettings.userId = data.user_id ?: ""
-        AppSettings.userInfo = data.user_info?.toUserInfo()
     }
 }

@@ -1,7 +1,10 @@
 package uz.tikoncha_parent.data.repository
 
+import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toDomain
+import uz.tikoncha_parent.data.mapper.toSubscriptionLimit
 import uz.tikoncha_parent.data.remote.PaymentApiService
+import uz.tikoncha_parent.data.remote.app_error.ApiErrorMapper
 import uz.tikoncha_parent.data.remote.model.PaymentStatusResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionLimitResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
@@ -10,6 +13,9 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPlansResponse
 import uz.tikoncha_parent.data.remote.model.SubscriptionStatusResponse
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
+import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
@@ -23,9 +29,20 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
         return api.subscriptionPayment(subscriptionPaymentRequest)
     }
 
-    override suspend fun getSubscriptionLimitsFromServer(): SubscriptionLimitResponse {
-        return api.subscriptionLimits()
-    }
+    override suspend fun syncSubscriptionLimits(): Outcome<List<SubscriptionLimit>> =
+        apiCall(TAG) {
+            val r = api.subscriptionLimits()
+            val body = r.data
+            when {
+                r.success && body != null -> {
+                    val limits = body.children.map { it.toSubscriptionLimit() }
+                    AppSettings.subscriptionLimitList = limits      // kesh — endi shu yerda
+                    Outcome.Success(limits)
+                }
+                r.success -> Outcome.Failure(ErrorCause.InvalidResponse)
+                else -> Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
+            }
+        }
 
     override suspend fun subscriptionPlans(): SubscriptionPlansResponse {
         return api.subscriptionPlans()
@@ -67,4 +84,6 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
     override suspend fun getSubscriptionStatus(userId: String?): SubscriptionStatusResponse {
         return api.getSubscriptionStatus(userId)
     }
+
+    private companion object { const val TAG = "PaymentRepository" }
 }

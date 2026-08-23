@@ -9,11 +9,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
-import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.UploadPart
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
@@ -25,7 +26,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ProfileViewModel(
     private val userInfoUseCase: UserInfoUseCase,
-    private val childrenUseCase: ChildrenUseCase,
+    private val childRepository: ChildRepository,
     private val logoutUseCase: LogoutUseCase,
     private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
     private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
@@ -325,20 +326,11 @@ class ProfileViewModel(
     fun getChildren() {
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {
-            val result = childrenUseCase()
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-
-                }
-
-                is Resource.Success -> {
-                    AppSettings.children = result.data.map { it.toUserInfo() }
-                    _state.update {
-                        it.copy(
-                            children = AppSettings.children
-                        )
-                    }
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> Unit
+                is Outcome.Success -> {
+                    AppSettings.children = res.data
+                    _state.update { it.copy(children = AppSettings.children) }
                 }
             }
         }

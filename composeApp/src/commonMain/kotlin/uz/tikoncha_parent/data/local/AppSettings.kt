@@ -218,8 +218,6 @@ object AppSettings {
         settings.remove(KEY_SELECT_SUBSCRIPTION_LIMIT)
         // fcmToken ni odatda saqlab qolsa ham bo‘ladi; xohlasang remove qil:
         // settings.remove(KEY_FCM_TOKEN)
-
-        Logger.d("AppSettings", "accessToken=$accessToken, userInfo=$userInfo, limits=$subscriptionLimitList")
     }
 
     /**

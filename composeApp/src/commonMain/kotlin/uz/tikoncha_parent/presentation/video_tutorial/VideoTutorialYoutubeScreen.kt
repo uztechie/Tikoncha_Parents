@@ -24,15 +24,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.qollash
 import tikoncha_parents.composeapp.generated.resources.video_qollanma
 import tikoncha_parents.composeapp.generated.resources.video_qollanma_error_message
 import tikoncha_parents.composeapp.generated.resources.youtube_ochilmoqda
-import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.openUrl
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.player.PlayerScreen
-import uz.tikoncha_parent.presentation.player.PlayerScreenModel
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -107,7 +104,7 @@ data class VideoTutorialYoutubeScreen(val tutorialType: TutorialType) : Screen {
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ){
-                        val message = state.error.ifBlank { stringResource(Res.string.video_qollanma_error_message) }
+                        val message = state.error?.asText() ?: stringResource(Res.string.video_qollanma_error_message)
                         Text(
                             text = message,
                             color = AppColors.text.secondary,

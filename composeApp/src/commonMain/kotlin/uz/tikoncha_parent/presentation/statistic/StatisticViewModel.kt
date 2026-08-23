@@ -10,28 +10,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
-import uz.tikoncha_parent.domain.use_case.app_usage.AppUsagesUseCase
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
-import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
+import uz.tikoncha_parent.domain.repository.ChildRepository
+import uz.tikoncha_parent.domain.repository.PaymentRepository
+import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class StatisticViewModel(
-    private val appUsagesUseCase: AppUsagesUseCase,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-    private val childrenUseCase: ChildrenUseCase,
-    private val permissionStatusUseCase: PermissionStatusUseCase,
+    private val paymentRepository: PaymentRepository,
+    private val childRepository: ChildRepository,
+    private val permissionStatusRepository: PermissionStatusRepository,
 ) : ScreenModel {
 
     private val TAG = "StatisticViewModel"
@@ -92,15 +90,13 @@ class StatisticViewModel(
         childrenJob = screenModelScope.launch {
             _state.update { it.copy(childrenResponseState = ResponseState.Loading) }
 
-            when (val response = childrenUseCase.invoke()) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update {
-                    it.copy(childrenResponseState = ResponseState.Error(
-                        res = response.resId, message = response.message
-                    ))
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
                 }
-                is Resource.Success -> {
-                    val list = response.data.map { dto -> dto.toUserInfo() }
+
+                is Outcome.Success -> {
+                    val list = res.data
                     _state.update {
                         it.copy(
                             childrenResponseState = ResponseState.Success(),
@@ -155,18 +151,18 @@ class StatisticViewModel(
         appUsageJob = screenModelScope.launch {
             _state.update { it.copy(appUsageResponseState = ResponseState.Loading) }
 
-            when (val response = appUsagesUseCase.invoke(childId)) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update {
-                    it.copy(appUsageResponseState = ResponseState.Error(
-                        res = response.resId, message = response.message
-                    ))
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            val from = today.minus(15, DateTimeUnit.DAY)
+
+            when (val res = childRepository.appUsages(childId, from = from, to = today)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(appUsageResponseState = ResponseState.Error(failure = res))
                 }
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             appUsageResponseState = ResponseState.Success(),
-                            appUsageList = response.data
+                            appUsageList = res.data
                         )
                     }
                     rebuildPagesForCurrentMode()
@@ -181,20 +177,12 @@ class StatisticViewModel(
         val childId = _state.value.selectedChild?.userId ?: return
         permissionJob?.cancel()
         permissionJob = screenModelScope.launch {
-            val res = permissionStatusUseCase.invoke(
-                PermissionStatusRequest(
-                    userId = childId,
-                    state = PermissionStatusType.STATISTICS.name
-                )
-            )
-            when (res) {
-                is Resource.Success -> _state.update {
-                    it.copy(permissionIssueList = res.data.issues)
-                }
-                is Resource.Error   -> _state.update {
-                    it.copy(permissionIssueList = emptyList())
-                }
-                else -> Unit
+            when (val res = permissionStatusRepository.permissionStatus(
+                childId = childId,
+                state = PermissionStatusType.STATISTICS,
+            )) {
+                is Outcome.Success -> _state.update { it.copy(permissionIssueList = res.data) }
+                is Outcome.Failure -> _state.update { it.copy(permissionIssueList = emptyList()) }
             }
         }
     }
@@ -203,7 +191,7 @@ class StatisticViewModel(
 
     private fun refreshSubscriptionLimit() {
         screenModelScope.launch {
-            subscriptionLimitUseCase.invoke()
+            paymentRepository.syncSubscriptionLimits()
             // useCase AppSettings.subscriptionLimitList ni yangilaydi (ehtimol).
             // Shundan keyin tanlangan child'ga mos limitni state ga ko'chirib qo'yamiz:
             val limit = AppSettings.subscriptionLimitList

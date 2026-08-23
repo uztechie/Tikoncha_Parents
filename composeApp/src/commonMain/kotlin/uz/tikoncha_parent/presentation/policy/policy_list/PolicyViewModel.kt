@@ -6,29 +6,22 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.data.remote.model.permission_status.PermissionStatusRequest
-import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
+import uz.tikoncha_parent.domain.repository.ChildRepository
+import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionLimitUseCase
-import uz.tikoncha_parent.domain.use_case.permission_status.PermissionStatusUseCase
-import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicyViewModel(
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
-    private val subscriptionLimitUseCase: SubscriptionLimitUseCase,
-    private val permissionStatusUseCase: PermissionStatusUseCase,
-    private val childrenUseCase: ChildrenUseCase,
+    private val permissionStatusRepository: PermissionStatusRepository,
+    private val childRepository: ChildRepository
 ) : ScreenModel {
 
     private var childrenJob: Job? = null
@@ -90,26 +83,18 @@ class PolicyViewModel(
                 )
             }
 
-            when (val response = childrenUseCase.invoke()) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
                 }
 
-                is Resource.Success -> {
-                    val children = response.data.map { it.toUserInfo() }
+                is Outcome.Success -> {
+                    val children = res.data
 
                     // ✅ AppSettings + selectedChild sync
                     AppSettings.syncSelectedChildWith(children)
 
-                    if (children.isEmpty()){
+                    if (children.isEmpty()) {
                         AppSettings.selectedChild = null
                         AppSettings.selectedChildId = ""
                     }
@@ -191,38 +176,24 @@ class PolicyViewModel(
     private fun loadPermissionStatus() {
         permissionJob?.cancel()
         permissionJob = screenModelScope.launch {
-            val res = permissionStatusUseCase.invoke(
-                PermissionStatusRequest(
-                    userId = _state.value.selectedChild?.userId?:"",
-                    state = PermissionStatusType.POLICY.name
-                )
-            )
-            when (res) {
-                is Resource.Success -> {
-                    val issues = res.data.issues
+            when (val res = permissionStatusRepository.permissionStatus(
+                childId = _state.value.selectedChild?.userId ?: "",
+                state = PermissionStatusType.POLICY,
+            )) {
+                is Outcome.Success -> {
+                    val issues = res.data
                     val hasIssues = issues.isNotEmpty()
-
-                    _state.update { currentState ->                    // ← har doim CURRENT state
+                    _state.update { currentState ->
                         currentState.copy(
                             permissionIssueList = issues,
-                            policies = currentState.policies.map {     // ← shu yerda hisoblanadi
-                                it.copy(isActive = !hasIssues)
-                            }
+                            policies = currentState.policies.map { it.copy(isActive = !hasIssues) }
                         )
                     }
                 }
-                is Resource.Error -> {
-                    // Xato — issue ko'rsatmaymiz, loading'ni yopamiz
-                    _state.update {
-                        it.copy(
-                            permissionIssueList = emptyList()
-                        )
-                    }
+                is Outcome.Failure -> _state.update {
+                    it.copy(permissionIssueList = emptyList())
                 }
-                else -> Unit
             }
         }
     }
-
-
 }

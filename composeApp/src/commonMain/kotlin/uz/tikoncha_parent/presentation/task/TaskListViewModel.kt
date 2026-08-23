@@ -15,7 +15,6 @@ import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.model.todo.CreatedByRole
 import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import uz.tikoncha_parent.domain.model.todo.TodosQuery
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
@@ -25,8 +24,7 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 class TaskListViewModel(
     private val getTodosUseCase: GetTodosUseCase,
     private val completeTodoUseCase: CompleteTodoUseCase,
-    private val deleteTodoUseCase: DeleteTodoUseCase,
-    private val childrenUseCase: ChildrenUseCase
+    private val deleteTodoUseCase: DeleteTodoUseCase
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(TaskListState())

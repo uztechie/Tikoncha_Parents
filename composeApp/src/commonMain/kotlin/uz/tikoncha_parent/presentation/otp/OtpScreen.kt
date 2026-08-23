@@ -126,7 +126,7 @@ fun OtpUi(
             val data = (state.responseState as? ResponseState.Success)?.data
             if (data != null) {
                 hasNavigated = true
-                if (data.user_info == null) {
+                if (data.needsRegistration) {
                     navigator?.push(RegisterScreen())
                 } else {
                     navigator?.replaceAll(NewHomeScreen())

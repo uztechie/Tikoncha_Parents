@@ -1,6 +1,6 @@
 package uz.tikoncha_parent.domain.model.auth
 
-import uz.saidburxon.newedu.data.model.VerifyOtpResponseData
+import uz.tikoncha_parent.data.remote.model.VerifyOtpResponseData
 
 sealed interface AuthExchangeResult {
     data class Success(val data: VerifyOtpResponseData) : AuthExchangeResult

@@ -7,61 +7,45 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.tutorial.VideoTutorialUseCase
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.TutorialRepository
 
 class VideoTutorialScreenModel(
-    private val videoTutorialUseCase: VideoTutorialUseCase
-): ScreenModel {
+    private val tutorialRepository: TutorialRepository
+) : ScreenModel {
+
     private val _state = MutableStateFlow(VideoTutorialState())
     val state = _state.asStateFlow()
 
-
-    fun loadVideoTutorial(type: TutorialType){
+    fun loadVideoTutorial(type: TutorialType) {
         screenModelScope.launch {
-            _state.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
+            _state.update { it.copy(isLoading = true, error = null) }
 
-            val result = videoTutorialUseCase.invoke()
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message?:""
-                        )
-                    }
+            when (val res = tutorialRepository.videoTutorials()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(isLoading = false, error = res)
                 }
-                is Resource.Success -> {
-                    val url = when(type){
+
+                is Outcome.Success -> {
+                    val url = when (type) {
                         TutorialType.TIKONCHA -> {
                             AppSettings.showTikonchaTutorial = false
-                            result.data.tikoncha_tutorial_url
+                            res.data.tikoncha
                         }
                         TutorialType.POLICY -> {
                             AppSettings.showPolicyTutorial = false
-                            result.data.policy_tutorial_url
+                            res.data.policy
                         }
                         TutorialType.BIND_CHILD -> {
                             AppSettings.showBindChildTutorial = false
-                            result.data.bind_child_tutorial_url
+                            res.data.bindChild
                         }
                     }
                     _state.update {
-                        it.copy(
-                            isLoading = false,
-                            videoUrl = url?:""
-                        )
+                        it.copy(isLoading = false, videoUrl = url ?: "")
                     }
                 }
             }
         }
     }
-
-
 }

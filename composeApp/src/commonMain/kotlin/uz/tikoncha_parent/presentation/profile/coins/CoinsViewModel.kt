@@ -9,17 +9,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toUserInfo
 import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.ChildrenUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
+import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class CoinsViewModel(
     private val getMyCoinsUseCase: GetMyCoinsUseCase,
     private val coinsPackageListUseCase: GetCoinPackageListUseCase,
-    private val childrenUseCase: ChildrenUseCase,
+    private val childRepository: ChildRepository,
 ): ScreenModel {
 
     private val _state = MutableStateFlow(CoinsState())
@@ -156,29 +156,21 @@ class CoinsViewModel(
                 )
             }
 
-            when (val response = childrenUseCase.invoke()) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            childrenResponseState = ResponseState.Error(
-                                res = response.resId,
-                                message = response.message
-                            )
-                        )
-                    }
+            when (val res = childRepository.children()) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
                 }
 
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             childrenResponseState = ResponseState.Success(),
-                            childrenList = response.data.map { userInfoDto -> userInfoDto.toUserInfo() },
+                            childrenList = res.data,
                             selectedChild = AppSettings.selectedChild
                         )
                     }
-                    AppSettings.children = response.data.map { userInfoDto -> userInfoDto.toUserInfo() }
-                    if (AppSettings.selectedChild == null){
+                    AppSettings.children = res.data
+                    if (AppSettings.selectedChild == null) {
                         AppSettings.selectedChild = AppSettings.children.firstOrNull()
                     }
                 }

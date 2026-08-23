@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.otp
 
-import uz.saidburxon.newedu.data.model.VerifyOtpResponseData
+import uz.tikoncha_parent.domain.model.Session
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class OtpState(
@@ -8,8 +9,9 @@ data class OtpState(
     val otpCode: String = "",
     val isRunning: Boolean = false,
     val hasInputError: Boolean = false,
-    var timeLife: Int = 0,
-    var isSendingOtp: Boolean = false,
-    val responseState: ResponseState<VerifyOtpResponseData> = ResponseState.Idle,
-    val deleteAccountUrl: String? = null,
-)
+    val timeLife: Int = 0,
+    val isSendingOtp: Boolean = false,
+    val responseState: ResponseState<Session> = ResponseState.Idle,
+) {
+    val deleteAccountUrl: String? get() = ((responseState as? ResponseState.Error)?.failure?.cause as? ErrorCause.AccountDeletionRequired)?.url
+}

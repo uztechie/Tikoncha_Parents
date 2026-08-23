@@ -816,4 +816,7 @@
     <string name="unlink_child_message">После выполнения этого действия контроль на устройстве «%1$s» будет прекращён!</string>
     <string name="unlink_child_action">Разорвать связь</string>
     <string name="child_unlinked_success">Ребёнок успешно отвязан</string>
+    <string name="operator_kodi_topilmadi">Такого кода оператора не существует</string>
+    <string name="kod_amal_qilish_muddati">Код действует: %1$s</string>
+    <string name="kod_muddati_tugadi">Срок действия кода истёк</string>
 </resources>
