@@ -1,11 +1,11 @@
 package uz.tikoncha_parent.presentation.protection
 
 import kotlinx.datetime.Instant
-import uz.tikoncha_parent.data.remote.model.protection.AccountRequestDto
-import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.protection.AccountRequest
 import uz.tikoncha_parent.domain.model.protection.ChildMode
 import uz.tikoncha_parent.domain.model.protection.ChildPermission
+import uz.tikoncha_parent.domain.model.protection.ChildRequest
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
@@ -26,9 +26,9 @@ data class ProtectionState(
     val disabledPermissions: Set<ChildPermission> = emptySet(),
 
     // farzand so'rovlari
-    val strictDisableRequest: ChildRequestDto? = null,
-    val logoutRequest: AccountRequestDto? = null,
-    val deleteRequest: AccountRequestDto? = null,
+    val strictDisableRequest: ChildRequest? = null,
+    val logoutRequest: AccountRequest? = null,
+    val deleteRequest: AccountRequest? = null,
     // remainingSeconds ← O'CHIRILDI (endi alohida flow)
     val actionInProgressId: String? = null,
     val actionResponseState: ResponseState<Any> = ResponseState.Idle,

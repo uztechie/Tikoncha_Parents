@@ -37,45 +37,36 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.berilgan
 import tikoncha_parents.composeapp.generated.resources.berilmagan
 import tikoncha_parents.composeapp.generated.resources.boshqa_rejimlar_uchun
-import tikoncha_parents.composeapp.generated.resources.delete
 import tikoncha_parents.composeapp.generated.resources.eye
 import tikoncha_parents.composeapp.generated.resources.eye_slash
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovadan_chiqish_sorovi
 import tikoncha_parents.composeapp.generated.resources.farzand_ilovani_ochirish_sorovi
 import tikoncha_parents.composeapp.generated.resources.farzand_qalqon_ochirish_sorovi
 import tikoncha_parents.composeapp.generated.resources.gujanak_uchun
-import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish
 import tikoncha_parents.composeapp.generated.resources.hisobdan_chiqish_ruxsat_berildi_desc
-import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish
 import tikoncha_parents.composeapp.generated.resources.ilovani_ochirish_ruxsat_berildi_desc
-import tikoncha_parents.composeapp.generated.resources.javob_uchun
-import tikoncha_parents.composeapp.generated.resources.korsatish
-import tikoncha_parents.composeapp.generated.resources.logout
-import tikoncha_parents.composeapp.generated.resources.ochirish_usuli
-import tikoncha_parents.composeapp.generated.resources.qalqon_uchun
-import tikoncha_parents.composeapp.generated.resources.qalqonni_ochirish
-import tikoncha_parents.composeapp.generated.resources.rad_etish
-import tikoncha_parents.composeapp.generated.resources.ruxsat_berish
-import tikoncha_parents.composeapp.generated.resources.ruxsatlar
-import tikoncha_parents.composeapp.generated.resources.sorovlar
-import tikoncha_parents.composeapp.generated.resources.oxirgi_sinxron
 import tikoncha_parents.composeapp.generated.resources.kod
-import tikoncha_parents.composeapp.generated.resources.tasdiqlash
-import tikoncha_parents.composeapp.generated.resources.x_dan_y_berilgan
-import tikoncha_parents.composeapp.generated.resources.yashirish
-import tikoncha_parents.composeapp.generated.resources.zarur_ruxsat_banner_desc
 import tikoncha_parents.composeapp.generated.resources.n_ta_zarur_ruxsat_ochiq
+import tikoncha_parents.composeapp.generated.resources.ochirish_usuli
+import tikoncha_parents.composeapp.generated.resources.oxirgi_sinxron
 import tikoncha_parents.composeapp.generated.resources.qalqon_ochirish_rad_etildi_desc
 import tikoncha_parents.composeapp.generated.resources.qalqon_ochirish_tasdiqlandi_desc
+import tikoncha_parents.composeapp.generated.resources.qalqon_uchun
+import tikoncha_parents.composeapp.generated.resources.qalqonni_ochirish
 import tikoncha_parents.composeapp.generated.resources.rad_etildi
+import tikoncha_parents.composeapp.generated.resources.rad_etish
 import tikoncha_parents.composeapp.generated.resources.ruxsat_berildi
+import tikoncha_parents.composeapp.generated.resources.ruxsat_berish
+import tikoncha_parents.composeapp.generated.resources.ruxsatlar
 import tikoncha_parents.composeapp.generated.resources.sorov_rad_etildi_desc
 import tikoncha_parents.composeapp.generated.resources.tasdiqlandi
-import uz.tikoncha_parent.data.remote.model.protection.AccountRequestDto
-import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
-import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
+import tikoncha_parents.composeapp.generated.resources.tasdiqlash
+import tikoncha_parents.composeapp.generated.resources.x_dan_y_berilgan
+import tikoncha_parents.composeapp.generated.resources.zarur_ruxsat_banner_desc
+import uz.tikoncha_parent.domain.model.protection.AccountRequest
 import uz.tikoncha_parent.domain.model.protection.ChildMode
 import uz.tikoncha_parent.domain.model.protection.ChildPermission
+import uz.tikoncha_parent.domain.model.protection.ChildRequest
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.ui.DialogButtonHeight
@@ -251,7 +242,7 @@ fun ProtectionHeroCard(
 
 @Composable
 fun ProtectionStrictRequestCard(
-    request: ChildRequestDto,
+    request: ChildRequest,
     childName: String,
     isPending: Boolean,
     remainingSeconds: Int,
@@ -328,7 +319,7 @@ fun ProtectionStrictRequestCard(
 
 @Composable
 fun ProtectionAccountRequestCard(
-    request: AccountRequestDto?,
+    request: AccountRequest?,
     childName: String,
     title: String,
     isProcessing: Boolean,

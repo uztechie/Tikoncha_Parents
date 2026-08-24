@@ -1,9 +1,7 @@
 package uz.tikoncha_parent.domain.model.protection
 
-import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusData
-
 /** Javob kutayotgan so'rovlar soni: strict pending + logout process + delete process */
-fun ProtectionStatusData.pendingRequestCount(): Int {
+fun ProtectionStatus.pendingRequestCount(): Int {
     val strictPending = strictDisableRequest?.status.equals("pending", ignoreCase = true)
     val logoutPending = logoutRequest?.status.equals("process", ignoreCase = true)
     val deletePending = deleteRequest?.status.equals("process", ignoreCase = true)
@@ -11,10 +9,10 @@ fun ProtectionStatusData.pendingRequestCount(): Int {
 }
 
 /** Joriy rejim uchun zarur bo'lib turib o'chiq qolgan ruxsatlar soni */
-fun ProtectionStatusData.missingRequiredPermissionCount(): Int {
-    val mode = ChildMode.from(modeStatus?.currentMode)
+fun ProtectionStatus.missingRequiredPermissionCount(): Int {
+    val mode = ChildMode.from(currentMode)
     if (mode == ChildMode.UNKNOWN) return 0
-    return modeStatus?.disabled.orEmpty()
+    return disabledKeys
         .mapNotNull { ChildPermission.from(it) }
         .count { it.minMode.ordinal <= mode.ordinal }
 }

@@ -1,12 +1,14 @@
 package uz.tikoncha_parent.domain.repository
 
-import uz.tikoncha_parent.data.remote.model.protection.AccountRequestActionResponse
 import uz.tikoncha_parent.data.remote.model.protection.ChildRequestsResponse
-import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusResponse
-import uz.tikoncha_parent.data.remote.model.protection.RequestActionResponse
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.model.protection.AccountRequest
+import uz.tikoncha_parent.domain.model.protection.AccountRequestStatus
+import uz.tikoncha_parent.domain.model.protection.ChildRequest
+import uz.tikoncha_parent.domain.model.protection.ProtectionStatus
 
 interface ProtectionRepository {
-    suspend fun protectionStatus(childId: String): ProtectionStatusResponse
+    suspend fun protectionStatus(childId: String): Outcome<ProtectionStatus>
 
     suspend fun strictDisableRequests(
         childId: String?,
@@ -15,12 +17,12 @@ interface ProtectionRepository {
         offset: Int,
     ): ChildRequestsResponse
 
-    suspend fun approveStrictDisableRequest(requestId: String): RequestActionResponse
+    suspend fun approveStrictDisableRequest(requestId: String): Outcome<ChildRequest>
 
-    suspend fun rejectStrictDisableRequest(requestId: String): RequestActionResponse
+    suspend fun rejectStrictDisableRequest(requestId: String): Outcome<ChildRequest>
 
     suspend fun updateAccountRequestStatus(
         requestId: String,
-        status: String,
-    ): AccountRequestActionResponse
+        status: AccountRequestStatus,
+    ): Outcome<AccountRequest>
 }

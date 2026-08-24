@@ -20,10 +20,10 @@ import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
 import uz.tikoncha_parent.domain.model.protection.pendingRequestCount
 import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
+import uz.tikoncha_parent.domain.repository.ProtectionRepository
 import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.app_usage.TodayUsageUseCase
 import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
-import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.platform.getDeviceInfo
@@ -37,7 +37,7 @@ class HomeViewModel(
     private val todoListUseCase: TodoListUseCase,
     private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
     private val todayUsageUseCase: TodayUsageUseCase,
-    private val protectionStatusUseCase: ProtectionStatusUseCase,
+    private val protectionRepository: ProtectionRepository,
 ) : ScreenModel {
 
     private val TAG = "HomeViewModel"
@@ -119,16 +119,14 @@ class HomeViewModel(
         }
         protectionJob?.cancel()
         protectionJob = screenModelScope.launch {
-            when (val result = protectionStatusUseCase.invoke(childId)) {
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            protectionPendingRequestCount = result.data.pendingRequestCount(),
-                            protectionPermissionOffCount = result.data.missingRequiredPermissionCount(),
-                        )
-                    }
+            when (val res = protectionRepository.protectionStatus(childId)) {
+                is Outcome.Success -> _state.update {
+                    it.copy(
+                        protectionPendingRequestCount = res.data.pendingRequestCount(),
+                        protectionPermissionOffCount = res.data.missingRequiredPermissionCount(),
+                    )
                 }
-                else -> Unit   // xato bo'lsa eski raqam qolaveradi, karta baribir ochiladi
+                is Outcome.Failure -> Unit
             }
         }
     }

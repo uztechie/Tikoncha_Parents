@@ -10,33 +10,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.remote.model.protection.ChildRequestDto
-import uz.tikoncha_parent.data.remote.model.protection.ProtectionStatusData
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.AccountRequestAction
 import uz.tikoncha_parent.domain.model.protection.AccountRequestStatus
 import uz.tikoncha_parent.domain.model.protection.ChildMode
 import uz.tikoncha_parent.domain.model.protection.ChildPermission
+import uz.tikoncha_parent.domain.model.protection.ChildRequest
+import uz.tikoncha_parent.domain.model.protection.ProtectionStatus
 import uz.tikoncha_parent.domain.model.protection.StrictMethod
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
-import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
-import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
-import uz.tikoncha_parent.domain.use_case.protection.UpdateAccountRequestStatusUseCase
+import uz.tikoncha_parent.domain.repository.ProtectionRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 class ProtectionViewModel(
-    private val protectionStatusUseCase: ProtectionStatusUseCase,
-    private val approveStrictRequestUseCase: ApproveStrictDisableRequestUseCase,
-    private val rejectStrictRequestUseCase: RejectStrictDisableRequestUseCase,
-    private val updateAccountRequestStatusUseCase: UpdateAccountRequestStatusUseCase,
+    private val protectionRepository: ProtectionRepository,
     private val childRepository: ChildRepository
 ) : ScreenModel {
 
@@ -126,27 +119,20 @@ class ProtectionViewModel(
                 _state.update { it.copy(responseState = ResponseState.Loading) }
             }
 
-            when (val result = protectionStatusUseCase.invoke(childId)) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            isRefreshing = false,
-                            responseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId,
-                            ),
-                        )
-                    }
+            when (val res = protectionRepository.protectionStatus(childId)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(
+                        isRefreshing = false,
+                        responseState = ResponseState.Error(failure = res),
+                    )
                 }
-                is Resource.Success -> applyStatus(result.data)
+                is Outcome.Success -> applyStatus(res.data)
             }
         }
     }
 
-    private fun applyStatus(data: ProtectionStatusData) {
-        val modeStatus = data.modeStatus
-        val mode = ChildMode.from(modeStatus?.currentMode)
+    private fun applyStatus(data: ProtectionStatus) {
+        val mode = ChildMode.from(data.currentMode)
         val lastSync = parseInstant(data.lastSyncAt)
 
         _state.update {
@@ -154,17 +140,13 @@ class ProtectionViewModel(
                 responseState = ResponseState.Success(),
                 isRefreshing = false,
                 mode = mode,
-                strictMethod = if (mode == ChildMode.STRICT) {
-                    StrictMethod.from(modeStatus?.strictMethod)
-                } else null,
-                unlockData = modeStatus?.unlockData,
+                strictMethod = if (mode == ChildMode.STRICT) StrictMethod.from(data.strictMethod) else null,
+                unlockData = data.unlockData,
                 isCodeVisible = false,
                 lastSyncAt = lastSync,
                 isOnline = isOnline(lastSync),
-                enabledPermissions = modeStatus?.enabled.orEmpty()
-                    .mapNotNull { key -> ChildPermission.from(key) }.toSet(),
-                disabledPermissions = modeStatus?.disabled.orEmpty()
-                    .mapNotNull { key -> ChildPermission.from(key) }.toSet(),
+                enabledPermissions = data.enabledKeys.mapNotNull { map -> ChildPermission.from(map) }.toSet(),
+                disabledPermissions = data.disabledKeys.mapNotNull { map -> ChildPermission.from(map) }.toSet(),
                 strictDisableRequest = data.strictDisableRequest,
                 logoutRequest = data.logoutRequest,
                 deleteRequest = data.deleteRequest,
@@ -181,32 +163,26 @@ class ProtectionViewModel(
         screenModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(actionInProgressId = requestId) }
 
-            val result = if (approve) {
-                approveStrictRequestUseCase.invoke(requestId)
+            val res = if (approve) {
+                protectionRepository.approveStrictDisableRequest(requestId)
             } else {
-                rejectStrictRequestUseCase.invoke(requestId)
+                protectionRepository.rejectStrictDisableRequest(requestId)
             }
 
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            actionInProgressId = null,
-                            actionResponseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId,
-                            ),
-                        )
-                    }
+            when (res) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(
+                        actionInProgressId = null,
+                        actionResponseState = ResponseState.Error(failure = res),
+                    )
                 }
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     countdownJob?.cancel()
                     _remainingSeconds.value = 0
                     _state.update {
                         it.copy(
                             actionInProgressId = null,
-                            strictDisableRequest = result.data,
+                            strictDisableRequest = res.data
                         )
                     }
                 }
@@ -230,20 +206,14 @@ class ProtectionViewModel(
             _state.update { it.copy(actionInProgressId = requestId) }
 
             val status = if (allow) AccountRequestStatus.ACCESS else AccountRequestStatus.DENY
-            when (val result = updateAccountRequestStatusUseCase.invoke(requestId, status)) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            actionInProgressId = null,
-                            actionResponseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId,
-                            ),
-                        )
-                    }
+            when (val res = protectionRepository.updateAccountRequestStatus(requestId, status)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(
+                        actionInProgressId = null,
+                        actionResponseState = ResponseState.Error(failure = res),
+                    )
                 }
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     // Karta yo'qolmaydi — yangilangan status (access/deny) bilan qoladi.
                     // Keyingi refresh'da API qaytarmasa tabiiy o'chadi.
                     val updated = request.copy(status = status.value)
@@ -262,7 +232,7 @@ class ProtectionViewModel(
 
     // ─────────────────────── Countdown ───────────────────────
 
-    private fun restartCountdown(request: ChildRequestDto?) {
+    private fun restartCountdown(request: ChildRequest?) {
         countdownJob?.cancel()
 
         val isPending = request?.status.equals("pending", ignoreCase = true)

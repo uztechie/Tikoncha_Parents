@@ -100,11 +100,6 @@ import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
 import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.protection.ApproveStrictDisableRequestUseCase
-import uz.tikoncha_parent.domain.use_case.protection.ProtectionStatusUseCase
-import uz.tikoncha_parent.domain.use_case.protection.RejectStrictDisableRequestUseCase
-import uz.tikoncha_parent.domain.use_case.protection.StrictDisableRequestsUseCase
-import uz.tikoncha_parent.domain.use_case.protection.UpdateAccountRequestStatusUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
@@ -260,11 +255,6 @@ val sharedModule = module {
 
     factory { DeleteAvatarFromServerUseCase(get()) }
     factory { GetSubscriptionStatusUseCase(get()) }
-    single { ProtectionStatusUseCase(get()) }
-    single { StrictDisableRequestsUseCase(get()) }
-    single { ApproveStrictDisableRequestUseCase(get()) }
-    single { RejectStrictDisableRequestUseCase(get()) }
-    single { UpdateAccountRequestStatusUseCase(get()) }
     single { UnlinkChildUseCase(get()) }
 
 
@@ -333,6 +323,6 @@ val sharedModule = module {
     factory { VideoTutorialScreenModel(get()) }
     factory { PaymentHistoryScreenModel(get()) }
     factory { SubscriptionViewModel(get()) }
-    factory { ProtectionViewModel(get(), get(), get(), get(), get()) }
+    factory { ProtectionViewModel(get(), get()) }
 
 }
