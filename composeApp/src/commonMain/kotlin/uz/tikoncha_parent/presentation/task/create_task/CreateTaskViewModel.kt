@@ -17,6 +17,8 @@ import uz.tikoncha_parent.common.Util.toMillis
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toImportance
 import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoParams
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
@@ -174,21 +176,21 @@ class CreateTaskViewModel(
                     coin = s.totalCoin
                 )
 
-                createTodoUseCase(params).fold(
-                    onSuccess = {
+                when (val res = createTodoUseCase(params)) {
+                    is Outcome.Success -> {
                         _state.update { it.copy(taskResponseState = ResponseState.Idle) }
                         loadParentCoins()
                         sendEffect(CreateTaskEffect.NavigateToSuccess)
-                    },
-                    onFailure = { e ->
-                        _state.update { it.copy(taskResponseState = ResponseState.Idle) }
-                        sendEffect(CreateTaskEffect.ShowError(e.message ?: "Xatolik"))
                     }
-                )
+                    is Outcome.Failure -> {
+                        _state.update { it.copy(taskResponseState = ResponseState.Idle) }
+                        sendEffect(CreateTaskEffect.ShowFailure(res))
+                    }
+                }
             }
             return
         }
-        sendEffect(CreateTaskEffect.ShowError(validationError))
+        sendEffect(CreateTaskEffect.ShowFailure(Outcome.Failure(validationError)))
     }
 
     // ---------------- update ----------------
@@ -196,7 +198,7 @@ class CreateTaskViewModel(
     private fun updateTask() {
         val s = state.value
         val id = s.editingTaskId ?: run {
-            sendEffect(CreateTaskEffect.ShowError("Vazifa identifikatori topilmadi"))
+            sendEffect(CreateTaskEffect.ShowFailure(Outcome.Failure(ErrorCause.TaskIdMissing)))
             return
         }
         val validationError = validate(s) ?: run {
@@ -213,32 +215,32 @@ class CreateTaskViewModel(
                     coin = s.totalCoin
                 )
 
-                updateTodoUseCase(params).fold(
-                    onSuccess = {
+                when (val res = updateTodoUseCase(params)) {
+                    is Outcome.Success -> {
                         _state.update { it.copy(taskResponseState = ResponseState.Idle) }
                         loadParentCoins()
                         sendEffect(CreateTaskEffect.NavigateToSuccess)
-                    },
-                    onFailure = { e ->
-                        _state.update { it.copy(taskResponseState = ResponseState.Idle) }
-                        sendEffect(CreateTaskEffect.ShowError(e.message ?: "Xatolik"))
                     }
-                )
+                    is Outcome.Failure -> {
+                        _state.update { it.copy(taskResponseState = ResponseState.Idle) }
+                        sendEffect(CreateTaskEffect.ShowFailure(res))
+                    }
+                }
             }
             return
         }
-        sendEffect(CreateTaskEffect.ShowError(validationError))
+        sendEffect(CreateTaskEffect.ShowFailure(Outcome.Failure(validationError)))
     }
 
     // ---------------- validation ----------------
 
-    private fun validate(s: CreateTaskState): String? = when {
-        s.title.isBlank() -> "Vazifa nomi bo'sh bo'lmasin"
-        s.importance == ImportanceType.NONE -> "Muhimlilik darajasini tanlang"
-        s.date == null -> "Tugatish sanasini tanlang"
-        s.time == null -> "Tugatish vaqtini tanlang"
-        s.totalCoin > s.availableCoins -> "Tanga balansingiz yetarli emas"
-        !s.isEditing && s.selectedChild == null -> "Farzand tanlanmagan"
+    private fun validate(s: CreateTaskState): ErrorCause? = when {
+        s.title.isBlank() -> ErrorCause.EmptyTitle
+        s.importance == ImportanceType.NONE -> ErrorCause.ImportanceNotSelected
+        s.date == null -> ErrorCause.DueDateNotSelected
+        s.time == null -> ErrorCause.DueTimeNotSelected
+        s.totalCoin > s.availableCoins -> ErrorCause.InsufficientCoins
+        !s.isEditing && s.selectedChild == null -> ErrorCause.ChildNotSelected
         else -> null
     }
 

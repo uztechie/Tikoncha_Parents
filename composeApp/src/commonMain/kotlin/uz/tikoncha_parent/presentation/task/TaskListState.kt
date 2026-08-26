@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.task
 
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
@@ -44,7 +45,7 @@ data class TaskListState(
 
     // Response
     val listResponseState: ResponseState<Nothing> = ResponseState.Idle,
-    val errorMessage: String? = null,
+    val error: Outcome.Failure? = null,
 
     // Toggles
     val showMineAll: Boolean = false,

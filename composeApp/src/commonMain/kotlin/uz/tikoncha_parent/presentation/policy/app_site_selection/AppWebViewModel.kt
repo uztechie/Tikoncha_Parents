@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.mapper.toAppSelectionUi
-import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.apps.AppCategory
-import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
+import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class AppWebViewModel(
-    private val getChildAppsUseCase: GetChildAppsUseCase,
+    private val policyRepository: PolicyRepository,
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(AppWebState())
@@ -96,20 +96,12 @@ class AppWebViewModel(
         screenModelScope.launch(Dispatchers.IO) {
             _state.update { it.copy(loadAppsResponseState = ResponseState.Loading) }
 
-            when (val result = getChildAppsUseCase.invoke(userId)) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            loadAppsResponseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId,
-                            )
-                        )
-                    }
+            when (val res = policyRepository.childApps(userId)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(loadAppsResponseState = ResponseState.Error(failure = res))
                 }
-                is Resource.Success -> {
-                    val allApps = result.data.map { it.toAppSelectionUi() }
+                is Outcome.Success -> {
+                    val allApps = res.data.map { it.toAppSelectionUi() }
 
                     // ════════════════════════════════════════════════════
                     // SORT: selected/covered first → usage → order → name

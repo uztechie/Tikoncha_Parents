@@ -10,7 +10,6 @@ sealed interface TaskListEvent {
     data object OnLoadMore : TaskListEvent
     data object OnRetry : TaskListEvent
     data object LoadAllChildrenActiveTasks : TaskListEvent
-    data object ClearError : TaskListEvent
 
     // ✅ Filter
     data class OnFilterChipToggled(val chip: TaskFilterChip) : TaskListEvent

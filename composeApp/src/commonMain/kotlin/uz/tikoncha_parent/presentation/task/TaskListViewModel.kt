@@ -3,6 +3,8 @@ package uz.tikoncha_parent.presentation.task
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +14,7 @@ import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toTask
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.todo.CreatedByRole
 import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import uz.tikoncha_parent.domain.model.todo.TodosQuery
@@ -34,6 +37,7 @@ class TaskListViewModel(
     val effect = _effect.receiveAsFlow()
 
     private var loadJob: Job? = null
+    private var countJob: Job? = null
 
     init {
         _state.update {
@@ -65,14 +69,6 @@ class TaskListViewModel(
 
             TaskListEvent.LoadAllChildrenActiveTasks -> {
                 loadAllChildrenActiveTasks()
-            }
-
-            TaskListEvent.ClearError -> {
-                _state.update {
-                    it.copy(
-                        errorMessage = null
-                    )
-                }
             }
 
             is TaskListEvent.OnFilterChipToggled -> {
@@ -175,7 +171,7 @@ class TaskListViewModel(
         _state.update {
             it.copy(
                 taskIndex = index,
-                errorMessage = null,
+                error = null,
                 taskList = emptyList(),
                 totalCount = 0,
                 offset = 0,
@@ -196,7 +192,7 @@ class TaskListViewModel(
         _state.update {
             it.copy(
                 selectedChild = child,
-                errorMessage = null,
+                error = null,
                 taskList = emptyList(),
                 totalCount = 0,
                 offset = 0,
@@ -215,7 +211,7 @@ class TaskListViewModel(
             val new = if (it.activeChip == chip) null else chip
             it.copy(
                 activeChip = new,
-                errorMessage = null,
+                error = null,
                 taskList = emptyList(),
                 totalCount = 0,
                 offset = 0,
@@ -249,7 +245,7 @@ class TaskListViewModel(
         _state.update {
             it.copy(
                 listResponseState = ResponseState.Loading,
-                errorMessage = null,
+                error = null,
                 offset = 0,
                 hasMore = true,
                 isPaginating = false,
@@ -264,7 +260,7 @@ class TaskListViewModel(
         _state.update {
             it.copy(
                 isRefreshing = true,
-                errorMessage = null,
+                error = null,
                 offset = 0,
                 hasMore = true,
                 isPaginating = false,
@@ -295,8 +291,9 @@ class TaskListViewModel(
             offset = if (reset) 0 else s.offset
         )
 
-        getTodosUseCase(query).fold(
-            onSuccess = { page ->
+        when (val res = getTodosUseCase(query)) {
+            is Outcome.Success -> {
+                val page = res.data
                 val mapped = page.items.map { it.toTask() }
                 _state.update { current ->
                     val newList = if (reset) mapped else current.taskList + mapped
@@ -310,26 +307,28 @@ class TaskListViewModel(
                         isRefreshing = false,
                         isPaginating = false,
                         listResponseState = ResponseState.Idle,
-                        errorMessage = null,
+                        error = null,
                         activeTaskCount = if (current.activeChip == null && current.taskIndex == 0)
                             page.total else current.activeTaskCount
                     )
                 }
-            },
-            onFailure = { e ->
+            }
+
+            is Outcome.Failure -> {
                 _state.update { current ->
                     current.copy(
                         isInitialLoading = false,
                         isRefiltering = false,
                         isRefreshing = false,
                         isPaginating = false,
+                        hasMore = if (reset) current.hasMore else false,
                         listResponseState = ResponseState.Idle,
-                        errorMessage = if (reset) e.message ?: "Xatolik" else current.errorMessage
+                        error = if (reset) res else current.error
                     )
                 }
-                if (!reset) sendEffect(TaskListEffect.ShowError(e.message ?: "Xatolik"))
+                if (!reset) sendEffect(TaskListEffect.ShowFailure(res))
             }
-        )
+        }
     }
 
     // ---------------- complete (Tekshirildi) ----------------
@@ -341,8 +340,8 @@ class TaskListViewModel(
         _state.update { it.copy(completingIds = it.completingIds + task.id) }
 
         screenModelScope.launch {
-            completeTodoUseCase(task.id).fold(
-                onSuccess = {
+            when (val res = completeTodoUseCase(task.id)) {
+                is Outcome.Success -> {
                     _state.update {
                         val newList = it.taskList.filterNot { t -> t.id == task.id }
                         it.copy(
@@ -353,12 +352,13 @@ class TaskListViewModel(
                         )
                     }
                     sendEffect(TaskListEffect.TaskMarkedAsCompleted)
-                },
-                onFailure = { e ->
-                    _state.update { it.copy(completingIds = it.completingIds - task.id) }
-                    sendEffect(TaskListEffect.ShowError(e.message ?: "Tekshirishda xatolik"))
                 }
-            )
+
+                is Outcome.Failure -> {
+                    _state.update { it.copy(completingIds = it.completingIds - task.id) }
+                    sendEffect(TaskListEffect.ShowFailure(res))
+                }
+            }
         }
     }
 
@@ -369,8 +369,8 @@ class TaskListViewModel(
         _state.update { it.copy(deletingIds = it.deletingIds + task.id) }
 
         screenModelScope.launch {
-            deleteTodoUseCase(task.id).fold(
-                onSuccess = {
+            when (val res = deleteTodoUseCase(task.id)) {
+                is Outcome.Success -> {
                     _state.update {
                         val newList = it.taskList.filterNot { t -> t.id == task.id }
                         it.copy(
@@ -381,12 +381,13 @@ class TaskListViewModel(
                         )
                     }
                     sendEffect(TaskListEffect.TaskDeleted)
-                },
-                onFailure = { e ->
-                    _state.update { it.copy(deletingIds = it.deletingIds - task.id) }
-                    sendEffect(TaskListEffect.ShowError(e.message ?: "O'chirishda xatolik"))
                 }
-            )
+
+                is Outcome.Failure -> {
+                    _state.update { it.copy(deletingIds = it.deletingIds - task.id) }
+                    sendEffect(TaskListEffect.ShowFailure(res))
+                }
+            }
         }
     }
 
@@ -398,16 +399,32 @@ class TaskListViewModel(
             _state.update { it.copy(allChildrenActiveTaskCount = 0) }
             return
         }
-        screenModelScope.launch {
+        countJob?.cancel()
+        countJob = screenModelScope.launch {
+            val results = children.map { child ->
+                async {
+                    getTodosUseCase(
+                        TodosQuery(
+                            targetUserId = child.userId,
+                            filter = TodoFilter(
+                                isCompleted = false,
+                                createdByRole = CreatedByRole.PARENT
+                            ),
+                            limit = 1,
+                            offset = 0
+                        )
+                    )
+                }
+            }.awaitAll()
+
             var total = 0
-            for (child in children) {
-                val q = TodosQuery(
-                    targetUserId = child.userId,
-                    filter = TodoFilter(isCompleted = false, createdByRole = CreatedByRole.PARENT),
-                    limit = 1,
-                    offset = 0
-                )
-                getTodosUseCase(q).onSuccess { page -> total += page.total }
+            for (res in results) {
+                when (res) {
+                    is Outcome.Success -> total += res.data.total
+                    // Bittasi yiqilsa ham — kam sonni ko'rsatmaymiz.
+                    // Eski qiymat state'da qoladi, "0 vazifa" degan yolg'on chiqmaydi.
+                    is Outcome.Failure -> return@launch
+                }
             }
             _state.update { it.copy(allChildrenActiveTaskCount = total) }
         }

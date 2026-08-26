@@ -9,33 +9,31 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
 import uz.tikoncha_parent.domain.model.PolicyType
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
 import uz.tikoncha_parent.domain.model.protection.pendingRequestCount
+import uz.tikoncha_parent.domain.model.todo.TodoFilter
+import uz.tikoncha_parent.domain.model.todo.TodosQuery
 import uz.tikoncha_parent.domain.repository.ChildRepository
+import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
+import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.repository.ProtectionRepository
-import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.app_usage.TodayUsageUseCase
-import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
-import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
+import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
 import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.platform.getDeviceInfo
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
     private val childRepository: ChildRepository,
-    private val registerDeviceUseCase: RegisterDeviceUseCase,
+    private val deviceRepository: DeviceRepository,
     private val paymentRepository: PaymentRepository,
-    private val todoListUseCase: TodoListUseCase,
-    private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
+    private val getTodosUseCase: GetTodosUseCase,
+    private val policyRepository: PolicyRepository,
     private val todayUsageUseCase: TodayUsageUseCase,
     private val protectionRepository: ProtectionRepository,
 ) : ScreenModel {
@@ -54,6 +52,7 @@ class HomeViewModel(
     private var todayUsageJob: Job? = null
 
     private var protectionJob: Job? = null
+    private var protectionChildId: String? = null
 
     init {
         loadOnce()
@@ -85,8 +84,12 @@ class HomeViewModel(
 
             HomeEvent.SyncSelectedChildFromSettings -> {
                 Logger.d(TAG, "SyncSelectedChildFromSettings = ${AppSettings.selectedChild}")
-                _state.update { it.copy(selectedChild = AppSettings.selectedChild) }
-
+                _state.update {
+                    it.copy(
+                        childrenList = AppSettings.children,
+                        selectedChild = AppSettings.selectedChild,
+                    )
+                }
                 loadAll()
             }
         }
@@ -109,6 +112,8 @@ class HomeViewModel(
     private fun loadProtectionStatus() {
         val childId = _state.value.selectedChild?.userId
         if (childId.isNullOrEmpty()) {
+            protectionJob?.cancel()
+            protectionChildId = null
             _state.update {
                 it.copy(
                     protectionPendingRequestCount = 0,
@@ -117,7 +122,11 @@ class HomeViewModel(
             }
             return
         }
+
+        if (protectionJob?.isActive == true && protectionChildId == childId) return
+
         protectionJob?.cancel()
+        protectionChildId = childId
         protectionJob = screenModelScope.launch {
             when (val res = protectionRepository.protectionStatus(childId)) {
                 is Outcome.Success -> _state.update {
@@ -142,17 +151,7 @@ class HomeViewModel(
     }
 
     private fun sendDeviceInfo() = screenModelScope.launch {
-        val token = AppSettings.fcmToken
-        val info = getDeviceInfo()
-        val request = DeviceRegisterRequest(
-            fcm_token = token,
-            manufacturer = info.manufacturer,
-            model_name = info.modelName,
-            os_version = info.osVersion,
-            os = info.os,
-            app_code = AppCode.currentAppCode
-        )
-        registerDeviceUseCase.invoke(request)
+        deviceRepository.registerDevice(AppSettings.fcmToken)
     }
 
     private fun getSubscriptionLimit() = screenModelScope.launch {
@@ -166,7 +165,13 @@ class HomeViewModel(
 
             when (val res = childRepository.children()) {
                 is Outcome.Failure -> _state.update {
-                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
+                    it.copy(
+                        childrenResponseState = ResponseState.Error(failure = res),
+                        // Server javob bermadi — lokal keshdan ko'rsatamiz.
+                        // Aks holda farzand bor bo'lsa ham "Farzand qo'shilmagan" chiqadi.
+                        childrenList = it.childrenList.ifEmpty { AppSettings.children },
+                        selectedChild = it.selectedChild ?: AppSettings.selectedChild,
+                    )
                 }
                 is Outcome.Success -> {
                     val children = res.data
@@ -182,7 +187,6 @@ class HomeViewModel(
                             selectedChild = AppSettings.selectedChild,
                         )
                     }
-
                     loadAll()
                 }
             }
@@ -192,24 +196,31 @@ class HomeViewModel(
 
     private fun loadTasks() = screenModelScope.launch {
         val selectedId = state.value.selectedChild?.userId ?: return@launch
-        when (val result = todoListUseCase.invoke(selectedId)) {
-            is Resource.Success -> {
+
+        val query = TodosQuery(
+            targetUserId = selectedId,
+            filter = TodoFilter(),
+            limit = 500,
+            offset = 0,
+        )
+
+        when (val res = getTodosUseCase(query)) {
+            is Outcome.Success -> {
                 _state.update {
-                    it.copy(activeTaskCount = result.data.count { t -> !t.is_completed })
+                    it.copy(activeTaskCount = res.data.items.count { todo -> !todo.isCompleted })
                 }
                 hasTaskLoaded.value = _state.value.selectedChild?.userId
             }
-
-            else -> Unit
+            is Outcome.Failure -> Unit
         }
     }
 
     private fun loadPolicies() = screenModelScope.launch {
         val selectedChildId = _state.value.selectedChild?.userId ?: return@launch
-        when (val result = getPoliciesFromServerUseCase.invoke(selectedChildId)) {
-            is Resource.Success ->{
+        when (val res = policyRepository.getPolicies(selectedChildId)) {
+            is Outcome.Success -> {
                 _state.update { innerState ->
-                    val policies = result.data
+                    val policies = res.data
                         .map { it.toPolicyListUi() }
                         .sortedByDescending { it.policyType.order }
                     val parentPolicyCount = policies
@@ -220,8 +231,7 @@ class HomeViewModel(
 
                 hasPolicyLoaded.value = _state.value.selectedChild?.userId
             }
-
-            else -> Unit
+            is Outcome.Failure -> Unit
         }
     }
 

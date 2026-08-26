@@ -1,19 +1,39 @@
 package uz.tikoncha_parent.data.repository
 
+import uz.tikoncha_parent.common.AppCode
 import uz.tikoncha_parent.data.remote.DeviceApiService
+import uz.tikoncha_parent.data.remote.app_error.ApiErrorMapper
 import uz.tikoncha_parent.data.remote.device.LogoutResponse
 import uz.tikoncha_parent.data.remote.model.DeviceRegisterRequest
-import uz.tikoncha_parent.data.remote.model.DeviceRegisterResponse
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.repository.DeviceRepository
+import uz.tikoncha_parent.platform.getDeviceInfo
 
 class DeviceRepositoryImpl(
     private val api: DeviceApiService
 ): DeviceRepository {
-    override suspend fun registerDevice(request: DeviceRegisterRequest): DeviceRegisterResponse {
-        return api.registerDevice(request)
-    }
+    override suspend fun registerDevice(fcmToken: String): Outcome<Unit> =
+        apiCall(TAG) {
+            val info = getDeviceInfo()
+            val r = api.registerDevice(
+                DeviceRegisterRequest(
+                    manufacturer = info.manufacturer,
+                    model_name = info.modelName,
+                    os = info.os,
+                    os_version = info.osVersion,
+                    fcm_token = fcmToken,
+                    app_code = AppCode.currentAppCode,
+                )
+            )
+            when {
+                r.success -> Outcome.Success(Unit)
+                else -> Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
+            }
+        }
 
     override suspend fun logout(fcmToken: String): LogoutResponse {
         return api.logout(fcmToken)
     }
+
+    private companion object { const val TAG = "DeviceRepository" }
 }

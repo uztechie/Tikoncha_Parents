@@ -49,17 +49,19 @@ import tikoncha_parents.composeapp.generated.resources.vazifani_tekshirish
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.common.DateTimeUtil.formatTime
 import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.bottomShadow
-import uz.tikoncha_parent.presentation.task.model.CollectEffects
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskEffect
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskEvent
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskState
 import uz.tikoncha_parent.presentation.task.create_task.CreateTaskViewModel
+import uz.tikoncha_parent.presentation.task.model.CollectEffects
 import uz.tikoncha_parent.presentation.task.model.ImportanceType
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.presentation.task.success.TaskSuccessScreen
@@ -67,7 +69,6 @@ import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.ui.ButtonCornerRadius
 import uz.tikoncha_parent.ui.ButtonHeight
 import uz.tikoncha_parent.ui.Space
-import uz.tikoncha_parent.ui.TextFieldHeight
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -82,8 +83,7 @@ class CreateTaskCheckScreen : Screen {
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        var errorMessage by remember { mutableStateOf<String?>(null) }
-
+        var failure by remember { mutableStateOf<Outcome.Failure?>(null) }
         val taskLoading = state.taskResponseState is ResponseState.Loading
         LoadingDialog(taskLoading)
 
@@ -92,8 +92,8 @@ class CreateTaskCheckScreen : Screen {
                 CreateTaskEffect.NavigateToSuccess -> {
                     navigator?.push(TaskSuccessScreen())
                 }
-                is CreateTaskEffect.ShowError -> {
-                    errorMessage = effect.message
+                is CreateTaskEffect.ShowFailure -> {
+                    failure = effect.failure
                 }
                 CreateTaskEffect.NavigateBack -> {
                     navigator?.pop()
@@ -102,13 +102,15 @@ class CreateTaskCheckScreen : Screen {
             }
         }
 
+        val errorText = failure?.asText()
+
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
-            onDismiss = { errorMessage = null },
-            show = errorMessage != null,
+            onDismiss = { failure = null },
+            show = errorText != null,
             title = stringResource(Res.string.xatolik),
-            message = errorMessage.orEmpty(),
-            onButtonClick = { errorMessage = null }
+            message = errorText.orEmpty(),
+            onButtonClick = { failure = null }
         )
 
         CreateTaskCheckUI(

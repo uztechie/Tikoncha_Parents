@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
@@ -46,7 +47,23 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.bugun_sarfladi
+import tikoncha_parents.composeapp.generated.resources.cheklovlar
+import tikoncha_parents.composeapp.generated.resources.diqqat
+import tikoncha_parents.composeapp.generated.resources.faol_vazifa
+import tikoncha_parents.composeapp.generated.resources.farzand_malumotlari_keyin_korinadi
+import tikoncha_parents.composeapp.generated.resources.farzand_qo_shish
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.home_table
+import tikoncha_parents.composeapp.generated.resources.home_task
+import tikoncha_parents.composeapp.generated.resources.ilova_cheklangan
+import tikoncha_parents.composeapp.generated.resources.instagram_icon
+import tikoncha_parents.composeapp.generated.resources.linkedin_icon
+import tikoncha_parents.composeapp.generated.resources.media_play
+import tikoncha_parents.composeapp.generated.resources.support_icon
+import tikoncha_parents.composeapp.generated.resources.topshiriqlar
+import tikoncha_parents.composeapp.generated.resources.whatsapp_icon
 import uz.tikoncha_parent.domain.model.HourMinute
 import uz.tikoncha_parent.platform.HandleUpdateEffect
 import uz.tikoncha_parent.platform.Logger
@@ -104,10 +121,10 @@ class NewHomeScreen : Screen {
         val updateState by updateViewModel.state.collectAsStateWithLifecycle()
         val updateEvent = updateViewModel::onEvent
 
-        LaunchedEffect(Unit) {
+        LifecycleStartEffect(Unit) {
             event(HomeEvent.SyncSelectedChildFromSettings)
             event(HomeEvent.GetChildren)
-//            updateEvent(UpdateEvent.ScreenStarted)
+            onStopOrDispose {}
         }
 
         HandleUpdateEffect(updateViewModel)

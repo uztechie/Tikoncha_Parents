@@ -836,4 +836,12 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="operator_kodi_topilmadi">Bunday operator kodi mavjud emas</string>
     <string name="kod_amal_qilish_muddati">Kod amal qiladi: %1$s</string>
     <string name="kod_muddati_tugadi">Kod muddati tugadi</string>
+    <string name="sarlavha_bosh">Sarlavha bo'sh bo'lmasin</string>
+    <string name="tanga_manfiy_bolmasin">Tanga miqdori manfiy bo'lmasin</string>
+    <string name="muhimlilikni_tanlang">Muhimlilik darajasini tanlang</string>
+    <string name="tugatish_sanasini_tanlang">Tugatish sanasini tanlang</string>
+    <string name="tugatish_vaqtini_tanlang">Tugatish vaqtini tanlang</string>
+    <string name="tanga_balansi_yetarli_emas">Tanga balansingiz yetarli emas</string>
+    <string name="farzand_tanlanmagan">Farzand tanlanmagan</string>
+    <string name="vazifa_id_topilmadi">Vazifa identifikatori topilmadi</string>
 </resources>

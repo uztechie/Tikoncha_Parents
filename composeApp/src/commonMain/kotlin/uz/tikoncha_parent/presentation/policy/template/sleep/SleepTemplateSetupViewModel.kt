@@ -13,21 +13,17 @@ import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
 import uz.tikoncha_parent.data.remote.model.UpdatePolicyRequest
 import uz.tikoncha_parent.domain.model.PolicyResourceType
 import uz.tikoncha_parent.domain.model.PolicyType
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.WeekDay
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
 import uz.tikoncha_parent.domain.model.policy.PolicyTemplate
-import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
+import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class SleepTemplateSetupViewModel(
-    private val createPolicyUseCase: CreatePolicyUseCase,
-    private val updatePolicyUseCase: UpdatePolicyUseCase,
-    private val deletePolicyUseCase: DeletePolicyUseCase,
+    private val policyRepository: PolicyRepository
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(SleepTemplateSetupState())
@@ -137,15 +133,12 @@ class SleepTemplateSetupViewModel(
                 policy_template = PolicyTemplate.SLEEP.name,
             )
 
-            when (val r = createPolicyUseCase(request)) {
-                is Resource.Loading -> Unit
-                is Resource.Success -> _state.update {
-                    it.copy(createState = ResponseState.Success())
+            when (val r = policyRepository.createPolicy(request)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(createState = ResponseState.Error(failure = r))
                 }
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        createState = ResponseState.Error(message = r.message, res = r.resId),
-                    )
+                is Outcome.Success -> _state.update {
+                    it.copy(createState = ResponseState.Success())
                 }
             }
         }
@@ -176,15 +169,12 @@ class SleepTemplateSetupViewModel(
                 policy_template = PolicyTemplate.SLEEP.name,
             )
 
-            when (val r = updatePolicyUseCase(request, ruleId)) {
-                is Resource.Loading -> Unit
-                is Resource.Success -> _state.update {
-                    it.copy(updateState = ResponseState.Success())
+            when (val r = policyRepository.updatePolicyInServer(request, ruleId)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(updateState = ResponseState.Error(failure = r))
                 }
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        updateState = ResponseState.Error(message = r.message, res = r.resId),
-                    )
+                is Outcome.Success -> _state.update {
+                    it.copy(updateState = ResponseState.Success())
                 }
             }
         }
@@ -193,15 +183,13 @@ class SleepTemplateSetupViewModel(
     private fun delete(ruleId: String) {
         screenModelScope.launch {
             _state.update { it.copy(deleteState = ResponseState.Loading) }
-            when (val r = deletePolicyUseCase(ruleId)) {
-                is Resource.Loading -> Unit
-                is Resource.Success -> _state.update {
-                    it.copy(deleteState = ResponseState.Success())
+
+            when (val r = policyRepository.deletePolicyInServer(ruleId)) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(deleteState = ResponseState.Error(failure = r))
                 }
-                is Resource.Error -> _state.update {
-                    it.copy(
-                        deleteState = ResponseState.Error(message = r.message, res = r.resId),
-                    )
+                is Outcome.Success -> _state.update {
+                    it.copy(deleteState = ResponseState.Success())
                 }
             }
         }

@@ -1,10 +1,8 @@
 package uz.tikoncha_parent.data.mapper.todo
 
-import uz.tikoncha_parent.data.local.AppSettings
+import uz.tikoncha_parent.data.remote.model.todo.CreateTodoRequest
 import uz.tikoncha_parent.data.remote.model.todo.TodoDto
 import uz.tikoncha_parent.data.remote.model.todo.TodoListData
-import uz.tikoncha_parent.data.remote.model.todo.CreateTodoRequest
-import uz.tikoncha_parent.data.remote.model.todo.TodoRequest
 import uz.tikoncha_parent.data.remote.model.todo.UpdateTodoRequest
 import uz.tikoncha_parent.domain.model.todo.Importance
 import uz.tikoncha_parent.domain.model.todo.PagedResult
@@ -19,7 +17,7 @@ fun TodoDto.toDomain(): Todo = Todo(
     authorId = author_id,
     targetUserId = target_user_id,
     title = title,
-    description = description,
+    description = description ?: "",
     dueAt = due_date,
     importance = Importance.fromApi(importance),
     isChildDone = is_child_done,
@@ -56,41 +54,6 @@ fun UpdateTodoParams.toRequest(): UpdateTodoRequest = UpdateTodoRequest(
     description = description,
     due_date = dueAt,
     importance = importance.apiValue,
-    coin = coin
-)
-
-fun Todo.toDto(): TodoDto = TodoDto(
-    id = id,
-    author_id = authorId,
-    target_user_id = targetUserId,
-    title = title,
-    description = description,
-    due_date = dueAt,
-    importance = importance.apiValue,
-    is_child_done = isChildDone,
-    is_completed = isCompleted,
-    is_expired = isExpired,
-    created_at = createdAt,
-    modified_at = modifiedAt,
-    can_update = null,
-    coin = coin
-)
-
-fun TodoRequest.toCreateParams(): CreateTodoParams = CreateTodoParams(
-    targetUserId = target_user_id,
-    title = title,
-    description = description,
-    dueAt = due_date,
-    importance = Importance.fromApi(importance),
-    coin = coin
-)
-
-fun TodoRequest.toUpdateParams(): UpdateTodoParams = UpdateTodoParams(
-    id = requireNotNull(id) { "id is required for update" },
-    title = title,
-    description = description,
-    dueAt = due_date,
-    importance = Importance.fromApi(importance),
     coin = coin
 )
 

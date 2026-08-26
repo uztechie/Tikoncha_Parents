@@ -40,11 +40,25 @@ import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.bajarilgan_vazifalar
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_internet
+import tikoncha_parents.composeapp.generated.resources.farzand_vazifalari_desc
+import tikoncha_parents.composeapp.generated.resources.farzandim
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.hali_vazifa_yoq
+import tikoncha_parents.composeapp.generated.resources.home_task
+import tikoncha_parents.composeapp.generated.resources.ozim
+import tikoncha_parents.composeapp.generated.resources.qayta_urinish
+import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.task.TaskSegmentedToggle
-import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -61,12 +75,12 @@ class CompletedTaskScreen : Screen {
         val navigator = LocalNavigator.current
 
         // ── Effect'lar (error dialog) ──────────────────────
-        var localError by remember { mutableStateOf<String?>(null) }
+        var localFailure by remember { mutableStateOf<Outcome.Failure?>(null) }
 
         LaunchedEffect(Unit) {
             viewModel.effect.collect { eff ->
                 when (eff) {
-                    is CompletedTaskEffect.ShowError -> localError = eff.message
+                    is CompletedTaskEffect.ShowFailure -> localFailure = eff.failure
                 }
             }
         }
@@ -76,21 +90,15 @@ class CompletedTaskScreen : Screen {
             onStopOrDispose {}
         }
 
-        val shownError = localError ?: state.errorMessage
+        val shownError = localFailure?.asText()
 
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
             show = shownError != null,
             title = stringResource(Res.string.xatolik),
             message = shownError.orEmpty(),
-            onDismiss = {
-                localError = null
-                event(CompletedTaskEvent.ClearError)
-            },
-            onButtonClick = {
-                localError = null
-                event(CompletedTaskEvent.ClearError)
-            }
+            onDismiss = { localFailure = null },
+            onButtonClick = { localFailure = null }
         )
 
         CompletedTaskUi(
@@ -107,6 +115,7 @@ fun CompletedTaskUi(
     state: CompletedTaskState,
     event: (CompletedTaskEvent) -> Unit
 ) {
+    val loadFailure = state.error
     val systemBars = rememberScreenSystemBars(
         statusBarColor = AppColors.bg.secondary,
         navigationBarColor = AppColors.bg.secondary
@@ -194,6 +203,17 @@ fun CompletedTaskUi(
                             )
                         }
                     }
+                    loadFailure != null && state.taskList.isEmpty() -> {
+                        item(key = "load-failed") {
+                            ErrorState(
+                                failure = loadFailure,
+                                onRetry = { event(CompletedTaskEvent.LoadTasks) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillParentMaxHeight(0.7f),
+                            )
+                        }
+                    }
                     state.taskList.isEmpty() -> {
                         item(key = "empty") {
                             EmptyState(
@@ -265,6 +285,48 @@ private fun EmptyState(
             color = AppColors.text.secondary,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+
+@Composable
+private fun ErrorState(
+    failure: Outcome.Failure,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        androidx.compose.foundation.Image(
+            painter = painterResource(
+                if (failure.cause == ErrorCause.NoInternet || failure.cause == ErrorCause.Timeout)
+                    Res.drawable.dialog_internet
+                else
+                    Res.drawable.dialog_failed
+            ),
+            contentDescription = null,
+            modifier = Modifier.size(90.dp)
+        )
+        Spacer(Modifier.height(26.dp))
+
+        Text(
+            text = failure.asText(),
+            style = AppTypography.emphasizedMdMedium,
+            color = AppColors.text.secondary,
+            textAlign = TextAlign.Center
+        )
+
+        if (failure.cause.isRetryable) {
+            Spacer(Modifier.height(20.dp))
+            CustomOutlinedButton(
+                text = stringResource(Res.string.qayta_urinish),
+                onClick = onRetry,
+                modifier = Modifier.padding(horizontal = 40.dp)
+            )
+        }
     }
 }
 

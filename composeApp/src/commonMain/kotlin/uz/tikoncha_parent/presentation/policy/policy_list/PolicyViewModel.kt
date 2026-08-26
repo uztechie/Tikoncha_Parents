@@ -9,17 +9,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toPolicyListUi
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.permission_status.PermissionStatusType
 import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.repository.PermissionStatusRepository
-import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
+import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicyViewModel(
-    private val getPoliciesFromServerUseCase: GetPoliciesFromServerUseCase,
+    private val policyRepository: PolicyRepository,
     private val permissionStatusRepository: PermissionStatusRepository,
     private val childRepository: ChildRepository
 ) : ScreenModel {
@@ -85,7 +84,10 @@ class PolicyViewModel(
 
             when (val res = childRepository.children()) {
                 is Outcome.Failure -> _state.update {
-                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
+                    it.copy(
+                        childrenResponseState = ResponseState.Error(failure = res),
+                        childrenList = it.childrenList.ifEmpty { AppSettings.children },
+                    )
                 }
 
                 is Outcome.Success -> {
@@ -141,23 +143,16 @@ class PolicyViewModel(
                 }
             }
 
-            val result = getPoliciesFromServerUseCase.invoke(_state.value.selectedChild?.userId ?: "")
-
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            policyResponseState = ResponseState.Error(message = result.message),
-                            isInitialLoadDone = true
-                        )
-                    }
+            when (val res = policyRepository.getPolicies(_state.value.selectedChild?.userId ?: "")) {
+                is Outcome.Failure -> _state.update {
+                    it.copy(
+                        policyResponseState = ResponseState.Error(failure = res),
+                        isInitialLoadDone = true
+                    )
                 }
-
-                is Resource.Success -> {
-
+                is Outcome.Success -> {
                     _state.update { innerState ->
-                        val policies = result.data
+                        val policies = res.data
                             .map { it.toPolicyListUi().copy(isActive = innerState.permissionIssueList.isEmpty()) }
                             .sortedByDescending { it.policyType.order }
 

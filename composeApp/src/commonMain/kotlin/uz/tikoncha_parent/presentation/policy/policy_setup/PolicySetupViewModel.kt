@@ -1,7 +1,5 @@
 package uz.tikoncha_parent.presentation.policy.policy_setup
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.channels.Channel
@@ -17,18 +15,13 @@ import uz.tikoncha_parent.data.remote.model.CreatePolicyRequest
 import uz.tikoncha_parent.data.remote.model.UpdatePolicyRequest
 import uz.tikoncha_parent.domain.model.PolicyResourceType
 import uz.tikoncha_parent.domain.model.PolicyType
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
-import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PolicySetupViewModel(
-    private val createPolicyUseCase: CreatePolicyUseCase,
-    private val updatePolicyUseCase: UpdatePolicyUseCase,
-    private val deletePolicyUseCase: DeletePolicyUseCase,
+    private val policyRepository: PolicyRepository
 ): ScreenModel {
 
 
@@ -95,10 +88,9 @@ class PolicySetupViewModel(
                 location_rule = shared.locationRule?.toLocationRuleDto(),
                 wifi = null,
             )
-            when (val result = createPolicyUseCase(request)) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update { it.copy(createState = ResponseState.Error(message = result.message,  res = result.resId)) }
-                is Resource.Success -> _state.update { it.copy(createState = ResponseState.Success()) }
+            when (val res = policyRepository.createPolicy(request)) {
+                is Outcome.Failure -> _state.update { it.copy(createState = ResponseState.Error(failure = res)) }
+                is Outcome.Success -> _state.update { it.copy(createState = ResponseState.Success()) }
             }
         }
     }
@@ -122,10 +114,10 @@ class PolicySetupViewModel(
                 location_rule = shared.locationRule?.toLocationRuleDto(),
                 wifi = null,
             )
-            when (val result = updatePolicyUseCase(request, ruleId)) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update { it.copy(updateState = ResponseState.Error(message = result.message,  res = result.resId)) }
-                is Resource.Success -> _state.update { it.copy(updateState = ResponseState.Success()) }
+
+            when (val res = policyRepository.updatePolicyInServer(request, ruleId)) {
+                is Outcome.Failure -> _state.update { it.copy(updateState = ResponseState.Error(failure = res)) }
+                is Outcome.Success -> _state.update { it.copy(updateState = ResponseState.Success()) }
             }
         }
     }
@@ -133,10 +125,10 @@ class PolicySetupViewModel(
     private fun requestDelete(ruleId: String) {
         screenModelScope.launch {
             _state.update { it.copy(deleteState = ResponseState.Loading) }
-            when (val result = deletePolicyUseCase(ruleId)) {
-                is Resource.Loading -> Unit
-                is Resource.Error -> _state.update { it.copy(deleteState = ResponseState.Error(message = result.message,   res = result.resId)) }
-                is Resource.Success -> _state.update { it.copy(deleteState = ResponseState.Success()) }
+
+            when (val res = policyRepository.deletePolicyInServer(ruleId)) {
+                is Outcome.Failure -> _state.update { it.copy(deleteState = ResponseState.Error(failure = res)) }
+                is Outcome.Success -> _state.update { it.copy(deleteState = ResponseState.Success()) }
             }
         }
     }

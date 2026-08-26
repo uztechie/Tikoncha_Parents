@@ -60,12 +60,14 @@ import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForT
 import uz.tikoncha_parent.common.Util.millisToLocalDate
 import uz.tikoncha_parent.common.Util.millisToLocalTime
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.LoadingDialog
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.bottomShadow
 import uz.tikoncha_parent.presentation.domain.model.Subscription
 import uz.tikoncha_parent.presentation.task.TaskListEffect
@@ -103,7 +105,7 @@ class TaskDetailScreen(
         }
 
         var taskToDelete by remember { mutableStateOf<Task?>(null) }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
+        var failure by remember { mutableStateOf<Outcome.Failure?>(null) }
         val isDeleting = currentTask.id in listState.deletingIds
         LoadingDialog(isDeleting)
 
@@ -112,19 +114,21 @@ class TaskDetailScreen(
             listViewModel.effect.collect { effect ->
                 when (effect) {
                     TaskListEffect.TaskDeleted -> navigator?.pop()
-                    is TaskListEffect.ShowError -> errorMessage = effect.message
+                    is TaskListEffect.ShowFailure -> failure = effect.failure
                     else -> Unit
                 }
             }
         }
 
+        val errorText = failure?.asText()
+
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
-            onDismiss = { errorMessage = null },
-            show = errorMessage != null,
+            onDismiss = { failure = null },
+            show = errorText != null,
             title = stringResource(Res.string.xatolik),
-            message = errorMessage.orEmpty(),
-            onButtonClick = { errorMessage = null }
+            message = errorText.orEmpty(),
+            onButtonClick = { failure = null }
         )
 
         taskToDelete?.let { t ->

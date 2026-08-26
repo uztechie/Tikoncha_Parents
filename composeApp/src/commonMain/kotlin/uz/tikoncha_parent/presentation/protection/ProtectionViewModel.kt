@@ -88,7 +88,10 @@ class ProtectionViewModel(
 
             when (val res = childRepository.children()) {
                 is Outcome.Failure -> _state.update {
-                    it.copy(childrenResponseState = ResponseState.Error(failure = res))
+                    it.copy(
+                        childrenResponseState = ResponseState.Error(failure = res),
+                        childrenList = it.childrenList.ifEmpty { AppSettings.children },
+                    )
                 }
 
                 is Outcome.Success -> {

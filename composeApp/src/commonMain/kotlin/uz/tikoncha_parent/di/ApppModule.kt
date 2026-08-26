@@ -59,7 +59,6 @@ import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
 import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
 import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.GetPoliciesFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
 import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
@@ -81,9 +80,7 @@ import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
-import uz.tikoncha_parent.domain.use_case.chat.UpdateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
-import uz.tikoncha_parent.domain.use_case.device.RegisterDeviceUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
@@ -96,17 +93,11 @@ import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
-import uz.tikoncha_parent.domain.use_case.policy.CreatePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.DeletePolicyUseCase
-import uz.tikoncha_parent.domain.use_case.policy.GetChildAppsUseCase
-import uz.tikoncha_parent.domain.use_case.policy.UpdatePolicyUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
-import uz.tikoncha_parent.domain.use_case.todo.GetTodoByIdUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
-import uz.tikoncha_parent.domain.use_case.todo.TodoListUseCase
-import uz.tikoncha_parent.domain.use_case.todo.TodoUseCase
+import uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.add_child.AddChildScreenModel
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
@@ -200,10 +191,7 @@ val sharedModule = module {
 
 
     // Use Case Module
-    single { TodoUseCase(get()) }
     single { UserInfoUseCase(get()) }
-    single { TodoListUseCase(get()) }
-    single { UpdateTodoUseCase(get()) }
     single { UploadAvatarToServerUseCase(get()) }
     single { LoadAvatarFromServerUseCase(get()) }
 
@@ -220,19 +208,13 @@ val sharedModule = module {
     single { ObserveChatEventUseCase(get()) }
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
-    single { RegisterDeviceUseCase(get()) }
     single { GetMyCoinsUseCase(get()) }
-    single { CreatePolicyUseCase(get()) }
-    single { UpdatePolicyUseCase(get()) }
-    single { DeletePolicyUseCase(get()) }
     single { SubscriptionPaymentUseCase(get()) }
     single { PromoCodeValidationUseCase(get()) }
     single { PaymentStatusUseCase(get()) }
     single { SubscriptionPlanUseCase(get()) }
-    single { GetChildAppsUseCase(get()) }
 
     single { ChatConnectionManager(get(), get()) }
-    single { GetPoliciesFromServerUseCase(get()) }
     single { GetCoinPackageListUseCase(get()) }
     single { PurchaseIApPremiumUseCase(get()) }
     single { ChildInfoEditUseCase(get()) }
@@ -246,7 +228,6 @@ val sharedModule = module {
     factory { GetPaymentTransactionsUseCase(get()) }
 
     single { GetTodosUseCase(get()) }
-    single { GetTodoByIdUseCase(get()) }
     single { CreateTodoUseCase(get()) }
     single { UpdateTodoUseCase(get()) }
     single { DeleteTodoUseCase(get()) }
@@ -297,10 +278,10 @@ val sharedModule = module {
     factory { TimeRuleSetupViewModel() }
     factory { LimitRuleSetupViewModel() }
 
-    factory { PolicySetupViewModel(get(), get(), get()) }
+    factory { PolicySetupViewModel(get()) }
     single { PolicySharedModel() }
     factory { AppWebViewModel(get()) }
-    factory { SleepTemplateSetupViewModel(get(), get(), get()) }
+    factory { SleepTemplateSetupViewModel(get()) }
 
     factory { PaymentViewModel(get(), get(), get(), get(), get(), get()) }
     factory { SubscriptionPaymentViewModel(get(), get()) }

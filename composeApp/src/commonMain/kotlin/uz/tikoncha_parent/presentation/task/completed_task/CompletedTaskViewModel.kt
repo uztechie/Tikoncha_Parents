@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toTask
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.todo.CreatedByRole
 import uz.tikoncha_parent.domain.model.todo.TodoFilter
 import uz.tikoncha_parent.domain.model.todo.TodosQuery
@@ -42,7 +43,6 @@ class CompletedTaskViewModel(
             CompletedTaskEvent.LoadTasks -> initialLoad()
             CompletedTaskEvent.OnRefresh -> refresh()
             CompletedTaskEvent.OnLoadMore -> loadMore()
-            CompletedTaskEvent.ClearError -> _state.update { it.copy(errorMessage = null) }
             is CompletedTaskEvent.OnTabSelected -> changeTab(event.taskIndex)
         }
     }
@@ -84,7 +84,7 @@ class CompletedTaskViewModel(
         _state.update {
             it.copy(
                 taskIndex = index,
-                errorMessage = null,
+                error = null,
                 taskList = emptyList(),
                 totalCount = 0,
                 offset = 0,
@@ -119,7 +119,7 @@ class CompletedTaskViewModel(
         loadJob?.cancel()
         _state.update {
             it.copy(
-                errorMessage = null,
+                error = null,
                 offset = 0,
                 hasMore = true,
                 isPaginating = false
@@ -135,7 +135,7 @@ class CompletedTaskViewModel(
         _state.update {
             it.copy(
                 isRefreshing = true,
-                errorMessage = null,
+                error = null,
                 offset = 0,
                 hasMore = true,
                 isPaginating = false
@@ -173,10 +173,11 @@ class CompletedTaskViewModel(
             offset = if (reset) 0 else s.offset
         )
 
-        getTodosUseCase.invoke(query).fold(
-            onSuccess = { page ->
+        when (val res = getTodosUseCase(query)) {
+            is Outcome.Success -> {
+                val page = res.data
                 val mapped = page.items.map { it.toTask() }
-                _state.update { current->
+                _state.update { current ->
                     val newList = if (reset) mapped else current.taskList + mapped
                     current.copy(
                         taskList = newList,
@@ -187,26 +188,25 @@ class CompletedTaskViewModel(
                         isRefiltering = false,
                         isRefreshing = false,
                         isPaginating = false,
-                        errorMessage = null
+                        error = null
                     )
                 }
-            },
-            onFailure = { e->
+            }
+
+            is Outcome.Failure -> {
                 _state.update { current ->
                     current.copy(
                         isInitialLoading = false,
                         isRefiltering = false,
                         isRefreshing = false,
                         isPaginating = false,
-                        errorMessage = if (reset) e.message ?: "Xatolik" else current.errorMessage
+                        hasMore = if (reset) current.hasMore else false,
+                        error = if (reset) res else current.error
                     )
                 }
-                if (!reset) sendEffect(CompletedTaskEffect.ShowError(e.message ?: "Xatolik"))
+                if (!reset) sendEffect(CompletedTaskEffect.ShowFailure(res))
             }
-        )
-
-
-
+        }
     }
 
 

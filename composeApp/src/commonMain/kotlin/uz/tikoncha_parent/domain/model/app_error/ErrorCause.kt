@@ -29,6 +29,30 @@ sealed interface ErrorCause {
     /** Javob keldi, lekin parse qilib bo'lmadi yoki payload kutilganidek emas. */
     data object InvalidResponse : ErrorCause
 
+    /** Vazifa sarlavhasi bo'sh. */
+    data object EmptyTitle : ErrorCause
+
+    /** Tanga miqdori manfiy. */
+    data object NegativeCoin : ErrorCause
+
+    /** Muhimlilik darajasi tanlanmagan. */
+    data object ImportanceNotSelected : ErrorCause
+
+    /** Tugatish sanasi tanlanmagan. */
+    data object DueDateNotSelected : ErrorCause
+
+    /** Tugatish vaqti tanlanmagan. */
+    data object DueTimeNotSelected : ErrorCause
+
+    /** Ota-onaning tanga balansi vazifa mukofotidan kam. */
+    data object InsufficientCoins : ErrorCause
+
+    /** Vazifa kimga berilishi tanlanmagan. */
+    data object ChildNotSelected : ErrorCause
+
+    /** Tahrirlashda vazifa id'si yo'qolgan — bo'lmasligi kerak bo'lgan holat. */
+    data object TaskIdMissing : ErrorCause
+
     data object Unknown : ErrorCause
 
     /**

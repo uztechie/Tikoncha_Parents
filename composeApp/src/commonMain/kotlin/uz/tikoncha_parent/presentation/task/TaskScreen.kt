@@ -53,13 +53,38 @@ import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.bajarilgan
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.circle_clock
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_internet
+import tikoncha_parents.composeapp.generated.resources.farzand_vazifalari_desc
+import tikoncha_parents.composeapp.generated.resources.farzandim
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.hali_vazifa_yoq
+import tikoncha_parents.composeapp.generated.resources.home_task
+import tikoncha_parents.composeapp.generated.resources.hozir_vazifalar_yo_q
+import tikoncha_parents.composeapp.generated.resources.jarayonda
+import tikoncha_parents.composeapp.generated.resources.muddati_otgan
+import tikoncha_parents.composeapp.generated.resources.ochirish
+import tikoncha_parents.composeapp.generated.resources.ota_ona_vazifalari_desc
+import tikoncha_parents.composeapp.generated.resources.ozim
+import tikoncha_parents.composeapp.generated.resources.qayta_urinish
+import tikoncha_parents.composeapp.generated.resources.vazifa_ochirilsinmi
+import tikoncha_parents.composeapp.generated.resources.vazifa_ochirish_tasdiq
+import tikoncha_parents.composeapp.generated.resources.vazifa_qo_shish
+import tikoncha_parents.composeapp.generated.resources.vazifalar
+import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.domain.model.app_error.ErrorCause
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.task.completed_task.CompletedTaskScreen
@@ -67,13 +92,13 @@ import uz.tikoncha_parent.presentation.task.create_task.CreateTaskScreen
 import uz.tikoncha_parent.presentation.task.detail.TaskDetailScreen
 import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
-import uz.tikoncha_parent.ui.*
+import uz.tikoncha_parent.ui.ButtonHeight
+import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
-
 
 class TaskScreen : Screen {
     @Composable
@@ -85,17 +110,12 @@ class TaskScreen : Screen {
         val navigator = LocalNavigator.current ?: return
 
         // ✅ Effect'larni collect qilish — error/success uchun
-        var localError by remember { mutableStateOf<String?>(null) }
+        var localFailure by remember { mutableStateOf<Outcome.Failure?>(null) }
 
         LaunchedEffect(Unit) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is TaskListEffect.ShowError -> {
-                        localError = effect.message
-                    }
-                    is TaskListEffect.ShowMessage -> {
-                        localError = effect.message
-                    }
+                    is TaskListEffect.ShowFailure -> localFailure = effect.failure
                     TaskListEffect.TaskDeleted -> {}
                     TaskListEffect.TaskMarkedAsCompleted -> {}
                 }
@@ -108,21 +128,15 @@ class TaskScreen : Screen {
             onStopOrDispose {}
         }
 
-        val shownError = localError ?: state.errorMessage
+        val shownError = localFailure?.asText()
 
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
             show = shownError != null,
             title = stringResource(Res.string.xatolik),
             message = shownError.orEmpty(),
-            onDismiss = {
-                localError = null
-                event(TaskListEvent.ClearError)
-            },
-            onButtonClick = {
-                localError = null
-                event(TaskListEvent.ClearError)
-            }
+            onDismiss = { localFailure = null },
+            onButtonClick = { localFailure = null }
         )
 
         TaskUi(
@@ -142,6 +156,7 @@ fun TaskUi(
     val isParentTab = state.taskIndex == 0
     var showChildSelector by remember { mutableStateOf(false) }
     var taskToDelete by remember { mutableStateOf<Task?>(null) }
+    val loadFailure = state.error
 
     // ── Bottom sheetlar ─────────────────────────────────────
     if (showChildSelector) {
@@ -200,29 +215,6 @@ fun TaskUi(
     val headerHeight = 56.dp
     val headerHeightPx = with(density) { headerHeight.toPx() }
     val headerOffsetPx = remember { mutableFloatStateOf(0f) }
-
-//    val collapseConnection = remember(headerHeightPx, listState) {
-//        object : NestedScrollConnection {
-//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-//                val delta = available.y
-//                val old = headerOffsetPx.floatValue
-//
-//                return when {
-//                    delta < 0 && old > -headerHeightPx -> {
-//                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
-//                        headerOffsetPx.floatValue = new
-//                        Offset(0f, new - old)
-//                    }
-//                    delta > 0 && old < 0f && !listState.canScrollBackward -> {
-//                        val new = (old + delta).coerceIn(-headerHeightPx, 0f)
-//                        headerOffsetPx.floatValue = new
-//                        Offset(0f, new - old)
-//                    }
-//                    else -> Offset.Zero
-//                }
-//            }
-//        }
-//    }
 
     val collapseConnection = remember(headerHeightPx, listState) {
         object : NestedScrollConnection {
@@ -405,6 +397,18 @@ fun TaskUi(
                             }
                         }
 
+                        loadFailure != null && state.taskList.isEmpty() -> {
+                            item(key = "load-failed") {
+                                ErrorTaskState(
+                                    failure = loadFailure,
+                                    onRetry = { event(TaskListEvent.OnRetry) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillParentMaxHeight(0.7f),
+                                )
+                            }
+                        }
+
                         state.taskList.isEmpty() -> {
                             item(key = "empty") {
                                 EmptyTaskState(
@@ -518,6 +522,49 @@ private fun EmptyTaskState(
             color = AppColors.text.secondary,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@Composable
+private fun ErrorTaskState(
+    failure: Outcome.Failure,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(
+                if (failure.cause == ErrorCause.NoInternet || failure.cause == ErrorCause.Timeout)
+                    Res.drawable.dialog_internet
+                else
+                    Res.drawable.dialog_failed
+            ),
+            contentDescription = null,
+            modifier = Modifier.size(90.dp)
+        )
+        Spacer(Modifier.height(26.dp))
+
+        Text(
+            text = failure.asText(),
+            style = AppTypography.emphasizedMdMedium,
+            color = AppColors.text.secondary,
+            textAlign = TextAlign.Center
+        )
+
+        // Qayta urinish faqat mantiqan foyda beradigan xatolarda.
+        // SessionExpired / InvalidResponse'da tugma ko'rsatilmaydi.
+        if (failure.cause.isRetryable) {
+            Spacer(Modifier.height(20.dp))
+            CustomOutlinedButton(
+                text = stringResource(Res.string.qayta_urinish),
+                onClick = onRetry,
+                modifier = Modifier.padding(horizontal = 40.dp)
+            )
+        }
     }
 }
 

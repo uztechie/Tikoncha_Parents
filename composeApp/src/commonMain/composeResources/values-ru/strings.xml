@@ -819,4 +819,12 @@
     <string name="operator_kodi_topilmadi">Такого кода оператора не существует</string>
     <string name="kod_amal_qilish_muddati">Код действует: %1$s</string>
     <string name="kod_muddati_tugadi">Срок действия кода истёк</string>
+    <string name="sarlavha_bosh">Заголовок не может быть пустым</string>
+    <string name="tanga_manfiy_bolmasin">Количество монет не может быть отрицательным</string>
+    <string name="muhimlilikni_tanlang">Выберите уровень важности</string>
+    <string name="tugatish_sanasini_tanlang">Выберите дату завершения</string>
+    <string name="tugatish_vaqtini_tanlang">Выберите время завершения</string>
+    <string name="tanga_balansi_yetarli_emas">Недостаточно монет на балансе</string>
+    <string name="farzand_tanlanmagan">Ребёнок не выбран</string>
+    <string name="vazifa_id_topilmadi">Идентификатор задачи не найден</string>
 </resources>

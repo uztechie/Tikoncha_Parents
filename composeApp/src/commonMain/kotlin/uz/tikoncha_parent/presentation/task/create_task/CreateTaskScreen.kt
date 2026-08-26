@@ -35,30 +35,48 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.calendar_2
+import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_success
+import tikoncha_parents.composeapp.generated.resources.izoh_ixtiyoriy
+import tikoncha_parents.composeapp.generated.resources.muvaffaqiyatli
+import tikoncha_parents.composeapp.generated.resources.time_square
+import tikoncha_parents.composeapp.generated.resources.tugash_vaqti
+import tikoncha_parents.composeapp.generated.resources.tugatish_sanasi
+import tikoncha_parents.composeapp.generated.resources.vazifa_haqida_qisqacha_ma_lumot
+import tikoncha_parents.composeapp.generated.resources.vazifa_nomi
+import tikoncha_parents.composeapp.generated.resources.vazifa_qo_shish
+import tikoncha_parents.composeapp.generated.resources.vazifani_tahrirlash
+import tikoncha_parents.composeapp.generated.resources.xatolik
+import uz.tikoncha_parent.common.DateTimeUtil.formatTime
+import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
 import uz.tikoncha_parent.common.Util
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.platform.Logger
+import uz.tikoncha_parent.presentation.base.CalendarBottomSheet
+import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.base.CustomTextFieldTask
-import uz.tikoncha_parent.ui.*
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.common.DateTimeUtil.formatTime
-import uz.tikoncha_parent.presentation.base.CustomButton
-import uz.tikoncha_parent.common.DateTimeUtil.reformattedDayMonthWithWeekdayForTask
-import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.base.CalendarBottomSheet
 import uz.tikoncha_parent.presentation.base.WheelTimePickerDialog
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.bottomShadow
-import uz.tikoncha_parent.presentation.task.model.CollectEffects
-import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.create_task_check.CreateTaskCheckScreen
+import uz.tikoncha_parent.presentation.task.model.CollectEffects
 import uz.tikoncha_parent.presentation.task.model.ImportanceType
+import uz.tikoncha_parent.presentation.task.model.Task
 import uz.tikoncha_parent.presentation.task.model.rememberSharedScreenModel
 import uz.tikoncha_parent.presentation.task.success.TaskSuccessScreen
+import uz.tikoncha_parent.ui.ButtonCornerRadius
+import uz.tikoncha_parent.ui.ButtonHeight
+import uz.tikoncha_parent.ui.CardCornerPadding
+import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -78,7 +96,8 @@ class CreateTaskScreen(
         val event = viewModel::onEvent
 
         var successDialogMessage by remember { mutableStateOf<String?>(null) }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
+        var failure by remember { mutableStateOf<Outcome.Failure?>(null) }
+        val failureText = failure?.asText()
 
         // ✅ Edit yoki yangi vazifa — har holatda form holatini to'g'ri o'rnatish.
         // taskToEdit = null bo'lsa, eski edit holatini reset qilamiz.
@@ -103,9 +122,7 @@ class CreateTaskScreen(
                     Logger.d("CreateTaskScreen", "onResetCollect:${event(CreateTaskEvent.OnReset)}")
                     event(CreateTaskEvent.OnReset)
                 }
-                is CreateTaskEffect.ShowError -> {
-                    errorMessage = effect.message
-                }
+                is CreateTaskEffect.ShowFailure -> { failure = effect.failure }
                 // ✅ Agar user CheckScreen'dan back qaytsa, lekin request muvaffaqiyatli bo'lsa,
                 // bu yerda success ekraniga o'tkazamiz
                 CreateTaskEffect.NavigateToSuccess -> {
@@ -125,11 +142,11 @@ class CreateTaskScreen(
 
         CustomDialog(
             painter = painterResource(Res.drawable.dialog_failed),
-            show = errorMessage != null,
+            message = failureText.orEmpty(),
+            show = failureText != null,
             title = stringResource(Res.string.xatolik),
-            message = errorMessage.orEmpty(),
-            onDismiss = { errorMessage = null },
-            onButtonClick = { errorMessage = null }
+            onDismiss = { failure = null },
+            onButtonClick = { failure = null }
         )
 
         CreateTaskUI(

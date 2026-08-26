@@ -8,7 +8,7 @@ data class TodoDto(
     val author_id: String?,
     val target_user_id: String?,
     val title: String,
-    val description: String,
+    val description: String? = null,
     val due_date: Long?,
     val importance: String,
     val is_child_done: Boolean,

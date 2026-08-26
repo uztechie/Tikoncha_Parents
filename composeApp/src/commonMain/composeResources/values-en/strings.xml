@@ -825,4 +825,12 @@ This information is used only for these features and is not shared with third pa
     <string name="operator_kodi_topilmadi">No such operator code</string>
     <string name="kod_amal_qilish_muddati">Code valid for: %1$s</string>
     <string name="kod_muddati_tugadi">Code expired</string>
+    <string name="sarlavha_bosh">Title cannot be empty</string>
+    <string name="tanga_manfiy_bolmasin">Coin amount cannot be negative</string>
+    <string name="muhimlilikni_tanlang">Select an importance level</string>
+    <string name="tugatish_sanasini_tanlang">Select a due date</string>
+    <string name="tugatish_vaqtini_tanlang">Select a due time</string>
+    <string name="tanga_balansi_yetarli_emas">Not enough coins in your balance</string>
+    <string name="farzand_tanlanmagan">No child selected</string>
+    <string name="vazifa_id_topilmadi">Task ID not found</string>
 </resources>

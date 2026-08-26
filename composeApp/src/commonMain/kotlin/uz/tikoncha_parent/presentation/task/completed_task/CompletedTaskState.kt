@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.task.completed_task
 
 import uz.tikoncha_parent.domain.model.UserInfo
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.task.model.Task
 
 data class CompletedTaskState(
@@ -27,7 +28,7 @@ data class CompletedTaskState(
     val isRefiltering: Boolean = false,
 
     // Error
-    val errorMessage: String? = null,
+    val error: Outcome.Failure? = null,
 ) {
     val canFetch: Boolean
         get() = selectedChild != null
