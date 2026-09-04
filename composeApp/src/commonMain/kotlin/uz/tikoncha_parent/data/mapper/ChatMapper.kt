@@ -1,6 +1,5 @@
 package uz.tikoncha_parent.data.mapper
 
-import uz.tikoncha_parent.presentation.model.ChatMemberUi
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.ChatDto
@@ -8,7 +7,7 @@ import uz.tikoncha_parent.data.remote.model.ChatMemberDto
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
 import uz.tikoncha_parent.presentation.chat.ChatDateTimeUtil
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
-import uz.tikoncha_parent.presentation.domain.model.LanguageType
+import uz.tikoncha_parent.presentation.model.ChatMemberUi
 import uz.tikoncha_parent.presentation.model.ChatMessageType
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.presentation.model.ChatType
@@ -47,23 +46,25 @@ fun ChatDto.toChatUi(): ChatUi {
 fun ChatMessageDto.toChatMessageUi(): ChatMessageUi{
     val dateMillis = DateTimeUtil.toMillis(created_at)
 
-    val mine = is_mine ?: false
+    // Server tahrirdan keyin ikkita hodisa yuboradi: ikkinchisida
+    // is_mine/is_read maydonlari umuman bo'lmaydi. Maydon yo'q bo'lsa
+    // "meniki"ni yuboruvchi id'sidan aniqlaymiz.
+    val mine = is_mine ?: (sender_id == AppSettings.userId)
     val read = is_read ?: false
 
     val status = when {
         mine && read -> DeliveryStatus.READ
-        mine && !read -> DeliveryStatus.SENT
         else -> DeliveryStatus.SENT
     }
 
 
     return ChatMessageUi(
         id = id,
-        isMine = is_mine?:false,
+        isMine = mine,
+        isRead = read,
         message = text,
         createdAt = dateMillis,
         time = ChatDateTimeUtil.millisToHHmm(dateMillis),
-        isRead = is_read?:false,
         senderName = sender_name,
         senderAvatar = sender_avatar.prepareAvatar(),
         remoteUrl = attachment_url ?: "",

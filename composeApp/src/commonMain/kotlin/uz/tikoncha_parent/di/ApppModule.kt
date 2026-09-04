@@ -8,7 +8,6 @@ import uz.tikoncha_parent.data.remote.ChatApiService
 import uz.tikoncha_parent.data.remote.ChatSocketService
 import uz.tikoncha_parent.data.remote.ChildApiService
 import uz.tikoncha_parent.data.remote.DeviceApiService
-import uz.tikoncha_parent.data.remote.GetCoinPackageApiService
 import uz.tikoncha_parent.data.remote.LoginApiService
 import uz.tikoncha_parent.data.remote.MyCoinsApiService
 import uz.tikoncha_parent.data.remote.NewApiService
@@ -24,7 +23,6 @@ import uz.tikoncha_parent.data.repository.AvatarRepositoryImpl
 import uz.tikoncha_parent.data.repository.ChatRepositoryImpl
 import uz.tikoncha_parent.data.repository.ChildRepositoryImpl
 import uz.tikoncha_parent.data.repository.DeviceRepositoryImpl
-import uz.tikoncha_parent.data.repository.GetCoinPackageRepositoryImpl
 import uz.tikoncha_parent.data.repository.LoginRepositoryImpl
 import uz.tikoncha_parent.data.repository.MyCoinsRepositoryImpl
 import uz.tikoncha_parent.data.repository.NewsRepositoryImpl
@@ -42,7 +40,6 @@ import uz.tikoncha_parent.domain.repository.AuthRepository
 import uz.tikoncha_parent.domain.repository.AvatarRepository
 import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.domain.repository.CoinPackageRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.repository.LoginRepository
 import uz.tikoncha_parent.domain.repository.MyCoinsRepository
@@ -57,34 +54,14 @@ import uz.tikoncha_parent.domain.repository.TelegramAuthRepository
 import uz.tikoncha_parent.domain.repository.TodoRepository
 import uz.tikoncha_parent.domain.repository.TutorialRepository
 import uz.tikoncha_parent.domain.repository.UpdateRepository
-import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
-import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
-import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
-import uz.tikoncha_parent.domain.use_case.UserInfoEditUseCase
-import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
 import uz.tikoncha_parent.domain.use_case.app_usage.TodayUsageUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ChatUnreadCountUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ConnectChatWebSocketUseCase
-import uz.tikoncha_parent.domain.use_case.chat.DeleteMessageUseCase
-import uz.tikoncha_parent.domain.use_case.chat.DisconnectChatWebSocketUseCase
-import uz.tikoncha_parent.domain.use_case.chat.EditMessageUseCase
-import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
 import uz.tikoncha_parent.domain.use_case.chat.GetChatMessagesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MarkUnreadUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageApiUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
-import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetPaymentTransactionsUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetSubscriptionStatusUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
@@ -101,6 +78,7 @@ import uz.tikoncha_parent.domain.use_case.todo.UpdateTodoUseCase
 import uz.tikoncha_parent.platform.PlatformPurchaseService
 import uz.tikoncha_parent.presentation.add_child.AddChildScreenModel
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
+import uz.tikoncha_parent.presentation.chat.chat_details.ChatDetailsViewModel
 import uz.tikoncha_parent.presentation.chat.chat_list.ChatViewModel
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomViewModel
 import uz.tikoncha_parent.presentation.child_confirm_cod.ChildConfirmViewModel
@@ -160,7 +138,6 @@ val sharedModule = module {
     single { MyCoinsApiService(get()) }
     single { PolicyApiService(get()) }
     single { PaymentApiService(get()) }
-    single { GetCoinPackageApiService(get()) }
     single { PermissionStatusApiService(get()) }
     single { TutorialApiService(get()) }
 
@@ -175,7 +152,6 @@ val sharedModule = module {
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single<MyCoinsRepository> { MyCoinsRepositoryImpl(get()) }
-    single<CoinPackageRepository> { GetCoinPackageRepositoryImpl(get()) }
     single<PolicyRepository> { PolicyRepositoryImpl(get()) }
     single<PaymentRepository> { PaymentRepositoryImpl(get()) }
     single<UpdateRepository> { UpdateRepositoryImpl(get()) }
@@ -191,40 +167,21 @@ val sharedModule = module {
 
 
     // Use Case Module
-    single { UserInfoUseCase(get()) }
-    single { UploadAvatarToServerUseCase(get()) }
-    single { LoadAvatarFromServerUseCase(get()) }
-
-    single { ChatStatusUseCase(get()) }
     single { ObserveChatStatusUseCase(get()) }
-    single { ChatUnreadCountUseCase(get()) }
-    single { ConnectChatWebSocketUseCase(get()) }
-    single { DisconnectChatWebSocketUseCase(get()) }
-    single { EditMessageUseCase(get()) }
-    single { GetChatListFromServerUseCase(get()) }
     single { GetChatMessagesFromServerUseCase(get()) }
-    single { MarkReadUseCase(get()) }
-    single { MarkUnreadUseCase(get()) }
-    single { ObserveChatEventUseCase(get()) }
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
-    single { GetMyCoinsUseCase(get()) }
     single { SubscriptionPaymentUseCase(get()) }
     single { PromoCodeValidationUseCase(get()) }
     single { PaymentStatusUseCase(get()) }
     single { SubscriptionPlanUseCase(get()) }
 
-    single { ChatConnectionManager(get(), get()) }
-    single { GetCoinPackageListUseCase(get()) }
+    single { ChatConnectionManager(get()) }
     single { PurchaseIApPremiumUseCase(get()) }
-    single { ChildInfoEditUseCase(get()) }
-    single { UserInfoEditUseCase(get()) }
-    single { DeleteMessageUseCase(get()) }
     single { PurchaseCoinUseCase(get()) }
     single { CheckUpdateUseCase(get()) }
     single { ObserveInstallEventsUseCase(get()) }
     single { CompleteFlexibleUpdateUseCase(get()) }
-    single { LogoutUseCase(get()) }
     factory { GetPaymentTransactionsUseCase(get()) }
 
     single { GetTodosUseCase(get()) }
@@ -233,17 +190,14 @@ val sharedModule = module {
     single { DeleteTodoUseCase(get()) }
     single { CompleteTodoUseCase(get()) }
     single { TodayUsageUseCase(get()) }
-
-    factory { DeleteAvatarFromServerUseCase(get()) }
     factory { GetSubscriptionStatusUseCase(get()) }
-    single { UnlinkChildUseCase(get()) }
 
 
     // ViewModel
     factory { LoginViewModel(get(), get(), get()) }
     factory { OtpViewmodel(get(), get()) }
     factory { RegisterViewmodel(get(), get()) }
-    factory { ProfileViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { ProfileViewModel(get(), get(), get(), get()) }
     factory { AddChildScreenModel(get()) }
     factory { ChildConfirmViewModel() }
     factory { TaskListViewModel(get(), get(), get()) }
@@ -252,19 +206,9 @@ val sharedModule = module {
     factory { StatisticViewModel(get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
-    factory {
-        ChatViewModel(
-            get(),
-            get(),
-            get()
-        )
-    }
-
+    factory { ChatViewModel(get(), get()) }
     factory {
         ChatRoomViewModel(
-            get(),
-            get(),
-            get(),
             get(),
             get(),
             get(),
@@ -288,13 +232,13 @@ val sharedModule = module {
     factory { CoinsViewModel(get(), get(), get()) }
     factory { (child: UserInfo) ->
         ChildInfoEditViewModel(
-            childInfoEditUseCase = get(),
+            loginRepository = get(),
             child = child
         )
     }
     factory { (userInfo: UserInfo) ->
         UserInfoEditViewModel(
-            userInfoEditUseCase = get(),
+            loginRepository = get(),
             userInfo = userInfo
         )
     }
@@ -305,5 +249,5 @@ val sharedModule = module {
     factory { PaymentHistoryScreenModel(get()) }
     factory { SubscriptionViewModel(get()) }
     factory { ProtectionViewModel(get(), get()) }
-
+    factory { ChatDetailsViewModel(get()) }
 }

@@ -16,10 +16,9 @@ import uz.tikoncha_parent.common.Util.millisToLocalTime
 import uz.tikoncha_parent.common.Util.toMillis
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.todo.toImportance
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
-import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
+import uz.tikoncha_parent.domain.repository.MyCoinsRepository
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoParams
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.UpdateTodoParams
@@ -31,7 +30,7 @@ import kotlin.time.ExperimentalTime
 class CreateTaskViewModel(
     private val createTodoUseCase: CreateTodoUseCase,
     private val updateTodoUseCase: UpdateTodoUseCase,
-    private val getMyCoinsUseCase: GetMyCoinsUseCase
+    private val myCoinsRepository: MyCoinsRepository,
 ) : ScreenModel {
 
     private var requestJob: Job? = null
@@ -146,14 +145,13 @@ class CreateTaskViewModel(
     private fun loadParentCoins() {
         coinJob?.cancel()
         coinJob = screenModelScope.launch {
-            when (val result = getMyCoinsUseCase()) {
-                is Resource.Success -> {
-                    _state.update { it.copy(availableCoins = result.data.coins) }
+            when (val res = myCoinsRepository.getMyCoins()) {
+                is Outcome.Success -> {
+                    _state.update { it.copy(availableCoins = res.data.coins) }
                 }
-                is Resource.Error -> {
+                is Outcome.Failure -> {
                     _state.update { it.copy(availableCoins = 0) }
                 }
-                is Resource.Loading -> {}
             }
         }
     }

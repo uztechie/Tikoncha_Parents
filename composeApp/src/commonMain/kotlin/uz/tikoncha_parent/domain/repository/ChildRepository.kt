@@ -22,5 +22,5 @@ interface ChildRepository {
 
     suspend fun childrenLocation(): Outcome<List<ChildLocation>>
 
-    suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse
+    suspend fun unlinkChild(childUserId: String, parentUserId: String): Outcome<String>
 }

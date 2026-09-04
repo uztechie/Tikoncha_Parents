@@ -5,28 +5,42 @@ package uz.tikoncha_parent.presentation.chat.chat_room
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -37,6 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -69,14 +84,15 @@ import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.domain.model.ChatMessageItem
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomText
+import uz.tikoncha_parent.presentation.base.ErrorRetryState
 import uz.tikoncha_parent.presentation.chat.ChatTextField
 import uz.tikoncha_parent.presentation.chat.ChatUtil
 import uz.tikoncha_parent.presentation.chat.ChatUtil.asText
+import uz.tikoncha_parent.presentation.chat.chat_details.ChatDetailsScreen
 import uz.tikoncha_parent.presentation.chat.item.MessageDateItem
 import uz.tikoncha_parent.presentation.chat.item.MessageReceivedItem
 import uz.tikoncha_parent.presentation.chat.item.MessageSentItem
 import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
-import uz.tikoncha_parent.presentation.chat.chat_details.ChatDetailsScreen
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
 import uz.tikoncha_parent.presentation.chat.model.MessageMenuAction
 import uz.tikoncha_parent.presentation.model.ChatMessageType
@@ -340,7 +356,7 @@ fun ChatRoomScreenUi(
                                     if (state.lastTimeOnline is ChatDateLabel.Unknown) {
                                         stringResource(Res.string.faol_emas)
                                     } else {
-                                        "${stringResource(Res.string.ohirgi_faollik)}: ${state.lastTimeOnline.asText()}"
+                                        "${stringResource(Res.string.ohirgi_faollik)} ${state.lastTimeOnline.asText()}"
                                     }
                                 }
                             }
@@ -497,6 +513,18 @@ fun ChatRoomScreenUi(
                         }
                     }
                 }
+            }
+
+            val loadFailure = state.error
+            if (loadFailure != null && state.messages.isEmpty()) {
+                ErrorRetryState(
+                    failure = loadFailure,
+                    onRetry = { event(ChatRoomEvent.LoadInitial) },
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxWidth()
+                        .padding(horizontal = ContainerPadding)
+                )
             }
             SpaceMedium()
 

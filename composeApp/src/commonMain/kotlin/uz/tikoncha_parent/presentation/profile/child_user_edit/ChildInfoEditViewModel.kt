@@ -7,16 +7,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.UserInfoDto
 import uz.tikoncha_parent.domain.model.GenderType
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.UserInfo
-import uz.tikoncha_parent.domain.use_case.ChildInfoEditUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.LoginRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ChildInfoEditViewModel(
-    private val childInfoEditUseCase: ChildInfoEditUseCase,
+    private val loginRepository: LoginRepository,
     private val child: UserInfo
 ) : ScreenModel {
 
@@ -116,10 +115,8 @@ class ChildInfoEditViewModel(
                 }
             )
 
-            val req = childInfoEditUseCase.invoke(request)
-            when (req) {
-                is Resource.Success -> {
-                    AppSettings.selectedChild
+            when (val res = loginRepository.childInfoEdit(request)) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             saveState = ResponseState.Success()
@@ -127,21 +124,10 @@ class ChildInfoEditViewModel(
                     }
                 }
 
-                is Resource.Error -> {
-                    val error = childInfoEditUseCase.invoke(request)
-                    val message = (error as Resource.Error).message ?: "Xatolik"
-
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            saveState = ResponseState.Error(message = message)
-                        )
-                    }
-                }
-
-                is Resource.Loading -> {
-                    _state.update {
-                        it.copy(
-                            saveState = ResponseState.Loading
+                            saveState = ResponseState.Error(failure = res)
                         )
                     }
                 }

@@ -11,12 +11,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.data.mapper.toChatMemberUi
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.chat.ChatStatusUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ChatDetailsViewModel(
-    private val chatStatusUseCase: ChatStatusUseCase
+    private val repository: ChatRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ChatDetailState>(ChatDetailState())
@@ -67,29 +67,25 @@ class ChatDetailsViewModel(
 
             while (isActive) {
                 val chatId = state.value.chatId
-                val result = chatStatusUseCase.invoke(chatId)
-                when (result) {
-                    is Resource.Loading -> {}
-                    is Resource.Error -> {
+                when (val res = repository.chatStatus(chatId)) {
+                    is Outcome.Failure -> {
                         _state.update {
                             it.copy(
-                               responseState = ResponseState.Error(
-                                   res = result.resId,
-                                   message = result.message
-                               )
+                                responseState = ResponseState.Error(failure = res)
                             )
                         }
                     }
-                    is Resource.Success -> {
+
+                    is Outcome.Success -> {
                         val lastTimeOnlineMillis =
-                            DateTimeUtil.toMillisUtc(result.data.firstOrNull()?.last_seen)
+                            DateTimeUtil.toMillisUtc(res.data.firstOrNull()?.last_seen)
                         val lastTimeOnline = DateTimeUtil.formatDateTimeForChatUserStatus(
                             millis = lastTimeOnlineMillis,
                             bugun = state.value.bugun,
                             kecha = state.value.kecha
                         )
 
-                        val members = result.data.map { member ->
+                        val members = res.data.map { member ->
 
                             val millis = DateTimeUtil.toMillisUtc(member.last_seen)
                             val memberLastSeen = DateTimeUtil.formatDateTimeForChatUserStatus(
@@ -98,13 +94,13 @@ class ChatDetailsViewModel(
                                 kecha = state.value.kecha
                             )
                             member.toChatMemberUi()
-                            .copy(lastSeen = memberLastSeen)
+                                .copy(lastSeen = memberLastSeen)
                         }
 
                         _state.update {
                             it.copy(
                                 members = members,
-                                memberCount = result.data.count(),
+                                memberCount = res.data.count(),
                                 responseState = ResponseState.Success()
                             )
                         }
@@ -112,8 +108,6 @@ class ChatDetailsViewModel(
                 }
                 delay(15000)
             }
-
-
         }
     }
 }

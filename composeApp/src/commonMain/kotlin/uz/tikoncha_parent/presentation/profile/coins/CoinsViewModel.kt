@@ -9,18 +9,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import uz.tikoncha_parent.domain.repository.MyCoinsRepository
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class CoinsViewModel(
-    private val getMyCoinsUseCase: GetMyCoinsUseCase,
-    private val coinsPackageListUseCase: GetCoinPackageListUseCase,
+    private val myCoinsRepository: MyCoinsRepository,
+    private val paymentRepository: PaymentRepository,
     private val childRepository: ChildRepository,
-): ScreenModel {
+) : ScreenModel {
 
     private val _state = MutableStateFlow(CoinsState())
     val state = _state.asStateFlow()
@@ -28,8 +27,8 @@ class CoinsViewModel(
     private var childrenJob: Job? = null
 
 
-    fun onEvent(event: CoinsEvent){
-        when(event){
+    fun onEvent(event: CoinsEvent) {
+        when (event) {
             is CoinsEvent.OnChildSelected -> {
                 _state.update {
                     it.copy(selectedChild = event.child)
@@ -70,12 +69,12 @@ class CoinsViewModel(
     fun getCoinPackagesList() {
         screenModelScope.launch {
             _state.update {
-                it.copy(isLoading = true, error = null)
+                it.copy(isLoading = true)
             }
-            when (val result = coinsPackageListUseCase()) {
-                is Resource.Success -> {
-                    val coinPrice = result.data.coin_price
-                    val list = result.data.coin_packages.map {
+            when (val res = paymentRepository.coinPackages()) {
+                is Outcome.Success -> {
+                    val coinPrice = res.data.coin_price
+                    val list = res.data.coin_packages.map {
                         val originalPrice = if (it.discount_percent in 1..99) {
                             (it.price * 100L / (100 - it.discount_percent))
                         } else {
@@ -103,13 +102,11 @@ class CoinsViewModel(
                     }
                 }
 
-                is Resource.Error -> {
+                is Outcome.Failure -> {
                     _state.update {
-                        it.copy(isLoading = false, error = result.message)
+                        it.copy(isLoading = false, error = res)
                     }
                 }
-
-                is Resource.Loading -> {}
             }
         }
     }
@@ -124,29 +121,30 @@ class CoinsViewModel(
             )
         }
         screenModelScope.launch {
-            when(val response = getMyCoinsUseCase()){
-                is Resource.Success -> {
+            when (val res = myCoinsRepository.getMyCoins()) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            myCoins = response.data.coins,
+                            myCoins = res.data.coins,
                             error = null
                         )
                     }
                 }
-                is Resource.Error -> {
+
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
                             myCoins = 0,
                             isLoading = false,
-                            error = response.message
+                            error = res
                         )
                     }
                 }
-                is Resource.Loading<*> -> {}
             }
         }
     }
+
     private fun loadChildren() {
         childrenJob?.cancel()
         childrenJob = screenModelScope.launch {

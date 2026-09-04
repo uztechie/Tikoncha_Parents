@@ -11,27 +11,20 @@ import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.kutilmagan_xatolik_qayta_urining
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toUserInfo
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.UploadPart
 import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.AvatarRepository
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.domain.use_case.DeleteAvatarFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.LoadAvatarFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.UnlinkChildUseCase
-import uz.tikoncha_parent.domain.use_case.UploadAvatarToServerUseCase
-import uz.tikoncha_parent.domain.use_case.UserInfoUseCase
-import uz.tikoncha_parent.domain.use_case.device.LogoutUseCase
+import uz.tikoncha_parent.domain.repository.DeviceRepository
+import uz.tikoncha_parent.domain.repository.LoginRepository
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class ProfileViewModel(
-    private val userInfoUseCase: UserInfoUseCase,
+    private val loginRepository: LoginRepository,
     private val childRepository: ChildRepository,
-    private val logoutUseCase: LogoutUseCase,
-    private val loadAvatarFromServerUseCase: LoadAvatarFromServerUseCase,
-    private val uploadAvatarToServerUseCase: UploadAvatarToServerUseCase,
-    private val deleteAvatarFromServerUseCase: DeleteAvatarFromServerUseCase,
-    private val unlinkChildUseCase: UnlinkChildUseCase
+    private val deviceRepository: DeviceRepository,
+    private val avatarRepository: AvatarRepository,
 ) : ScreenModel {
     var userInfoJob: Job? = null
     var childrenJob: Job? = null
@@ -51,9 +44,6 @@ class ProfileViewModel(
                 profileImageUrl = AppSettings.profileImageUrl
             )
         }
-        userInfoJob()
-        getChildren()
-        getAvatar()
     }
 
     fun onEvent(event: ProfileEvent) {
@@ -162,25 +152,21 @@ class ProfileViewModel(
         }
 
         unlinkJob = screenModelScope.launch {
-            val result = unlinkChildUseCase(
+            val res = childRepository.unlinkChild(
                 childUserId = child?.userId ?: "",
                 parentUserId = parentId
             )
 
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (res) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            unlinkState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
+                            unlinkState = ResponseState.Error(failure = res)
                         )
                     }
                 }
 
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     val update = _state.value.children.filterNot { it.userId == child?.userId }
                     AppSettings.children = update
 
@@ -206,21 +192,16 @@ class ProfileViewModel(
         }
 
         deleteAvatarJob = screenModelScope.launch {
-            val result = deleteAvatarFromServerUseCase()
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (val res = avatarRepository.deleteAvatar()) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            deleteAvatarState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
+                            deleteAvatarState = ResponseState.Error(failure = res)
                         )
                     }
                 }
 
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     AppSettings.profileImageUrl = ""
                     _state.update {
                         it.copy(
@@ -238,14 +219,14 @@ class ProfileViewModel(
         avatarJob?.cancel()
 
         avatarJob = screenModelScope.launch {
-            when (val res = uploadAvatarToServerUseCase(part)) {
-                is Resource.Success -> {
+            when (val res = avatarRepository.uploadAvatar(part)) {
+                is Outcome.Success -> {
                     val url = res.data.avatar_url ?: ""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }
 
-                else -> Unit
+                is Outcome.Failure -> Unit
             }
         }
     }
@@ -254,14 +235,14 @@ class ProfileViewModel(
         avatarJob?.cancel()
 
         avatarJob = screenModelScope.launch {
-            when (val res = loadAvatarFromServerUseCase()) {
-                is Resource.Success -> {
+            when (val res = avatarRepository.getAvatarFromServer()) {
+                is Outcome.Success -> {
                     val url = res.data.avatar_url ?: ""
                     AppSettings.profileImageUrl = url
                     _state.update { it.copy(profileImageUrl = url) }
                 }
 
-                else -> Unit
+                is Outcome.Failure -> Unit
             }
         }
     }
@@ -273,21 +254,16 @@ class ProfileViewModel(
             )
         }
         screenModelScope.launch {
-            val result = logoutUseCase.invoke(AppSettings.fcmToken)
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (val res = deviceRepository.logout(AppSettings.fcmToken)) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            logoutState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
+                            logoutState = ResponseState.Error(failure = res)
                         )
                     }
                 }
 
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     AppSettings.clearSession()
                     _state.update {
                         it.copy(
@@ -295,7 +271,6 @@ class ProfileViewModel(
                         )
                     }
                 }
-
             }
         }
     }
@@ -303,19 +278,15 @@ class ProfileViewModel(
     private fun userInfoJob() {
         userInfoJob?.cancel()
         userInfoJob = screenModelScope.launch {
-            val result = userInfoUseCase()
-            when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
-
-                }
-
-                is Resource.Success -> {
-                    AppSettings.userInfo = result.data.toUserInfo()
+            when (val res = loginRepository.userInfo()) {
+                is Outcome.Failure -> Unit
+                is Outcome.Success -> {
+                    val info = res.data.toUserInfo()
+                    AppSettings.userInfo = info
                     _state.update {
                         it.copy(
                             children = AppSettings.children,
-                            userInfo = result.data.toUserInfo()
+                            userInfo = info
                         )
                     }
                 }

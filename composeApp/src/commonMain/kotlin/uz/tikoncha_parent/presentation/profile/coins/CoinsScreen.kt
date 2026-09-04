@@ -3,7 +3,16 @@ package uz.tikoncha_parent.presentation.profile.coins
 import androidx.compose.animation.SharedTransitionDefaults
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +32,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -31,19 +41,31 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.ui.*
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.davom_etish
+import tikoncha_parents.composeapp.generated.resources.farzandingizni_tanlang
+import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
+import tikoncha_parents.composeapp.generated.resources.narx
+import tikoncha_parents.composeapp.generated.resources.ozingiz_qoshing
+import tikoncha_parents.composeapp.generated.resources.qanday_qilib_ishlab_topish
+import tikoncha_parents.composeapp.generated.resources.qanday_qilib_ishlatish
+import tikoncha_parents.composeapp.generated.resources.tanga_s
+import tikoncha_parents.composeapp.generated.resources.tangachalar
+import tikoncha_parents.composeapp.generated.resources.tavsiya_etilgan_paketlar
+import tikoncha_parents.composeapp.generated.resources.tolov
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
 import uz.tikoncha_parent.presentation.base.CustomButton
+import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.ErrorRetryState
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseScreen
+import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.MainCornerRadius
+import uz.tikoncha_parent.ui.SpaceMedium
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
@@ -87,6 +109,14 @@ fun CoinsUi(
     var helpType by remember { mutableStateOf<CoinsHelpType?>(null) }
     val currentLocale = SharedTransitionDefaults
     var showDialog by remember { mutableStateOf(false) }
+    var retrying by remember { mutableStateOf(false) }
+
+    LaunchedEffect(retrying) {
+        if (retrying) {
+            delay(900)
+            retrying = false
+        }
+    }
 
     if (showDialog) {
         SelectionChildBottomSheet(
@@ -213,23 +243,38 @@ fun CoinsUi(
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    state.coinPackageList.forEachIndexed { index, item ->
-                        CoinPackageItem(
-                            coinPackageUi = item,
-                            hasBorder = state.selectedPackageIndex == index,
+                    val failure = state.error
+                    if (failure != null && state.coinPackageList.isEmpty()) {
+                        ErrorRetryState(
+                            failure = failure,
+                            isRetrying = retrying || state.isLoading,
+                            onRetry = {
+                                retrying = true
+                                event(CoinsEvent.LoadCoinList)
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    event(CoinsEvent.OnPackageSelected(index))
-                                    navigator?.push(
-                                        CoinPurchaseScreen(
-                                            coins = item.coins,
-                                            totalPrice = item.price.toInt(),
-                                            discountPrice = item.discountedPrice.toInt()
-                                        )
-                                    )
-                                }
+                                .padding(vertical = 24.dp)
                         )
+                    } else {
+                        state.coinPackageList.forEachIndexed { index, item ->
+                            CoinPackageItem(
+                                coinPackageUi = item,
+                                hasBorder = state.selectedPackageIndex == index,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        event(CoinsEvent.OnPackageSelected(index))
+                                        navigator?.push(
+                                            CoinPurchaseScreen(
+                                                coins = item.coins,
+                                                totalPrice = item.price.toInt(),
+                                                discountPrice = item.discountedPrice.toInt()
+                                            )
+                                        )
+                                    }
+                            )
+                        }
                     }
                 }
                 Spacer(Modifier.height(24.dp))

@@ -5,7 +5,6 @@ import uz.tikoncha_parent.data.mapper.protection.toChildRequest
 import uz.tikoncha_parent.data.mapper.protection.toProtectionStatus
 import uz.tikoncha_parent.data.remote.ProtectionApiService
 import uz.tikoncha_parent.data.remote.app_error.ApiErrorMapper
-import uz.tikoncha_parent.data.remote.model.protection.ChildRequestsResponse
 import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.AccountRequest
@@ -28,15 +27,6 @@ class ProtectionRepositoryImpl(
                 else -> Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
             }
         }
-
-    override suspend fun strictDisableRequests(
-        childId: String?,
-        status: String?,
-        limit: Int,
-        offset: Int,
-    ): ChildRequestsResponse {
-        return api.strictDisableRequests(childId, status, limit, offset)
-    }
 
     override suspend fun approveStrictDisableRequest(requestId: String): Outcome<ChildRequest> =
         apiCall(TAG) {

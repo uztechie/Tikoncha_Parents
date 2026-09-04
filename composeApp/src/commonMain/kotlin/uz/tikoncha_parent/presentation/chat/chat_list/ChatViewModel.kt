@@ -12,17 +12,14 @@ import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.mapper.toChatUi
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.chat.GetChatListFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.presentation.chat.ChatConnectionManager
 import uz.tikoncha_parent.presentation.chat.ChatDateTimeUtil
 import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
-import kotlin.collections.map
 
 class ChatViewModel(
-    private val chatListUseCase: GetChatListFromServerUseCase,
-    private val observeEvents: ObserveChatEventUseCase,
+    private val repository: ChatRepository,
     private val connectionManager: ChatConnectionManager
 ) : ScreenModel {
 
@@ -67,7 +64,7 @@ class ChatViewModel(
     private fun startObserveEvents() {
         if (eventsJob?.isActive == true) return
         eventsJob = screenModelScope.launch {
-            observeEvents().collect { ev ->
+            repository.observeEvents().collect { ev ->
                 when (ev) {
                     is ChatWsEvent.MessageCreated -> applyMessageCreated(ev.message)
                     is ChatWsEvent.ReadUpdate -> applyReadUpdate(ev.chatId, ev.messageId)
@@ -84,37 +81,36 @@ class ChatViewModel(
             if (isRefresh) {
                 it.copy(
                     isRefreshing = true,
-                    error = ""
+                    error = null
                 )
             }
             else {
                 it.copy(
                     loading = true,
-                    error = ""
+                    error = null
                 )
             }
         }
 
         chatListJob?.cancel()
         chatListJob = screenModelScope.launch {
-            when (val result = chatListUseCase.invoke()) {
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (val res = repository.chatList()) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
                             loading = false,
                             isRefreshing = false,
                             hasLoadedOnce = true,
-                            error = result.message
+                            error = res
                         )
                     }
                 }
 
-                is Resource.Success -> {
-                    val chats = result.data?.map { it.toChatUi() }.orEmpty()
+                is Outcome.Success -> {
+                    val chats = res.data.map { it.toChatUi() }
                     _state.update {
                         it.copy(
-                            error = "",
+                            error = null,
                             chats = chats,
                             loading = false,
                             hasLoadedOnce = true,

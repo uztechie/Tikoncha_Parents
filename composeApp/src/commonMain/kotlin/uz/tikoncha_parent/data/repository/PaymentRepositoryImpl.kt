@@ -17,13 +17,16 @@ import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
+import uz.tikoncha_parent.domain.model.subscription.CoinPackageListWrapper
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
 import uz.tikoncha_parent.domain.model.subscription.SubscriptionStatus
 import uz.tikoncha_parent.domain.model.transaction.TransactionPage
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 
-class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentRepository {
+class PaymentRepositoryImpl(
+    private val api: PaymentApiService
+) : PaymentRepository {
 
     override suspend fun subscriptionPayment(subscriptionPaymentRequest: SubscriptionPaymentRequest): SubscriptionPaymentResponse {
         return api.subscriptionPayment(subscriptionPaymentRequest)
@@ -39,6 +42,7 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
                     AppSettings.subscriptionLimitList = limits      // kesh — endi shu yerda
                     Outcome.Success(limits)
                 }
+
                 r.success -> Outcome.Failure(ErrorCause.InvalidResponse)
                 else -> Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
             }
@@ -56,8 +60,11 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
         return api.promoCodeValidation(promoCodeValidationRequest)
     }
 
-    override suspend fun coinPackages(): CoinPackageListResponse {
-        return api.coinPackageList()
+    override suspend fun coinPackages(): Outcome<CoinPackageListWrapper> = apiCall(TAG) {
+        val r = api.coinPackageList()
+        val data = r.data
+        if (r.success && data != null) Outcome.Success(data)
+        else Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
     }
 
     override suspend fun purchaseCoin(purchaseCoinRequest: PurchaseCoinRequest): PurchaseCoinResponse {
@@ -85,5 +92,7 @@ class PaymentRepositoryImpl(private val api: PaymentApiService) : PaymentReposit
         return api.getSubscriptionStatus(userId)
     }
 
-    private companion object { const val TAG = "PaymentRepository" }
+    private companion object {
+        const val TAG = "PaymentRepository"
+    }
 }

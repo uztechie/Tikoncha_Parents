@@ -9,7 +9,7 @@
     import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationResponse
     import uz.tikoncha_parent.domain.model.SubscriptionLimit
     import uz.tikoncha_parent.domain.model.app_error.Outcome
-    import uz.tikoncha_parent.domain.model.subscription.CoinPackageListResponse
+    import uz.tikoncha_parent.domain.model.subscription.CoinPackageListWrapper
     import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
     import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinResponse
     import uz.tikoncha_parent.domain.model.transaction.TransactionPage
@@ -25,7 +25,7 @@
 
         suspend fun promoCodeValidation(promoCodeValidationRequest: PromoCodeValidationRequest): PromoCodeValidationResponse
 
-        suspend fun coinPackages(): CoinPackageListResponse
+        suspend fun coinPackages(): Outcome<CoinPackageListWrapper>
 
         suspend fun purchaseCoin(purchaseCoinRequest: PurchaseCoinRequest): PurchaseCoinResponse
 

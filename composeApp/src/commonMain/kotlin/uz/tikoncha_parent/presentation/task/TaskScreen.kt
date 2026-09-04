@@ -57,7 +57,6 @@ import tikoncha_parents.composeapp.generated.resources.bajarilgan
 import tikoncha_parents.composeapp.generated.resources.bekor_qilish
 import tikoncha_parents.composeapp.generated.resources.circle_clock
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
-import tikoncha_parents.composeapp.generated.resources.dialog_internet
 import tikoncha_parents.composeapp.generated.resources.farzand_vazifalari_desc
 import tikoncha_parents.composeapp.generated.resources.farzandim
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
@@ -69,13 +68,11 @@ import tikoncha_parents.composeapp.generated.resources.muddati_otgan
 import tikoncha_parents.composeapp.generated.resources.ochirish
 import tikoncha_parents.composeapp.generated.resources.ota_ona_vazifalari_desc
 import tikoncha_parents.composeapp.generated.resources.ozim
-import tikoncha_parents.composeapp.generated.resources.qayta_urinish
 import tikoncha_parents.composeapp.generated.resources.vazifa_ochirilsinmi
 import tikoncha_parents.composeapp.generated.resources.vazifa_ochirish_tasdiq
 import tikoncha_parents.composeapp.generated.resources.vazifa_qo_shish
 import tikoncha_parents.composeapp.generated.resources.vazifalar
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.add_child.AddChildScreen
 import uz.tikoncha_parent.presentation.base.ChildSelectionButton
@@ -83,7 +80,7 @@ import uz.tikoncha_parent.presentation.base.ConfirmationBottomSheet
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.ErrorRetryState
 import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.new_home.SelectionChildBottomSheet
@@ -399,7 +396,7 @@ fun TaskUi(
 
                         loadFailure != null && state.taskList.isEmpty() -> {
                             item(key = "load-failed") {
-                                ErrorTaskState(
+                                ErrorRetryState(
                                     failure = loadFailure,
                                     onRetry = { event(TaskListEvent.OnRetry) },
                                     modifier = Modifier
@@ -522,49 +519,6 @@ private fun EmptyTaskState(
             color = AppColors.text.secondary,
             textAlign = TextAlign.Center
         )
-    }
-}
-
-@Composable
-private fun ErrorTaskState(
-    failure: Outcome.Failure,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(
-                if (failure.cause == ErrorCause.NoInternet || failure.cause == ErrorCause.Timeout)
-                    Res.drawable.dialog_internet
-                else
-                    Res.drawable.dialog_failed
-            ),
-            contentDescription = null,
-            modifier = Modifier.size(90.dp)
-        )
-        Spacer(Modifier.height(26.dp))
-
-        Text(
-            text = failure.asText(),
-            style = AppTypography.emphasizedMdMedium,
-            color = AppColors.text.secondary,
-            textAlign = TextAlign.Center
-        )
-
-        // Qayta urinish faqat mantiqan foyda beradigan xatolarda.
-        // SessionExpired / InvalidResponse'da tugma ko'rsatilmaydi.
-        if (failure.cause.isRetryable) {
-            Spacer(Modifier.height(20.dp))
-            CustomOutlinedButton(
-                text = stringResource(Res.string.qayta_urinish),
-                onClick = onRetry,
-                modifier = Modifier.padding(horizontal = 40.dp)
-            )
-        }
     }
 }
 

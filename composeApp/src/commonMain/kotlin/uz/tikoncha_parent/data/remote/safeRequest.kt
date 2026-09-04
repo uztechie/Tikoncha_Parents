@@ -14,9 +14,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.contentType
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.io.IOException
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.RefreshTokenResponse
-
+import kotlin.coroutines.cancellation.CancellationException
 
 suspend inline fun <reified T> HttpClient.safeRequest(
     method: HttpMethod,
@@ -34,21 +37,21 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     // Check for 401
     val bodyText = response.bodyAsText()
     if (bodyText.contains("\"code\":401") || response.status == HttpStatusCode.Unauthorized) {
-        val success = refreshAccessToken(this)
-
-        if (success) {
-            // Retry request
-            val retryResponse = this.request {
-                this.method = method
-                url(url)
-                contentType(ContentType.Application.Json)
-                block()
+        when (val r = refreshAccessToken(this)) {
+            RefreshResult.Success -> {
+                val retryResponse = this.request {
+                    this.method = method
+                    url(url)
+                    contentType(ContentType.Application.Json)
+                    block()
+                }
+                return retryResponse.body()
             }
-
-            return retryResponse.body()
-        } else {
-            handleSessionExpired()
-            throw Exception("Session expired, please login again.")
+            RefreshResult.InvalidToken -> {
+                handleSessionExpired()
+                throw Exception("Session expired, please login again.")
+            }
+            is RefreshResult.Temporary -> throw r.cause ?: IOException("Tokenni yangilab bo'lmadi")
         }
     }
 
@@ -71,39 +74,72 @@ suspend inline fun <reified T> HttpClient.safeUploadMultipart(
 
     // 🔁 2. Token expired (code == 501)
     if (bodyText.contains("\"code\":401")) {
-        val success = refreshAccessToken(this)
-        if (success) {
-            val retryResponse = this.submitFormWithBinaryData(
-                url = url,
-                formData = formData
-            )
-            return retryResponse.body()
-        } else {
-            handleSessionExpired()
-            throw Exception("Session expired. Please log in again.")
+        when (val r = refreshAccessToken(this)) {
+            RefreshResult.Success -> {
+                val retryResponse = this.submitFormWithBinaryData(
+                    url = url,
+                    formData = formData
+                )
+                return retryResponse.body()
+            }
+            RefreshResult.InvalidToken -> {
+                handleSessionExpired()
+                throw Exception("Session expired, please login again.")
+            }
+            is RefreshResult.Temporary -> throw r.cause ?: IOException("Tokenni yangilab bo'lmadi")
         }
     }
 
     return response.body()
 }
 
-suspend fun refreshAccessToken(client: HttpClient): Boolean {
-    return try {
-        val response = client.post("auth/refresh") {
-            parameter("refresh_token", AppSettings.refreshToken)
-        }.body<RefreshTokenResponse>()
+/** Token yangilash natijasi. */
+sealed interface RefreshResult {
+    data object Success : RefreshResult
+    data object InvalidToken : RefreshResult
+    data class Temporary(val cause: Throwable?) : RefreshResult
+}
 
+private val refreshMutex = Mutex()
 
-        if (response.success){
-            AppSettings.accessToken = response.data?.access_token?:""
-            true
+suspend fun refreshAccessToken(client: HttpClient): RefreshResult {
+    // Refresh token yo'q — server 422 qaytaradi, 401 emas. Cheksiz siklga tushmaslik uchun.
+    if (AppSettings.refreshToken.isBlank()) return RefreshResult.InvalidToken
+
+    val tokenBefore = AppSettings.accessToken
+
+    // Boshqa korutin allaqachon yangilayapti — kutamiz, o'zimiz 15 s urinmaymiz
+    if (refreshMutex.isLocked) {
+        refreshMutex.withLock { }
+        val after = AppSettings.accessToken
+        return if (after.isNotBlank() && after != tokenBefore) RefreshResult.Success
+        else RefreshResult.Temporary(null)
+    }
+
+    return refreshMutex.withLock {
+        // Navbat kutayotganda kimdir yangilab bo'lgan bo'lishi mumkin
+        val current = AppSettings.accessToken
+        if (current.isNotBlank() && current != tokenBefore) return@withLock RefreshResult.Success
+
+        try {
+            val body = client.post("auth/refresh") {
+                parameter("refresh_token", AppSettings.refreshToken)
+            }.body<RefreshTokenResponse>()
+
+            val newToken = body.data?.access_token
+            when {
+                body.success && !newToken.isNullOrBlank() -> {
+                    AppSettings.accessToken = newToken
+                    RefreshResult.Success
+                }
+                body.code == 401 || body.code == 403 -> RefreshResult.InvalidToken
+                else -> RefreshResult.Temporary(null)
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            RefreshResult.Temporary(e)
         }
-        else{
-            false
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
     }
 }
 

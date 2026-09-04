@@ -31,8 +31,10 @@ class DeviceRepositoryImpl(
             }
         }
 
-    override suspend fun logout(fcmToken: String): LogoutResponse {
-        return api.logout(fcmToken)
+    override suspend fun logout(fcmToken: String): Outcome<Unit> = apiCall(TAG) {
+        val r = api.logout(fcmToken)
+        if (r.success) Outcome.Success(Unit)
+        else Outcome.Failure(ApiErrorMapper.fromCode(null), r.error)
     }
 
     private companion object { const val TAG = "DeviceRepository" }

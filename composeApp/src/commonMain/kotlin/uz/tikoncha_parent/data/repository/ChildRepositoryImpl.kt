@@ -79,8 +79,18 @@ class ChildRepositoryImpl(
             }
         }
 
-    override suspend fun unlinkChild(request: UnlinkChildRequest): UnlinkChildResponse {
-        return api.unlinkChild(request)
+    override suspend fun unlinkChild(
+        childUserId: String,
+        parentUserId: String
+    ): Outcome<String> = apiCall(TAG) {
+        val r = api.unlinkChild(
+            UnlinkChildRequest(
+                child_user_id = childUserId,
+                parent_user_id = parentUserId
+            )
+        )
+        if (r.success) Outcome.Success(r.data?.message ?: "")
+        else Outcome.Failure(ApiErrorMapper.fromCode(r.code), r.error)
     }
 
     private companion object {

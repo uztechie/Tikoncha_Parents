@@ -4,10 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -23,8 +23,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -40,19 +38,18 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.presentation.base.AppEmptyList
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.ErrorRetryState
 import uz.tikoncha_parent.presentation.base.NoInternetDialog
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.rememberInternetCheck
 import uz.tikoncha_parent.presentation.chat.ChatMessageAiScreen
 import uz.tikoncha_parent.presentation.chat.chat_room.ChatRoomScreen
 import uz.tikoncha_parent.presentation.model.ChatType
-import uz.tikoncha_parent.presentation.new_home.HomeEvent
-import uz.tikoncha_parent.presentation.statistic.StatisticEvent
 import uz.tikoncha_parent.ui.ContainerPadding
 import uz.tikoncha_parent.ui.DividerHorizontal
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
-import uz.tikoncha_parent.ui.theme.extendedColor
 import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 
@@ -95,8 +92,13 @@ fun ChatUi(
         }
     }
 
-    LaunchedEffect(state.error) {
-        if (!state.error.isNullOrEmpty()) {
+    val loadFailure = state.error
+    val errorText = loadFailure?.asText()
+
+    // Ro'yxat bo'sh bo'lsa xato ekran ichida ko'rsatiladi — dialog ortiqcha.
+    // Dialog faqat yangilash yiqilganda kerak (ro'yxat allaqachon ko'rinib turibdi).
+    LaunchedEffect(errorText, state.chats.isEmpty()) {
+        if (!errorText.isNullOrEmpty() && state.chats.isNotEmpty()) {
             showDialog = true
         }
     }
@@ -105,7 +107,7 @@ fun ChatUi(
         painter = painterResource(Res.drawable.dialog_failed),
         show = showDialog,
         title = stringResource(Res.string.xatolik),
-        message = state.error ?: "",
+        message = errorText ?: "",
         buttonText = stringResource(Res.string.ok),
         showCloseButton = false,
         onDismiss = {
@@ -114,6 +116,7 @@ fun ChatUi(
         },
         onButtonClick = {
             showDialog = false
+            event(ChatEvent.ClearError)
         }
     )
 
@@ -150,6 +153,21 @@ fun ChatUi(
                             .fillMaxSize()
                             .padding(horizontal = ContainerPadding)
                     )
+                }
+
+                loadFailure != null && state.chats.isEmpty() -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        item {
+                            ErrorRetryState(
+                                failure = loadFailure,
+                                onRetry = { event(ChatEvent.Refresh) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 }
 
                 state.chats.isEmpty() -> {

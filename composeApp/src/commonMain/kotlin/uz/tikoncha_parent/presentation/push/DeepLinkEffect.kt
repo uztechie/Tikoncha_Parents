@@ -25,7 +25,6 @@ fun navigateByDeepLink(navigator: Navigator, link: DeepLink){
     when(link){
         is DeepLink.Chat -> navigator.push(
             listOf(
-                StatisticScreen(),
                 ChatScreen(),
                 ChatRoomScreen(
                     chatId = link.chatId,

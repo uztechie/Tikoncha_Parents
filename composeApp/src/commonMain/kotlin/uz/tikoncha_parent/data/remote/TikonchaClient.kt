@@ -40,12 +40,16 @@ class TikonchaClient(private val engine: HttpClientEngine) {
         }
 
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = BuildConfig.isDebug // release'da trafikni tejaymiz
-                isLenient = true
-                ignoreUnknownKeys = true
-                encodeDefaults = true
-            })
+            json(
+                Json
+                {
+                    prettyPrint = BuildConfig.isDebug // release'da trafikni tejaymiz
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    encodeDefaults = true
+                    coerceInputValues = true
+                }
+            )
         }
 
         // Log faqat debug'da

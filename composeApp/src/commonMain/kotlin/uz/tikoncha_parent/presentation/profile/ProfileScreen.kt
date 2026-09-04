@@ -79,8 +79,8 @@ import tikoncha_parents.composeapp.generated.resources.versiya
 import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.data.mapper.toUploadPart
 import uz.tikoncha_parent.domain.repository.ChildRepository
-import uz.tikoncha_parent.domain.use_case.chat.GetMyCoinsUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetCoinPackageListUseCase
+import uz.tikoncha_parent.domain.repository.MyCoinsRepository
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.platform.decodeImageBitmapOrNull
 import uz.tikoncha_parent.platform.getAppVersion
 import uz.tikoncha_parent.platform.openUrl
@@ -127,17 +127,17 @@ class ProfileScreen : Screen {
         val state = viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        val useCase: GetMyCoinsUseCase = koinInject()
-        val coinCase: GetCoinPackageListUseCase = koinInject()
+        val myCoinsRepo: MyCoinsRepository = koinInject()
+        val paymentRepo: PaymentRepository = koinInject()
         val childRepo: ChildRepository = koinInject()
         val coinsViewModel = remember {
             CoinsViewModel(
-                getMyCoinsUseCase = useCase,
-                coinsPackageListUseCase = coinCase,
+                myCoinsRepository = myCoinsRepo,
+                paymentRepository = paymentRepo,
                 childRepository = childRepo
             )
         }
-        LaunchedEffect(state.value.userInfo) {
+        LaunchedEffect(Unit) {
             viewModel.onEvent(ProfileEvent.Refresh)
         }
 
@@ -155,10 +155,6 @@ class ProfileScreen : Screen {
             taskViewModel.onEvent(TaskListEvent.LoadAllChildrenActiveTasks)
         }
         val activeTasksCount = taskState.allChildrenActiveTaskCount
-
-        LaunchedEffect(Unit) {
-            event(ProfileEvent.LoadAvatarFromServer)
-        }
 
         ProfileUi(
             navigator = navigator,

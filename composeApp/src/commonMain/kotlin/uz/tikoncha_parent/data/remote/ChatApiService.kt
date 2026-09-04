@@ -25,7 +25,7 @@ class ChatApiService (
     suspend fun chatMessages(params: Map<String, Any>): ChatMessagesResponse =
         httpClient.safeRequest(
             method = HttpMethod.Get,
-            url = "chat/messages/",
+            url = "chat/messages",
             block = {
                 params.forEach {
                     parameter(it.key, it.value)
@@ -36,7 +36,7 @@ class ChatApiService (
     suspend fun chatSendMessage(request: SendMessageRequest): SendMessageResponse =
         httpClient.safeRequest(
             method = HttpMethod.Post,
-            url = "chat/messages/",
+            url = "chat/messages",
             block = {
                 setBody(request)
             }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -53,7 +54,6 @@ import uz.tikoncha_parent.presentation.base.CustomButtonDash
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.DashedBorderButton
-import uz.tikoncha_parent.presentation.chat.chat_list.ChatEvent
 import uz.tikoncha_parent.presentation.profile.ProfileEvent
 import uz.tikoncha_parent.presentation.profile.ProfileState
 import uz.tikoncha_parent.presentation.profile.ProfileViewModel
@@ -74,8 +74,9 @@ class ChildrenSelectScreen : Screen {
         val state by viewModel.state.collectAsStateWithLifecycle()
         val event = viewModel::onEvent
 
-        LaunchedEffect(state.children) {
+        LifecycleStartEffect(Unit) {
             event(ProfileEvent.Refresh)
+            onStopOrDispose {  }
         }
 
         ChildrenSelectUi(

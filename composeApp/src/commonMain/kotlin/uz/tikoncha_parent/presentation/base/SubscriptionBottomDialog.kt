@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.ktor.util.reflect.Type
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -35,11 +33,8 @@ import tikoncha_parents.composeapp.generated.resources.hedgehog_heart
 import tikoncha_parents.composeapp.generated.resources.plus_imkoniyatlarini_ochish
 import tikoncha_parents.composeapp.generated.resources.tikoncha_orqali_ilovalar_vaqt_va_foydalanishni_boshqaring
 import tikoncha_parents.composeapp.generated.resources.to_liq_nazoratni_yoqing
-
-import uz.tikoncha_parent.App
 import uz.tikoncha_parent.ui.Space
 import uz.tikoncha_parent.ui.SpaceLarge
-import uz.tikoncha_parent.ui.SpaceSmall
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
@@ -52,7 +47,6 @@ fun SubscriptionBottomDialog(
     message: String = stringResource(Res.string.tikoncha_orqali_ilovalar_vaqt_va_foydalanishni_boshqaring),
     confirmButtonText: String = stringResource(Res.string.plus_imkoniyatlarini_ochish),
     dismissButtonText: String = stringResource(Res.string.bekor_qilish),
-    confirmButtonColor: Color = AppColors.action.primary,
     showCancelButton: Boolean = true,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit

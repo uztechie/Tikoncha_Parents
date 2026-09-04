@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +25,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import uz.tikoncha_parent.data.local.AppSettings
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
+import uz.tikoncha_parent.data.remote.model.WSEditMessage
 import uz.tikoncha_parent.data.remote.model.WSError
 import uz.tikoncha_parent.data.remote.model.WSMessageCreated
 import uz.tikoncha_parent.data.remote.model.WSMessageUpdated
@@ -35,18 +35,16 @@ import uz.tikoncha_parent.data.remote.model.WSRequest
 import uz.tikoncha_parent.data.remote.model.WSResponse
 import uz.tikoncha_parent.data.remote.model.WSSendMessage
 import uz.tikoncha_parent.platform.Logger
-
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-class ChatSocketService (
+class ChatSocketService(
     private val client: HttpClient
-)
-{
+) {
 
     private val TAG = "ChatSocketService"
-    private val scope = CoroutineScope(SupervisorJob()+ Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var session: DefaultClientWebSocketSession? = null
     private var reconnectJob: Job? = null
     private var heartbeatJob: Job? = null
@@ -63,19 +61,23 @@ class ChatSocketService (
         ignoreUnknownKeys = true
         isLenient = true
         encodeDefaults = true
+        coerceInputValues = true
     }
     private val baseWs = "wss://${TikonchaClient.BASE_URL}/chat/ws"
 
-    fun connect(){
+    fun connect() {
         if (reconnectJob?.isActive == true) return
         reconnectJob = scope.launch {
             var attempts = 0
-            while (isActive){
+            while (isActive) {
                 val token = AppSettings.accessToken
                 Logger.d(TAG, "connect: 1")
 
                 val url = URLBuilder(baseWs).apply {
-                    parameters.append("token", token) // "Bearer xxx" bo‘lsa ham to‘g‘ri encode qiladi
+                    parameters.append(
+                        "token",
+                        token
+                    ) // "Bearer xxx" bo‘lsa ham to‘g‘ri encode qiladi
                 }.buildString()
 
                 // Bir vaqtning o'zida parallel connect bo‘lishini oldini olamiz
@@ -86,7 +88,7 @@ class ChatSocketService (
 
                 try {
                     Logger.d(TAG, "connect: token=$token")
-                    client.webSocket(url){
+                    client.webSocket(url) {
                         session = this
                         attempts = 0
                         _connected.value = true
@@ -94,21 +96,18 @@ class ChatSocketService (
                         startHeartbeat()
                         listenLoop()
                     }
-                }
-                catch (ce: CancellationException) {
+                } catch (ce: CancellationException) {
                     Logger.e(TAG, "connect: cancelled", ce)
                     throw ce               // ← cancel normal chiqish
-                }
-                catch (e: Throwable){
+                } catch (e: Throwable) {
                     Logger.e(TAG, "connect error", e)
                     attempts++
                     val base = (attempts * 1000L).coerceAtMost(15_000L)
                     val jitter = (0..400).random().toLong()
                     delay(base + jitter)
 
-                }
-                finally {
-                    Logger.e(TAG, "connect: finaly", )
+                } finally {
+                    Logger.e(TAG, "connect: finaly")
                     stopHeartbeat()
                     _connected.value = false
                     session = null
@@ -135,47 +134,52 @@ class ChatSocketService (
         }
     }
 
-    private fun stopHeartbeat(){
+    private fun stopHeartbeat() {
         heartbeatJob?.cancel()
         heartbeatJob = null
     }
 
-    private suspend fun listenLoop(){
-        for (frame in session?.incoming ?: return){
-            val text = (frame as? Frame.Text)?.readText()?:continue
+    private suspend fun listenLoop() {
+        for (frame in session?.incoming ?: return) {
+            val text = (frame as? Frame.Text)?.readText() ?: continue
             Logger.d(TAG, "WS-IN: $text")
             runCatching { handleIncoming(text) }
-                .onFailure { _events.tryEmit(ChatWsEvent.Error("parse error: ${it.message}"))  }
+                .onFailure { _events.tryEmit(ChatWsEvent.Error("parse error: ${it.message}")) }
         }
     }
 
-    private suspend fun sendText(payLoad: String){
+    private suspend fun sendText(payLoad: String) {
         Logger.d(TAG, "WS-OUT: $payLoad")
         session?.send(Frame.Text(payLoad))
     }
 
-    private  fun handleIncoming(raw: String){
-       val env = json.decodeFromString<WSResponse<JsonElement>>(raw)
-        when(env.type){
-            "pong" -> { _events.tryEmit(ChatWsEvent.Pong) }
+    private fun handleIncoming(raw: String) {
+        val env = json.decodeFromString<WSResponse<JsonElement>>(raw)
+        when (env.type) {
+            "pong" -> {
+                _events.tryEmit(ChatWsEvent.Pong)
+            }
+
             "message_created" -> {
-                val data = env.data?.let {json.decodeFromJsonElement<WSMessageCreated>(it) }
+                val data = env.data?.let { json.decodeFromJsonElement<WSMessageCreated>(it) }
 
                 val message = data?.message
-                if (message != null){
+                if (message != null) {
                     _events.tryEmit(ChatWsEvent.MessageCreated(message))
                 }
             }
+
             "message_updated" -> {
-                val data = env.data?.let {json.decodeFromJsonElement<WSMessageUpdated>(it) }
+                val data = env.data?.let { json.decodeFromJsonElement<WSMessageUpdated>(it) }
                 val message = data?.message
-                if (message != null){
+                if (message != null) {
                     _events.tryEmit(ChatWsEvent.MessageUpdated(message))
                 }
             }
+
             "read_update" -> {
-                val data = env.data?.let {json.decodeFromJsonElement<WSReadUpdate>(it) }
-                if (data != null){
+                val data = env.data?.let { json.decodeFromJsonElement<WSReadUpdate>(it) }
+                if (data != null) {
                     _events.tryEmit(
                         ChatWsEvent.ReadUpdate(
                             chatId = data.chat_id,
@@ -185,15 +189,17 @@ class ChatSocketService (
                     )
                 }
             }
+
             "error" -> {
-                val data = env.data?.let {json.decodeFromJsonElement<WSError>(it) }
+                val data = env.data?.let { json.decodeFromJsonElement<WSError>(it) }
                 _events.tryEmit(ChatWsEvent.Error(data?.error ?: "Unknown WS error"))
             }
+
             else -> _events.tryEmit(ChatWsEvent.Raw(env.type))
         }
     }
 
-    suspend fun sendPing(){
+    suspend fun sendPing() {
         val env = WSRequest<Any>(
             type = "ping",
             payload = null
@@ -210,7 +216,15 @@ class ChatSocketService (
     }
 
     suspend fun editMessage(messageId: String, newText: String) {
-
+        val editMessage = WSEditMessage(
+            message_id = messageId,
+            text = newText
+        )
+        val env = WSRequest(
+            type = "edit_message",
+            payload = editMessage
+        )
+        sendText(json.encodeToString(env))
     }
 
     suspend fun markRead(chatId: String, messageId: String) {
@@ -224,16 +238,4 @@ class ChatSocketService (
         )
         sendText(json.encodeToString(env))
     }
-
-    suspend fun markUnread(chatId: String, messageId: String) {
-
-    }
-
-
-
-
-
-
-
-
 }

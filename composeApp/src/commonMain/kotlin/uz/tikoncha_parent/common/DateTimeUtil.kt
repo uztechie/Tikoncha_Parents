@@ -80,7 +80,8 @@ object DateTimeUtil {
             ms * 1_000_000 // nanos
         )
 
-        // Interpret the naive timestamp as UTC (no offset in the string)
+        // Naive timestamp'ni MAHALLIY vaqt deb o'qiydi (server local yuborsa — shu).
+        // Server UTC yuborsa toMillisUtc() ishlating.
         return ldt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 

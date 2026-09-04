@@ -17,12 +17,9 @@ import uz.tikoncha_parent.data.mapper.stableKey
 import uz.tikoncha_parent.data.mapper.toChatMessageUi
 import uz.tikoncha_parent.data.remote.model.ChatMessageDto
 import uz.tikoncha_parent.data.remote.model.ChatWsEvent
-import uz.tikoncha_parent.domain.model.Resource
-import uz.tikoncha_parent.domain.use_case.chat.DeleteMessageUseCase
-import uz.tikoncha_parent.domain.use_case.chat.EditMessageUseCase
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+import uz.tikoncha_parent.domain.repository.ChatRepository
 import uz.tikoncha_parent.domain.use_case.chat.GetChatMessagesFromServerUseCase
-import uz.tikoncha_parent.domain.use_case.chat.MarkReadUseCase
-import uz.tikoncha_parent.domain.use_case.chat.ObserveChatEventUseCase
 import uz.tikoncha_parent.domain.use_case.chat.ObserveChatStatusUseCase
 import uz.tikoncha_parent.domain.use_case.chat.SendMessageUseCase
 import uz.tikoncha_parent.platform.Logger
@@ -36,13 +33,10 @@ import uz.tikoncha_parent.presentation.profile.language.LanguagePrefs
 
 class ChatRoomViewModel(
     private val getChatMessagesPage: GetChatMessagesFromServerUseCase,
-    private val observeEvents: ObserveChatEventUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
-    private val editMessageUseCase: EditMessageUseCase,
-    private val deleteMessageUseCase: DeleteMessageUseCase,
     private val observeChatStatusUseCase: ObserveChatStatusUseCase,
-    private val markReadUseCase: MarkReadUseCase,
-    private val connectionManager: ChatConnectionManager
+    private val connectionManager: ChatConnectionManager,
+    private val repository: ChatRepository
 ) : ScreenModel {
 
     private val langType = LanguagePrefs.loadOrDefault()
@@ -156,7 +150,7 @@ class ChatRoomViewModel(
     private fun startObserver() {
         if (wsJob?.isActive == true) return
         wsJob = screenModelScope.launch {
-            observeEvents().collect { ev ->
+            repository.observeEvents().collect { ev ->
                 when (ev) {
                     is ChatWsEvent.MessageCreated -> onSocketMessageCreated(ev.message)
                     is ChatWsEvent.ReadUpdate -> onSocketReadUpdate(ev.chatId, ev.messageId)
@@ -176,7 +170,7 @@ class ChatRoomViewModel(
             it.copy(
                 isInitialLoading = true,
                 isPagingLoading = false,
-                error = "",
+                error = null,
                 allMessages = emptyList(),
                 messages = emptyList(),
                 lastMessage = null,
@@ -188,13 +182,13 @@ class ChatRoomViewModel(
         screenModelScope.launch {
             when (val res =
                 getChatMessagesPage(chatId, sinceId = null, sinceTs = null, limit = 40)) {
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     val pageDesc = res.data.items
                         .map { it.toChatMessageUi() }
                         .distinctBy { it.stableKey() }
                         .sortedByDescending { it.createdAt }
 
-                    // cursor: backend bersa o‘sha, bo‘lmasa oldest id
+                    // cursor: backend bersa o'sha, bo'lmasa oldest id
                     val cursor = res.data.sinceId ?: pageDesc.lastOrNull()?.id
 
                     _state.update {
@@ -208,11 +202,9 @@ class ChatRoomViewModel(
                     applyAllMessagesDesc(pageDesc)
                 }
 
-                is Resource.Error -> _state.update {
-                    it.copy(isInitialLoading = false, error = res.message)
+                is Outcome.Failure -> _state.update {
+                    it.copy(isInitialLoading = false, error = res)
                 }
-
-                else -> _state.update { it.copy(isInitialLoading = false) }
             }
         }
     }
@@ -236,7 +228,7 @@ class ChatRoomViewModel(
         screenModelScope.launch {
             when (val res =
                 getChatMessagesPage(s.chatId, sinceId = cursor, sinceTs = null, limit = 40)) {
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     val olderDesc = res.data.items
                         .map { it.toChatMessageUi() }
                         .distinctBy { it.stableKey() }
@@ -245,7 +237,7 @@ class ChatRoomViewModel(
                     mergeMutex.withLock {
                         val current = state.value.allMessages
 
-                        // ✅ server DESC + sinceId => bu older bo‘lishi kerak
+                        // ✅ server DESC + sinceId => bu older bo'lishi kerak
                         // current (newest..oldest) + older (newest..oldest older-part)
                         val merged = (current + olderDesc)
                             .distinctBy { it.stableKey() }
@@ -269,11 +261,14 @@ class ChatRoomViewModel(
                     }
                 }
 
-                is Resource.Error -> _state.update {
-                    it.copy(isPagingLoading = false, error = res.message)
+                is Outcome.Failure -> {
+                    // Qulfni ochamiz — aks holda internet qaytsa ham
+                    // shu kursor bilan qayta urinib bo'lmaydi.
+                    lastRequestedSinceId = null
+                    _state.update {
+                        it.copy(isPagingLoading = false, error = res)
+                    }
                 }
-
-                else -> _state.update { it.copy(isPagingLoading = false) }
             }
         }
     }
@@ -326,7 +321,7 @@ class ChatRoomViewModel(
                 replyToId = replyToMessage?.id
             )
 
-            if (res is Resource.Error) {
+            if (res is Outcome.Failure) {
                 markLocalFailed(clientMsgId)
             }
         }
@@ -364,11 +359,11 @@ class ChatRoomViewModel(
                 }
                 applyAllMessagesDesc(next)
             }
-            val res = editMessageUseCase.invoke(
-                text = text,
-                messageId = selectedMessage.id
+            val res = repository.editMessage(
+                messageId = selectedMessage.id,
+                newText = text
             )
-            if (res is Resource.Error) {
+            if (res is Outcome.Failure) {
                 markLocalFailed(selectedMessage.id)
             }
         }
@@ -388,10 +383,8 @@ class ChatRoomViewModel(
                 }
                 return@launch
             }
-            val response = deleteMessageUseCase(selectedMessage.id)
-            when(response){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (repository.deleteMessage(selectedMessage.id)) {
+                is Outcome.Failure -> {
                     markLocalFailed(selectedMessage.clientMsgId ?: "")
                     _state.update {
                         it.copy(
@@ -399,7 +392,7 @@ class ChatRoomViewModel(
                         )
                     }
                 }
-                is Resource.Success -> {
+                is Outcome.Success -> {
                     deleteLocalByClientMsgId(selectedMessage.clientMsgId ?: "")
                     _state.update {
                         it.copy(
@@ -439,7 +432,7 @@ class ChatRoomViewModel(
                 clientMsgId = clientMsgId,
                 replyToId = messageUi.replyToId
             )
-            if (res is Resource.Error) {
+            if (res is Outcome.Failure) {
                 markLocalFailed(clientMsgId)
             }
         }
@@ -462,11 +455,11 @@ class ChatRoomViewModel(
                 }.sortedWith(descComparator())
                 applyAllMessagesDesc(next)
             }
-            val res = editMessageUseCase.invoke(
-                text = text,
-                messageId = messageId
+            val res = repository.editMessage(
+                messageId = messageId,
+                newText = text
             )
-            if (res is Resource.Error) {
+            if (res is Outcome.Failure) {
                 markEditFailed(messageId)
             }
         }
@@ -578,7 +571,7 @@ class ChatRoomViewModel(
         if (last.isMine || last.isRead) return
 
         screenModelScope.launch {
-            markReadUseCase(chatId = chatId, messageId = last.id)
+            repository.markRead(chatId = chatId, messageId = last.id)
         }
     }
 
@@ -623,9 +616,8 @@ class ChatRoomViewModel(
         chatStatusJob = screenModelScope.launch(Dispatchers.Default) {
             observeChatStatusUseCase.invoke(chatId).collect { result ->
                 when (result) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {}
-                    is Resource.Success -> {
+                    is Outcome.Failure -> Unit
+                    is Outcome.Success -> {
                         Logger.d(
                             "observeChatStatus",
                             "lastSeen=${result.data.firstOrNull()?.last_seen}  data=${result.data.joinToString()}"

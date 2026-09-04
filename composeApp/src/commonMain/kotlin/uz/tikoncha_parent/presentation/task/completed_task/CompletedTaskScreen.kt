@@ -42,20 +42,17 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.bajarilgan_vazifalar
 import tikoncha_parents.composeapp.generated.resources.dialog_failed
-import tikoncha_parents.composeapp.generated.resources.dialog_internet
 import tikoncha_parents.composeapp.generated.resources.farzand_vazifalari_desc
 import tikoncha_parents.composeapp.generated.resources.farzandim
 import tikoncha_parents.composeapp.generated.resources.farzandlaringiz
 import tikoncha_parents.composeapp.generated.resources.hali_vazifa_yoq
 import tikoncha_parents.composeapp.generated.resources.home_task
 import tikoncha_parents.composeapp.generated.resources.ozim
-import tikoncha_parents.composeapp.generated.resources.qayta_urinish
 import tikoncha_parents.composeapp.generated.resources.xatolik
-import uz.tikoncha_parent.domain.model.app_error.ErrorCause
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.base.CustomDialog
 import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.base.CustomOutlinedButton
+import uz.tikoncha_parent.presentation.base.ErrorRetryState
 import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.task.TaskSegmentedToggle
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -205,7 +202,7 @@ fun CompletedTaskUi(
                     }
                     loadFailure != null && state.taskList.isEmpty() -> {
                         item(key = "load-failed") {
-                            ErrorState(
+                            ErrorRetryState(
                                 failure = loadFailure,
                                 onRetry = { event(CompletedTaskEvent.LoadTasks) },
                                 modifier = Modifier
@@ -285,48 +282,6 @@ private fun EmptyState(
             color = AppColors.text.secondary,
             textAlign = TextAlign.Center
         )
-    }
-}
-
-
-@Composable
-private fun ErrorState(
-    failure: Outcome.Failure,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        androidx.compose.foundation.Image(
-            painter = painterResource(
-                if (failure.cause == ErrorCause.NoInternet || failure.cause == ErrorCause.Timeout)
-                    Res.drawable.dialog_internet
-                else
-                    Res.drawable.dialog_failed
-            ),
-            contentDescription = null,
-            modifier = Modifier.size(90.dp)
-        )
-        Spacer(Modifier.height(26.dp))
-
-        Text(
-            text = failure.asText(),
-            style = AppTypography.emphasizedMdMedium,
-            color = AppColors.text.secondary,
-            textAlign = TextAlign.Center
-        )
-
-        if (failure.cause.isRetryable) {
-            Spacer(Modifier.height(20.dp))
-            CustomOutlinedButton(
-                text = stringResource(Res.string.qayta_urinish),
-                onClick = onRetry,
-                modifier = Modifier.padding(horizontal = 40.dp)
-            )
-        }
     }
 }
 

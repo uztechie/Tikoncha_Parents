@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.chat.chat_room
 
 import uz.tikoncha_parent.domain.model.ChatMessageItem
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.chat.model.ChatDateLabel
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.presentation.model.ChatType
@@ -29,7 +30,7 @@ data class ChatRoomState(
     // ✅ sinceId cursor (current oldest message id)
     val sinceId: String? = null,
 
-    val error: String? = null,
+    val error: Outcome.Failure? = null,
 
     // header subscription_info (sizda bor)
     val chatMembersCount: Int = 0,

@@ -175,6 +175,8 @@ class HomeViewModel(
                 }
                 is Outcome.Success -> {
                     val children = res.data
+                    val previousChildId = _state.value.selectedChild?.userId
+
                     AppSettings.syncSelectedChildWith(children)
                     if (children.isEmpty()) {
                         AppSettings.selectedChild = null
@@ -187,7 +189,12 @@ class HomeViewModel(
                             selectedChild = AppSettings.selectedChild,
                         )
                     }
-                    loadAll()
+
+                    // Serverdan kelgan farzand keshdagi bilan bir xil bo'lsa,
+                    // SyncSelectedChildFromSettings allaqachon yuklagan — takrorlamaymiz.
+                    if (AppSettings.selectedChild?.userId != previousChildId) {
+                        loadAll()
+                    }
                 }
             }
         }

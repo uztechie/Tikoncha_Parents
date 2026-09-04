@@ -29,6 +29,13 @@ data class WSReadMessage(
 
 
 @Serializable
+data class WSEditMessage(
+    val message_id: String,
+    val text: String
+)
+
+
+@Serializable
 data class WSResponse<T>(
     val type: String,
     val data:T? = null
