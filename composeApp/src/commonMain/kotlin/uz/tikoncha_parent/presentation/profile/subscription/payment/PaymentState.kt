@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.profile.subscription.payment
 
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 data class PaymentState(
@@ -13,7 +14,7 @@ data class PaymentState(
     val merchantId: Int = 46788,
     val subscriptionDuration: SubscriptionDuration = SubscriptionDuration.MONTHLY,
     val paymentStatus: PaymentStatus = PaymentStatus.START,
-    val paymentStatusError: String = "",
+    val paymentStatusError: Outcome.Failure? = null,
     val isTestAccount: Boolean = false,
     val planId: String = "",
 

@@ -41,6 +41,7 @@ import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionEffect
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionEvent
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionState
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText

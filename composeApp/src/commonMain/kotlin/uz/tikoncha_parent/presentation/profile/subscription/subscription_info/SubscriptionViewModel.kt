@@ -1,4 +1,4 @@
-package uz.tikoncha_parent.presentation.profile.subscription.info
+package uz.tikoncha_parent.presentation.profile.subscription.subscription_info
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -10,20 +10,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.subscription.PlanType
-import uz.tikoncha_parent.domain.use_case.payment.GetSubscriptionStatusUseCase
-import uz.tikoncha_parent.platform.Logger
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionEffect
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionEvent
-import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionState
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class SubscriptionViewModel(
-    private val getSubscriptionStatusUseCase: GetSubscriptionStatusUseCase
+    private val paymentRepository: PaymentRepository
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(SubscriptionState())
@@ -79,25 +73,21 @@ class SubscriptionViewModel(
         screenModelScope.launch {
             _state.update { it.copy(subscriptionStatusState = ResponseState.Loading) }
 
-            val result = getSubscriptionStatusUseCase.invoke(_state.value.selectedChildId)
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Error -> {
+            when (val res = paymentRepository.getSubscriptionStatus(_state.value.selectedChildId)) {
+                is Outcome.Failure -> {
                     _state.update {
-                        it.copy(
-                            subscriptionStatusState = ResponseState.Error(message = result.message, res = result.resId)
-                        )
+                        it.copy(subscriptionStatusState = ResponseState.Error(failure = res))
                     }
                 }
-                is Resource.Success -> {
+
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
-                            subscription = result.data,
+                            subscription = res.data,
                             subscriptionStatusState = ResponseState.Success(Unit)
                         )
                     }
-
-                    if (result.data.planType == PlanType.FREE || result.data.isExpired) {
+                    if (res.data.planType == PlanType.FREE || res.data.isExpired) {
                         _effect.trySend(SubscriptionEffect.NavigateToPayment)
                     }
                 }

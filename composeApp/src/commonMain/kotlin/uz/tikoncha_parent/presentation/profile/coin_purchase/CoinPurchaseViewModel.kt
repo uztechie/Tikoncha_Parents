@@ -12,16 +12,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.domain.model.PaymentStatus
-import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.subscription.PurchaseCoinRequest
-import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
+import uz.tikoncha_parent.domain.repository.PaymentRepository
 
 class CoinPurchaseViewModel (
-    private val promoCodeValidationUseCase: PromoCodeValidationUseCase,
-    private val purchaseCoinUseCase: PurchaseCoinUseCase,
-    private val paymentStatusUseCase: PaymentStatusUseCase
+    private val paymentRepository: PaymentRepository
 ): ScreenModel {
 
     private val _state = MutableStateFlow(CoinPurchaseState())
@@ -72,28 +68,27 @@ class CoinPurchaseViewModel (
                 amount = _state.value.totalPrice - _state.value.discountPrice,
                 plan_duration = null
             )
-            when(val result = promoCodeValidationUseCase.invoke(request)){
-                is Resource.Error -> {
+            when (val res = paymentRepository.promoCodeValidation(request)) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
                             promoCodeLoading = false,
                             promoActivated = false,
                         )
                     }
-                    _effect.tryEmit(CoinPurchaseEffect.ShowPromoCodeErrorToast(result.message ?: "Server connection error"))
+                    _effect.tryEmit(CoinPurchaseEffect.ShowPromoCodeErrorToast(res))
                 }
-                is Resource.Success -> {
-                    val discountedPromoCodePrice = result.data.savings
+
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             promoActivated = true,
                             promoCodeLoading = false,
-                            promoCodeDiscountPrice = discountedPromoCodePrice,
+                            promoCodeDiscountPrice = res.data.savings,
                         )
                     }
                     _effect.tryEmit(CoinPurchaseEffect.ShowPromoCodeSuccessToast)
                 }
-                is Resource.Loading -> {}
             }
         }
     }
@@ -109,10 +104,9 @@ class CoinPurchaseViewModel (
             val request = PurchaseCoinRequest(
                 coins = _state.value.coins
             )
-            when(val result = purchaseCoinUseCase.invoke(request)){
-                is Resource.Loading<*> -> {}
-                is Resource.Error -> {
-                    _effect.tryEmit(CoinPurchaseEffect.PaymentFailed(result.message?:"Server connection error"))
+            when (val res = paymentRepository.purchaseCoin(request)) {
+                is Outcome.Failure -> {
+                    _effect.tryEmit(CoinPurchaseEffect.PaymentFailed(res))
                     _state.update {
                         it.copy(
                             paymentLoading = false,
@@ -120,21 +114,22 @@ class CoinPurchaseViewModel (
                         )
                     }
                 }
-                is Resource.Success-> {
+
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             paymentLoading = false,
-                            merchantTransId = result.data.merchant_trans_id,
-                            serviceId = result.data.service_id
+                            merchantTransId = res.data.merchant_trans_id,
+                            serviceId = res.data.service_id
                         )
                     }
 
                     _effect.tryEmit(
                         CoinPurchaseEffect.OpenClickPayment(
-                            serviceId = result.data.service_id,
+                            serviceId = res.data.service_id,
                             merchantId = _state.value.merchantId,
                             amount = _state.value.finalPrice,
-                            transactionId = result.data.merchant_trans_id
+                            transactionId = res.data.merchant_trans_id
                         )
                     )
                     requestPaymentStatus()
@@ -159,35 +154,22 @@ class CoinPurchaseViewModel (
             }
 
             repeat(120) {
-                when (val result = paymentStatusUseCase.invoke(_state.value.merchantTransId)) {
-                    is Resource.Loading<*> -> {}
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                paymentStatusError = result.message ?: "Server connection error"
-                            )
-                        }
+                when (val res = paymentRepository.paymentStatus(_state.value.merchantTransId)) {
+                    is Outcome.Failure -> {
+                        _state.update { it.copy(paymentStatusError = res) }
                     }
 
-                    is Resource.Success -> {
-                        val status = PaymentStatus.fromString(result.data.status)
+                    is Outcome.Success -> {
+                        val status = res.data
 
-                        _state.update {
-                            it.copy(
-                                paymentStatus = PaymentStatus.fromString(result.data.status)
-                            )
-                        }
+                        _state.update { it.copy(paymentStatus = status) }
 
-                        if (status == PaymentStatus.COMPLETED){
+                        if (status == PaymentStatus.COMPLETED) {
                             _effect.tryEmit(CoinPurchaseEffect.PaymentSuccess)
                         }
 
-                        if (status == PaymentStatus.COMPLETED || status == PaymentStatus.FAILED){
-                            _state.update {
-                                it.copy(
-                                    paymentActive = false
-                                )
-                            }
+                        if (status == PaymentStatus.COMPLETED || status == PaymentStatus.FAILED) {
+                            _state.update { it.copy(paymentActive = false) }
                             return@launch
                         }
                     }

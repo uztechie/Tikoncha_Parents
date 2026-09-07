@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.use_case.payment.GetPaymentTransactionsUseCase
 
 class PaymentHistoryScreenModel(
@@ -41,27 +42,29 @@ class PaymentHistoryScreenModel(
                 )
             }
 
-            getTransactions(limit = PaymentHistoryState.PAGE_SIZE, offset = 0)
-                .onSuccess { page ->
+            when (val res = getTransactions(limit = PaymentHistoryState.PAGE_SIZE, offset = 0)) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
-                            items = page.items,
-                            hasNext = page.hasNext,
+                            items = res.data.items,
+                            hasNext = res.data.items.size == PaymentHistoryState.PAGE_SIZE,
                             isInitialLoading = false,
                             hasLoadedOnce = true,
                             initialError = null,
                         )
                     }
                 }
-                .onFailure { e ->
+
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
                             isInitialLoading = false,
-                            initialError = e.message ?: "Xatolik yuz berdi",
+                            initialError = res,
                             hasLoadedOnce = true,
                         )
                     }
                 }
+            }
         }
     }
 
@@ -75,12 +78,12 @@ class PaymentHistoryScreenModel(
                 it.copy(isRefreshing = true, paginationError = null)
             }
 
-            getTransactions(limit = PaymentHistoryState.PAGE_SIZE, offset = 0)
-                .onSuccess { page ->
+            when (val res = getTransactions(limit = PaymentHistoryState.PAGE_SIZE, offset = 0)) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
-                            items = page.items,
-                            hasNext = page.hasNext,
+                            items = res.data.items,
+                            hasNext = res.data.items.size == PaymentHistoryState.PAGE_SIZE,
                             isRefreshing = false,
                             initialError = null,
                             paginationError = null,
@@ -88,14 +91,13 @@ class PaymentHistoryScreenModel(
                         )
                     }
                 }
-                .onFailure { e ->
+
+                is Outcome.Failure -> {
                     _state.update {
-                        it.copy(
-                            isRefreshing = false,
-                            paginationError = e.message ?: "Yangilashda xatolik",
-                        )
+                        it.copy(isRefreshing = false, paginationError = res)
                     }
                 }
+            }
         }
     }
 
@@ -114,27 +116,25 @@ class PaymentHistoryScreenModel(
             }
 
             // Offset = hozir bizda mavjud items soni
-            // Bu has_next != items.size scenariyda ham to'g'ri ishlaydi
-            val nextOffset = current.items.size
 
-            getTransactions(limit = current.limit, offset = nextOffset)
-                .onSuccess { page ->
+            val nextOffset = current.items.size
+            when (val res = getTransactions(limit = current.limit, offset = nextOffset)) {
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
-                            items = it.items + page.items,
-                            hasNext = page.hasNext,
+                            items = it.items + res.data.items,
+                            hasNext = res.data.items.size == current.limit,
                             isLoadingNext = false,
                         )
                     }
                 }
-                .onFailure { e ->
+
+                is Outcome.Failure -> {
                     _state.update {
-                        it.copy(
-                            isLoadingNext = false,
-                            paginationError = e.message ?: "Yuklashda xatolik",
-                        )
+                        it.copy(isLoadingNext = false, paginationError = res)
                     }
                 }
+            }
         }
     }
 }

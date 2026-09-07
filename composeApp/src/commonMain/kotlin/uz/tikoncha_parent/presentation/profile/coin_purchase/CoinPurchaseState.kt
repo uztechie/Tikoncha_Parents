@@ -1,6 +1,7 @@
 package uz.tikoncha_parent.presentation.profile.coin_purchase
 
 import uz.tikoncha_parent.domain.model.PaymentStatus
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 
 data class CoinPurchaseState(
     val coins: Int = 0,
@@ -13,7 +14,7 @@ data class CoinPurchaseState(
     val serviceId: Int = 0,
     val merchantId: Int = 46788,
     val paymentStatus: PaymentStatus = PaymentStatus.START,
-    val paymentStatusError: String = "",
+    val paymentStatusError: Outcome.Failure? = null,
     val planId: String = "",
     val promoActivated: Boolean = false,
     val promoCode: String = "",

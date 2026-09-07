@@ -63,13 +63,7 @@ import uz.tikoncha_parent.domain.use_case.in_app_update.CheckUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.CompleteFlexibleUpdateUseCase
 import uz.tikoncha_parent.domain.use_case.in_app_update.ObserveInstallEventsUseCase
 import uz.tikoncha_parent.domain.use_case.payment.GetPaymentTransactionsUseCase
-import uz.tikoncha_parent.domain.use_case.payment.GetSubscriptionStatusUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PurchaseCoinUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CompleteTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.CreateTodoUseCase
 import uz.tikoncha_parent.domain.use_case.todo.DeleteTodoUseCase
@@ -100,8 +94,8 @@ import uz.tikoncha_parent.presentation.profile.child_user_edit.ChildInfoEditView
 import uz.tikoncha_parent.presentation.profile.coin_purchase.CoinPurchaseViewModel
 import uz.tikoncha_parent.presentation.profile.coins.CoinsViewModel
 import uz.tikoncha_parent.presentation.profile.payment_history.PaymentHistoryScreenModel
-import uz.tikoncha_parent.presentation.profile.subscription.info.SubscriptionViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentViewModel
+import uz.tikoncha_parent.presentation.profile.subscription.subscription_info.SubscriptionViewModel
 import uz.tikoncha_parent.presentation.profile.subscription.subscription_payment.SubscriptionPaymentViewModel
 import uz.tikoncha_parent.presentation.profile.user_edit.UserInfoEditViewModel
 import uz.tikoncha_parent.presentation.protection.ProtectionViewModel
@@ -171,14 +165,9 @@ val sharedModule = module {
     single { GetChatMessagesFromServerUseCase(get()) }
     single { SendMessageUseCase(get()) }
     single { SendMessageApiUseCase(get()) }
-    single { SubscriptionPaymentUseCase(get()) }
-    single { PromoCodeValidationUseCase(get()) }
-    single { PaymentStatusUseCase(get()) }
-    single { SubscriptionPlanUseCase(get()) }
 
     single { ChatConnectionManager(get()) }
     single { PurchaseIApPremiumUseCase(get()) }
-    single { PurchaseCoinUseCase(get()) }
     single { CheckUpdateUseCase(get()) }
     single { ObserveInstallEventsUseCase(get()) }
     single { CompleteFlexibleUpdateUseCase(get()) }
@@ -190,7 +179,6 @@ val sharedModule = module {
     single { DeleteTodoUseCase(get()) }
     single { CompleteTodoUseCase(get()) }
     single { TodayUsageUseCase(get()) }
-    factory { GetSubscriptionStatusUseCase(get()) }
 
 
     // ViewModel
@@ -227,8 +215,8 @@ val sharedModule = module {
     factory { AppWebViewModel(get()) }
     factory { SleepTemplateSetupViewModel(get()) }
 
-    factory { PaymentViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { SubscriptionPaymentViewModel(get(), get()) }
+    factory { PaymentViewModel(get(), get(), get()) }
+    factory { SubscriptionPaymentViewModel(get()) }
     factory { CoinsViewModel(get(), get(), get()) }
     factory { (child: UserInfo) ->
         ChildInfoEditViewModel(
@@ -242,7 +230,7 @@ val sharedModule = module {
             userInfo = userInfo
         )
     }
-    factory { CoinPurchaseViewModel(get(), get(), get()) }
+    factory { CoinPurchaseViewModel(get()) }
     single { UpdateViewModel(get(), get(), get()) }
     factory { PlayerScreenModel(get(), get()) }
     factory { VideoTutorialScreenModel(get()) }

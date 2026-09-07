@@ -51,6 +51,7 @@ import tikoncha_parents.composeapp.generated.resources.xatolik
 import tikoncha_parents.composeapp.generated.resources.yopish
 import uz.tikoncha_parent.common.Util.toCurrency
 import uz.tikoncha_parent.domain.model.PaymentStatus
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.platform.PaymentUtil
 import uz.tikoncha_parent.presentation.base.CustomButton
 import uz.tikoncha_parent.presentation.base.CustomDialog
@@ -59,6 +60,7 @@ import uz.tikoncha_parent.presentation.base.LocalToastHost
 import uz.tikoncha_parent.presentation.base.ToastData
 import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.profile.subscription.payment.PaymentOption
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -111,13 +113,17 @@ fun CoinPurchaseUi(
 ) {
 
     val toast = LocalToastHost.current
-    var promoCodeToastData by remember {
-        mutableStateOf<ToastData?>(null)
-    }
     val promoCodeSuccessMessage = stringResource(Res.string.promokod_tasdiqlandi)
 
-    var showPaymentFailedDialog by remember {
-        mutableStateOf("")
+    var paymentFailure by remember { mutableStateOf<Outcome.Failure?>(null) }
+    var promoErrorFailure by remember { mutableStateOf<Outcome.Failure?>(null) }
+    val promoErrorText = promoErrorFailure?.asText()
+
+    LaunchedEffect(promoErrorText) {
+        promoErrorText?.let {
+            toast.show(toast = ToastData(type = ToastType.Error, title = it))
+            promoErrorFailure = null
+        }
     }
 
     var showPaymentSuccessDialog by remember {
@@ -129,12 +135,7 @@ fun CoinPurchaseUi(
         effect.collect { eff ->
             when (eff) {
                 is CoinPurchaseEffect.ShowPromoCodeErrorToast -> {
-                    toast.show(
-                        toast = ToastData(
-                            type = ToastType.Error,
-                            title = eff.message
-                        )
-                    )
+                    promoErrorFailure = eff.failure
                 }
 
                 CoinPurchaseEffect.ShowPromoCodeSuccessToast -> {
@@ -157,7 +158,7 @@ fun CoinPurchaseUi(
                 }
 
                 is CoinPurchaseEffect.PaymentFailed -> {
-                    showPaymentFailedDialog = eff.message
+                    paymentFailure = eff.failure
                 }
 
                 CoinPurchaseEffect.PaymentSuccess -> {
@@ -169,15 +170,13 @@ fun CoinPurchaseUi(
 
 
     CustomDialog(
-        show = showPaymentFailedDialog.isNotBlank(),
-        onDismiss = { showPaymentFailedDialog = "" },
+        show = paymentFailure != null,
+        onDismiss = { paymentFailure = null },
         title = stringResource(Res.string.xatolik),
-        message = showPaymentFailedDialog,
+        message = paymentFailure?.asText().orEmpty(),
         buttonText = stringResource(Res.string.yopish),
         showCloseButton = false,
-        onButtonClick = {
-            showPaymentFailedDialog = ""
-        },
+        onButtonClick = { paymentFailure = null },
     )
 
     CustomDialog(

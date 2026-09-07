@@ -1,7 +1,16 @@
 package uz.tikoncha_parent.presentation.profile.payment_history
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,10 +21,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +39,6 @@ import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.boshqa_yozuvlar_yoq
 import tikoncha_parents.composeapp.generated.resources.qayta_urinish
-import tikoncha_parents.composeapp.generated.resources.sotib_olish
 import tikoncha_parents.composeapp.generated.resources.tolovlar_tarixi
 import tikoncha_parents.composeapp.generated.resources.tolovlar_tarixi_bos
 import tikoncha_parents.composeapp.generated.resources.tolovlar_tarixi_bos_hint
@@ -40,6 +48,7 @@ import uz.tikoncha_parent.domain.model.transaction.PurchaseType
 import uz.tikoncha_parent.domain.model.transaction.Transaction
 import uz.tikoncha_parent.domain.model.transaction.TransactionStatus
 import uz.tikoncha_parent.presentation.base.CustomHeader
+import uz.tikoncha_parent.presentation.base.asText
 import uz.tikoncha_parent.presentation.base.singleClick
 import uz.tikoncha_parent.presentation.profile.payment_history.components.TransactionItem
 import uz.tikoncha_parent.ui.ContainerPadding
@@ -122,7 +131,7 @@ private fun PaymentHistoryUi(
                 state.isInitialLoading -> FullScreenLoader()
 
                 state.showInitialError -> FullScreenError(
-                    message = state.initialError.orEmpty(),
+                    message = state.initialError?.asText().orEmpty(),
                     onRetry = { event(PaymentHistoryEvent.RetryInitial) },
                 )
 
@@ -154,7 +163,7 @@ private fun PaymentHistoryUi(
                         if (state.paginationError != null) {
                             item(key = "pagination_error") {
                                 PaginationErrorFooter(
-                                    message = state.paginationError,
+                                    message = state.paginationError.asText(),
                                     onRetry = { event(PaymentHistoryEvent.RetryPagination) },
                                 )
                             }
@@ -428,7 +437,7 @@ private fun Preview_InitialError() {
     TikonchaParentTheme(ThemeMode.LIGHT) {
         PaymentHistoryUi(
             state = PaymentHistoryState(
-                initialError = "Internet bilan bog'lanishda xatolik",
+                initialError = null,
                 hasLoadedOnce = true,
             ),
             event = {},
@@ -511,7 +520,7 @@ private fun Preview_PaginationError() {
                 items = previewSampleItems(),
                 hasLoadedOnce = true,
                 hasNext = true,
-                paginationError = "Internet bilan bog'lanishda xatolik",
+                paginationError = null,
             ),
             event = {},
             onBackClick = {},

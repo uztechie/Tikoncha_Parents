@@ -1,10 +1,12 @@
 package uz.tikoncha_parent.presentation.profile.coin_purchase
 
+import uz.tikoncha_parent.domain.model.app_error.Outcome
+
 sealed class CoinPurchaseEffect {
-    data class ShowPromoCodeErrorToast(val message: String): CoinPurchaseEffect()
+    data class ShowPromoCodeErrorToast(val failure: Outcome.Failure): CoinPurchaseEffect()
+    data class PaymentFailed(val failure: Outcome.Failure): CoinPurchaseEffect()
 
     data object PaymentSuccess: CoinPurchaseEffect()
-    data class PaymentFailed(val message: String): CoinPurchaseEffect()
     data object ShowPromoCodeSuccessToast: CoinPurchaseEffect()
 
     data class OpenClickPayment(

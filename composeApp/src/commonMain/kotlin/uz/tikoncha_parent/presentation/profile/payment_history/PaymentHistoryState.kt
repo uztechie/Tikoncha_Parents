@@ -1,5 +1,6 @@
 package uz.tikoncha_parent.presentation.profile.payment_history
 
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.transaction.Transaction
 
 data class PaymentHistoryState(
@@ -15,8 +16,8 @@ data class PaymentHistoryState(
     val hasLoadedOnce: Boolean = false,      // hech bo'lmasa 1 marta urinish bo'ldimi
 
     // Xatolar ham alohida — pagination xatosi ro'yxatni o'chirmaydi
-    val initialError: String? = null,
-    val paginationError: String? = null,
+    val initialError: Outcome.Failure? = null,
+    val paginationError: Outcome.Failure? = null,
 ) {
     /** Empty state'ni ko'rsatish vaqti */
     val showEmpty: Boolean

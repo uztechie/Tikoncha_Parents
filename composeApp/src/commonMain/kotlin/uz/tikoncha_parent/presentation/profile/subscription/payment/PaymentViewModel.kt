@@ -15,22 +15,16 @@ import uz.tikoncha_parent.data.remote.model.SubscriptionPaymentRequest
 import uz.tikoncha_parent.data.remote.model.subscription.PromoCodeValidationRequest
 import uz.tikoncha_parent.domain.model.PaymentStatus
 import uz.tikoncha_parent.domain.model.PurchaseResult
-import uz.tikoncha_parent.domain.model.Resource
 import uz.tikoncha_parent.domain.model.SubscriptionDuration
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.repository.PaymentRepository
 import uz.tikoncha_parent.domain.service.PaymentService
-import uz.tikoncha_parent.domain.use_case.payment.PaymentStatusUseCase
-import uz.tikoncha_parent.domain.use_case.payment.PromoCodeValidationUseCase
 import uz.tikoncha_parent.domain.use_case.payment.PurchaseIApPremiumUseCase
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPaymentUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 class PaymentViewModel(
     private val paymentRepository: PaymentRepository,
-    private val paymentUseCase: SubscriptionPaymentUseCase,
-    private val paymentStatusUseCase: PaymentStatusUseCase,
     private val purchaseIApPremiumUseCase: PurchaseIApPremiumUseCase,
-    private val promoCodeValidationUseCase: PromoCodeValidationUseCase,
     private val paymentService: PaymentService
 ): ScreenModel {
 
@@ -167,8 +161,8 @@ class PaymentViewModel(
             else{
                 "tikoncha.parent.yearly.v2"
             }
-            val result = purchaseIApPremiumUseCase.invoke(productId)
-            when(result){
+
+            when(val result = purchaseIApPremiumUseCase.invoke(productId)){
                 PurchaseResult.Cancelled -> {
                     _state.update {
                         it.copy(
@@ -224,26 +218,20 @@ class PaymentViewModel(
                 child_phone = phone,
                 promocode_code = _state.value.promoCode
             )
-            val result = paymentUseCase.invoke(request)
-            when(result){
-                is Resource.Loading<*> -> {}
-                is Resource.Error -> {
+            when (val res = paymentRepository.subscriptionPayment(request)) {
+                is Outcome.Failure -> {
                     _state.update {
-                        it.copy(
-                            paymentResponseState = ResponseState.Error(
-                                message = result.message,
-                                res = result.resId
-                            )
-                        )
+                        it.copy(paymentResponseState = ResponseState.Error(failure = res))
                     }
                 }
-                is Resource.Success-> {
+
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             paymentResponseState = ResponseState.Success(),
-                            merchantTransId = result.data.merchant_trans_id,
-                            serviceId = result.data.service_id,
-                            finalAmount = result.data.amount,
+                            merchantTransId = res.data.merchant_trans_id,
+                            serviceId = res.data.service_id,
+                            finalAmount = res.data.amount,
                             showSubscribeChildSheet = false
                         )
                     }
@@ -276,34 +264,24 @@ class PaymentViewModel(
             }
 
             repeat(120) {
-                val result = paymentStatusUseCase.invoke(_state.value.merchantTransId)
-                when (result) {
-                    is Resource.Loading<*> -> {}
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                paymentStatusError = result.message?:"Server connection error"
-                            )
-                        }
+
+                when (val res = paymentRepository.paymentStatus(_state.value.merchantTransId)) {
+                    is Outcome.Failure -> {
+                        _state.update { it.copy(paymentStatusError = res) }
                     }
 
-                    is Resource.Success -> {
-                        val status = PaymentStatus.fromString(result.data.status)
+                    is Outcome.Success -> {
+                        val status = res.data
 
-                        _state.update {
-                            it.copy(
-                                paymentStatus = PaymentStatus.fromString(result.data.status)
-                            )
-                        }
+                        _state.update { it.copy(paymentStatus = status) }
 
-                        if (status == PaymentStatus.COMPLETED){
+                        if (status == PaymentStatus.COMPLETED) {
                             requestSubscriptionLimit()
                         }
 
-                        if (status == PaymentStatus.COMPLETED || status == PaymentStatus.FAILED){
+                        if (status == PaymentStatus.COMPLETED || status == PaymentStatus.FAILED) {
                             return@launch
                         }
-
                     }
                 }
                 delay(1000)
@@ -348,29 +326,27 @@ class PaymentViewModel(
                 amount = _state.value.originalAmount,
                 plan_duration = _state.value.subscriptionDuration.name
             )
-            val result = promoCodeValidationUseCase.invoke(request)
-            when(result){
-                is Resource.Loading<*> -> {}
-                is Resource.Error -> {
+
+            when (val res = paymentRepository.promoCodeValidation(request)) {
+                is Outcome.Failure -> {
                     _state.update {
                         it.copy(
-                            promoCodeResponseState = ResponseState.Error(
-                                message = result.message
-                            ),
+                            promoCodeResponseState = ResponseState.Error(failure = res),
                             promoActivated = false
                         )
                     }
                 }
-                is Resource.Success-> {
+
+                is Outcome.Success -> {
                     _state.update {
                         it.copy(
                             promoActivated = true,
                             promoCodeResponseState = ResponseState.Success(),
-                            originalAmount = result.data.original_amount,
-                            discountAmount = result.data.discounted_amount,
-                            discountPercentage = result.data.discount_percentage,
-                            discountSaving = result.data.savings,
-                            finalAmount = result.data.discounted_amount
+                            originalAmount = res.data.original_amount,
+                            discountAmount = res.data.discounted_amount,
+                            discountPercentage = res.data.discount_percentage,
+                            discountSaving = res.data.savings,
+                            finalAmount = res.data.discounted_amount
                         )
                     }
                 }

@@ -8,15 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.domain.model.Resource
+import uz.tikoncha_parent.data.mapper.toSubscriptionPlanUi
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
+import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.repository.PaymentRepository
-import uz.tikoncha_parent.domain.use_case.payment.SubscriptionPlanUseCase
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 
 
 class SubscriptionPaymentViewModel(
-    private val subscriptionPlanUseCase: SubscriptionPlanUseCase,
     private val paymentRepository: PaymentRepository,
 ) : ScreenModel {
 
@@ -67,29 +66,20 @@ class SubscriptionPaymentViewModel(
     private fun requestSubscriptionPlans(showLoading: Boolean = true) {
         screenModelScope.launch {
             if (showLoading) {
-                _state.update {
-                    it.copy(
-                        subscriptionPlanState = ResponseState.Loading
-                    )
-                }
+                _state.update { it.copy(subscriptionPlanState = ResponseState.Loading) }
             }
 
-            when (val result = subscriptionPlanUseCase.invoke()) {
-                is Resource.Loading<*> -> {}
-                is Resource.Error -> {
+            when (val res = paymentRepository.subscriptionPlans()) {
+                is Outcome.Failure -> {
                     if (showLoading) {
                         _state.update {
-                            it.copy(
-                                subscriptionPlanState = ResponseState.Error(
-                                    message = result.message
-                                )
-                            )
+                            it.copy(subscriptionPlanState = ResponseState.Error(failure = res))
                         }
                     }
                 }
 
-                is Resource.Success -> {
-                    val data = result.data.firstOrNull()
+                is Outcome.Success -> {
+                    val data = res.data.firstOrNull()?.toSubscriptionPlanUi()
                     cachedSubscription = data
                     _state.update {
                         it.copy(
