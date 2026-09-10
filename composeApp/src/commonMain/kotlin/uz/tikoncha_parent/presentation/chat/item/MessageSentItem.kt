@@ -1,25 +1,66 @@
 package uz.tikoncha_parent.presentation.chat.item
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.javob_berish
+import tikoncha_parents.composeapp.generated.resources.message_copy
+import tikoncha_parents.composeapp.generated.resources.message_delete
+import tikoncha_parents.composeapp.generated.resources.message_edit
 import tikoncha_parents.composeapp.generated.resources.message_failed
 import tikoncha_parents.composeapp.generated.resources.message_read
+import tikoncha_parents.composeapp.generated.resources.message_reply
+import tikoncha_parents.composeapp.generated.resources.message_retry
 import tikoncha_parents.composeapp.generated.resources.message_sending
 import tikoncha_parents.composeapp.generated.resources.message_sent
+import tikoncha_parents.composeapp.generated.resources.nusxalash
+import tikoncha_parents.composeapp.generated.resources.ochirish
+import tikoncha_parents.composeapp.generated.resources.qayta_urinish
+import tikoncha_parents.composeapp.generated.resources.tahrirlangan
+import tikoncha_parents.composeapp.generated.resources.tahrirlash
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
@@ -30,32 +71,11 @@ import uz.tikoncha_parent.ui.Failed
 import uz.tikoncha_parent.ui.SmallIconSize
 import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.UltraSmallTextSize
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
 import uz.tikoncha_parent.ui.theme.ThemeMode
 import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 import uz.tikoncha_parent.ui.theme.extendedColor
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalViewConfiguration
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntOffset
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import tikoncha_parents.composeapp.generated.resources.*
-import uz.tikoncha_parent.ui.theme.AppColors
-import uz.tikoncha_parent.ui.theme.AppTypography
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -209,10 +229,10 @@ fun MessageSentItem(
                 )
 
                 SentMeta(
-                    modifier = Modifier
-                        .align(Alignment.End),
+                    modifier = Modifier.align(Alignment.End),
                     time = chatMessageUi.time,
-                    status = chatMessageUi.status
+                    status = chatMessageUi.status,
+                    isEdited = chatMessageUi.isEdited
                 )
             }
 
@@ -353,7 +373,8 @@ fun MessageSentItem(
 private fun SentMeta(
     modifier: Modifier = Modifier,
     time: String,
-    status: DeliveryStatus
+    status: DeliveryStatus,
+    isEdited: Boolean = false
 ) {
     Row(
         modifier = modifier,
@@ -380,6 +401,16 @@ private fun SentMeta(
             DeliveryStatus.SENT -> painterResource(Res.drawable.message_sent)
             DeliveryStatus.READ -> painterResource(Res.drawable.message_read)
             DeliveryStatus.FAILED -> painterResource(Res.drawable.message_failed)
+        }
+
+        if (isEdited) {
+            CustomText(
+                text = stringResource(Res.string.tahrirlangan),
+                color = textColor,
+                fontSize = UltraSmallTextSize,
+                lineHeight = UltraSmallTextSize,
+            )
+            SpaceUltraSmall()
         }
 
         CustomText(

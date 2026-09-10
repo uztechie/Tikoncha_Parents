@@ -153,6 +153,7 @@ class ChatRoomViewModel(
             repository.observeEvents().collect { ev ->
                 when (ev) {
                     is ChatWsEvent.MessageCreated -> onSocketMessageCreated(ev.message)
+                    is ChatWsEvent.MessageUpdated -> onSocketMessageUpdated(ev.message)
                     is ChatWsEvent.ReadUpdate -> onSocketReadUpdate(ev.chatId, ev.messageId)
                     else -> Unit
                 }
@@ -549,6 +550,40 @@ class ChatRoomViewModel(
 
                 applyAllMessagesDesc(normalized, true)
 
+            }
+        }
+    }
+
+    private fun onSocketMessageUpdated(dto: ChatMessageDto) {
+        // faqat shu chat
+        if (dto.chat_id != state.value.chatId) return
+
+        val serverUi = dto.toChatMessageUi()
+        if (serverUi.id.isBlank()) return
+
+        screenModelScope.launch {
+            mergeMutex.withLock {
+                var found = false
+
+                val next = state.value.allMessages.map { local ->
+                    if (local.id == serverUi.id) {
+                        found = true
+                        // Tahrir faqat matnni o'zgartiradi. is_read/is_mine maydonlari
+                        // tahrir hodisasida kelmasligi mumkin, shuning uchun ularni
+                        // lokal holatdan saqlab qolamiz.
+                        local.copy(
+                            message = serverUi.message,
+                            isEdited = serverUi.isEdited,
+                            messageType = serverUi.messageType,
+                            remoteUrl = serverUi.remoteUrl,
+                        )
+                    } else {
+                        local
+                    }
+                }
+
+                // Xabar hozirgi ro'yxatda bo'lmasa (masalan eski sahifada) — tegmaymiz
+                if (found) applyAllMessagesDesc(next)
             }
         }
     }

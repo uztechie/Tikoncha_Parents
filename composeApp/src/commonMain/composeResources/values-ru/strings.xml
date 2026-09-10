@@ -827,4 +827,18 @@
     <string name="tanga_balansi_yetarli_emas">Недостаточно монет на балансе</string>
     <string name="farzand_tanlanmagan">Ребёнок не выбран</string>
     <string name="vazifa_id_topilmadi">Идентификатор задачи не найден</string>
+    <string name="tahrirlangan">изменено</string>
+    <plurals name="minutes">
+        <item quantity="one">%1$d минута</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минуты</item>
+    </plurals>
+
+    <plurals name="hours">
+        <item quantity="one">%1$d час</item>
+        <item quantity="few">%1$d часа</item>
+        <item quantity="many">%1$d часов</item>
+        <item quantity="other">%1$d часа</item>
+    </plurals>
 </resources>

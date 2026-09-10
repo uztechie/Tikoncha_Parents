@@ -62,6 +62,7 @@ fun ChatMessageDto.toChatMessageUi(): ChatMessageUi{
         id = id,
         isMine = mine,
         isRead = read,
+        isEdited = !edited_at.isNullOrBlank(),
         message = text,
         createdAt = dateMillis,
         time = ChatDateTimeUtil.millisToHHmm(dateMillis),

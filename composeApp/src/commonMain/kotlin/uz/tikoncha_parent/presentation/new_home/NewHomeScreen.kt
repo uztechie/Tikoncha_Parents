@@ -418,7 +418,8 @@ fun NewHomeUi(
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.Bottom
+                            verticalAlignment = Alignment.Bottom,
+                            modifier = Modifier.padding(end = 14.5.dp)
                         ) {
                             Box(
                                 modifier = Modifier
@@ -513,7 +514,9 @@ fun NewHomeUi(
                         Image(
                             painter = painterResource(Res.drawable.home_table),
                             contentDescription = "",
-                            modifier = Modifier.size(HomeIconSize)
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .size(HomeIconSize)
                         )
                     }
                     Space(12.dp)

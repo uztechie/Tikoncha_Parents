@@ -6,9 +6,20 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -23,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -38,12 +48,12 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import qrgenerator.qrkitpainter.text
 import tikoncha_parents.composeapp.generated.resources.Res
 import tikoncha_parents.composeapp.generated.resources.javob_berish
 import tikoncha_parents.composeapp.generated.resources.message_copy
 import tikoncha_parents.composeapp.generated.resources.message_reply
 import tikoncha_parents.composeapp.generated.resources.nusxalash
+import tikoncha_parents.composeapp.generated.resources.tahrirlangan
 import uz.tikoncha_parent.common.DateTimeUtil
 import uz.tikoncha_parent.presentation.base.CustomText
 import uz.tikoncha_parent.presentation.chat.model.DeliveryStatus
@@ -51,6 +61,7 @@ import uz.tikoncha_parent.presentation.chat.model.MessageMenuAction
 import uz.tikoncha_parent.presentation.model.ChatMessageUi
 import uz.tikoncha_parent.ui.ChatMessageCornerRadius
 import uz.tikoncha_parent.ui.SmallTextSize
+import uz.tikoncha_parent.ui.SpaceUltraSmall
 import uz.tikoncha_parent.ui.UltraSmallTextSize
 import uz.tikoncha_parent.ui.theme.AppColors
 import uz.tikoncha_parent.ui.theme.AppTypography
@@ -211,12 +222,27 @@ fun MessageReceivedItem(
                     style = AppTypography.emphasizedMdRegular
                 )
 
-                Text(
-                    text = chatMessageUi.time,
-                    color = AppColors.text.primary,
-                    style = AppTypography.bodyMdMedium,
-                    modifier = Modifier.align(Alignment.End)
-                )
+                Row(
+                    modifier = Modifier.align(Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (chatMessageUi.isEdited) {
+                        CustomText(
+                            text = stringResource(Res.string.tahrirlangan),
+                            color = AppColors.text.tertiary,
+                            fontSize = UltraSmallTextSize,
+                            lineHeight = UltraSmallTextSize,
+                        )
+                        SpaceUltraSmall()
+                    }
+
+                    CustomText(
+                        text = chatMessageUi.time,
+                        color = AppColors.text.tertiary,
+                        fontSize = UltraSmallTextSize,
+                        lineHeight = UltraSmallTextSize,
+                    )
+                }
             }
 
             DropdownMenu(

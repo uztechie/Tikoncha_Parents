@@ -21,6 +21,7 @@ data class ChatMessageUi(
     val repliedMessageOwner: String? = null,
     val repliedMessageText: String? = null,
     val status: DeliveryStatus = DeliveryStatus.SENT,
+    val isEdited: Boolean = false,
 
     val messageType: ChatMessageType = ChatMessageType.TEXT,
 )

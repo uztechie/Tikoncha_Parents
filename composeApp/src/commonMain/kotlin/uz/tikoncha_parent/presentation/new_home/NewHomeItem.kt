@@ -71,7 +71,9 @@ fun NewHomeItem(
                     Image(
                         painter = painterResource(selection.iconId),
                         contentDescription = "",
-                        modifier = Modifier.size(HomeIconSize)
+                        modifier = Modifier
+                            .padding(end = selection.iconEndPadding)
+                            .size(HomeIconSize)
                     )
                 }
             }

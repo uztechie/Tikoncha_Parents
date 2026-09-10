@@ -85,7 +85,9 @@ fun ChildProtectionCard(
 
         Spacer(Modifier.width(12.dp))
 
-        Box {
+        Box(
+            modifier = Modifier.padding(end = 5.6.dp)
+        ) {
             Image(
                 painter = painterResource(Res.drawable.guard),
                 contentDescription = null,

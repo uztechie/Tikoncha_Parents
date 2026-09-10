@@ -844,4 +844,14 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="tanga_balansi_yetarli_emas">Tanga balansingiz yetarli emas</string>
     <string name="farzand_tanlanmagan">Farzand tanlanmagan</string>
     <string name="vazifa_id_topilmadi">Vazifa identifikatori topilmadi</string>
+    <string name="tahrirlangan">tahrirlangan</string>
+    <plurals name="minutes">
+        <item quantity="one">%1$d daqiqa</item>
+        <item quantity="other">%1$d daqiqa</item>
+    </plurals>
+
+    <plurals name="hours">
+        <item quantity="one">%1$d soat</item>
+        <item quantity="other">%1$d soat</item>
+    </plurals>
 </resources>

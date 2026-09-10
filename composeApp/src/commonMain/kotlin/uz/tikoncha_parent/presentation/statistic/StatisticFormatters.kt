@@ -2,6 +2,7 @@ package uz.tikoncha_parent.presentation.statistic
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import tikoncha_parents.composeapp.generated.resources.*
 import uz.tikoncha_parent.domain.model.HourMinute
@@ -29,12 +30,15 @@ fun weekdayShort(index: Int): String = stringResource(WeekdayShortRes[index.coer
 
 @Composable
 fun durationString(hm: HourMinute): String {
-    val hour = stringResource(Res.string.soat)
-    val min = stringResource(Res.string.daqiqa)
-    if (hm.isEmpty())  return "0 $min"
+    val hourText = pluralStringResource(Res.plurals.hours, hm.hour, hm.hour)
+    val minText  = pluralStringResource(Res.plurals.minutes, hm.minute, hm.minute)
+    val zeroText = pluralStringResource(Res.plurals.minutes, 0, 0)
+
+    if (hm.isEmpty()) return zeroText
+
     return buildList {
-        if (hm.hour > 0)   add("${hm.hour} $hour")
-        if (hm.minute > 0) add("${hm.minute} $min")
+        if (hm.hour > 0)   add(hourText)
+        if (hm.minute > 0) add(minText)
     }.joinToString(" ")
 }
 
