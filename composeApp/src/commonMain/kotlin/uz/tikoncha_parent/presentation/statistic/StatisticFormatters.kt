@@ -53,18 +53,6 @@ fun durationStringShort(hm: HourMinute): String {
     }.joinToString("  ")
 }
 
-/** HomeScreen uchun: bo'sh holatda "0 soat" ko'rsatadi. */
-@Composable
-fun durationStringWithZero(hm: HourMinute): String {
-    val hour = stringResource(Res.string.soat)
-    val min = stringResource(Res.string.daqiqa)
-    if (hm.isEmpty()) return "0 $hour"
-    return buildList {
-        if (hm.hour > 0)   add("${hm.hour} $hour")
-        if (hm.minute > 0) add("${hm.minute} $min")
-    }.joinToString(" ")
-}
-
 @Composable
 fun pageTitleString(title: PageTitle): String = when (title) {
     is PageTitle.Day -> {

@@ -84,7 +84,7 @@ import uz.tikoncha_parent.presentation.policy.policy_list.PolicyListScreen
 import uz.tikoncha_parent.presentation.profile.ProfileScreen
 import uz.tikoncha_parent.presentation.protection.ProtectionScreen
 import uz.tikoncha_parent.presentation.statistic.StatisticScreen
-import uz.tikoncha_parent.presentation.statistic.durationStringWithZero
+import uz.tikoncha_parent.presentation.statistic.durationString
 import uz.tikoncha_parent.presentation.task.TaskScreen
 import uz.tikoncha_parent.presentation.tracking.TrackingScreen
 import uz.tikoncha_parent.presentation.video_tutorial.TutorialType
@@ -403,7 +403,7 @@ fun NewHomeUi(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = durationStringWithZero(state.todayUsage),
+                                text = durationString(state.todayUsage),
                                 color = AppColors.text.primary,
                                 style = AppTypography.displaySmRegular
                             )

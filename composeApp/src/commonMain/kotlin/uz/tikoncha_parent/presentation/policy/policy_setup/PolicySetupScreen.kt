@@ -3,14 +3,26 @@
 package uz.tikoncha_parent.presentation.policy.policy_setup
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,20 +49,72 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.Res
+import tikoncha_parents.composeapp.generated.resources.arrow_down_reg
+import tikoncha_parents.composeapp.generated.resources.arrow_right_rounded
+import tikoncha_parents.composeapp.generated.resources.bekor_qilish
+import tikoncha_parents.composeapp.generated.resources.belgilangan_hudud_ichida
+import tikoncha_parents.composeapp.generated.resources.belgilangan_hududdan_tashqarida
+import tikoncha_parents.composeapp.generated.resources.blocklist
+import tikoncha_parents.composeapp.generated.resources.bloklamoqchi_bo_lgan_ilova_yoki_saytlarni_tanlang
+import tikoncha_parents.composeapp.generated.resources.bloklash_rejimi
+import tikoncha_parents.composeapp.generated.resources.chiqish
+import tikoncha_parents.composeapp.generated.resources.chiqmoqchimisiz
+import tikoncha_parents.composeapp.generated.resources.dialog_failed
+import tikoncha_parents.composeapp.generated.resources.dialog_success
+import tikoncha_parents.composeapp.generated.resources.edite_pen_ilne
+import tikoncha_parents.composeapp.generated.resources.har_kuni
+import tikoncha_parents.composeapp.generated.resources.ilovalar
+import tikoncha_parents.composeapp.generated.resources.jadval_muvaffaqiyatli_o_chirildi
+import tikoncha_parents.composeapp.generated.resources.jadval_muvaffaqiyatli_tahrirlandi
+import tikoncha_parents.composeapp.generated.resources.jadval_muvaffaqiyatli_yaratildi
+import tikoncha_parents.composeapp.generated.resources.jadval_nomi
+import tikoncha_parents.composeapp.generated.resources.jadval_nomini_kiriting
+import tikoncha_parents.composeapp.generated.resources.jadval_o_chirilsinmi
+import tikoncha_parents.composeapp.generated.resources.jadval_yaratish
+import tikoncha_parents.composeapp.generated.resources.joylashuv
+import tikoncha_parents.composeapp.generated.resources.kamida_1_ta_ilova_kategoriya_yoki_sayt_tanlang
+import tikoncha_parents.composeapp.generated.resources.kamida_1_ta_shart_kiriting
+import tikoncha_parents.composeapp.generated.resources.kategoriyalar
+import tikoncha_parents.composeapp.generated.resources.kiritilgan_ma_lumotlar_saqlanmaydi
+import tikoncha_parents.composeapp.generated.resources.kun_davomida
+import tikoncha_parents.composeapp.generated.resources.kunlik
+import tikoncha_parents.composeapp.generated.resources.kunlik_yoki_soatlik_foydalanish_vaqtini_cheklash
+import tikoncha_parents.composeapp.generated.resources.limit
+import tikoncha_parents.composeapp.generated.resources.locked
+import tikoncha_parents.composeapp.generated.resources.malum_hududga_kirilganda_ilovalarni_bloklash
+import tikoncha_parents.composeapp.generated.resources.message_delete
+import tikoncha_parents.composeapp.generated.resources.muvaffaqiyatli
+import tikoncha_parents.composeapp.generated.resources.ochirish
+import tikoncha_parents.composeapp.generated.resources.ok
+import tikoncha_parents.composeapp.generated.resources.oq_royhat
+import tikoncha_parents.composeapp.generated.resources.oq_royxat_uchun_kerakli_ilovalar_va_saytlarni_tanlang
+import tikoncha_parents.composeapp.generated.resources.per_location_enable
+import tikoncha_parents.composeapp.generated.resources.per_time_enabled
+import tikoncha_parents.composeapp.generated.resources.qolish
+import tikoncha_parents.composeapp.generated.resources.qora_ro_yxat
+import tikoncha_parents.composeapp.generated.resources.saqlash
+import tikoncha_parents.composeapp.generated.resources.saytlar
+import tikoncha_parents.composeapp.generated.resources.shartlar
+import tikoncha_parents.composeapp.generated.resources.siz_rostdan_ham_ushbu_jadvalni_o_chirmoqchimisiz
+import tikoncha_parents.composeapp.generated.resources.soatlik
+import tikoncha_parents.composeapp.generated.resources.ta_jadval
+import tikoncha_parents.composeapp.generated.resources.tahrirlash
+import tikoncha_parents.composeapp.generated.resources.tanlangan_kun_va_soatlarda_avtomatik_bloklash
+import tikoncha_parents.composeapp.generated.resources.tashqarida
+import tikoncha_parents.composeapp.generated.resources.time_square
+import tikoncha_parents.composeapp.generated.resources.vaqt
+import tikoncha_parents.composeapp.generated.resources.whitelist
+import tikoncha_parents.composeapp.generated.resources.xatolik
 import uz.tikoncha_parent.domain.model.DayHour
 import uz.tikoncha_parent.domain.model.GeoType
 import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
-import uz.tikoncha_parent.presentation.base.CustomHeader
-import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebSelectionScreen
-import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
-import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
-import uz.tikoncha_parent.ui.*
 import uz.tikoncha_parent.domain.model.weekdayLabel
 import uz.tikoncha_parent.presentation.base.CustomBottomDialog
 import uz.tikoncha_parent.presentation.base.CustomButtonNew
 import uz.tikoncha_parent.presentation.base.CustomDialog
+import uz.tikoncha_parent.presentation.base.CustomHeader
 import uz.tikoncha_parent.presentation.base.CustomTextField
 import uz.tikoncha_parent.presentation.base.LoadingDialog
 import uz.tikoncha_parent.presentation.base.LocalToastHost
@@ -59,13 +123,27 @@ import uz.tikoncha_parent.presentation.base.ToastProvider
 import uz.tikoncha_parent.presentation.base.ToastType
 import uz.tikoncha_parent.presentation.base.simpleShadow
 import uz.tikoncha_parent.presentation.base.singleClick
+import uz.tikoncha_parent.presentation.policy.app_site_selection.AppWebSelectionScreen
+import uz.tikoncha_parent.presentation.policy.common.formatDuration
+import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleListScreen
 import uz.tikoncha_parent.presentation.policy.location_rule.LocationRuleScreen
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedEvent
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedModel
 import uz.tikoncha_parent.presentation.policy.shared.PolicySharedState
+import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleListScreen
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
 import uz.tikoncha_parent.presentation.ui_state.errorText
-import uz.tikoncha_parent.ui.theme.*
+import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.SpaceLarge
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.TextFieldHeight
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
+import uz.tikoncha_parent.ui.theme.rememberScreenSystemBars
 
 class PolicySetupScreen : Screen {
 
@@ -768,10 +846,7 @@ private fun buildLimitRuleSubtitle(sharedState: PolicySharedState): String {
         val weekdays = if (rule.weekDays.size == 7) stringResource(Res.string.har_kuni)
         else rule.weekDays.map { it.weekdayLabel() }.joinToString(", ")
 
-        val time = buildString {
-            if (rule.time.hour > 0) append("${rule.time.hour} ${stringResource(Res.string.soat)}, ")
-            if (rule.time.minute > 0) append("${rule.time.minute} ${stringResource(Res.string.daqiqa)}")
-        }
+        val time = formatDuration(rule.time.toMinutes())
         val type = if (rule.limitType == DayHour.DAY) stringResource(Res.string.kunlik)
         else stringResource(Res.string.soatlik)
 
