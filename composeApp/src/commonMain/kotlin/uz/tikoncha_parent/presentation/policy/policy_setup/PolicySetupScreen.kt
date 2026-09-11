@@ -328,7 +328,7 @@ fun PolicySetupUi(
         onDismiss = { showDeleteConfirmDialog = false },
         onConfirm = {
             showDeleteConfirmDialog = false
-            sharedState.selectedPolicy?.ruleId?.let {
+            sharedState.selectedPolicy?.policyId?.let {
                 event(PolicySetupEvent.DeletePolicy(it))
             }
         },

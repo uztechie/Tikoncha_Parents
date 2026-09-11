@@ -834,6 +834,7 @@ This information is used only for these features and is not shared with third pa
     <string name="farzand_tanlanmagan">No child selected</string>
     <string name="vazifa_id_topilmadi">Task ID not found</string>
     <string name="tahrirlangan">edited</string>
+    <string name="jadval_topilmadi">Schedule not found.</string>
     <plurals name="minutes">
         <item quantity="one">%1$d minute</item>
         <item quantity="other">%1$d minutes</item>

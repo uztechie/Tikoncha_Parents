@@ -1,13 +1,11 @@
 package uz.tikoncha_parent.presentation.policy.shared
 
 import uz.tikoncha_parent.domain.model.LocationRule
-import uz.tikoncha_parent.domain.model.Policy
 import uz.tikoncha_parent.domain.model.SubscriptionLimit
 import uz.tikoncha_parent.domain.model.UserInfo
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
-import uz.tikoncha_parent.presentation.policy.policy_list.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
-import uz.tikoncha_parent.presentation.policy.policy_setup.PolicyDraftSnapshot
+import uz.tikoncha_parent.presentation.policy.policy_list.PolicyItemUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
 
 sealed interface PolicySharedEvent {

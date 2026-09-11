@@ -2,8 +2,6 @@ package uz.tikoncha_parent.presentation.policy.policy_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,20 +18,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import qrgenerator.qrkitpainter.text
 import tikoncha_parents.composeapp.generated.resources.Res
-import tikoncha_parents.composeapp.generated.resources.*
+import tikoncha_parents.composeapp.generated.resources.apps_play
+import tikoncha_parents.composeapp.generated.resources.category_point
+import tikoncha_parents.composeapp.generated.resources.dot
+import tikoncha_parents.composeapp.generated.resources.faol
+import tikoncha_parents.composeapp.generated.resources.faol_emas
+import tikoncha_parents.composeapp.generated.resources.global
+import tikoncha_parents.composeapp.generated.resources.ilovalar
+import tikoncha_parents.composeapp.generated.resources.kategoriyalar
+import tikoncha_parents.composeapp.generated.resources.ta
+import tikoncha_parents.composeapp.generated.resources.vebsaytlar
+import uz.tikoncha_parent.domain.model.GeoType
+import uz.tikoncha_parent.domain.model.HourMinute
+import uz.tikoncha_parent.domain.model.LocationRule
 import uz.tikoncha_parent.domain.model.PolicyType
+import uz.tikoncha_parent.domain.model.WeekDay
 import uz.tikoncha_parent.domain.model.policy.PolicyAction
+import uz.tikoncha_parent.domain.model.policy.PolicyEffectiveState
+import uz.tikoncha_parent.domain.model.policy.PolicyKind
+import uz.tikoncha_parent.domain.model.policy.PolicyTargets
 import uz.tikoncha_parent.presentation.base.simpleShadow
-import uz.tikoncha_parent.ui.*
-import uz.tikoncha_parent.ui.theme.*
-
+import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
+import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
+import uz.tikoncha_parent.ui.ContainerPadding
+import uz.tikoncha_parent.ui.Space
+import uz.tikoncha_parent.ui.SpaceSmall
+import uz.tikoncha_parent.ui.SpaceUltraSmall
+import uz.tikoncha_parent.ui.theme.AppColors
+import uz.tikoncha_parent.ui.theme.AppTypography
+import uz.tikoncha_parent.ui.theme.ThemeMode
+import uz.tikoncha_parent.ui.theme.TikonchaParentTheme
 
 @Composable
 fun PolicyListItem(
@@ -203,26 +222,34 @@ private fun PolicyListRow(
 private fun PolicyListItemPreview() {
     TikonchaParentTheme(ThemeMode.LIGHT) {
         PolicyListItem(
+            onClick = {},
             modifier = Modifier.fillMaxWidth(),
             policy = PolicyItemUi(
+                policyId = "preview",
                 policyName = "Maktab",
-                ruleId = "",
-                policyType = PolicyType.STUDENT,
-                isMine = true,
-                hasTimeRule = true,
-                hasLimitRule = true,
-                hasLocationRule = true,
-                limitRule = emptyList(),
-                timeRule = emptyList(),
-                isActive = false,
-                packages = emptyList(),
-                categories = emptyList(),
-                features = emptyList(),
                 action = PolicyAction.ALLOW,
-                sites = emptyList(),
-                locationRule = null
-            ),
-            onClick = {}
+                kind = PolicyKind.STANDARD,
+                preset = null,
+                packCode = null,
+                policyType = PolicyType.STUDENT,
+                actorUserId = null,
+                isMine = true,
+                canEdit = true,
+                isActive = false,
+                effectiveState = PolicyEffectiveState.OFF,
+                pausedUntil = null,
+                expiresAt = null,
+                targets = PolicyTargets(),
+                timeRule = listOf(TimeRuleUi(id = 1, weekDays = WeekDay.entries.toSet())),
+                limitRule = listOf(LimitRuleUi(id = 1, time = HourMinute(1, 30))),
+                locationRule = LocationRule(
+                    geoType = GeoType.CIRCLE,
+                    centerLat = 41.31,
+                    centerLng = 69.24,
+                    radiusMeters = 150,
+                    reverse = false
+                ),
+            )
         )
     }
 }

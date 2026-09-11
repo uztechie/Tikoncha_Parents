@@ -366,7 +366,7 @@ fun PolicyListUi(
 
                 items(
                     items = state.filteredPolicies,
-                    key = { it.ruleId }
+                    key = { it.policyId }
                 ) {
                     PolicyListItem(
                         modifier = Modifier,

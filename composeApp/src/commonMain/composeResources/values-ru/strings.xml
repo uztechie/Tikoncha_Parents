@@ -828,6 +828,7 @@
     <string name="farzand_tanlanmagan">Ребёнок не выбран</string>
     <string name="vazifa_id_topilmadi">Идентификатор задачи не найден</string>
     <string name="tahrirlangan">изменено</string>
+    <string name="jadval_topilmadi">Расписание не найдено.</string>
     <plurals name="minutes">
         <item quantity="one">%1$d минута</item>
         <item quantity="few">%1$d минуты</item>

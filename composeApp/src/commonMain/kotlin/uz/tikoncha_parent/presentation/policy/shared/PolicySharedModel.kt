@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.presentation.policy.app_site_selection.AppFeatures
 import uz.tikoncha_parent.presentation.policy.limit_rule.LimitRuleUi
 import uz.tikoncha_parent.presentation.policy.time_rule.TimeRuleUi
@@ -65,14 +64,24 @@ class PolicySharedModel() : ViewModel() {
                         timeList = policy.timeRule,
                         limitList = policy.limitRule,
                         locationRule = policy.locationRule,
-                        selectedPkgs = policy.packages.toSet(),
-                        selectedCategories = policy.categories.toSet(),
-                        selectedSites = policy.sites.toSet(),
-                        selectedFeatures = policy.features.toSet(),
+                        selectedPkgs = policy.targets.packages.toSet(),
+                        selectedCategories = policy.targets.categories.toSet(),
+                        selectedSites = policy.targets.sites.toSet(),
+                        selectedFeatures = policy.targets.features.toSet(),
                         policyTitle = policy.policyName,
                         policyAction = policy.action,
                         selectedPolicy = policy,
-                        canUpdate = policy.policyType == PolicyType.PARENT_CHILD,
+                        canUpdate = policy.canEdit,
+                        // ── passthrough ──
+                        preset = policy.preset,
+                        isActive = policy.isActive,
+                        pausedUntil = policy.pausedUntil,
+                        expiresAt = policy.expiresAt,
+                        wifiList = policy.wifiRule,
+                        extraLocations = policy.extraLocations,
+                        launchLimits = policy.launchLimits,
+                        iosSelectionIds = policy.targets.iosSelectionIds,
+                        packs = policy.targets.packs,
                     )
                 }
                 _state.update { s -> s.copy(initialDraftSnapshot = s.toSnapshot()) }

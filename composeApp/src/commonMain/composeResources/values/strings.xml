@@ -845,6 +845,7 @@ Bu ma’lumot faqat ushbu funksiyalar uchun qo‘llaniladi va uchinchi shaxslarg
     <string name="farzand_tanlanmagan">Farzand tanlanmagan</string>
     <string name="vazifa_id_topilmadi">Vazifa identifikatori topilmadi</string>
     <string name="tahrirlangan">tahrirlangan</string>
+    <string name="jadval_topilmadi">Jadval topilmadi.</string>
     <plurals name="minutes">
         <item quantity="one">%1$d daqiqa</item>
         <item quantity="other">%1$d daqiqa</item>

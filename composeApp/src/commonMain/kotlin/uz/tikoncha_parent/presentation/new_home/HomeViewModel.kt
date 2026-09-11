@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.tikoncha_parent.data.local.AppSettings
-import uz.tikoncha_parent.data.mapper.toPolicyListUi
 import uz.tikoncha_parent.domain.model.PolicyType
 import uz.tikoncha_parent.domain.model.app_error.Outcome
 import uz.tikoncha_parent.domain.model.protection.missingRequiredPermissionCount
@@ -20,9 +19,10 @@ import uz.tikoncha_parent.domain.model.todo.TodosQuery
 import uz.tikoncha_parent.domain.repository.ChildRepository
 import uz.tikoncha_parent.domain.repository.DeviceRepository
 import uz.tikoncha_parent.domain.repository.PaymentRepository
-import uz.tikoncha_parent.domain.repository.PolicyRepository
 import uz.tikoncha_parent.domain.repository.ProtectionRepository
+import uz.tikoncha_parent.domain.repository.policy.PolicyRepository
 import uz.tikoncha_parent.domain.use_case.app_usage.TodayUsageUseCase
+import uz.tikoncha_parent.domain.use_case.policy.ObservePoliciesUseCase
 import uz.tikoncha_parent.domain.use_case.todo.GetTodosUseCase
 import uz.tikoncha_parent.platform.Logger
 import uz.tikoncha_parent.presentation.ui_state.ResponseState
@@ -36,6 +36,7 @@ class HomeViewModel(
     private val policyRepository: PolicyRepository,
     private val todayUsageUseCase: TodayUsageUseCase,
     private val protectionRepository: ProtectionRepository,
+    private val observePoliciesUseCase: ObservePoliciesUseCase,
 ) : ScreenModel {
 
     private val TAG = "HomeViewModel"
@@ -50,7 +51,8 @@ class HomeViewModel(
 
     private var childrenJob: Job? = null
     private var todayUsageJob: Job? = null
-
+    private var policyObserveJob: Job? = null
+    private var observedPolicyChildId: String? = null
     private var protectionJob: Job? = null
     private var protectionChildId: String? = null
 
@@ -71,9 +73,7 @@ class HomeViewModel(
                 _state.update { it.copy(selectedChild = event.child) }
                 AppSettings.selectedChildId = event.child.userId
                 AppSettings.selectedChild = event.child
-
                 loadAll()
-
             }
 
             HomeEvent.GetChildren -> loadChildren()
@@ -100,6 +100,7 @@ class HomeViewModel(
         if (hasTaskLoaded.value != selectedChildId){
             loadTasks()
         }
+        observePolicyCount()
         if (hasPolicyLoaded.value != selectedChildId){
             loadPolicies()
         }
@@ -222,23 +223,38 @@ class HomeViewModel(
         }
     }
 
+    /** Keshni kuzatadi — jadval tahrirlanganda raqam o'zi yangilanadi. */
+    private fun observePolicyCount() {
+        val childId = _state.value.selectedChild?.userId
+
+        if (childId.isNullOrBlank()) {
+            policyObserveJob?.cancel()
+            observedPolicyChildId = null
+            _state.update { it.copy(parentPolicyCount = 0) }
+            return
+        }
+
+        if (observedPolicyChildId == childId && policyObserveJob?.isActive == true) return
+
+        policyObserveJob?.cancel()
+        observedPolicyChildId = childId
+        policyObserveJob = screenModelScope.launch {
+            observePoliciesUseCase(childId).collect { policies ->
+                val count = policies
+                    .filter { it.scope == PolicyType.PARENT_CHILD && it.isStandard }
+                    .flatMap { it.targets.packages }
+                    .toSet().size
+
+                _state.update { it.copy(parentPolicyCount = count) }
+            }
+        }
+    }
+
+    /** Faqat tarmoqdan yangilaydi — hisob observePolicyCount() da. */
     private fun loadPolicies() = screenModelScope.launch {
         val selectedChildId = _state.value.selectedChild?.userId ?: return@launch
-        when (val res = policyRepository.getPolicies(selectedChildId)) {
-            is Outcome.Success -> {
-                _state.update { innerState ->
-                    val policies = res.data
-                        .map { it.toPolicyListUi() }
-                        .sortedByDescending { it.policyType.order }
-                    val parentPolicyCount = policies
-                        .filter { it.policyType == PolicyType.PARENT_CHILD }
-                        .flatMap { it.packages }.toSet().size
-                    innerState.copy(parentPolicyCount = parentPolicyCount)
-                }
-
-                hasPolicyLoaded.value = _state.value.selectedChild?.userId
-            }
-            is Outcome.Failure -> Unit
+        if (policyRepository.refreshPolicies(selectedChildId) is Outcome.Success) {
+            hasPolicyLoaded.value = selectedChildId
         }
     }
 
